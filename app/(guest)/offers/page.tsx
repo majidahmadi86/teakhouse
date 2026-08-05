@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { OfferCard } from "@/components/OfferCard";
 import { PageHero } from "@/components/PageHero";
-import { MotionCard, Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 
 const OFFERS = ["1", "2", "3"] as const;
@@ -20,31 +21,22 @@ export default function OffersPage() {
         lead={t("off.lead")}
       />
 
-      <section className="section-pad bg-white">
+      <section className="section-pad bg-coral-bg">
         <div className="mx-auto max-w-[1180px]">
           <RevealStagger className="grid gap-7 md:grid-cols-3">
             {OFFERS.map((n) => (
               <RevealItem key={n}>
-                <MotionCard className="tkh-card flex h-full flex-col p-7">
-                  <span className="urgency-chip w-fit">{t(`off.${n}.badge`)}</span>
-                  <h2 className="mt-5 font-display text-[1.6rem] text-ink">
-                    {t(`off.${n}.title`)}
-                  </h2>
-                  <p className="mt-3 flex-1 text-[0.98rem] leading-relaxed text-sub">
-                    {t(`off.${n}.body`)}
-                  </p>
-                  <p className="mt-4 text-xs font-semibold text-strike">
-                    {t("off.terms")}
-                  </p>
-                  <Link href="/book" className="btn-primary mt-6 w-full">
-                    {t("off.cta")}
-                  </Link>
-                </MotionCard>
+                <OfferCard n={n} large />
               </RevealItem>
             ))}
           </RevealStagger>
           <Reveal className="mt-12 text-center text-sm font-semibold text-sub">
             {t("off.terms")}
+          </Reveal>
+          <Reveal className="mt-8 text-center">
+            <Link href="/book" className="btn-primary inline-flex">
+              {t("nav.book")}
+            </Link>
           </Reveal>
         </div>
       </section>
