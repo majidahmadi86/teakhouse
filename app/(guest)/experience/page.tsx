@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { ConciergeAskButton } from "@/components/Concierge";
@@ -50,7 +50,7 @@ export default function ExperiencePage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1528181304800-259b08848526?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1900&q=80"
         alt="Long-tail boat on the river"
         eyebrow={t("nav.experience")}
         title={t("xp.h1")}
@@ -88,7 +88,7 @@ export default function ExperiencePage() {
                   </p>
                   <ConciergeAskButton
                     topic={section.topic}
-                    className="mt-8 inline-flex rounded-full border border-brand/30 px-6 py-3 text-sm font-bold text-brand transition hover:bg-deal-bg"
+                    className="mt-8 inline-flex rounded-full border border-blue/30 px-6 py-3 text-sm font-bold text-blue transition hover:bg-deal-bg"
                   >
                     {t("xp.ask")}
                   </ConciergeAskButton>
@@ -123,7 +123,7 @@ export default function ExperiencePage() {
           </p>
           <Link
             href="/book"
-            className="mt-8 inline-flex rounded-full bg-gold px-7 py-3.5 text-sm font-bold text-white"
+            className="mt-8 inline-flex rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white"
           >
             {t("xp.cta")}
           </Link>

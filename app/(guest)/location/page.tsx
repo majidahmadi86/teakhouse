@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Plane, Ship, Train } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
@@ -21,7 +21,7 @@ export default function LocationPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1900&q=80"
         alt="Old Bangkok riverside"
         eyebrow={t("nav.location")}
         title={t("lc.h1")}
@@ -30,7 +30,7 @@ export default function LocationPage() {
 
       <section className="px-6 py-24">
         <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[1fr_1.1fr]">
-          <div className="overflow-hidden rounded-2xl border-2 border-brand shadow-panel">
+          <div className="overflow-hidden rounded-2xl border-2 border-blue shadow-panel">
             <iframe
               title="The Teak House on Google Maps"
               src={MAP_EMBED}
@@ -42,14 +42,14 @@ export default function LocationPage() {
           </div>
 
           <div className="rounded-[14px] bg-white p-8 shadow-panel">
-            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-gold">
+            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-amber">
               {t("lc.dir")}
             </p>
             <h2 className="mb-6 text-2xl">{t("lc.h1")}</h2>
             <div className="space-y-6">
               {DIRECTIONS.map(({ icon: Icon, title, body }) => (
                 <article key={title} className="flex gap-4">
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-deal-bg text-brand">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-deal-bg text-blue">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
@@ -67,7 +67,7 @@ export default function LocationPage() {
               href={MAP_ROUTE}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-white hover:bg-brand-2"
+              className="mt-8 inline-flex rounded-full bg-navy px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark"
             >
               {t("lc.route")}
             </a>

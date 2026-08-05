@@ -23,6 +23,7 @@ export type Room = {
   balcony: boolean;
   pets: boolean;
   active: boolean;
+  urgency?: { en: string; th: string };
 };
 
 export const SHORT_KEY_TO_SLUG: Record<RoomShortKey, string> = {
@@ -59,12 +60,12 @@ export const SEED_ROOMS: Room[] = [
       th: "ชั้นบนสุดเป็นของคุณ ไม้สักทอง เตียงคิงหันหน้าสู่แม่น้ำ และระเบียงที่วิวเรือคือโชว์ยามค่ำ",
     },
     photos: [
-      unsplash("photo-1582719508461-905c673771fd"),
       unsplash("photo-1631049307264-da0ec9d70304"),
       unsplash("photo-1618773928121-c32242e63f39"),
+      unsplash("photo-1590490360182-c33d57733427"),
+      unsplash("photo-1582719478250-c89cae4dc85b"),
       unsplash("photo-1566665797739-1674de466a3a"),
-      unsplash("photo-1595579500751-8461e8d4a8c8"),
-      unsplash("photo-1522771739844-47449f1b1172"),
+      unsplash("photo-1611892440508-40a792e6e403"),
     ],
     amenities: [
       "aircon",
@@ -93,6 +94,10 @@ export const SEED_ROOMS: Room[] = [
     balcony: true,
     pets: false,
     active: true,
+    urgency: {
+      en: "Only 2 left at this price",
+      th: "เหลือ 2 ห้องราคานี้",
+    },
   },
   {
     id: "teak-suite",
@@ -110,12 +115,12 @@ export const SEED_ROOMS: Room[] = [
       th: "ห้องมาสเตอร์ดั้งเดิมของบ้าน เพดานสูง อ่างอาบน้ำลึก และกลิ่นไม้สักเก่าหลังฝนตก",
     },
     photos: [
-      unsplash("photo-1578683010236-d716f9a3f461"),
+      unsplash("photo-1618220178498-32a9c0df6513"),
       unsplash("photo-1584624373636-ae1712614446"),
-      unsplash("photo-1611892440508-40a792e6e403"),
       unsplash("photo-1620626011766-99694d1a8e2e"),
       unsplash("photo-1596394516093-67854e782444"),
       unsplash("photo-1560185007-cde436f6a4d2"),
+      unsplash("photo-1616486338812-68d4e645c0d8"),
     ],
     amenities: [
       "aircon",
@@ -161,10 +166,10 @@ export const SEED_ROOMS: Room[] = [
       th: "เปิดสู่คอร์ทยาร์ดและต้นมะม่วง เงียบสงบ ร่มรื่น ห่างจากสระน้ำเพียง 5 ก้าว",
     },
     photos: [
-      unsplash("photo-1590490360182-c33d57733427"),
+      unsplash("photo-1578683010236-d716f9a3f461"),
       unsplash("photo-1591087917153-872378c177a2"),
-      unsplash("photo-1616486338812-68d4e645c0d8"),
-      unsplash("photo-1582719478250-c89cae4dc85b"),
+      unsplash("photo-1584132967334-10e028bd69f7"),
+      unsplash("photo-1414235077428-338989a2e8c0"),
       unsplash("photo-1595526114035-0d45ed16c565"),
       unsplash("photo-1571008887538-b36bb74556e6"),
     ],
@@ -192,6 +197,10 @@ export const SEED_ROOMS: Room[] = [
     balcony: false,
     pets: true,
     active: true,
+    urgency: {
+      en: "Popular choice",
+      th: "ห้องยอดนิยม",
+    },
   },
   {
     id: "courtyard-twin",
@@ -211,10 +220,10 @@ export const SEED_ROOMS: Room[] = [
     photos: [
       unsplash("photo-1560448204-e02f11c3d0e2"),
       unsplash("photo-1598928502111-a684ea7036fb"),
-      unsplash("photo-1618220178498-32a9c0df6513"),
       unsplash("photo-1560185127-8726d12649a8"),
       unsplash("photo-1584133760887-c4244e998f6c"),
       unsplash("photo-1615874959477-2f584629a619"),
+      unsplash("photo-1522771739844-47449f1b1172"),
     ],
     amenities: [
       "aircon",
