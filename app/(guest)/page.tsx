@@ -28,7 +28,13 @@ const AvailBar = dynamic(
 );
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=2400&q=85";
+  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=2600&q=88&auto=format&fit=crop";
+
+const HERO_FALLBACKS = [
+  "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=2600&q=88&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=2600&q=88&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=2600&q=88&auto=format&fit=crop",
+];
 
 const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
 const OFFERS = ["1", "2", "3"] as const;
@@ -131,11 +137,12 @@ export default function HomePage() {
             >
               <SafeImage
                 src={HERO_IMAGE}
-                alt="Long-tail boats and limestone cliffs"
+                alt="Resort pool at dusk with warm lanterns"
                 fill
                 priority
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover object-[center_42%] md:object-[center_45%]"
+                fallbackSrcs={HERO_FALLBACKS}
               />
             </div>
             <div className="hero-scrim absolute inset-0" />

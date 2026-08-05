@@ -13,6 +13,8 @@ type SafeImageProps = {
   height?: number;
   priority?: boolean;
   sizes?: string;
+  /** Tried in order when primary src fails. */
+  fallbackSrcs?: string[];
 };
 
 export function SafeImage({
@@ -24,10 +26,14 @@ export function SafeImage({
   height,
   priority,
   sizes,
+  fallbackSrcs = [],
 }: SafeImageProps) {
-  const [failed, setFailed] = useState(false);
+  const sources = [src, ...fallbackSrcs];
+  const [index, setIndex] = useState(0);
+  const current = sources[index];
+  const exhausted = index >= sources.length;
 
-  if (failed) {
+  if (exhausted || !current) {
     return (
       <div
         className={cn(
@@ -44,11 +50,12 @@ export function SafeImage({
   if (fill) {
     return (
       <Image
-        src={src}
+        key={current}
+        src={current}
         alt={alt}
         fill
         className={cn("object-cover", className)}
-        onError={() => setFailed(true)}
+        onError={() => setIndex((i) => i + 1)}
         priority={priority}
         sizes={sizes ?? "100vw"}
       />
@@ -57,12 +64,13 @@ export function SafeImage({
 
   return (
     <Image
-      src={src}
+      key={current}
+      src={current}
       alt={alt}
       width={width ?? 1200}
       height={height ?? 800}
       className={className}
-      onError={() => setFailed(true)}
+      onError={() => setIndex((i) => i + 1)}
       priority={priority}
       sizes={sizes}
     />
