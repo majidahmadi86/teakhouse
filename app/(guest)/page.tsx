@@ -26,7 +26,7 @@ const HeroSearchPill = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[72px] max-w-[720px] animate-pulse rounded-full bg-white/90 shadow-2xl" />
+      <div className="h-14 w-full animate-pulse rounded-full bg-white shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px]" />
     ),
   }
 );
@@ -57,8 +57,8 @@ export default function HomePage() {
           <div className="hero-scrim absolute inset-0 hidden md:block" />
         </div>
 
-        {/* Mobile: bottom stage — brand, one line, CTA */}
-        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-24 md:hidden">
+        {/* Mobile: one-screen stack — brand, headline, trust, search pill */}
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-6 pt-20 md:hidden">
           <motion.p
             className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow"
             initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -67,30 +67,12 @@ export default function HomePage() {
           >
             {t("brand.name")}
           </motion.p>
-          <motion.p
-            className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/70 hero-text-shadow"
-            initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          >
-            {t("hero.eyebrow")}
-          </motion.p>
-          <div className="mt-3">
+          <div className="mt-2">
             <HeroHeadline />
           </div>
-          <motion.p
-            className="mt-3 max-w-[28ch] text-[15px] leading-snug text-white/88 hero-text-shadow"
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: subDelay, duration: 0.45 }}
-          >
-            {t("hero.leadShort")}
-          </motion.p>
-          <div className="mt-4">
-            <HeroTrustRow compact className="mt-0 justify-start" />
-          </div>
+          <HeroTrustRow compact className="mt-3 justify-start" />
           <motion.div
-            className="relative z-20 mt-5"
+            className="relative z-20 mt-4"
             initial={reduce ? false : { opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: pillDelay }}

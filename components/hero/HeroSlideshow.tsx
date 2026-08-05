@@ -20,10 +20,10 @@ const SLIDES = [
     position: "object-[center_40%] md:object-[center_45%]",
   },
   {
-    src: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=2600&q=88&auto=format&fit=crop",
-    alt: "River at dusk",
+    src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=2600&q=88&auto=format&fit=crop",
+    alt: "Warm teak house interior",
     zoom: "in" as const,
-    position: "object-[center_38%] md:object-[center_48%]",
+    position: "object-[center_40%] md:object-[center_45%]",
   },
 ];
 

@@ -25,6 +25,7 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  ChevronUp,
   User,
 } from "lucide-react";
 import { DayPicker } from "react-day-picker";
@@ -110,16 +111,26 @@ export function HeroSearchPill({ className }: { className?: string }) {
         <button
           type="button"
           onClick={() => setSheetOpen(true)}
-          className="flex h-[3.65rem] w-full items-center gap-3 rounded-full border border-white/80 bg-white/97 px-3.5 shadow-[0_20px_50px_rgba(6,22,48,.38)] backdrop-blur-sm"
+          className="flex h-14 w-full items-center gap-3 rounded-full border border-line bg-white px-3 shadow-[0_16px_44px_rgba(10,46,92,.20)]"
         >
           <CalendarDays className="h-5 w-5 shrink-0 text-blue" aria-hidden />
-          <span className="min-w-0 flex-1 truncate text-left text-[15px] font-semibold tracking-[-0.01em] text-ink">
+          <span className="min-w-0 flex-1 truncate text-left text-[14px] font-semibold text-ink">
             {compactLabel}
           </span>
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue text-white shadow-[0_8px_18px_rgba(10,46,92,.35)]">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue text-white">
             <ArrowRight className="h-4 w-4" aria-hidden />
           </span>
         </button>
+
+        {!reduce ? (
+          <motion.div
+            className="mt-3 flex justify-center text-white/70"
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 1.1, times: [0, 0.5, 1], repeat: 1 }}
+          >
+            <ChevronUp className="h-5 w-5" aria-hidden />
+          </motion.div>
+        ) : null}
 
         <MobileSearchSheet
           open={sheetOpen}

@@ -40,10 +40,10 @@ export function HeroHeadline({ className }: { className?: string }) {
       : (w: string) => w.toLowerCase().replace(/[.,]/g, "") === "river";
 
   const h1Class = cn(
-    "max-w-[14ch] leading-[1.08] tracking-[-0.01em] text-white hero-text-shadow md:max-w-[16ch] md:leading-[1.15] md:tracking-normal",
+    "max-w-[15ch] leading-[1.12] text-white hero-text-shadow md:max-w-[16ch] md:leading-[1.15]",
     lang === "th"
-      ? "font-th-display text-[2.45rem] font-semibold md:text-[clamp(2.5rem,4.8vw,3.8rem)]"
-      : "font-display text-[2.55rem] md:text-[clamp(2.7rem,5vw,4.3rem)]",
+      ? "font-th-display text-[2.25rem] font-semibold md:text-[clamp(2.5rem,4.8vw,3.8rem)]"
+      : "font-display text-[2.35rem] md:text-[clamp(2.7rem,5vw,4.3rem)]",
     className
   );
 
