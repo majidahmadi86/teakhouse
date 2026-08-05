@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { DateRangePicker } from "@/components/ui/DateRangePicker";
 import { ListboxField } from "@/components/ui/ListboxField";
 import { useI18n } from "@/lib/i18n";
@@ -20,6 +21,8 @@ export function AvailBar({
 }: AvailBarProps) {
   const { t } = useI18n();
   const router = useRouter();
+  const reduce = useReducedMotion();
+  const [pulse, setPulse] = useState(false);
 
   const [checkIn, setCheckIn] = useState<Date | undefined>(() =>
     addDays(new Date(), 1)
@@ -28,6 +31,13 @@ export function AvailBar({
     addDays(new Date(), 2)
   );
   const [guests, setGuests] = useState("2");
+
+  useEffect(() => {
+    if (variant !== "hero" || reduce) return;
+    setPulse(true);
+    const tmr = setTimeout(() => setPulse(false), 2400);
+    return () => clearTimeout(tmr);
+  }, [variant, reduce]);
 
   const guestOptions = useMemo(
     () =>
@@ -63,7 +73,9 @@ export function AvailBar({
       <div
         className={cn(
           "overflow-hidden bg-white text-ink shadow-2xl",
-          isHero ? "rounded-2xl" : "rounded-[18px] shadow-panel"
+          isHero
+            ? "rounded-2xl border-t border-blue"
+            : "rounded-[18px] shadow-panel"
         )}
       >
         <div
@@ -113,7 +125,8 @@ export function AvailBar({
               onClick={goBook}
               className={cn(
                 "w-full rounded-xl bg-blue px-8 text-[0.95rem] font-extrabold text-white transition hover:bg-blue-dark md:rounded-none",
-                isHero ? "h-14 md:h-auto md:min-h-[72px]" : "py-4 lg:py-0 lg:min-h-[72px]"
+                isHero ? "h-14 md:h-auto md:min-h-[72px]" : "py-4 lg:py-0 lg:min-h-[72px]",
+                pulse && "avail-pulse"
               )}
             >
               {t("avail.go")}

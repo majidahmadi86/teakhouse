@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, MessageCircle, User } from "lucide-react";
+import { OfferCard } from "@/components/OfferCard";
 import { RoomCard } from "@/components/RoomCard";
 import { SafeImage } from "@/components/SafeImage";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/components/motion/Reveal";
 import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 const AvailBar = dynamic(
   () => import("@/components/AvailBar").then((m) => m.AvailBar),
@@ -58,20 +60,40 @@ function TrustBadges({ mobile }: { mobile?: boolean }) {
   );
 }
 
+function GoogleRatingPill({ className }: { className?: string }) {
+  const { t } = useI18n();
+  return (
+    <div
+      className={cn(
+        "inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/12 px-3.5 py-1.5 text-[13px] font-semibold text-white backdrop-blur-md",
+        className
+      )}
+    >
+      <span className="tracking-[1px] text-gold" aria-hidden>
+        ★★★★★
+      </span>
+      <span>{t("hero.google")}</span>
+    </div>
+  );
+}
+
 function HeroWords({ text }: { text: string }) {
+  const { lang } = useI18n();
   const reduce = useReducedMotion();
   const words = text.split(" ");
+  const h1Class = cn(
+    "max-w-[14ch] leading-[1.2] text-white hero-text-shadow md:max-w-[16ch]",
+    lang === "th"
+      ? "font-th-display text-[2.1rem] font-semibold md:text-[clamp(2.4rem,4.5vw,3.6rem)]"
+      : "font-display text-[2.1rem] md:text-[clamp(2.6rem,5vw,4.2rem)]"
+  );
 
   if (reduce) {
-    return (
-      <h1 className="max-w-[14ch] font-display text-[2.1rem] leading-[1.2] text-white hero-text-shadow md:max-w-[16ch] md:text-[clamp(2.6rem,5vw,4.2rem)]">
-        {text}
-      </h1>
-    );
+    return <h1 className={h1Class}>{text}</h1>;
   }
 
   return (
-    <h1 className="max-w-[14ch] font-display text-[2.1rem] leading-[1.2] text-white hero-text-shadow md:max-w-[16ch] md:text-[clamp(2.6rem,5vw,4.2rem)]">
+    <h1 className={h1Class}>
       {words.map((w, i) => (
         <motion.span
           key={`${w}-${i}`}
@@ -94,21 +116,49 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative z-[1] overflow-visible bg-cloud md:h-[78svh]">
-        <div className="relative z-[1] h-[58svh] overflow-visible md:absolute md:inset-0 md:h-full">
+      <section
+        id="tkh-hero"
+        className="relative z-[1] overflow-visible bg-cloud md:h-[min(78svh,720px)]"
+      >
+        {/* Mobile: photo + overlay copy */}
+        <div className="relative z-[1] h-[55svh] overflow-hidden md:absolute md:inset-0 md:h-full">
           <div className="absolute inset-0 overflow-hidden">
-            <SafeImage
-              src={HERO_IMAGE}
-              alt="Long-tail boats and limestone cliffs"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
+            <div
+              className={cn(
+                "absolute inset-0",
+                !reduce && "hero-kenburns"
+              )}
+            >
+              <SafeImage
+                src={HERO_IMAGE}
+                alt="Long-tail boats and limestone cliffs"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            </div>
             <div className="hero-scrim absolute inset-0" />
           </div>
 
-          <div className="absolute inset-0 flex flex-col justify-end px-6 pb-6 pt-28 md:pb-8">
+          {/* Mobile overlay: eyebrow, H1, rating */}
+          <div className="absolute inset-0 flex flex-col justify-end px-5 pb-5 pt-20 md:hidden">
+            <p className="eyebrow mb-2 text-gold hero-text-shadow">
+              {t("hero.eyebrow")}
+            </p>
+            <HeroWords text={t("hero.h1")} />
+            <motion.div
+              className="mt-3"
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.5 }}
+            >
+              <GoogleRatingPill />
+            </motion.div>
+          </div>
+
+          {/* Desktop overlay */}
+          <div className="absolute inset-0 hidden flex-col justify-end px-6 pb-8 pt-28 md:flex">
             <div className="mx-auto w-full max-w-[1180px]">
               <p className="eyebrow mb-3 text-gold hero-text-shadow">
                 {t("hero.eyebrow")}
@@ -124,7 +174,16 @@ export default function HomePage() {
               </motion.p>
 
               <motion.div
-                className="relative z-20 mt-8 hidden md:block"
+                className="relative z-20 mt-5"
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.5 }}
+              >
+                <GoogleRatingPill />
+              </motion.div>
+
+              <motion.div
+                className="relative z-20 mt-4"
                 initial={reduce ? false : { opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45, duration: 0.6 }}
@@ -142,7 +201,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative z-20 px-6 py-6 md:hidden">
+        {/* Mobile: search + trust below photo, first screen */}
+        <div className="relative z-20 px-5 pb-5 pt-4 md:hidden">
           <AvailBar variant="hero" showNote={false} />
           <TrustBadges mobile />
         </div>
@@ -204,27 +264,20 @@ export default function HomePage() {
         <div className="mx-auto max-w-[1180px]">
           <Reveal className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow mb-3.5">{t("off.eyebrow")}</p>
+              <p className="eyebrow mb-3.5 text-blue">{t("off.eyebrow")}</p>
               <h2>{t("off.strip")}</h2>
             </div>
-            <Link href="/offers" className="text-sm font-bold text-coral-deep underline">
-              {t("off.seeAll")}
+            <Link
+              href="/offers"
+              className="inline-flex items-center gap-1 text-sm font-bold text-blue transition hover:gap-2"
+            >
+              {t("off.seeAll")} →
             </Link>
           </Reveal>
           <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
             {OFFERS.map((n) => (
               <RevealItem key={n}>
-                <MotionCard className="tkh-card block p-6">
-                  <Link href="/offers" className="block">
-                    <span className="urgency-chip">{t(`off.${n}.badge`)}</span>
-                    <h3 className="mt-4 font-display text-xl text-ink">
-                      {t(`off.${n}.title`)}
-                    </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-sub">
-                      {t(`off.${n}.body`)}
-                    </p>
-                  </Link>
-                </MotionCard>
+                <OfferCard n={n} />
               </RevealItem>
             ))}
           </RevealStagger>
