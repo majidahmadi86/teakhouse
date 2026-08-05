@@ -1,0 +1,148 @@
+"use client";
+
+import Link from "next/link";
+import { PageHero } from "@/components/PageHero";
+import { RoomCard } from "@/components/RoomCard";
+import { useGuestRooms } from "@/lib/ownerStore";
+import { useI18n } from "@/lib/i18n";
+import { formatBaht } from "@/lib/utils";
+import type { Room } from "@/lib/rooms";
+
+const DESC_KEYS: Record<string, string> = {
+  "river-loft": "rp.r1p",
+  "teak-suite": "rp.r2p",
+  "garden-room": "rp.r3p",
+  "courtyard-twin": "rp.r4p",
+};
+
+const INCLUDES = ["rp.i1", "rp.i2", "rp.i3", "rp.i4", "rp.i5", "rp.i6"] as const;
+
+function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => string; tr: (e: { en: string; th: string }) => string }) {
+  const rows: {
+    key: string;
+    label: string;
+    render: (room: Room) => string;
+  }[] = [
+    { key: "size", label: t("cmp.size"), render: (r) => `${r.sizeM2} m²` },
+    { key: "bed", label: t("cmp.bed"), render: (r) => tr(r.bedType) },
+    { key: "sleeps", label: t("cmp.sleeps"), render: (r) => String(r.capacity) },
+    { key: "view", label: t("cmp.view"), render: (r) => tr(r.view) },
+    {
+      key: "bathtub",
+      label: t("cmp.bathtub"),
+      render: (r) => (r.bathtub ? t("cmp.yes") : t("cmp.no")),
+    },
+    {
+      key: "balcony",
+      label: t("cmp.balcony"),
+      render: (r) => (r.balcony ? t("cmp.yes") : t("cmp.no")),
+    },
+    {
+      key: "pets",
+      label: t("cmp.pets"),
+      render: (r) => (r.pets ? t("cmp.yes") : t("cmp.no")),
+    },
+    {
+      key: "direct",
+      label: t("cmp.direct"),
+      render: (r) => formatBaht(r.rate),
+    },
+    {
+      key: "agoda",
+      label: t("cmp.agoda"),
+      render: (r) => formatBaht(r.ota),
+    },
+  ];
+
+  return (
+    <div className="mt-12 overflow-x-auto rounded-[14px] bg-white shadow-panel">
+      <table className="w-full min-w-[720px] border-collapse text-sm">
+        <thead>
+          <tr className="border-b border-line">
+            <th className="p-4 text-left font-semibold text-strike" />
+            {rooms.map((room) => (
+              <th key={room.id} className="p-4 text-left font-display text-base text-brand">
+                {tr(room.name)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.key} className="border-b border-line/70">
+              <td className="p-4 font-semibold text-ink">{row.label}</td>
+              {rooms.map((room) => (
+                <td key={room.id} className="p-4 text-ink/85">
+                  {row.render(room)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default function RoomsPage() {
+  const { t, tr } = useI18n();
+  const rooms = useGuestRooms();
+
+  return (
+    <>
+      <PageHero
+        image="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=1900&q=80"
+        alt="Room interior"
+        eyebrow={t("rooms.eyebrow")}
+        title={t("rp.h1")}
+        lead={t("rp.lead")}
+      />
+
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-[1180px]">
+          <div className="grid gap-7 md:grid-cols-2">
+            {rooms.map((room) => (
+              <RoomCard
+                key={room.id}
+                room={room}
+                variant="full"
+                descriptionKey={DESC_KEYS[room.slug]}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface px-6 py-16">
+        <div className="mx-auto max-w-[1180px]">
+          <h2>{t("rp.inc")}</h2>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {INCLUDES.map((key) => (
+              <article
+                key={key}
+                className="rounded-[14px] bg-white p-6 shadow-[0_8px_30px_rgba(23,33,29,0.07)]"
+              >
+                <h3 className="text-lg">{t(key)}</h3>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-[1180px]">
+          <h2>{t("rooms.compare")}</h2>
+          <CompareTable rooms={rooms} t={t} tr={tr} />
+          <p className="mt-10 text-center">
+            <Link
+              href="/book"
+              className="inline-flex rounded-full bg-gold px-7 py-3.5 text-sm font-bold text-white"
+            >
+              {t("nav.book")}
+            </Link>
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}
