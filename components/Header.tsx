@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   BadgePercent,
+  CalendarDays,
   ChevronDown,
   Menu,
   MessageCircle,
@@ -16,13 +17,23 @@ import {
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { Logo } from "@/components/Logo";
 import { SafeImage } from "@/components/SafeImage";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useGuestRooms } from "@/lib/ownerStore";
 import { cn } from "@/lib/utils";
 
-const NAV_REST = [
+const NAV_CENTER = [
+  { href: "/experience", key: "nav.experience" },
+  { href: "/gallery", key: "nav.gallery" },
+  { href: "/location", key: "nav.location" },
+  { href: "/contact", key: "nav.contact" },
+] as const;
+
+const DRAWER_NAV = [
+  { href: "/rooms", key: "nav.rooms", subtitle: "nav.roomsCount" as const },
+  { href: "/offers", key: "nav.offers", offers: true },
   { href: "/experience", key: "nav.experience" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
@@ -33,11 +44,11 @@ function LangPair({ className }: { className?: string }) {
   const { lang, setLang } = useI18n();
 
   return (
-    <div className={cn("flex items-center gap-1.5", className)}>
+    <div className={cn("flex shrink-0 items-center gap-1.5 whitespace-nowrap", className)}>
       {(["en", "th"] as Lang[]).map((l, i) => (
         <span key={l} className="inline-flex items-center gap-1.5">
           {i > 0 ? (
-            <span className="text-[14px] font-bold text-line" aria-hidden>
+            <span className="text-[13px] font-bold text-line" aria-hidden>
               |
             </span>
           ) : null}
@@ -45,7 +56,7 @@ function LangPair({ className }: { className?: string }) {
             type="button"
             onClick={() => setLang(l)}
             className={cn(
-              "text-[14px] font-bold transition",
+              "whitespace-nowrap text-[13px] font-bold transition",
               lang === l
                 ? "text-blue underline decoration-2 underline-offset-4"
                 : "text-sub hover:text-ink"
@@ -59,7 +70,7 @@ function LangPair({ className }: { className?: string }) {
   );
 }
 
-function AccountMenu() {
+function AccountEntry({ iconOnly }: { iconOnly?: boolean }) {
   const { t } = useI18n();
   const { user, signOut } = useGuestAuth();
   const router = useRouter();
@@ -77,15 +88,26 @@ function AccountMenu() {
   }, []);
 
   if (!user) {
+    if (iconOnly) {
+      return (
+        <Tooltip label={t("acc.signin")}>
+          <Link
+            href="/account/signin"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center text-ink transition hover:text-blue"
+            aria-label={t("acc.signin")}
+          >
+            <User className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden />
+          </Link>
+        </Tooltip>
+      );
+    }
     return (
       <Link
         href="/account/signin"
-        className="inline-flex items-center gap-1.5 text-[14px] font-bold text-ink transition hover:text-blue"
+        className="inline-flex items-center gap-2 whitespace-nowrap text-[17px] font-semibold text-ink"
       >
-        <User className="h-4 w-4" strokeWidth={2} aria-hidden />
-        <span>
-          {t("acc.signin")} | เข้าสู่ระบบ
-        </span>
+        <User className="h-5 w-5 shrink-0" strokeWidth={1.75} aria-hidden />
+        {t("acc.signin")}
       </Link>
     );
   }
@@ -93,36 +115,35 @@ function AccountMenu() {
   const initial = user.name.trim().charAt(0).toUpperCase() || "G";
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative shrink-0" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-blue text-sm font-bold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky"
+        className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-blue text-[13px] font-bold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky"
         aria-expanded={open}
         aria-haspopup="menu"
+        aria-label={user.name}
       >
         {initial}
       </button>
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-popover mt-2 min-w-[180px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl"
+          className="absolute right-0 z-[80] mt-2 min-w-[180px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl"
         >
           <Link
             href="/account"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2.5 text-sm font-semibold text-ink hover:bg-sky"
+            className="block whitespace-nowrap px-4 py-2.5 text-sm font-semibold text-ink hover:bg-sky"
           >
             {t("acc.myBookings")}
           </Link>
           <Link
-            href="/account"
+            href="/account#profile"
             role="menuitem"
-            onClick={() => {
-              setOpen(false);
-            }}
-            className="block px-4 py-2.5 text-sm font-semibold text-ink hover:bg-sky"
+            onClick={() => setOpen(false)}
+            className="block whitespace-nowrap px-4 py-2.5 text-sm font-semibold text-ink hover:bg-sky"
           >
             {t("acc.profile")}
           </Link>
@@ -134,7 +155,7 @@ function AccountMenu() {
               setOpen(false);
               router.push("/");
             }}
-            className="block w-full px-4 py-2.5 text-left text-sm font-semibold text-ink hover:bg-sky"
+            className="block w-full whitespace-nowrap px-4 py-2.5 text-left text-sm font-semibold text-ink hover:bg-sky"
           >
             {t("acc.signout")}
           </button>
@@ -144,70 +165,34 @@ function AccountMenu() {
   );
 }
 
-function OffersNavLink({
-  active,
-  onClick,
-  mobile,
-}: {
-  active: boolean;
-  onClick?: () => void;
-  mobile?: boolean;
-}) {
+function OffersIconLink({ active }: { active: boolean }) {
   const { t } = useI18n();
   const reduce = useReducedMotion();
 
-  if (mobile) {
-    return (
+  return (
+    <Tooltip label={t("nav.offers")}>
       <Link
         href="/offers"
-        onClick={onClick}
+        aria-label={t("nav.offers")}
         className={cn(
-          "flex items-center gap-2 border-b border-line px-4 py-5 font-display text-[1.45rem] transition",
-          active ? "text-blue" : "text-ink"
+          "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition",
+          active ? "bg-coral-bg" : "hover:bg-coral-bg"
         )}
       >
-        <span className="relative">
-          <BadgePercent
-            className="h-5 w-5 text-coral-deep"
-            strokeWidth={2}
-            aria-hidden
-          />
-          {!reduce ? (
-            <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-coral-deep" />
-          ) : null}
-        </span>
-        {t("nav.offers")}
-      </Link>
-    );
-  }
-
-  return (
-    <Link
-      href="/offers"
-      onClick={onClick}
-      className={cn(
-        "group relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[15px] font-semibold transition",
-        active
-          ? "bg-coral-bg text-coral-deep"
-          : "text-ink hover:bg-coral-bg hover:text-coral-deep"
-      )}
-    >
-      <span className="relative">
-        <BadgePercent className="h-4 w-4 text-coral-deep" aria-hidden />
+        <BadgePercent
+          className="h-5 w-5 text-coral-deep"
+          strokeWidth={2}
+          aria-hidden
+        />
         {!reduce ? (
-          <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 animate-[pulse_2s_ease-in-out_infinite] rounded-full bg-coral-deep" />
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-[pulse_2s_ease-in-out_infinite] rounded-full bg-coral-deep" />
         ) : null}
-      </span>
-      {t("nav.offers")}
-    </Link>
+      </Link>
+    </Tooltip>
   );
 }
 
-function RoomsMegaMenu({
-  active,
-}: {
-  active: boolean;
-}) {
+function RoomsMegaMenu({ active }: { active: boolean }) {
   const { t, tr } = useI18n();
   const { format } = useCurrency();
   const rooms = useGuestRooms();
@@ -233,7 +218,7 @@ function RoomsMegaMenu({
 
   return (
     <div
-      className="relative"
+      className="relative shrink-0"
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
       onFocus={openMenu}
@@ -246,7 +231,7 @@ function RoomsMegaMenu({
       <Link
         href="/rooms"
         className={cn(
-          "group relative inline-flex items-center gap-1 text-[15px] font-semibold transition",
+          "group relative inline-flex items-center gap-1 whitespace-nowrap text-[15px] font-semibold transition",
           active || open ? "text-blue" : "text-ink hover:text-blue"
         )}
         aria-expanded={open}
@@ -262,10 +247,7 @@ function RoomsMegaMenu({
       >
         {t("nav.rooms")}
         <ChevronDown
-          className={cn(
-            "h-3.5 w-3.5 transition",
-            open && "rotate-180"
-          )}
+          className={cn("h-3.5 w-3.5 transition", open && "rotate-180")}
           aria-hidden
         />
         <span
@@ -285,7 +267,7 @@ function RoomsMegaMenu({
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-1/2 top-full z-popover mt-3 w-[min(92vw,720px)] -translate-x-1/2 rounded-2xl bg-white p-5 shadow-2xl"
+            className="absolute left-0 top-full z-[80] mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
           >
             <div className="grid gap-5 md:grid-cols-[1fr_180px]">
               <div className="grid grid-cols-2 gap-3">
@@ -310,7 +292,7 @@ function RoomsMegaMenu({
                       <div className="truncate text-sm font-bold text-ink">
                         {tr(room.name)}
                       </div>
-                      <div className="mt-0.5 text-xs font-semibold text-blue">
+                      <div className="mt-0.5 whitespace-nowrap text-xs font-semibold text-blue">
                         {t("room.from")} {format(room.rate)}
                       </div>
                     </div>
@@ -355,19 +337,16 @@ function NavLink({
   href,
   label,
   active,
-  onClick,
 }: {
   href: string;
   label: string;
   active: boolean;
-  onClick?: () => void;
 }) {
   return (
     <Link
       href={href}
-      onClick={onClick}
       className={cn(
-        "group relative text-[15px] font-semibold transition",
+        "group relative shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
         active ? "text-blue" : "text-ink hover:text-blue"
       )}
     >
@@ -426,24 +405,19 @@ export function Header() {
             : "border-line bg-white"
         )}
       >
-        <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between gap-4 px-5 md:gap-5 md:px-6">
-          <Link href="/" className="shrink-0">
+        <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 min-[760px]:px-5 xl:px-6">
+          {/* LEFT: emblem + wordmark */}
+          <Link href="/" className="shrink-0 whitespace-nowrap">
             <Logo
-              showTag={false}
-              className="md:hidden [&_.logo-tagline]:hidden"
+              showTag
+              className="[&_.logo-tagline]:hidden min-[1440px]:[&_.logo-tagline]:block"
             />
-            <span className="hidden md:inline-flex">
-              <Logo
-                showTag
-                className="[&_.logo-tagline]:hidden min-[1100px]:[&_.logo-tagline]:block"
-              />
-            </span>
           </Link>
 
-          <nav className="hidden items-center gap-5 xl:gap-7 lg:flex">
+          {/* CENTER nav: ≥1200px */}
+          <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
             <RoomsMegaMenu active={isActive("/rooms")} />
-            <OffersNavLink active={isActive("/offers")} />
-            {NAV_REST.map(({ href, key }) => (
+            {NAV_CENTER.map(({ href, key }) => (
               <NavLink
                 key={href}
                 href={href}
@@ -453,21 +427,37 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="hidden items-center gap-3 sm:flex">
+          {/* RIGHT utility cluster */}
+          <div className="ml-auto flex shrink-0 items-center gap-[18px]">
+            {/* Utilities: visible ≥760px */}
+            <div className="hidden items-center gap-[18px] min-[760px]:flex">
+              <OffersIconLink active={isActive("/offers")} />
               <CurrencySwitcher />
               <LangPair />
-              <AccountMenu />
+              <AccountEntry iconOnly />
             </div>
+
+            {/* Book CTA: text ≥760px, icon <760px */}
             <Link
               href="/book"
-              className="btn-shine btn-primary hidden sm:inline-flex"
+              className="btn-shine btn-primary hidden whitespace-nowrap min-[760px]:inline-flex"
             >
               {t("nav.book")}
             </Link>
+            <Tooltip label={t("nav.book")}>
+              <Link
+                href="/book"
+                aria-label={t("nav.book")}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta min-[760px]:hidden"
+              >
+                <CalendarDays className="h-5 w-5" aria-hidden />
+              </Link>
+            </Tooltip>
+
+            {/* Burger: <1200px */}
             <button
               type="button"
-              className="flex h-11 w-11 items-center justify-center lg:hidden"
+              className="flex h-10 w-10 items-center justify-center min-[1200px]:hidden"
               aria-label={t("mobile.menu")}
               onClick={() => setDrawerOpen(true)}
             >
@@ -481,150 +471,141 @@ export function Header() {
         <button
           type="button"
           aria-label={t("mobile.close")}
-          className="fixed inset-0 z-[55] bg-ink/40 lg:hidden"
+          className="fixed inset-0 z-[55] bg-ink/40 min-[1200px]:hidden"
           onClick={() => setDrawerOpen(false)}
         />
       ) : null}
 
+      {/* Mobile / tablet drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-drawer flex w-[min(100%,360px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 lg:hidden",
+          "fixed inset-y-0 right-0 z-drawer flex w-[min(100%,320px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 min-[1200px]:hidden",
           drawerOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex h-14 items-center justify-between border-b border-line px-5">
-          <Logo showTag={false} />
+        <div className="flex h-12 shrink-0 items-center justify-between border-b border-line px-4">
+          <Logo showTag={false} size={20} className="[&_div]:text-[16px]" />
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center"
+            className="flex h-10 w-10 items-center justify-center"
             aria-label={t("mobile.close")}
             onClick={() => setDrawerOpen(false)}
           >
-            <X className="h-6 w-6 text-ink" strokeWidth={2} />
+            <X className="h-5 w-5 text-ink" strokeWidth={2} />
           </button>
         </div>
 
-        <nav className="flex flex-1 flex-col overflow-y-auto px-2 pt-2">
-          <motion.div
-            initial={reduce || !drawerOpen ? false : { opacity: 0, x: 16 }}
-            animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
-            transition={{ delay: 0, duration: 0.35 }}
-          >
-            <Link
-              href="/rooms"
-              onClick={() => setDrawerOpen(false)}
-              className={cn(
-                "block border-b border-line px-4 py-5 transition",
-                isActive("/rooms") ? "text-blue" : "text-ink"
-              )}
-            >
-              <span className="font-display text-[1.45rem]">{t("nav.rooms")}</span>
-              <span className="mt-0.5 block text-sm font-semibold text-sub">
-                {t("nav.roomsCount")}
-              </span>
-            </Link>
-          </motion.div>
+        <nav className="flex flex-1 flex-col overflow-y-auto px-1">
+          {DRAWER_NAV.map((item, i) => {
+            const active = isActive(item.href);
+            const subtitle = "subtitle" in item ? item.subtitle : undefined;
+            const offers = "offers" in item && item.offers;
 
-          <motion.div
-            initial={reduce || !drawerOpen ? false : { opacity: 0, x: 16 }}
-            animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
-            transition={{ delay: 0.05, duration: 0.35 }}
-          >
-            <OffersNavLink
-              active={isActive("/offers")}
-              mobile
-              onClick={() => setDrawerOpen(false)}
-            />
-          </motion.div>
-
-          {NAV_REST.map(({ href, key }, i) => (
-            <motion.div
-              key={href}
-              initial={reduce || !drawerOpen ? false : { opacity: 0, x: 16 }}
-              animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
-              transition={{ delay: (i + 2) * 0.05, duration: 0.35 }}
-            >
-              <Link
-                href={href}
-                onClick={() => setDrawerOpen(false)}
-                className={cn(
-                  "block border-b border-line px-4 py-5 font-display text-[1.45rem] transition",
-                  isActive(href) ? "text-blue" : "text-ink"
-                )}
+            return (
+              <motion.div
+                key={item.href}
+                initial={reduce || !drawerOpen ? false : { opacity: 0, x: 12 }}
+                animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
+                transition={{ delay: i * 0.04, duration: 0.28 }}
               >
-                {t(key)}
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  href={item.href}
+                  onClick={() => setDrawerOpen(false)}
+                  className={cn(
+                    "flex items-center gap-2 border-b border-line px-4 py-3.5 transition",
+                    active ? "text-blue" : "text-ink"
+                  )}
+                >
+                  {offers ? (
+                    <BadgePercent
+                      className="h-4 w-4 shrink-0 text-coral-deep"
+                      aria-hidden
+                    />
+                  ) : null}
+                  <span className="min-w-0">
+                    <span className="block whitespace-nowrap text-[17px] font-semibold">
+                      {t(item.key)}
+                    </span>
+                    {subtitle ? (
+                      <span className="mt-0.5 block text-[12px] font-semibold text-sub">
+                        {t(subtitle)}
+                      </span>
+                    ) : null}
+                  </span>
+                </Link>
+              </motion.div>
+            );
+          })}
 
-          <div className="mt-4 border-t border-line px-4 pt-5">
-            <div className="mb-4 flex flex-wrap items-center gap-4">
-              <CurrencySwitcher />
+          <div className="border-b border-line px-4 py-3.5">
+            <div className="flex items-center gap-5">
+              <CurrencySwitcher sheet />
               <LangPair />
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href="tel:+6620000000"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-blue bg-white text-sm font-bold text-blue"
-              >
-                <Phone className="h-4 w-4" />
-                {t("ct.call")}
-              </a>
-              <a
-                href="https://line.me/R/ti/p/@teakhouse"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-blue bg-white text-sm font-bold text-blue"
-              >
-                <MessageCircle className="h-4 w-4" />
-                {t("ct.lineBtn")}
-              </a>
-            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 border-b border-line px-4 py-3.5">
+            <a
+              href="tel:+6620000000"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-blue bg-white text-[13px] font-bold text-blue"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              {t("ct.call")}
+            </a>
+            <a
+              href="https://line.me/R/ti/p/@teakhouse"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-blue bg-white text-[13px] font-bold text-blue"
+            >
+              <MessageCircle className="h-3.5 w-3.5" />
+              {t("ct.lineBtn")}
+            </a>
+          </div>
+
+          <div className="border-b border-line px-4 py-3.5">
+            {user ? (
+              <div className="space-y-1">
+                <Link
+                  href="/account"
+                  onClick={() => setDrawerOpen(false)}
+                  className="flex items-center gap-2.5 text-[17px] font-semibold text-ink"
+                >
+                  <span className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-blue text-[13px] font-bold text-white">
+                    {user.name.trim().charAt(0).toUpperCase()}
+                  </span>
+                  {t("acc.myBookings")}
+                </Link>
+                <Link
+                  href="/account#profile"
+                  onClick={() => setDrawerOpen(false)}
+                  className="block py-1.5 pl-10 text-[14px] font-semibold text-sub"
+                >
+                  {t("acc.profile")}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    signOut();
+                    setDrawerOpen(false);
+                    router.push("/");
+                  }}
+                  className="block py-1.5 pl-10 text-[14px] font-semibold text-sub"
+                >
+                  {t("acc.signout")}
+                </button>
+              </div>
+            ) : (
+              <AccountEntry />
+            )}
           </div>
         </nav>
 
-        <div className="space-y-3 border-t border-line p-5">
-          {user ? (
-            <div className="space-y-1">
-              <Link
-                href="/account"
-                onClick={() => setDrawerOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 font-semibold text-ink hover:bg-cloud"
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue text-sm font-bold text-white">
-                  {user.name.trim().charAt(0).toUpperCase()}
-                </span>
-                <span>
-                  <span className="block text-sm">{t("acc.myBookings")}</span>
-                  <span className="block text-xs text-sub">{t("acc.profile")}</span>
-                </span>
-              </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  signOut();
-                  setDrawerOpen(false);
-                  router.push("/");
-                }}
-                className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-bold text-sub hover:bg-cloud"
-              >
-                {t("acc.signout")}
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/account/signin"
-              onClick={() => setDrawerOpen(false)}
-              className="flex items-center gap-2 rounded-xl px-3 py-3 font-bold text-ink hover:bg-cloud"
-            >
-              <User className="h-5 w-5" />
-              {t("acc.signin")} | เข้าสู่ระบบ
-            </Link>
-          )}
+        <div className="shrink-0 border-t border-line p-4">
           <Link
             href="/book"
             onClick={() => setDrawerOpen(false)}
-            className="btn-shine btn-primary w-full"
+            className="btn-shine btn-primary w-full whitespace-nowrap"
           >
             {t("nav.book")}
           </Link>

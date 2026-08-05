@@ -536,8 +536,12 @@ export const DICT: Record<string, DictEntry> = {
     th: "มีบัญชีที่ใช้ อีเมลนี้แล้ว",
   },
   "acc.errInvalid": {
-    en: "Email or password is incorrect.",
+    en: "Email or password incorrect",
     th: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+  },
+  "acc.join": {
+    en: "Join the house",
+    th: "มาเป็นแขกของบ้านเรา",
   },
   "acc.errMissing": {
     en: "Please fill in all fields.",
