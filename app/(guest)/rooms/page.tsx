@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { RoomCard } from "@/components/RoomCard";
+import { useCurrency } from "@/lib/currency";
 import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
-import { formatBaht } from "@/lib/utils";
 import type { Room } from "@/lib/rooms";
 
 const DESC_KEYS: Record<string, string> = {
@@ -17,7 +17,17 @@ const DESC_KEYS: Record<string, string> = {
 
 const INCLUDES = ["rp.i1", "rp.i2", "rp.i3", "rp.i4", "rp.i5", "rp.i6"] as const;
 
-function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => string; tr: (e: { en: string; th: string }) => string }) {
+function CompareTable({
+  rooms,
+  t,
+  tr,
+  format,
+}: {
+  rooms: Room[];
+  t: (k: string) => string;
+  tr: (e: { en: string; th: string }) => string;
+  format: (n: number) => string;
+}) {
   const rows: {
     key: string;
     label: string;
@@ -45,12 +55,12 @@ function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => strin
     {
       key: "direct",
       label: t("cmp.direct"),
-      render: (r) => formatBaht(r.rate),
+      render: (r) => format(r.rate),
     },
     {
       key: "agoda",
       label: t("cmp.agoda"),
-      render: (r) => formatBaht(r.ota),
+      render: (r) => format(r.ota),
     },
   ];
 
@@ -91,6 +101,7 @@ function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => strin
 
 export default function RoomsPage() {
   const { t, tr } = useI18n();
+  const { format } = useCurrency();
   const rooms = useGuestRooms();
 
   return (
@@ -116,9 +127,9 @@ export default function RoomsPage() {
             ))}
           </div>
 
-          <div className="mt-20">
+          <div className="mt-20" id="compare">
             <h2 className="mb-2">{t("rooms.compare")}</h2>
-            <CompareTable rooms={rooms} t={t} tr={tr} />
+            <CompareTable rooms={rooms} t={t} tr={tr} format={format} />
           </div>
         </div>
       </section>

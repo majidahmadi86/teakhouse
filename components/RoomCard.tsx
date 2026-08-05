@@ -5,9 +5,9 @@ import { SafeImage } from "@/components/SafeImage";
 import { PriceChip } from "@/components/PriceChip";
 import { AmenityIcon } from "@/components/ui/AmenityIcon";
 import { AMENITIES, type AmenityId } from "@/lib/amenities";
+import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { Room } from "@/lib/rooms";
-import { formatBaht } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 type RoomCardProps = {
@@ -24,6 +24,7 @@ export function RoomCard({
   className,
 }: RoomCardProps) {
   const { t, tr } = useI18n();
+  const { format } = useCurrency();
   const topAmenities = room.amenities.slice(0, 3);
 
   return (
@@ -76,7 +77,7 @@ export function RoomCard({
         ) : null}
         <div className="mt-auto flex items-center justify-between gap-3 pt-3.5">
           <div className="font-display text-2xl text-ink">
-            {formatBaht(room.rate)}{" "}
+            {format(room.rate)}{" "}
             <small className="font-sans text-[0.72rem] font-semibold text-strike">
               {t("room.night")}
             </small>

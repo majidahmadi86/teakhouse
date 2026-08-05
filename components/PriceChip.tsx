@@ -1,7 +1,7 @@
 "use client";
 
+import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
-import { formatBaht } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 type PriceChipProps = {
@@ -22,6 +22,7 @@ export function PriceChip({
   showSave = true,
 }: PriceChipProps) {
   const { t, tr } = useI18n();
+  const { format } = useCurrency();
   const save = ota - rate;
 
   return (
@@ -34,12 +35,12 @@ export function PriceChip({
         )}
       >
         <span className="text-sm font-bold text-blue">
-          {t("chip.direct")} {formatBaht(rate)}
+          {t("chip.direct")} {format(rate)}
         </span>
-        <span className="text-xs text-strike line-through">{formatBaht(ota)}</span>
+        <span className="text-xs text-strike line-through">{format(ota)}</span>
         {showSave && save > 0 ? (
           <span className="rounded-full bg-deal-bg px-2 py-0.5 text-[0.68rem] font-bold text-deal">
-            {t("chip.save").replace("{z}", String(save))}
+            {t("chip.save", { z: format(save) })}
           </span>
         ) : null}
       </div>

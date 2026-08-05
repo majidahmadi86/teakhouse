@@ -2,9 +2,10 @@
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { SafeImage } from "@/components/SafeImage";
+import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { Room } from "@/lib/rooms";
-import { formatBaht, isoDate } from "@/lib/utils";
+import { isoDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export type BookingSummaryProps = {
@@ -42,6 +43,7 @@ export function BookingSummary({
   className,
 }: BookingSummaryProps) {
   const { t, tr } = useI18n();
+  const { format } = useCurrency();
   const datesComplete = Boolean(checkOut);
 
   const body = (
@@ -100,23 +102,23 @@ export function BookingSummary({
         <div className="space-y-2 border-t border-line pt-4">
           <div className="flex justify-between">
             <span className="text-sub">
-              {formatBaht(rate)} × {nights}
+              {format(rate)} × {nights}
             </span>
-            <span className="font-semibold text-ink">{formatBaht(subtotal)}</span>
+            <span className="font-semibold text-ink">{format(subtotal)}</span>
           </div>
           {savings > 0 ? (
             <div className="flex justify-between text-deal">
               <span>{t("bk.save")}</span>
-              <span className="font-bold">-{formatBaht(savings)}</span>
+              <span className="font-bold">-{format(savings)}</span>
             </div>
           ) : null}
           <div className="flex justify-between border-t border-line pt-2 font-bold text-ink">
             <span>{t("bk.dep")}</span>
-            <span>{formatBaht(deposit)}</span>
+            <span>{format(deposit)}</span>
           </div>
           <div className="flex justify-between text-[0.82rem] text-sub">
             <span>{t("bk.bal")}</span>
-            <span>{formatBaht(balance)}</span>
+            <span>{format(balance)}</span>
           </div>
         </div>
       ) : null}
@@ -142,13 +144,13 @@ export function BookingSummary({
               {t("bk.summary")}
             </div>
             <div className="truncate font-display text-lg font-semibold text-ink">
-              {room && nights > 0 ? formatBaht(subtotal) : t("avail.selectDates")}
+              {room && nights > 0 ? format(subtotal) : t("avail.selectDates")}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             {deposit > 0 ? (
               <span className="text-[0.78rem] font-bold text-blue">
-                {formatBaht(deposit)} {t("bk.dep").split("(")[0].trim()}
+                {format(deposit)} {t("bk.dep").split("(")[0].trim()}
               </span>
             ) : null}
             {expanded ? (

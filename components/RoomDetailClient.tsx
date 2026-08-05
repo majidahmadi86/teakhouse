@@ -14,12 +14,12 @@ import {
   type AmenityId,
 } from "@/lib/amenities";
 import { CONDITIONS, CONDITIONS_TITLE } from "@/lib/conditions";
+import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { Room } from "@/lib/rooms";
 import { useGuestRooms } from "@/lib/ownerStore";
 import {
   addDays,
-  formatBaht,
   isoDate,
   nightsBetween,
 } from "@/lib/utils";
@@ -33,6 +33,7 @@ type RoomDetailClientProps = {
 
 export function RoomDetailClient({ room }: RoomDetailClientProps) {
   const { t, tr, lang } = useI18n();
+  const { format } = useCurrency();
   const allRooms = useGuestRooms();
   const otherRooms = allRooms.filter((r) => r.slug !== room.slug);
 
@@ -104,13 +105,13 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
       <div className="mt-5 space-y-2 border-t border-line pt-5 text-sm">
         <div className="flex justify-between">
           <span>
-            {formatBaht(room.rate)} x {nights} {nights > 1 ? t("bk.nights") : t("bk.night")}
+            {format(room.rate)} x {nights} {nights > 1 ? t("bk.nights") : t("bk.night")}
           </span>
-          <span className="font-semibold">{formatBaht(total)}</span>
+          <span className="font-semibold">{format(total)}</span>
         </div>
         <div className="flex justify-between text-deal">
           <span>{t("bk.save")}</span>
-          <span className="font-bold">-{formatBaht(save)}</span>
+          <span className="font-bold">-{format(save)}</span>
         </div>
       </div>
       <Link
@@ -277,7 +278,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                 <div className="p-4">
                   <h3 className="font-display text-lg">{tr(other.name)}</h3>
                   <p className="text-sm font-semibold text-strike">{tr(other.meta)}</p>
-                  <p className="mt-1 font-display text-xl">{formatBaht(other.rate)}</p>
+                  <p className="mt-1 font-display text-xl">{format(other.rate)}</p>
                 </div>
               </Link>
             ))}

@@ -3,9 +3,9 @@
 import { SafeImage } from "@/components/SafeImage";
 import { AmenityIcon } from "@/components/ui/AmenityIcon";
 import { AMENITIES, type AmenityId } from "@/lib/amenities";
+import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { Room, RoomShortKey } from "@/lib/rooms";
-import { formatBaht } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const URGENCY: Partial<Record<RoomShortKey, string>> = {
@@ -27,6 +27,7 @@ export function RoomSelectCard({
   onViewDetails,
 }: RoomSelectCardProps) {
   const { t, tr } = useI18n();
+  const { format } = useCurrency();
   const topAmenities = room.amenities.slice(0, 3);
   const savePerNight = room.ota - room.rate;
   const urgencyKey = URGENCY[room.shortKey];
@@ -92,14 +93,14 @@ export function RoomSelectCard({
         <div className="flex flex-col items-stretch gap-3 md:min-w-[148px] md:items-end md:text-right">
           <div>
             <div className="text-[20px] font-bold leading-tight text-ink">
-              {formatBaht(room.rate)}
+              {format(room.rate)}
             </div>
             <div className="mt-0.5 text-[12px] font-semibold text-strike">
-              <s>{formatBaht(room.ota)}</s> {t("chip.via")}
+              <s>{format(room.ota)}</s> {t("chip.via")}
             </div>
             {savePerNight > 0 ? (
               <span className="mt-1.5 inline-block rounded-full bg-deal-bg px-2 py-0.5 text-[0.65rem] font-bold text-deal">
-                {t("chip.save", { z: savePerNight.toLocaleString("en-US") })}
+                {t("chip.save", { z: format(savePerNight) })}
               </span>
             ) : null}
           </div>
