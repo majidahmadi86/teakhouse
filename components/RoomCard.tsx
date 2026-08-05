@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { SafeImage } from "@/components/SafeImage";
@@ -29,7 +29,7 @@ export function RoomCard({
   return (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-[14px] bg-white shadow-[0_8px_30px_rgba(23,33,29,0.08)] transition hover:-translate-y-1.5 hover:shadow-panel",
+        "tkh-card flex flex-col overflow-hidden",
         className
       )}
     >
@@ -41,13 +41,18 @@ export function RoomCard({
           className="object-cover transition duration-700 hover:scale-105"
           sizes="(max-width:768px) 100vw, 33vw"
         />
-        <div className="absolute bottom-3.5 left-3.5">
-          <PriceChip rate={room.rate} ota={room.ota} />
+        <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-wrap items-end gap-2">
+          <PriceChip
+            rate={room.rate}
+            ota={room.ota}
+            showSave
+            urgency={room.urgency}
+          />
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-2.5 p-6">
-        <h3 className="font-display text-xl">{tr(room.name)}</h3>
-        <p className="flex flex-wrap gap-3.5 text-[0.8rem] font-semibold text-strike">
+        <h3 className="font-display text-xl text-ink">{tr(room.name)}</h3>
+        <p className="flex flex-wrap gap-3.5 text-[0.8rem] font-semibold text-sub">
           <span>{room.sizeM2} m²</span>
           <span>{tr(room.bedType)}</span>
           <span>{tr(room.view)}</span>
@@ -56,17 +61,21 @@ export function RoomCard({
           ) : null}
         </p>
         {variant === "full" && descriptionKey ? (
-          <p className="text-[0.93rem]">{t(descriptionKey)}</p>
+          <p className="text-[0.93rem] text-sub">{t(descriptionKey)}</p>
         ) : null}
         {variant === "full" ? (
-          <div className="flex gap-3 text-brand">
+          <div className="flex gap-3 text-blue">
             {topAmenities.map((id) => (
-              <AmenityIcon key={id} name={AMENITIES[id as AmenityId].icon} className="h-5 w-5" />
+              <AmenityIcon
+                key={id}
+                name={AMENITIES[id as AmenityId].icon}
+                className="h-5 w-5"
+              />
             ))}
           </div>
         ) : null}
-        <div className="mt-auto flex items-center justify-between pt-3.5">
-          <div className="font-display text-2xl">
+        <div className="mt-auto flex items-center justify-between gap-3 pt-3.5">
+          <div className="font-display text-2xl text-ink">
             {formatBaht(room.rate)}{" "}
             <small className="font-sans text-[0.72rem] font-semibold text-strike">
               {t("room.night")}
@@ -75,13 +84,13 @@ export function RoomCard({
           <div className="flex flex-wrap gap-2">
             <Link
               href={`/rooms/${room.slug}`}
-              className="rounded-full border border-ink/25 px-5 py-2.5 text-[0.84rem] font-bold transition hover:border-brand hover:bg-brand/5"
+              className="rounded-full border border-line px-5 py-2.5 text-[0.84rem] font-bold text-ink transition hover:border-blue hover:bg-sky"
             >
               {t("room.see")}
             </Link>
             <Link
               href={`/book?room=${room.shortKey}`}
-              className="rounded-full bg-gold px-5 py-2.5 text-[0.84rem] font-bold text-white transition hover:bg-[#C29A5E]"
+              className="btn-primary px-5 py-2.5 text-[0.84rem]"
             >
               {t("room.book")}
             </Link>

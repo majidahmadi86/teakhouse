@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useState } from "react";
@@ -31,7 +31,7 @@ export function SafeImage({
     return (
       <div
         className={cn(
-          "bg-gradient-to-br from-brand to-brand-2",
+          "bg-gradient-to-br from-navy to-navy",
           fill && "absolute inset-0",
           className
         )}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
@@ -10,7 +10,7 @@ export function Footer() {
   const { open } = useDemoModal();
 
   return (
-    <footer className="bg-brand px-6 py-[70px] pb-8 text-white/80">
+    <footer className="bg-navy px-6 py-[70px] pb-8 text-white/80">
       <div className="mx-auto max-w-[1180px]">
         <div className="mb-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>

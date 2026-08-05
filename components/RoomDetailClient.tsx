@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -81,7 +81,6 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
           onChange={(from, to) => {
             if (from) setCheckIn(from);
             if (to) setCheckOut(to);
-            if (from && !to) setCheckOut(addDays(from, 1));
           }}
           placeholder={t("avail.selectDates")}
           numberOfMonths={1}
@@ -107,7 +106,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
       </div>
       <Link
         href={bookHref}
-        className="mt-5 flex w-full items-center justify-center rounded-full bg-brand py-3.5 text-sm font-bold text-white hover:bg-brand-2"
+        className="mt-5 flex w-full items-center justify-center rounded-full bg-blue py-3.5 text-sm font-bold text-white transition hover:bg-blue-dark"
       >
         {t("rooms.bookThis")}
       </Link>
@@ -140,7 +139,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                   onClick={() => setActivePhoto(i)}
                   className={cn(
                     "relative aspect-[4/3] overflow-hidden rounded-lg lg:aspect-auto lg:min-h-0 lg:flex-1",
-                    activePhoto === i && "ring-2 ring-gold"
+                    activePhoto === i && "ring-2 ring-sky"
                   )}
                 >
                   <SafeImage src={photo} alt="" fill className="object-cover" />
@@ -187,7 +186,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                             : "sec.services";
                     return (
                       <div key={group}>
-                        <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-gold">
+                        <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-amber">
                           {t(sectionKey)}
                         </h3>
                         <ul className="grid gap-3 sm:grid-cols-2">
@@ -198,7 +197,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                                 key={id}
                                 className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm"
                               >
-                                <AmenityIcon name={amenity.icon} className="text-brand" />
+                                <AmenityIcon name={amenity.icon} className="text-blue" />
                                 <span className="text-sm font-semibold">
                                   {lang === "th" ? amenity.th : amenity.en}
                                 </span>
@@ -220,7 +219,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                   {CONDITIONS.map((item) => (
                     <li
                       key={item.en}
-                      className="flex gap-2 text-sm font-semibold text-ink/85 before:text-gold before:content-['·']"
+                      className="flex gap-2 text-sm font-semibold text-ink/85 before:text-amber before:content-['·']"
                     >
                       {lang === "th" ? item.th : item.en}
                     </li>
@@ -234,7 +233,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-[54] border-t border-line bg-white/95 p-4 backdrop-blur-md lg:hidden">
+      <div className="z-bar fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-4 pb-safe backdrop-blur-md lg:hidden">
         {bookingRail}
       </div>
 
@@ -269,7 +268,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
       {lightboxOpen ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-brand/90"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-navy/90"
           role="dialog"
           aria-modal="true"
           onClick={() => setLightboxOpen(false)}
