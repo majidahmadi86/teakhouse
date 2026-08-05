@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
 import { SafeImage } from "@/components/SafeImage";
-import { MotionCard, Reveal } from "@/components/motion/Reveal";
+import { Reveal, RevealItem, RevealStagger, ScaleIn } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -82,25 +82,27 @@ export default function GalleryPage() {
             ))}
           </Reveal>
 
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+          <RevealStagger stagger={0.06} className="columns-1 gap-4 sm:columns-2 lg:columns-3">
             {items.map((img, i) => (
-              <MotionCard key={img.src + i} className="mb-4 break-inside-avoid">
-                <button
-                  type="button"
-                  onClick={() => setLightbox(i)}
-                  className="group relative w-full overflow-hidden rounded-card"
-                >
-                  <SafeImage
-                    src={img.src}
-                    alt={img.alt}
-                    width={800}
-                    height={1000}
-                    className="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
-                  />
-                </button>
-              </MotionCard>
+              <RevealItem key={img.src + i} className="mb-4 break-inside-avoid">
+                <ScaleIn>
+                  <button
+                    type="button"
+                    onClick={() => setLightbox(i)}
+                    className="group relative w-full overflow-hidden rounded-card"
+                  >
+                    <SafeImage
+                      src={img.src}
+                      alt={img.alt}
+                      width={800}
+                      height={1000}
+                      className="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
+                    />
+                  </button>
+                </ScaleIn>
+              </RevealItem>
             ))}
-          </div>
+          </RevealStagger>
         </div>
       </section>
 
