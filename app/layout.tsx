@@ -12,30 +12,31 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   display: "swap",
-  weight: ["500", "600"],
+  weight: ["600"],
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
   display: "swap",
-  weight: ["400", "600", "700", "800"],
-});
-
-const prompt = Prompt({
-  subsets: ["latin", "thai"],
-  variable: "--font-prompt",
-  display: "swap",
-  weight: ["400", "500", "600"],
-});
-
-const ibmThai = IBM_Plex_Sans_Thai({
-  subsets: ["latin", "thai"],
-  variable: "--font-ibm-thai",
-  display: "swap",
   weight: ["400", "600", "700"],
 });
 
+const prompt = Prompt({
+  subsets: ["thai", "latin"],
+  variable: "--font-prompt",
+  display: "swap",
+  weight: ["500", "600"],
+  preload: false,
+});
+
+const ibmThai = IBM_Plex_Sans_Thai({
+  subsets: ["thai", "latin"],
+  variable: "--font-ibm-thai",
+  display: "swap",
+  weight: ["400", "600"],
+  preload: false,
+});
 export const metadata: Metadata = {
   title: "The Teak House",
   description:
