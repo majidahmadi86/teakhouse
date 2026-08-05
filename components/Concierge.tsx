@@ -92,7 +92,7 @@ export function Concierge({ offsetForBookBar = true }: { offsetForBookBar?: bool
         type="button"
         onClick={() => openConcierge()}
         className={cn(
-          "fixed right-[22px] z-fab flex items-center gap-2.5 rounded-full bg-navy px-5 py-3.5 text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition hover:-translate-y-0.5 hover:bg-blue-dark max-md:right-2.5",
+          "fixed right-[22px] z-fab flex items-center gap-2.5 rounded-full bg-navy px-5 py-3.5 text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition duration-150 hover:scale-[1.04] hover:bg-blue-dark hover:shadow-[0_18px_48px_rgba(18,33,28,0.45)] max-md:right-2.5",
           fabBottom
         )}
         aria-label={t("cg.fab")}

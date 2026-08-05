@@ -93,7 +93,7 @@ function AccountEntry({ iconOnly }: { iconOnly?: boolean }) {
         <Tooltip label={t("acc.signin")}>
           <Link
             href="/account/signin"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center text-ink transition hover:text-blue"
+            className="icon-hit inline-flex h-9 w-9 shrink-0 items-center justify-center text-ink"
             aria-label={t("acc.signin")}
           >
             <User className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden />
@@ -175,8 +175,8 @@ function OffersIconLink({ active }: { active: boolean }) {
         href="/offers"
         aria-label={t("nav.offers")}
         className={cn(
-          "relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition",
-          active ? "bg-coral-bg" : "hover:bg-coral-bg"
+          "offers-hit relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition duration-150",
+          active && "bg-coral-bg"
         )}
       >
         <BadgePercent
@@ -263,10 +263,10 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
           <motion.div
             id={menuId}
             role="menu"
-            initial={reduce ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? undefined : { opacity: 0, y: 8 }}
-            transition={{ duration: 0.2 }}
+            initial={reduce ? false : { opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduce ? undefined : { opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 280, damping: 24 }}
             className="absolute left-0 top-full z-[80] mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
           >
             <div className="grid gap-5 md:grid-cols-[1fr_180px]">
@@ -346,17 +346,11 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "group relative shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
+        "link-draw shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
         active ? "text-blue" : "text-ink hover:text-blue"
       )}
     >
       {label}
-      <span
-        className={cn(
-          "absolute -bottom-1 left-0 h-0.5 bg-blue transition-all duration-300",
-          active ? "w-full" : "w-0 group-hover:w-full"
-        )}
-      />
     </Link>
   );
 }

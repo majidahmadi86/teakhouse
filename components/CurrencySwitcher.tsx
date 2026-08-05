@@ -34,7 +34,7 @@ export function CurrencySwitcher({
         <div className={cn("relative", className)}>
           <ListboxButton
             className={cn(
-              "inline-flex items-center gap-1 whitespace-nowrap text-[13px] font-bold text-ink transition hover:text-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-sky"
+              "icon-hit inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 text-[13px] font-bold text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-sky"
             )}
           >
             <span>{selected.label}</span>

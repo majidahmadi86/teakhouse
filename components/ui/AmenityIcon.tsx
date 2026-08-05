@@ -47,7 +47,19 @@ type AmenityIconProps = {
   className?: string;
 };
 
+/** Duotone amenity mark: blue stroke over soft sky fill. */
 export function AmenityIcon({ name, className }: AmenityIconProps) {
   const Icon = ICON_MAP[name] ?? Sparkles;
-  return <Icon className={cn("h-4 w-4 shrink-0", className)} aria-hidden />;
+  return (
+    <span
+      className={cn(
+        "relative inline-grid h-8 w-8 shrink-0 place-items-center text-blue",
+        className
+      )}
+      aria-hidden
+    >
+      <span className="absolute inset-1 rounded-md bg-sky" />
+      <Icon className="relative h-4 w-4" strokeWidth={1.75} />
+    </span>
+  );
 }
