@@ -1,11 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { Concierge } from "@/components/Concierge";
 import { DemoModal } from "@/components/DemoModal";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MobileBookBar } from "@/components/MobileBookBar";
+
+const Concierge = dynamic(
+  () => import("@/components/Concierge").then((m) => m.Concierge),
+  { ssr: false }
+);
 
 export default function GuestLayout({
   children,

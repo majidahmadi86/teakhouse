@@ -9,7 +9,7 @@ import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1900&q=80";
+  "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1600&q=70";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -24,9 +24,11 @@ export default function HomePage() {
             alt="Chao Phraya river at dusk"
             fill
             priority
-            className="animate-[kb_22s_ease-out_forwards] scale-[1.12] object-cover"
+            sizes="100vw"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-brand/75 via-brand/10 to-brand/75" />
+          <div className="hero-scrim absolute inset-0" />
+          <div className="nav-scrim pointer-events-none absolute inset-x-0 top-0 h-36" />
         </div>
         <div className="mx-auto w-full max-w-[1180px] px-6 pb-8 pt-28">
           <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-gold hero-text-shadow">
