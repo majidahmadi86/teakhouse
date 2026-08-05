@@ -19,15 +19,20 @@ export default function GuestLayout({
 }) {
   const pathname = usePathname();
   const isBook = pathname === "/book";
+  const isRoomDetail =
+    pathname.startsWith("/rooms/") && pathname !== "/rooms";
   const autoDemo = pathname === "/";
+  const showMobileBookBar = !isBook && !isRoomDetail;
 
   return (
     <DemoModal auto={autoDemo}>
       <Header />
-      <main className={isBook ? "pb-8" : "pb-24 md:pb-8"}>{children}</main>
+      <main className={isBook || isRoomDetail ? "pb-8" : "pb-24 md:pb-8"}>
+        {children}
+      </main>
       <Footer />
-      {!isBook ? <MobileBookBar /> : null}
-      <Concierge />
+      {showMobileBookBar ? <MobileBookBar /> : null}
+      <Concierge offsetForBookBar={showMobileBookBar} />
     </DemoModal>
   );
 }

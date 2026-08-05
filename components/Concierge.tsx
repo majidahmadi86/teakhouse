@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, X } from "lucide-react";
@@ -24,7 +24,7 @@ function nowLabel(): string {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-export function Concierge() {
+export function Concierge({ offsetForBookBar = true }: { offsetForBookBar?: boolean }) {
   const { lang, t } = useI18n();
   const { isOpen, prefill, openConcierge, closeConcierge } = useConcierge();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -82,12 +82,19 @@ export function Concierge() {
 
   const chips = CONCIERGE_CHIPS[lang];
 
+  const fabBottom = offsetForBookBar
+    ? "bottom-[76px] md:bottom-6"
+    : "bottom-6";
+
   return (
     <>
       <button
         type="button"
         onClick={() => openConcierge()}
-        className="fixed bottom-[90px] right-[22px] z-[80] flex items-center gap-2.5 rounded-full bg-brand px-5 py-3.5 text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition hover:-translate-y-0.5 hover:bg-brand-2 max-md:bottom-[84px] max-md:right-2.5"
+        className={cn(
+          "fixed right-[22px] z-fab flex items-center gap-2.5 rounded-full bg-navy px-5 py-3.5 text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition hover:-translate-y-0.5 hover:bg-blue-dark max-md:right-2.5",
+          fabBottom
+        )}
         aria-label={t("cg.fab")}
       >
         <span className="h-2 w-2 animate-pulse rounded-full bg-[#7FD79A]" />
@@ -96,7 +103,8 @@ export function Concierge() {
 
       <div
         className={cn(
-          "fixed bottom-[90px] right-[22px] z-[80] flex h-[min(560px,72svh)] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-[18px] bg-white shadow-[0_30px_80px_rgba(18,33,28,0.35)] transition max-md:bottom-[84px] max-md:right-2.5",
+          "fixed right-[22px] z-fab flex h-[min(560px,72svh)] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-[18px] bg-white shadow-[0_30px_80px_rgba(18,33,28,0.35)] transition max-md:right-2.5",
+          fabBottom,
           isOpen
             ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
             : "pointer-events-none translate-y-[18px] scale-[0.98] opacity-0"
@@ -104,8 +112,8 @@ export function Concierge() {
         role="dialog"
         aria-label="Concierge chat"
       >
-        <div className="flex items-center gap-3 bg-brand px-5 py-4 text-white">
-          <div className="grid h-[38px] w-[38px] place-items-center rounded-full bg-gold font-display text-lg font-semibold">
+        <div className="flex items-center gap-3 bg-navy px-5 py-4 text-white">
+          <div className="grid h-[38px] w-[38px] place-items-center rounded-full bg-blue font-display text-lg font-semibold">
             N
           </div>
           <div className="min-w-0 flex-1">
@@ -133,14 +141,14 @@ export function Concierge() {
                 "max-w-[82%] rounded-[15px] px-4 py-3 text-[0.9rem] leading-relaxed",
                 msg.role === "ai"
                   ? "bg-white shadow-sm"
-                  : "ml-auto bg-brand text-white"
+                  : "ml-auto bg-navy text-white"
               )}
             >
               {msg.role === "ai" ? (
                 <div
                   dangerouslySetInnerHTML={{
                     __html: msg.html.replace(
-                      'class="font-extrabold text-gold"',
+                      'class="font-extrabold text-amber"',
                       'style="color:#B9853D;font-weight:800"'
                     ),
                   }}
@@ -170,7 +178,7 @@ export function Concierge() {
               key={chip}
               type="button"
               onClick={() => respond(chip)}
-              className="rounded-full border border-brand/25 bg-white px-3 py-1.5 text-[0.76rem] font-bold text-brand hover:bg-line/50"
+              className="rounded-full border border-blue/25 bg-white px-3 py-1.5 text-[0.76rem] font-bold text-blue hover:bg-line/50"
             >
               {chip}
             </button>
@@ -195,7 +203,7 @@ export function Concierge() {
           />
           <button
             type="submit"
-            className="grid h-11 w-11 place-items-center rounded-[10px] bg-gold text-white"
+            className="grid h-11 w-11 place-items-center rounded-[10px] bg-blue text-white"
             aria-label="Send"
           >
             <Send className="h-[18px] w-[18px]" />

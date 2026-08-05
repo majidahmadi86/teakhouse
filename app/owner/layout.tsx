@@ -30,24 +30,30 @@ const NAV: {
 
 function Spinner() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-2">
+    <div className="own-theme flex min-h-screen items-center justify-center bg-brand-2">
       <Loader2 className="h-8 w-8 animate-spin text-gold" aria-hidden />
     </div>
   );
 }
 
-function LangToggle() {
+function LangToggle({ compact }: { compact?: boolean }) {
   const { lang, setLang } = useI18n();
 
   return (
-    <div className="flex rounded-xl border border-white/12 bg-white/5 p-1">
+    <div
+      className={cn(
+        "flex rounded-xl border border-white/12 bg-white/5 p-1",
+        compact ? "shrink-0" : "w-full"
+      )}
+    >
       {(["en", "th"] as const).map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => setLang(l)}
           className={cn(
-            "min-h-[44px] min-w-[44px] rounded-lg px-3 text-sm font-extrabold uppercase transition",
+            "rounded-lg text-sm font-extrabold uppercase transition",
+            compact ? "min-h-[36px] min-w-[36px] px-2.5" : "min-h-[44px] min-w-[44px] px-3",
             lang === l
               ? "bg-gold text-white"
               : "text-white/60 hover:text-white"
@@ -105,14 +111,26 @@ export default function OwnerLayout({
   if (!isAuthed) return <LoginScreen />;
 
   return (
-    <div className="min-h-screen bg-brand-2 text-white">
-      {/* Mobile top tab bar */}
+    <div className="own-theme min-h-screen bg-brand-2 text-white">
+      {/* Mobile top bar */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md lg:hidden">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Logo className="h-6 w-auto shrink-0 brightness-0 invert" />
+          <Logo className="h-6 w-auto shrink-0 invert brightness-0" />
           <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
             {t("ow.eyebrow")}
           </span>
+        </div>
+        <div className="flex items-center gap-2 px-4 pb-3">
+          <LangToggle compact />
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm(t("ow.sure"))) resetDemo();
+            }}
+            className="min-h-[36px] flex-1 rounded-xl border border-white/15 px-3 text-xs font-bold text-white/70 transition hover:border-gold/40 hover:text-white"
+          >
+            {t("ow.reset")}
+          </button>
         </div>
         <nav
           className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -143,7 +161,7 @@ export default function OwnerLayout({
         {/* Desktop sidebar */}
         <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-brand lg:fixed lg:inset-y-0 lg:flex lg:w-72">
           <div className="border-b border-white/10 px-6 py-6">
-            <Logo className="mb-4 h-7 w-auto brightness-0 invert" />
+            <Logo className="mb-4 h-7 w-auto invert brightness-0" />
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">
               {t("ow.eyebrow")}
             </p>

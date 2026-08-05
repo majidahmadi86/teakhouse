@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
@@ -55,13 +55,16 @@ function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => strin
   ];
 
   return (
-    <div className="mt-12 overflow-x-auto rounded-[14px] bg-white shadow-panel">
+    <div className="mt-8 overflow-x-auto rounded-card border border-line bg-white shadow-card">
       <table className="w-full min-w-[720px] border-collapse text-sm">
         <thead>
-          <tr className="border-b border-line">
-            <th className="p-4 text-left font-semibold text-strike" />
+          <tr className="border-b border-line bg-cloud">
+            <th className="sticky left-0 z-10 bg-cloud p-4 text-left font-semibold text-sub" />
             {rooms.map((room) => (
-              <th key={room.id} className="p-4 text-left font-display text-base text-brand">
+              <th
+                key={room.id}
+                className="p-4 text-left font-display text-base text-navy"
+              >
                 {tr(room.name)}
               </th>
             ))}
@@ -70,9 +73,11 @@ function CompareTable({ rooms, t, tr }: { rooms: Room[]; t: (k: string) => strin
         <tbody>
           {rows.map((row) => (
             <tr key={row.key} className="border-b border-line/70">
-              <td className="p-4 font-semibold text-ink">{row.label}</td>
+              <td className="sticky left-0 z-10 bg-white p-4 font-semibold text-ink">
+                {row.label}
+              </td>
               {rooms.map((room) => (
-                <td key={room.id} className="p-4 text-ink/85">
+                <td key={room.id} className="p-4 text-sub">
                   {row.render(room)}
                 </td>
               ))}
@@ -91,14 +96,14 @@ export default function RoomsPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=1900&q=80"
-        alt="Room interior"
+        image="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1900&q=80"
+        alt="Teak hotel room interior"
         eyebrow={t("rooms.eyebrow")}
         title={t("rp.h1")}
         lead={t("rp.lead")}
       />
 
-      <section className="px-6 py-24">
+      <section className="px-6 py-20">
         <div className="mx-auto max-w-[1180px]">
           <div className="grid gap-7 md:grid-cols-2">
             {rooms.map((room) => (
@@ -110,34 +115,26 @@ export default function RoomsPage() {
               />
             ))}
           </div>
-        </div>
-      </section>
 
-      <section className="bg-surface px-6 py-16">
-        <div className="mx-auto max-w-[1180px]">
-          <h2>{t("rp.inc")}</h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {INCLUDES.map((key) => (
-              <article
-                key={key}
-                className="rounded-[14px] bg-white p-6 shadow-[0_8px_30px_rgba(23,33,29,0.07)]"
-              >
-                <h3 className="text-lg">{t(key)}</h3>
-              </article>
-            ))}
+          <div className="mt-20">
+            <h2 className="mb-2">{t("rooms.compare")}</h2>
+            <CompareTable rooms={rooms} t={t} tr={tr} />
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-24">
+      <section className="border-t border-line bg-white px-6 py-20">
         <div className="mx-auto max-w-[1180px]">
-          <h2>{t("rooms.compare")}</h2>
-          <CompareTable rooms={rooms} t={t} tr={tr} />
-          <p className="mt-10 text-center">
-            <Link
-              href="/book"
-              className="inline-flex rounded-full bg-gold px-7 py-3.5 text-sm font-bold text-white"
-            >
+          <h2>{t("rp.inc")}</h2>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {INCLUDES.map((key) => (
+              <article key={key} className="tkh-card p-6">
+                <h3 className="text-lg">{t(key)}</h3>
+              </article>
+            ))}
+          </div>
+          <p className="mt-12 text-center">
+            <Link href="/book" className="btn-primary">
               {t("nav.book")}
             </Link>
           </p>
