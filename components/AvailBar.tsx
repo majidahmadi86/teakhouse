@@ -21,8 +21,12 @@ export function AvailBar({
   const { t } = useI18n();
   const router = useRouter();
 
-  const [checkIn, setCheckIn] = useState<Date>(() => addDays(new Date(), 1));
-  const [checkOut, setCheckOut] = useState<Date>(() => addDays(new Date(), 2));
+  const [checkIn, setCheckIn] = useState<Date | undefined>(() =>
+    addDays(new Date(), 1)
+  );
+  const [checkOut, setCheckOut] = useState<Date | undefined>(() =>
+    addDays(new Date(), 2)
+  );
   const [guests, setGuests] = useState("2");
 
   const guestOptions = useMemo(
@@ -35,14 +39,16 @@ export function AvailBar({
   );
 
   function handleDates(from?: Date, to?: Date) {
-    if (from) setCheckIn(from);
-    if (to) setCheckOut(to);
+    setCheckIn(from);
+    setCheckOut(to);
   }
 
   function goBook() {
     const params = new URLSearchParams();
-    params.set("in", isoDate(checkIn));
-    params.set("out", isoDate(checkOut));
+    const inDate = checkIn ?? addDays(new Date(), 1);
+    const outDate = checkOut ?? addDays(inDate, 1);
+    params.set("in", isoDate(inDate));
+    params.set("out", isoDate(outDate));
     params.set("g", guests);
     router.push(`/book?${params.toString()}`);
   }

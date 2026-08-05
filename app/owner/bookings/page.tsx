@@ -68,7 +68,7 @@ type BookingForm = {
   notes: string;
   roomSlug: string;
   checkIn: Date;
-  checkOut: Date;
+  checkOut: Date | undefined;
   source: BookingSource;
   amount: number;
   status: BookingStatus;
@@ -123,6 +123,7 @@ function bookingToForm(booking: Booking): BookingForm {
 function formToPayload(form: BookingForm) {
   const adults = form.adults.trim() ? parseInt(form.adults, 10) : undefined;
   const children = form.children.trim() ? parseInt(form.children, 10) : undefined;
+  const checkOut = form.checkOut ?? addDays(form.checkIn, 1);
 
   return {
     guest: form.guest.trim(),
@@ -137,7 +138,7 @@ function formToPayload(form: BookingForm) {
     notes: form.notes,
     roomSlug: form.roomSlug,
     checkIn: isoDate(form.checkIn),
-    checkOut: isoDate(form.checkOut),
+    checkOut: isoDate(checkOut),
     source: form.source,
     amount: form.amount,
     status: form.status,
@@ -241,19 +242,29 @@ export default function OwnerBookingsPage() {
 
   function handleDates(from?: Date, to?: Date) {
     setForm((prev) => {
-      const checkIn = from ?? prev.checkIn;
-      let checkOut = to ?? prev.checkOut;
-      if (from && !to) checkOut = addDays(from, 1);
       const room = activeRooms.find((r) => r.slug === prev.roomSlug);
-      const nights = nightsBetween(isoDate(checkIn), isoDate(checkOut));
-      const amount = room ? room.rate * nights : prev.amount;
-      return { ...prev, checkIn, checkOut, amount };
+      if (!from) {
+        return { ...prev, checkIn: prev.checkIn, checkOut: undefined };
+      }
+      if (!to) {
+        return { ...prev, checkIn: from, checkOut: undefined };
+      }
+      const nights = nightsBetween(isoDate(from), isoDate(to));
+      return {
+        ...prev,
+        checkIn: from,
+        checkOut: to,
+        amount: room ? room.rate * nights : prev.amount,
+      };
     });
   }
 
   function handleRoomChange(slug: string) {
     setForm((prev) => {
       const room = activeRooms.find((r) => r.slug === slug);
+      if (!prev.checkOut) {
+        return { ...prev, roomSlug: slug };
+      }
       const nights = nightsBetween(
         isoDate(prev.checkIn),
         isoDate(prev.checkOut)
@@ -267,7 +278,7 @@ export default function OwnerBookingsPage() {
   }
 
   function saveBooking() {
-    if (!form.guest.trim()) return;
+    if (!form.guest.trim() || !form.checkOut) return;
 
     const payload = formToPayload(form);
 

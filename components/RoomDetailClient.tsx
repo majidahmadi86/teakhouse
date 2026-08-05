@@ -38,12 +38,21 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
   const [activePhoto, setActivePhoto] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [checkIn, setCheckIn] = useState<Date>(() => addDays(new Date(), 1));
-  const [checkOut, setCheckOut] = useState<Date>(() => addDays(new Date(), 2));
+  const [checkIn, setCheckIn] = useState<Date | undefined>(() =>
+    addDays(new Date(), 1)
+  );
+  const [checkOut, setCheckOut] = useState<Date | undefined>(() =>
+    addDays(new Date(), 2)
+  );
   const [guests, setGuests] = useState("2");
 
   const photos = room.photos.slice(0, 6);
-  const nights = nightsBetween(isoDate(checkIn), isoDate(checkOut));
+  const inDate = checkIn ?? addDays(new Date(), 1);
+  const outDate = checkOut ?? addDays(inDate, 1);
+  const nights =
+    checkIn && checkOut && checkOut > checkIn
+      ? nightsBetween(isoDate(checkIn), isoDate(checkOut))
+      : 0;
   const total = room.rate * nights;
   const save = (room.ota - room.rate) * nights;
 
@@ -70,7 +79,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxOpen, goPhoto]);
 
-  const bookHref = `/book?room=${room.shortKey}&in=${isoDate(checkIn)}&out=${isoDate(checkOut)}&g=${guests}`;
+  const bookHref = `/book?room=${room.shortKey}&in=${isoDate(inDate)}&out=${isoDate(outDate)}&g=${guests}`;
 
   const bookingRail = (
     <div className="rounded-[14px] bg-white p-6 shadow-panel">
@@ -79,8 +88,8 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
           from={checkIn}
           to={checkOut}
           onChange={(from, to) => {
-            if (from) setCheckIn(from);
-            if (to) setCheckOut(to);
+            setCheckIn(from);
+            setCheckOut(to);
           }}
           placeholder={t("avail.selectDates")}
           numberOfMonths={1}

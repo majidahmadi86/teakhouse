@@ -103,12 +103,8 @@ export default function BookPageClient() {
   }
 
   function handleDates(from?: Date, to?: Date) {
-    if (from) setCheckIn(from);
-    if (to) {
-      setCheckOut(to);
-    } else if (from) {
-      setCheckOut(undefined);
-    }
+    setCheckIn(from ?? addDays(new Date(), 1));
+    setCheckOut(to);
   }
 
   function handleStepClick(target: number) {
