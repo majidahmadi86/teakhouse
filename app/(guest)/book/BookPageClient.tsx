@@ -443,7 +443,7 @@ export default function BookPageClient() {
 }
 
 const inputClass =
-  "w-full rounded-[10px] border border-line bg-cloud px-4 py-3 text-sm font-semibold text-ink focus:border-blue focus:outline-none focus:ring-2 focus:ring-blue/20";
+  "w-full rounded-[10px] border-[1.5px] border-line bg-white px-4 py-3 text-sm font-semibold text-ink placeholder:text-[#93A0B4] focus:border-blue focus:outline-none focus:ring-2 focus:ring-sky";
 
 function Field({
   label,

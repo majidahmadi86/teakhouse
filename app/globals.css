@@ -51,46 +51,46 @@
     @apply outline-none ring-2 ring-sky ring-offset-2 ring-offset-cloud;
   }
 
-  /* Guest inputs */
-  input:not([type="checkbox"]):not([type="radio"]),
-  textarea {
-    background-color: #fff;
-    border: 1.5px solid #e3e8ef;
-    border-radius: 10px;
-    color: #1a1a2b;
-  }
+}
 
-  input::placeholder,
-  textarea::placeholder {
-    color: #93a0b4;
-    opacity: 1;
-  }
+/* Guest + owner inputs outside layers so placeholder contrast wins over utilities */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+  background-color: #fff;
+  border: 1.5px solid #e3e8ef;
+  border-radius: 10px;
+  color: #1a1a2b;
+}
 
-  input:focus,
-  textarea:focus {
-    border-color: #0a6cde;
-    box-shadow: 0 0 0 3px #e8f1fd;
-    outline: none;
-  }
+input::placeholder,
+textarea::placeholder {
+  color: #93a0b4;
+  opacity: 1;
+}
 
-  /* Owner dark inputs */
-  .own-theme input:not([type="checkbox"]):not([type="radio"]),
-  .own-theme textarea {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-    color: #fff;
-  }
+input:focus,
+textarea:focus {
+  border-color: #0a6cde;
+  box-shadow: 0 0 0 3px #e8f1fd;
+  outline: none;
+}
 
-  .own-theme input::placeholder,
-  .own-theme textarea::placeholder {
-    color: rgba(255, 255, 255, 0.45);
-  }
+.own-theme input:not([type="checkbox"]):not([type="radio"]),
+.own-theme textarea {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
 
-  .own-theme input:focus,
-  .own-theme textarea:focus {
-    border-color: #b9853d;
-    box-shadow: 0 0 0 3px rgba(185, 133, 61, 0.25);
-  }
+.own-theme input::placeholder,
+.own-theme textarea::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.own-theme input:focus,
+.own-theme textarea:focus {
+  border-color: #b9853d;
+  box-shadow: 0 0 0 3px rgba(185, 133, 61, 0.25);
 }
 
 @layer components {

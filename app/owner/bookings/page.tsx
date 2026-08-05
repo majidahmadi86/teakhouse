@@ -327,7 +327,7 @@ export default function OwnerBookingsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("ow.searchph")}
-            className="min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+            className="min-h-[44px] w-full px-4 py-3 text-base"
           />
           <OwnerListbox
             value={sourceFilter}
@@ -786,7 +786,7 @@ export default function OwnerBookingsPage() {
                           value={drawerNotes}
                           onChange={(e) => setDrawerNotes(e.target.value)}
                           onBlur={saveNotes}
-                          className="w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                          className="w-full px-4 py-3 text-sm"
                         />
                       </section>
                     </div>
@@ -841,11 +841,9 @@ export default function OwnerBookingsPage() {
   );
 }
 
-const inputClass =
-  "min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
+const inputClass = "min-h-[44px] w-full px-4 py-3 text-base";
 
-const textareaClass =
-  "w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
+const textareaClass = "w-full px-4 py-3 text-base";
 
 function Field({
   label,

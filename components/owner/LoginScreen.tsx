@@ -51,7 +51,7 @@ export function LoginScreen() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              className="min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-gold/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              className="min-h-[44px] w-full px-4 py-3 text-base"
             />
           </div>
 
@@ -69,7 +69,7 @@ export function LoginScreen() {
               value={pin}
               onChange={(e) => setPin(e.target.value)}
               autoComplete="current-password"
-              className="min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-gold/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+              className="min-h-[44px] w-full px-4 py-3 text-base"
             />
             <p className="mt-2 text-sm font-semibold text-gold/80">
               {t("ow.pinHint")}

@@ -59,8 +59,8 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative bg-cloud md:h-[78svh]">
-        <div className="relative h-[58svh] overflow-hidden md:absolute md:inset-0 md:h-full">
+      <section className="relative z-[1] bg-cloud md:h-[78svh]">
+        <div className="relative z-[1] h-[58svh] overflow-hidden md:absolute md:inset-0 md:h-full">
           <SafeImage
             src={HERO_IMAGE}
             alt="Chao Phraya river at dusk, Bangkok"

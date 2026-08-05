@@ -616,8 +616,7 @@ export default function OwnerRoomsPage() {
   );
 }
 
-const inputClass =
-  "min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
+const inputClass = "min-h-[44px] w-full px-4 py-3 text-base";
 
 function Field({
   label,
