@@ -7,7 +7,11 @@ import { Calendar, MessageCircle, User } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
 import { RoomCard } from "@/components/RoomCard";
 import { SafeImage } from "@/components/SafeImage";
+import { HeroHeadline } from "@/components/hero/HeroHeadline";
+import { HeroSlideshow } from "@/components/hero/HeroSlideshow";
+import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
 import {
+  CurtainReveal,
   MotionCard,
   Reveal,
   RevealItem,
@@ -15,203 +19,85 @@ import {
 } from "@/components/motion/Reveal";
 import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
 
-const AvailBar = dynamic(
-  () => import("@/components/AvailBar").then((m) => m.AvailBar),
+const HeroSearchPill = dynamic(
+  () =>
+    import("@/components/hero/HeroSearchPill").then((m) => m.HeroSearchPill),
   {
     ssr: false,
     loading: () => (
-      <div className="h-[72px] animate-pulse rounded-2xl bg-white/90 shadow-2xl" />
+      <div className="h-[72px] max-w-[720px] animate-pulse rounded-full bg-white/90 shadow-2xl" />
     ),
   }
 );
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=2600&q=88&auto=format&fit=crop";
-
-const HERO_FALLBACKS = [
-  "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=2600&q=88&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=2600&q=88&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=2600&q=88&auto=format&fit=crop",
-];
-
-const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
 const OFFERS = ["1", "2", "3"] as const;
-
-function TrustBadges({ mobile }: { mobile?: boolean }) {
-  const { t } = useI18n();
-
-  if (mobile) {
-    return (
-      <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
-        {TRUST_KEYS.map((key) => (
-          <li key={key} className="text-[13px] font-bold text-ink/80">
-            {t(key)}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  return (
-    <p className="mt-4 flex flex-wrap items-center justify-center gap-x-2 text-[13px] font-bold text-white/95">
-      {TRUST_KEYS.map((key, i) => (
-        <span key={key} className="inline-flex items-center gap-2">
-          {i > 0 ? <span aria-hidden>·</span> : null}
-          {t(key)}
-        </span>
-      ))}
-    </p>
-  );
-}
-
-function GoogleRatingPill({ className }: { className?: string }) {
-  const { t } = useI18n();
-  return (
-    <div
-      className={cn(
-        "inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/12 px-3.5 py-1.5 text-[13px] font-semibold text-white backdrop-blur-md",
-        className
-      )}
-    >
-      <span className="tracking-[1px] text-gold" aria-hidden>
-        ★★★★★
-      </span>
-      <span>{t("hero.google")}</span>
-    </div>
-  );
-}
-
-function HeroWords({ text }: { text: string }) {
-  const { lang } = useI18n();
-  const reduce = useReducedMotion();
-  const words = text.split(" ");
-  const h1Class = cn(
-    "max-w-[14ch] leading-[1.2] text-white hero-text-shadow md:max-w-[16ch]",
-    lang === "th"
-      ? "font-th-display text-[2.1rem] font-semibold md:text-[clamp(2.4rem,4.5vw,3.6rem)]"
-      : "font-display text-[2.1rem] md:text-[clamp(2.6rem,5vw,4.2rem)]"
-  );
-
-  if (reduce) {
-    return <h1 className={h1Class}>{text}</h1>;
-  }
-
-  return (
-    <h1 className={h1Class}>
-      {words.map((w, i) => (
-        <motion.span
-          key={`${w}-${i}`}
-          className="mr-[0.28em] inline-block"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {w}
-        </motion.span>
-      ))}
-    </h1>
-  );
-}
+const spring = { type: "spring" as const, stiffness: 120, damping: 16 };
 
 export default function HomePage() {
   const { t } = useI18n();
   const rooms = useGuestRooms().slice(0, 3);
   const reduce = useReducedMotion();
+  const wordCount = t("hero.h1").split(" ").length;
+  const subDelay = wordCount * 0.09 + 0.15;
+  const pillDelay = subDelay + 0.35;
 
   return (
     <>
       <section
         id="tkh-hero"
-        className="relative z-[1] overflow-visible bg-cloud md:h-[min(78svh,720px)]"
+        className="relative z-[1] h-[100svh] overflow-hidden bg-navy md:h-[min(86svh,820px)]"
       >
-        {/* Mobile: photo + overlay copy */}
-        <div className="relative z-[1] h-[55svh] overflow-hidden md:absolute md:inset-0 md:h-full">
-          <div className="absolute inset-0 overflow-hidden">
-            <div
-              className={cn(
-                "absolute inset-0",
-                !reduce && "hero-kenburns"
-              )}
-            >
-              <SafeImage
-                src={HERO_IMAGE}
-                alt="Resort pool at dusk with warm lanterns"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover object-[center_42%] md:object-[center_45%]"
-                fallbackSrcs={HERO_FALLBACKS}
-              />
-            </div>
-            <div className="hero-scrim absolute inset-0" />
-          </div>
-
-          {/* Mobile overlay: eyebrow, H1, rating */}
-          <div className="absolute inset-0 flex flex-col justify-end px-5 pb-5 pt-20 md:hidden">
-            <p className="eyebrow mb-2 text-gold hero-text-shadow">
-              {t("hero.eyebrow")}
-            </p>
-            <HeroWords text={t("hero.h1")} />
-            <motion.div
-              className="mt-3"
-              initial={reduce ? false : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.5 }}
-            >
-              <GoogleRatingPill />
-            </motion.div>
-          </div>
-
-          {/* Desktop overlay */}
-          <div className="absolute inset-0 hidden flex-col justify-end px-6 pb-8 pt-28 md:flex">
-            <div className="mx-auto w-full max-w-[1180px]">
-              <p className="eyebrow mb-3 text-gold hero-text-shadow">
-                {t("hero.eyebrow")}
-              </p>
-              <HeroWords text={t("hero.h1")} />
-              <motion.p
-                className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/90 hero-text-shadow"
-                initial={reduce ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25, duration: 0.6 }}
-              >
-                {t("hero.lead")}
-              </motion.p>
-
-              <motion.div
-                className="relative z-20 mt-5"
-                initial={reduce ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.5 }}
-              >
-                <GoogleRatingPill />
-              </motion.div>
-
-              <motion.div
-                className="relative z-20 mt-4"
-                initial={reduce ? false : { opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45, duration: 0.6 }}
-              >
-                <AvailBar variant="hero" showNote={false} />
-                <motion.div
-                  initial={reduce ? false : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.5 }}
-                >
-                  <TrustBadges />
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
+        <div className="absolute inset-0">
+          <HeroSlideshow />
+          <div className="hero-scrim absolute inset-0" />
         </div>
 
-        {/* Mobile: search + trust below photo, first screen */}
-        <div className="relative z-20 px-5 pb-5 pt-4 md:hidden">
-          <AvailBar variant="hero" showNote={false} />
-          <TrustBadges mobile />
+        {/* Mobile: bottom-anchored content */}
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8 pt-24 md:hidden">
+          <p className="eyebrow mb-2 text-gold hero-text-shadow">
+            {t("hero.eyebrow")}
+          </p>
+          <HeroHeadline />
+          <div className="mt-4">
+            <HeroTrustRow className="mt-0 justify-start" />
+          </div>
+          <motion.div
+            className="relative z-20 mt-5"
+            initial={reduce ? false : { opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...spring, delay: pillDelay }}
+          >
+            <HeroSearchPill />
+          </motion.div>
+        </div>
+
+        {/* Desktop overlay */}
+        <div className="absolute inset-0 hidden flex-col justify-end px-6 pb-10 pt-28 md:flex">
+          <div className="mx-auto w-full max-w-[1180px]">
+            <p className="eyebrow mb-3 text-gold hero-text-shadow">
+              {t("hero.eyebrow")}
+            </p>
+            <HeroHeadline />
+            <motion.p
+              className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/90 hero-text-shadow"
+              initial={reduce ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: subDelay, duration: 0.5 }}
+            >
+              {t("hero.lead")}
+            </motion.p>
+
+            <motion.div
+              className="relative z-20 mt-7"
+              initial={reduce ? false : { opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...spring, delay: pillDelay }}
+            >
+              <HeroSearchPill />
+              <HeroTrustRow />
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -223,11 +109,11 @@ export default function HomePage() {
             <p className="mt-5 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
               {t("about.p")}
             </p>
-            <Link href="/rooms" className="btn-navy mt-8 inline-flex">
+            <Link href="/rooms" className="btn-navy btn-lift mt-8 inline-flex">
               {t("about.cta")}
             </Link>
           </Reveal>
-          <Reveal delay={0.1}>
+          <CurtainReveal>
             <div className="relative overflow-hidden rounded-[14px] shadow-panel">
               <SafeImage
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"
@@ -237,7 +123,7 @@ export default function HomePage() {
                 className="aspect-[4/5] w-full object-cover transition duration-500 hover:scale-[1.06]"
               />
             </div>
-          </Reveal>
+          </CurtainReveal>
         </div>
       </section>
 
@@ -260,7 +146,7 @@ export default function HomePage() {
             ))}
           </RevealStagger>
           <p className="mt-10 text-center">
-            <Link href="/rooms" className="btn-secondary">
+            <Link href="/rooms" className="btn-secondary btn-lift">
               {t("rooms.all")}
             </Link>
           </p>
@@ -276,9 +162,12 @@ export default function HomePage() {
             </div>
             <Link
               href="/offers"
-              className="inline-flex items-center gap-1 text-sm font-bold text-blue transition hover:gap-2"
+              className="link-draw inline-flex items-center gap-1 text-sm font-bold text-blue"
             >
-              {t("off.seeAll")} →
+              {t("off.seeAll")}
+              <span className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
             </Link>
           </Reveal>
           <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
@@ -350,7 +239,7 @@ export default function HomePage() {
           <p className="mx-auto mt-4 max-w-prose text-[1.08rem] text-ink/80">
             {t("cta.p")}
           </p>
-          <Link href="/book" className="btn-primary mt-8 inline-flex">
+          <Link href="/book" className="btn-primary btn-shine btn-lift mt-8 inline-flex">
             {t("cta.btn")}
           </Link>
         </Reveal>

@@ -563,8 +563,16 @@ export const DICT: Record<string, DictEntry> = {
     th: "จองด้วยข้อเสนอนี้ →",
   },
   "hero.google": {
-    en: "5.0 · Google reviews",
-    th: "5.0 · รีวิว Google",
+    en: "{n} · Google reviews",
+    th: "{n} · รีวิว Google",
+  },
+  "hero.tonight": {
+    en: "Tonight from {z}",
+    th: "คืนนี้เริ่ม {z}",
+  },
+  "trust.freeShort": {
+    en: "Free cancellation",
+    th: "ยกเลิกฟรี",
   },
 };
 
