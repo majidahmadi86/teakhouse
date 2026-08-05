@@ -41,7 +41,9 @@ export default function GuestLayout({
       </main>
       {isAuth ? null : <Footer />}
       {showMobileBookBar ? <MobileBookBar /> : null}
-      <Concierge offsetForBookBar={showMobileBookBar} />
+      {isAuth ? null : (
+        <Concierge offsetForBookBar={showMobileBookBar} />
+      )}
     </DemoModal>
   );
 }
