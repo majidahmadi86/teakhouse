@@ -8,8 +8,11 @@ export type DictEntry = { en: string; th: string };
 
 export const DICT: Record<string, DictEntry> = {
   "nav.rooms": { en: "Rooms", th: "ห้องพัก" },
+  "nav.offers": { en: "Offers", th: "ข้อเสนอ" },
   "nav.experience": { en: "Experience", th: "ประสบการณ์" },
+  "nav.gallery": { en: "Gallery", th: "แกลเลอรี" },
   "nav.location": { en: "Location", th: "การเดินทาง" },
+  "nav.contact": { en: "Contact", th: "ติดต่อ" },
   "nav.book": { en: "Book direct", th: "จองตรง" },
   "brand.tag": { en: "Riverside Boutique Hotel · Bangkok", th: "โรงแรมบูทีคริมแม่น้ำ · กรุงเทพฯ" },
 
@@ -419,6 +422,82 @@ export const DICT: Record<string, DictEntry> = {
   "sec.bathroom": { en: "Bathroom", th: "ห้องน้ำ" },
   "sec.comfort": { en: "Comfort", th: "ความสบาย" },
   "sec.services": { en: "Services", th: "บริการ" },
+
+  "off.page": { en: "Offers", th: "ข้อเสนอพิเศษ" },
+  "off.eyebrow": { en: "Direct only", th: "จองตรงเท่านั้น" },
+  "off.lead": {
+    en: "Three ways the river rewards guests who book with the house.",
+    th: "สามวิธีที่แม่น้ำตอบแทนแขกที่จองตรงกับบ้านหลังนี้",
+  },
+  "off.terms": {
+    en: "Offers apply to direct bookings only.",
+    th: "ข้อเสนอสำหรับการจองตรงเท่านั้น",
+  },
+  "off.cta": { en: "Book with this offer", th: "จองพร้อมข้อเสนอนี้" },
+  "off.1.badge": { en: "Book 30 days ahead", th: "จองก่อน 30 วัน" },
+  "off.1.title": { en: "Early bird · 15% off", th: "จองล่วงหน้า ลด 15%" },
+  "off.1.body": {
+    en: "Plan ahead and the river rewards you: 15% off the direct rate, same small deposit.",
+    th: "วางแผนล่วงหน้า แม่น้ำมีรางวัลให้เสมอ ลด 15% จากราคาจองตรง มัดจำเท่าเดิม",
+  },
+  "off.2.badge": { en: "4 nights or more", th: "พัก 4 คืนขึ้นไป" },
+  "off.2.title": { en: "Stay longer · 20% off", th: "พักยาว ลด 20%" },
+  "off.2.body": {
+    en: "Four nights or more and the riverside morning becomes your routine.",
+    th: "พักตั้งแต่ 4 คืนขึ้นไป ให้เช้า ริมน้ำกลายเป็นกิจวัตรของคุณ",
+  },
+  "off.3.badge": { en: "3+ nights, booked direct", th: "จองตรง 3 คืนขึ้นไป" },
+  "off.3.title": {
+    en: "Direct perk · free airport pickup",
+    th: "สิทธิ์จองตรง รับส่งสนามบินฟรี",
+  },
+  "off.3.body": {
+    en: "Book direct for three nights or more and the sedan at gate 3 is on us.",
+    th: "จองตรงตั้งแต่ 3 คืน เรารับคุณที่สนามบินฟรี รถรอที่ประตู 3",
+  },
+  "off.strip": { en: "Special offers", th: "ข้อเสนอพิเศษ" },
+  "off.seeAll": { en: "See all offers", th: "ดูข้อเสนอทั้งหมด" },
+
+  "gal.page": { en: "Gallery", th: "แกลเลอรี" },
+  "gal.lead": {
+    en: "Teak rooms, courtyard water, and the river that frames the house.",
+    th: "ห้องไม้สัก น้ำในคอร์ทยาร์ด และแม่น้ำที่โอบบ้านหลังนี้",
+  },
+  "gal.all": { en: "All", th: "ทั้งหมด" },
+  "gal.rooms": { en: "Rooms", th: "ห้องพัก" },
+  "gal.pool": { en: "Pool", th: "สระน้ำ" },
+  "gal.river": { en: "River", th: "แม่น้ำ" },
+  "gal.food": { en: "Food", th: "อาหาร" },
+
+  "ct.page": { en: "Contact", th: "ติดต่อเรา" },
+  "ct.lead": {
+    en: "Write to the house. We reply within a day, in Thai or English.",
+    th: "เขียนถึงบ้านหลังนี้ เราตอบภายในหนึ่งวัน ทั้งไทยและอังกฤษ",
+  },
+  "ct.name": { en: "Name", th: "ชื่อ" },
+  "ct.email": { en: "Email", th: "อีเมล" },
+  "ct.message": { en: "Message", th: "ข้อความ" },
+  "ct.send": { en: "Send message", th: "ส่งข้อความ" },
+  "ct.success": {
+    en: "Message sent. We reply within a day.",
+    th: "ส่งข้อความแล้ว เราจะตอบกลับภายใน 1 วัน",
+  },
+  "ct.address": {
+    en: "Charoenkrung 44, Bang Rak, Bangkok 10500",
+    th: "เจริญกรุง 44 บางรัก กรุงเทพฯ 10500",
+  },
+  "ct.phone": { en: "+66 2 000 0000", th: "+66 2 000 0000" },
+  "ct.mail": { en: "stay@teakhouse.demo", th: "stay@teakhouse.demo" },
+  "ct.line": { en: "LINE @teakhouse", th: "LINE @teakhouse" },
+  "ct.call": { en: "Call", th: "โทร" },
+  "ct.lineBtn": { en: "LINE", th: "LINE" },
+  "rooms.crumb": { en: "Rooms", th: "ห้องพัก" },
+  "drp.hint": {
+    en: "1st click: check-in · 2nd: check-out",
+    th: "คลิกแรก: เช็คอิน · คลิกที่สอง: เช็คเอาท์",
+  },
+  "drp.nights": { en: "{n} nights", th: "{n} คืน" },
+  "drp.done": { en: "Done", th: "เสร็จสิ้น" },
 };
 
 type I18nCtx = {
