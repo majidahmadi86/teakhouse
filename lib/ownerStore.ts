@@ -27,7 +27,31 @@ export type Booking = {
   amount: number;
   status: BookingStatus;
   notes: string;
+  passportId?: string;
+  nationality?: string;
+  adults?: number;
+  children?: number;
+  arrivalTime?: string;
+  specialRequests?: string;
 };
+
+export type BookingInput = Partial<Booking> &
+  Pick<
+    Booking,
+    | "id"
+    | "code"
+    | "guest"
+    | "roomSlug"
+    | "checkIn"
+    | "checkOut"
+    | "source"
+    | "amount"
+    | "status"
+  > & {
+    phone?: string;
+    email?: string;
+    notes?: string;
+  };
 export type RoomData = import("./rooms").Room;
 export type CellState = "available" | "booked" | "blocked";
 export type OwnerData = {
@@ -144,7 +168,7 @@ type OwnerCtx = {
   login: (email: string, pin: string) => boolean;
   logout: () => void;
   resetDemo: () => void;
-  addBooking: (booking: Booking) => void;
+  addBooking: (booking: BookingInput) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   deleteBooking: (id: string) => void;
   addRoom: (room: RoomData) => void;
@@ -219,10 +243,16 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
   }, [commit]);
 
   const addBooking = useCallback(
-    (booking: Booking) => {
+    (booking: BookingInput) => {
+      const full: Booking = {
+        phone: "",
+        email: "",
+        notes: "",
+        ...booking,
+      };
       commit((prev) => ({
         ...prev,
-        bookings: [...prev.bookings, booking],
+        bookings: [...prev.bookings, full],
       }));
     },
     [commit]

@@ -57,15 +57,21 @@ function nextCode(bookings: Booking[]): string {
 
 type BookingForm = {
   guest: string;
+  passportId: string;
+  nationality: string;
   phone: string;
   email: string;
+  adults: string;
+  children: string;
+  arrivalTime: string;
+  specialRequests: string;
+  notes: string;
   roomSlug: string;
   checkIn: Date;
   checkOut: Date;
   source: BookingSource;
   amount: number;
   status: BookingStatus;
-  notes: string;
 };
 
 function emptyForm(rooms: { slug: string; rate: number }[]): BookingForm {
@@ -75,15 +81,66 @@ function emptyForm(rooms: { slug: string; rate: number }[]): BookingForm {
   const rate = rooms[0]?.rate ?? 3000;
   return {
     guest: "",
+    passportId: "",
+    nationality: "",
     phone: "",
     email: "",
+    adults: "2",
+    children: "0",
+    arrivalTime: "",
+    specialRequests: "",
+    notes: "",
     roomSlug: slug,
     checkIn: inDate,
     checkOut: outDate,
     source: "Direct",
     amount: rate * nightsBetween(isoDate(inDate), isoDate(outDate)),
     status: "ok",
-    notes: "",
+  };
+}
+
+function bookingToForm(booking: Booking): BookingForm {
+  return {
+    guest: booking.guest,
+    passportId: booking.passportId ?? "",
+    nationality: booking.nationality ?? "",
+    phone: booking.phone,
+    email: booking.email,
+    adults: booking.adults != null ? String(booking.adults) : "",
+    children: booking.children != null ? String(booking.children) : "",
+    arrivalTime: booking.arrivalTime ?? "",
+    specialRequests: booking.specialRequests ?? "",
+    notes: booking.notes,
+    roomSlug: booking.roomSlug,
+    checkIn: parseISO(booking.checkIn),
+    checkOut: parseISO(booking.checkOut),
+    source: booking.source,
+    amount: booking.amount,
+    status: booking.status,
+  };
+}
+
+function formToPayload(form: BookingForm) {
+  const adults = form.adults.trim() ? parseInt(form.adults, 10) : undefined;
+  const children = form.children.trim() ? parseInt(form.children, 10) : undefined;
+
+  return {
+    guest: form.guest.trim(),
+    passportId: form.passportId.trim() || undefined,
+    nationality: form.nationality.trim() || undefined,
+    phone: form.phone.trim(),
+    email: form.email.trim(),
+    adults: Number.isFinite(adults) ? adults : undefined,
+    children: Number.isFinite(children) ? children : undefined,
+    arrivalTime: form.arrivalTime.trim() || undefined,
+    specialRequests: form.specialRequests.trim() || undefined,
+    notes: form.notes,
+    roomSlug: form.roomSlug,
+    checkIn: isoDate(form.checkIn),
+    checkOut: isoDate(form.checkOut),
+    source: form.source,
+    amount: form.amount,
+    status: form.status,
   };
 }
 
@@ -170,18 +227,7 @@ export default function OwnerBookingsPage() {
   }
 
   function openEdit(booking: Booking) {
-    setForm({
-      guest: booking.guest,
-      phone: booking.phone,
-      email: booking.email,
-      roomSlug: booking.roomSlug,
-      checkIn: parseISO(booking.checkIn),
-      checkOut: parseISO(booking.checkOut),
-      source: booking.source,
-      amount: booking.amount,
-      status: booking.status,
-      notes: booking.notes,
-    });
+    setForm(bookingToForm(booking));
     setEditMode(true);
     setSelected(booking);
     setModalOpen(true);
@@ -223,29 +269,17 @@ export default function OwnerBookingsPage() {
   function saveBooking() {
     if (!form.guest.trim()) return;
 
-    const payload = {
-      guest: form.guest.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      roomSlug: form.roomSlug,
-      checkIn: isoDate(form.checkIn),
-      checkOut: isoDate(form.checkOut),
-      source: form.source,
-      amount: form.amount,
-      status: form.status,
-      notes: form.notes,
-    };
+    const payload = formToPayload(form);
 
     if (editMode && selected) {
       updateBooking(selected.id, payload);
       setSelected({ ...selected, ...payload });
     } else {
-      const booking: Booking = {
+      addBooking({
         id: `bk-${Date.now()}`,
         code: nextCode(data.bookings),
         ...payload,
-      };
-      addBooking(booking);
+      });
     }
 
     setModalOpen(false);
@@ -450,6 +484,24 @@ export default function OwnerBookingsPage() {
                       className={inputClass}
                     />
                   </Field>
+                  <Field label={t("ow.passport")}>
+                    <input
+                      value={form.passportId}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, passportId: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label={t("ow.nationality")}>
+                    <input
+                      value={form.nationality}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, nationality: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
                   <Field label={t("ow.phone")}>
                     <input
                       value={form.phone}
@@ -469,12 +521,72 @@ export default function OwnerBookingsPage() {
                       className={inputClass}
                     />
                   </Field>
-                  <OwnerListbox
-                    label={t("col.room")}
-                    value={form.roomSlug}
-                    onChange={handleRoomChange}
-                    options={roomOptions}
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label={t("ow.adults")}>
+                      <input
+                        type="number"
+                        min={0}
+                        value={form.adults}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, adults: e.target.value }))
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field label={t("ow.children")}>
+                      <input
+                        type="number"
+                        min={0}
+                        value={form.children}
+                        onChange={(e) =>
+                          setForm((p) => ({ ...p, children: e.target.value }))
+                        }
+                        className={inputClass}
+                      />
+                    </Field>
+                  </div>
+                  <Field label={t("ow.arrival")}>
+                    <input
+                      value={form.arrivalTime}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, arrivalTime: e.target.value }))
+                      }
+                      placeholder="e.g. 22:30"
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label={t("ow.special")}>
+                    <textarea
+                      rows={2}
+                      value={form.specialRequests}
+                      onChange={(e) =>
+                        setForm((p) => ({
+                          ...p,
+                          specialRequests: e.target.value,
+                        }))
+                      }
+                      className={textareaClass}
+                    />
+                  </Field>
+                  <Field label={t("ow.notes")}>
+                    <textarea
+                      rows={2}
+                      value={form.notes}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, notes: e.target.value }))
+                      }
+                      className={textareaClass}
+                    />
+                  </Field>
+
+                  <div className="border-t border-white/10 pt-4">
+                    <OwnerListbox
+                      label={t("col.room")}
+                      value={form.roomSlug}
+                      onChange={handleRoomChange}
+                      options={roomOptions}
+                    />
+                  </div>
                   <Field label={t("col.dates")}>
                     <OwnerDateRange
                       from={form.checkIn}
@@ -582,36 +694,82 @@ export default function OwnerBookingsPage() {
                           {t("ow.guestInfo")}
                         </h3>
                         <dl className="space-y-3 text-sm">
-                          <Row label={t("col.guest")} value={selected.guest} />
-                          <Row label={t("ow.phone")} value={selected.phone} />
-                          <Row label={t("ow.email")} value={selected.email} />
+                          <DetailRow label={t("col.guest")} value={selected.guest} />
+                          <DetailRow
+                            label={t("ow.passport")}
+                            value={selected.passportId}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.nationality")}
+                            value={selected.nationality}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.phone")}
+                            value={selected.phone}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.email")}
+                            value={selected.email}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.adults")}
+                            value={selected.adults}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.children")}
+                            value={selected.children}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.arrival")}
+                            value={selected.arrivalTime}
+                            t={t}
+                          />
+                          <DetailRow
+                            label={t("ow.special")}
+                            value={selected.specialRequests}
+                            t={t}
+                          />
                         </dl>
                       </section>
 
                       <section className="mb-8">
                         <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
-                          {t("col.room")}
+                          {t("ow.stayGroup")}
                         </h3>
                         <dl className="space-y-3 text-sm">
-                          <Row
+                          <DetailRow
                             label={t("col.room")}
                             value={roomName(selected.roomSlug)}
                           />
-                          <Row
+                          <DetailRow
                             label={t("col.dates")}
                             value={formatStay(selected.checkIn, selected.checkOut)}
                           />
-                          <Row label={t("col.src")} value={selected.source} />
-                          <Row
-                            label={t("col.amt")}
-                            value={formatBaht(selected.amount)}
-                          />
+                          <DetailRow label={t("col.src")} value={selected.source} />
                           <div className="flex items-center gap-3">
                             <dt className="text-white/50">{t("col.st")}</dt>
                             <dd>
                               <StatusBadge status={selected.status} t={t} />
                             </dd>
                           </div>
+                        </dl>
+                      </section>
+
+                      <section className="mb-8">
+                        <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+                          {t("ow.payGroup")}
+                        </h3>
+                        <dl className="space-y-3 text-sm">
+                          <DetailRow
+                            label={t("col.amt")}
+                            value={formatBaht(selected.amount)}
+                          />
                         </dl>
                       </section>
 
@@ -686,6 +844,9 @@ export default function OwnerBookingsPage() {
 const inputClass =
   "min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
 
+const textareaClass =
+  "w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
+
 function Field({
   label,
   children,
@@ -701,11 +862,35 @@ function Field({
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function DetailRow({
+  label,
+  value,
+  t,
+}: {
+  label: string;
+  value?: string | number | null;
+  t?: (k: string) => string;
+}) {
+  const missing =
+    value === undefined ||
+    value === null ||
+    (typeof value === "string" && value.trim() === "");
+
+  const display = missing
+    ? t?.("ow.notRecorded") ?? "Not recorded"
+    : String(value);
+
   return (
     <div className="flex justify-between gap-4">
       <dt className="text-white/50">{label}</dt>
-      <dd className="text-right font-semibold text-white">{value}</dd>
+      <dd
+        className={cn(
+          "text-right font-semibold",
+          missing ? "text-white/40 italic" : "text-white"
+        )}
+      >
+        {display}
+      </dd>
     </div>
   );
 }
