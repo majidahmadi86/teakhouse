@@ -1,0 +1,730 @@
+"use client";
+
+import { Fragment, useMemo, useState } from "react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
+import { format, parseISO } from "date-fns";
+import { Plus, X } from "lucide-react";
+import { OwnerDateRange, OwnerListbox } from "@/components/owner/OwnerField";
+import { useI18n } from "@/lib/i18n";
+import {
+  type Booking,
+  type BookingSource,
+  type BookingStatus,
+  useOwner,
+} from "@/lib/ownerStore";
+import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
+
+const STATUSES: BookingStatus[] = ["ok", "in", "out", "cancelled"];
+const SOURCES: BookingSource[] = ["Direct", "Agoda", "Booking"];
+
+function statusLabel(t: (k: string) => string, status: BookingStatus): string {
+  return t(`ow.st.${status}`);
+}
+
+function statusClass(status: BookingStatus): string {
+  if (status === "in") return "bg-gold/20 text-gold";
+  if (status === "ok") return "bg-deal/20 text-deal";
+  if (status === "out") return "bg-white/10 text-white/60";
+  return "bg-red-500/20 text-red-300";
+}
+
+function sourceClass(source: BookingSource): string {
+  return source === "Direct" ? "text-deal" : "text-gold";
+}
+
+function formatStay(checkIn: string, checkOut: string): string {
+  const a = format(parseISO(checkIn), "d MMM");
+  const b = format(parseISO(checkOut), "d MMM yyyy");
+  return `${a} to ${b}`;
+}
+
+function nextCode(bookings: Booking[]): string {
+  const nums = bookings
+    .map((b) => {
+      const m = b.code.match(/(\d+)$/);
+      return m ? parseInt(m[1], 10) : 0;
+    })
+    .filter((n) => n > 0);
+  const next = nums.length ? Math.max(...nums) + 1 : 4272;
+  return `TKH-${next}`;
+}
+
+type BookingForm = {
+  guest: string;
+  phone: string;
+  email: string;
+  roomSlug: string;
+  checkIn: Date;
+  checkOut: Date;
+  source: BookingSource;
+  amount: number;
+  status: BookingStatus;
+  notes: string;
+};
+
+function emptyForm(rooms: { slug: string; rate: number }[]): BookingForm {
+  const inDate = addDays(new Date(), 1);
+  const outDate = addDays(inDate, 2);
+  const slug = rooms[0]?.slug ?? "river-loft";
+  const rate = rooms[0]?.rate ?? 3000;
+  return {
+    guest: "",
+    phone: "",
+    email: "",
+    roomSlug: slug,
+    checkIn: inDate,
+    checkOut: outDate,
+    source: "Direct",
+    amount: rate * nightsBetween(isoDate(inDate), isoDate(outDate)),
+    status: "ok",
+    notes: "",
+  };
+}
+
+export default function OwnerBookingsPage() {
+  const { t, tr } = useI18n();
+  const { data, addBooking, updateBooking } = useOwner();
+
+  const [search, setSearch] = useState("");
+  const [sourceFilter, setSourceFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selected, setSelected] = useState<Booking | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [form, setForm] = useState<BookingForm>(() =>
+    emptyForm(data.rooms.filter((r) => r.active))
+  );
+  const [drawerNotes, setDrawerNotes] = useState("");
+
+  const activeRooms = data.rooms.filter((r) => r.active);
+
+  const sourceOptions = useMemo(
+    () => [
+      { value: "all", label: t("ow.all") },
+      { value: "Direct", label: t("ow.direct") },
+      { value: "ota", label: t("ow.ota") },
+    ],
+    [t]
+  );
+
+  const statusOptions = useMemo(
+    () => [
+      { value: "all", label: t("ow.allStatus") },
+      ...STATUSES.map((s) => ({ value: s, label: statusLabel(t, s) })),
+    ],
+    [t]
+  );
+
+  const roomOptions = useMemo(
+    () =>
+      activeRooms.map((r) => ({
+        value: r.slug,
+        label: tr(r.name),
+      })),
+    [activeRooms, tr]
+  );
+
+  const sourceFormOptions = useMemo(
+    () => SOURCES.map((s) => ({ value: s, label: s })),
+    []
+  );
+
+  const statusFormOptions = useMemo(
+    () => STATUSES.map((s) => ({ value: s, label: statusLabel(t, s) })),
+    [t]
+  );
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return data.bookings
+      .filter((b) => {
+        if (sourceFilter === "Direct" && b.source !== "Direct") return false;
+        if (sourceFilter === "ota" && b.source === "Direct") return false;
+        if (statusFilter !== "all" && b.status !== statusFilter) return false;
+        if (!q) return true;
+        return (
+          b.guest.toLowerCase().includes(q) ||
+          b.code.toLowerCase().includes(q) ||
+          b.email.toLowerCase().includes(q)
+        );
+      })
+      .sort((a, b) => b.checkIn.localeCompare(a.checkIn));
+  }, [data.bookings, search, sourceFilter, statusFilter]);
+
+  function roomName(slug: string): string {
+    const room = data.rooms.find((r) => r.slug === slug);
+    return room ? tr(room.name) : slug;
+  }
+
+  function openNew() {
+    setForm(emptyForm(activeRooms));
+    setEditMode(false);
+    setModalOpen(true);
+  }
+
+  function openEdit(booking: Booking) {
+    setForm({
+      guest: booking.guest,
+      phone: booking.phone,
+      email: booking.email,
+      roomSlug: booking.roomSlug,
+      checkIn: parseISO(booking.checkIn),
+      checkOut: parseISO(booking.checkOut),
+      source: booking.source,
+      amount: booking.amount,
+      status: booking.status,
+      notes: booking.notes,
+    });
+    setEditMode(true);
+    setSelected(booking);
+    setModalOpen(true);
+  }
+
+  function openDrawer(booking: Booking) {
+    setSelected(booking);
+    setDrawerNotes(booking.notes);
+    setDrawerOpen(true);
+  }
+
+  function handleDates(from?: Date, to?: Date) {
+    setForm((prev) => {
+      const checkIn = from ?? prev.checkIn;
+      let checkOut = to ?? prev.checkOut;
+      if (from && !to) checkOut = addDays(from, 1);
+      const room = activeRooms.find((r) => r.slug === prev.roomSlug);
+      const nights = nightsBetween(isoDate(checkIn), isoDate(checkOut));
+      const amount = room ? room.rate * nights : prev.amount;
+      return { ...prev, checkIn, checkOut, amount };
+    });
+  }
+
+  function handleRoomChange(slug: string) {
+    setForm((prev) => {
+      const room = activeRooms.find((r) => r.slug === slug);
+      const nights = nightsBetween(
+        isoDate(prev.checkIn),
+        isoDate(prev.checkOut)
+      );
+      return {
+        ...prev,
+        roomSlug: slug,
+        amount: room ? room.rate * nights : prev.amount,
+      };
+    });
+  }
+
+  function saveBooking() {
+    if (!form.guest.trim()) return;
+
+    const payload = {
+      guest: form.guest.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim(),
+      roomSlug: form.roomSlug,
+      checkIn: isoDate(form.checkIn),
+      checkOut: isoDate(form.checkOut),
+      source: form.source,
+      amount: form.amount,
+      status: form.status,
+      notes: form.notes,
+    };
+
+    if (editMode && selected) {
+      updateBooking(selected.id, payload);
+      setSelected({ ...selected, ...payload });
+    } else {
+      const booking: Booking = {
+        id: `bk-${Date.now()}`,
+        code: nextCode(data.bookings),
+        ...payload,
+      };
+      addBooking(booking);
+    }
+
+    setModalOpen(false);
+  }
+
+  function saveNotes() {
+    if (!selected) return;
+    updateBooking(selected.id, { notes: drawerNotes });
+    setSelected({ ...selected, notes: drawerNotes });
+  }
+
+  function setStatus(status: BookingStatus) {
+    if (!selected) return;
+    updateBooking(selected.id, { status });
+    setSelected({ ...selected, status });
+  }
+
+  function cancelBooking() {
+    if (!selected) return;
+    if (!window.confirm(t("ow.sure"))) return;
+    updateBooking(selected.id, { status: "cancelled" });
+    setSelected({ ...selected, status: "cancelled" });
+    setDrawerOpen(false);
+  }
+
+  return (
+    <div>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-display text-3xl font-semibold text-white">
+          {t("ow.bk")}
+        </h1>
+        <button
+          type="button"
+          onClick={openNew}
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gold/90"
+        >
+          <Plus className="h-5 w-5" aria-hidden />+ {t("ow.new")}
+        </button>
+      </div>
+
+      <div className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+        <div className="grid gap-4 md:grid-cols-[1fr_auto_auto]">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("ow.searchph")}
+            className="min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          />
+          <OwnerListbox
+            value={sourceFilter}
+            onChange={setSourceFilter}
+            options={sourceOptions}
+          />
+          <OwnerListbox
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={statusOptions}
+          />
+        </div>
+      </div>
+
+      {/* Desktop table */}
+      <div className="owner-panel hidden overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] md:block">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left">
+                {[t("col.code"), t("col.guest"), t("col.room"), t("col.dates"), t("col.src"), t("col.amt"), t("col.st")].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-[0.66rem] font-extrabold uppercase tracking-[0.14em] text-gold"
+                    >
+                      {h}
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-12 text-center font-semibold text-white/50"
+                  >
+                    {t("ow.noMatch")}
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((b) => (
+                  <tr
+                    key={b.id}
+                    onClick={() => openDrawer(b)}
+                    className="cursor-pointer border-b border-white/5 transition hover:bg-white/[0.03]"
+                  >
+                    <td className="px-4 py-4 font-bold text-white">{b.code}</td>
+                    <td className="px-4 py-4 text-white/90">{b.guest}</td>
+                    <td className="px-4 py-4 text-white/70">
+                      {roomName(b.roomSlug)}
+                    </td>
+                    <td className="px-4 py-4 text-white/70">
+                      {formatStay(b.checkIn, b.checkOut)}
+                    </td>
+                    <td className={cn("px-4 py-4 font-bold", sourceClass(b.source))}>
+                      {b.source}
+                    </td>
+                    <td className="px-4 py-4 font-bold text-white">
+                      {formatBaht(b.amount)}
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge status={b.status} t={t} />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {filtered.length === 0 ? (
+          <p className="py-12 text-center font-semibold text-white/50">
+            {t("ow.noMatch")}
+          </p>
+        ) : (
+          filtered.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => openDrawer(b)}
+              className="w-full rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-gold/30"
+            >
+              <div className="mb-2 flex items-start justify-between gap-3">
+                <span className="font-bold text-white">{b.code}</span>
+                <StatusBadge status={b.status} t={t} />
+              </div>
+              <p className="font-semibold text-white/90">{b.guest}</p>
+              <p className="mt-1 text-sm text-white/60">
+                {roomName(b.roomSlug)} · {formatStay(b.checkIn, b.checkOut)}
+              </p>
+              <div className="mt-3 flex items-center justify-between">
+                <span className={cn("text-sm font-bold", sourceClass(b.source))}>
+                  {b.source}
+                </span>
+                <span className="font-bold text-white">{formatBaht(b.amount)}</span>
+              </div>
+            </button>
+          ))
+        )}
+      </div>
+
+      {/* New / Edit modal */}
+      <Transition show={modalOpen} as={Fragment}>
+        <Dialog onClose={() => setModalOpen(false)} className="relative z-50">
+          <TransitionChild
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          </TransitionChild>
+
+          <div className="fixed inset-0 flex items-end justify-center p-4 sm:items-center">
+            <TransitionChild
+              as={Fragment}
+              enter="ease-out duration-200"
+              enterFrom="opacity-0 translate-y-4"
+              enterTo="opacity-100 translate-y-0"
+              leave="ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-4"
+            >
+              <DialogPanel className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-brand p-6 shadow-panel">
+                <div className="mb-6 flex items-center justify-between">
+                  <DialogTitle className="font-display text-xl font-semibold text-white">
+                    {editMode ? t("ow.edit") : t("ow.new")}
+                  </DialogTitle>
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white/60 hover:bg-white/10 hover:text-white"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  <Field label={t("col.guest")}>
+                    <input
+                      value={form.guest}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, guest: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label={t("ow.phone")}>
+                    <input
+                      value={form.phone}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, phone: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                  <Field label={t("ow.email")}>
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(e) =>
+                        setForm((p) => ({ ...p, email: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                  <OwnerListbox
+                    label={t("col.room")}
+                    value={form.roomSlug}
+                    onChange={handleRoomChange}
+                    options={roomOptions}
+                  />
+                  <Field label={t("col.dates")}>
+                    <OwnerDateRange
+                      from={form.checkIn}
+                      to={form.checkOut}
+                      onChange={handleDates}
+                    />
+                  </Field>
+                  <OwnerListbox
+                    label={t("col.src")}
+                    value={form.source}
+                    onChange={(v) =>
+                      setForm((p) => ({ ...p, source: v as BookingSource }))
+                    }
+                    options={sourceFormOptions}
+                  />
+                  <Field label={t("col.amt")}>
+                    <input
+                      type="number"
+                      value={form.amount}
+                      onChange={(e) =>
+                        setForm((p) => ({
+                          ...p,
+                          amount: parseInt(e.target.value, 10) || 0,
+                        }))
+                      }
+                      className={inputClass}
+                    />
+                  </Field>
+                  <OwnerListbox
+                    label={t("col.st")}
+                    value={form.status}
+                    onChange={(v) =>
+                      setForm((p) => ({ ...p, status: v as BookingStatus }))
+                    }
+                    options={statusFormOptions}
+                  />
+                </div>
+
+                <div className="mt-8 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(false)}
+                    className="min-h-[44px] flex-1 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70"
+                  >
+                    {t("ow.cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={saveBooking}
+                    className="min-h-[44px] flex-1 rounded-xl bg-gold px-4 py-3 text-sm font-extrabold text-white"
+                  >
+                    {t("ow.save")}
+                  </button>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Detail drawer */}
+      <Transition show={drawerOpen} as={Fragment}>
+        <Dialog onClose={() => setDrawerOpen(false)} className="relative z-50">
+          <TransitionChild
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+          </TransitionChild>
+
+          <div className="fixed inset-0 flex justify-end">
+            <TransitionChild
+              as={Fragment}
+              enter="ease-out duration-250"
+              enterFrom="opacity-0 translate-x-full"
+              enterTo="opacity-100 translate-x-0"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-x-0"
+              leaveTo="opacity-0 translate-x-full"
+            >
+              <DialogPanel className="flex h-full w-full max-w-md flex-col border-l border-white/10 bg-brand-2 shadow-panel">
+                {selected ? (
+                  <>
+                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                      <DialogTitle className="font-display text-xl font-semibold text-white">
+                        {selected.code}
+                      </DialogTitle>
+                      <button
+                        type="button"
+                        onClick={() => setDrawerOpen(false)}
+                        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white/60 hover:bg-white/10"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto px-5 py-6">
+                      <section className="mb-8">
+                        <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+                          {t("ow.guestInfo")}
+                        </h3>
+                        <dl className="space-y-3 text-sm">
+                          <Row label={t("col.guest")} value={selected.guest} />
+                          <Row label={t("ow.phone")} value={selected.phone} />
+                          <Row label={t("ow.email")} value={selected.email} />
+                        </dl>
+                      </section>
+
+                      <section className="mb-8">
+                        <h3 className="mb-4 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+                          {t("col.room")}
+                        </h3>
+                        <dl className="space-y-3 text-sm">
+                          <Row
+                            label={t("col.room")}
+                            value={roomName(selected.roomSlug)}
+                          />
+                          <Row
+                            label={t("col.dates")}
+                            value={formatStay(selected.checkIn, selected.checkOut)}
+                          />
+                          <Row label={t("col.src")} value={selected.source} />
+                          <Row
+                            label={t("col.amt")}
+                            value={formatBaht(selected.amount)}
+                          />
+                          <div className="flex items-center gap-3">
+                            <dt className="text-white/50">{t("col.st")}</dt>
+                            <dd>
+                              <StatusBadge status={selected.status} t={t} />
+                            </dd>
+                          </div>
+                        </dl>
+                      </section>
+
+                      <section>
+                        <label
+                          htmlFor="booking-notes"
+                          className="mb-3 block text-xs font-extrabold uppercase tracking-[0.14em] text-gold"
+                        >
+                          {t("ow.notes")}
+                        </label>
+                        <textarea
+                          id="booking-notes"
+                          rows={4}
+                          value={drawerNotes}
+                          onChange={(e) => setDrawerNotes(e.target.value)}
+                          onBlur={saveNotes}
+                          className="w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                        />
+                      </section>
+                    </div>
+
+                    <div className="space-y-2 border-t border-white/10 p-5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          openEdit(selected);
+                          setDrawerOpen(false);
+                        }}
+                        className="min-h-[44px] w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white"
+                      >
+                        {t("ow.edit")}
+                      </button>
+                      {selected.status === "ok" ? (
+                        <button
+                          type="button"
+                          onClick={() => setStatus("in")}
+                          className="min-h-[44px] w-full rounded-xl bg-deal px-4 py-3 text-sm font-extrabold text-white"
+                        >
+                          {t("ow.checkin")}
+                        </button>
+                      ) : null}
+                      {selected.status === "in" ? (
+                        <button
+                          type="button"
+                          onClick={() => setStatus("out")}
+                          className="min-h-[44px] w-full rounded-xl bg-gold px-4 py-3 text-sm font-extrabold text-white"
+                        >
+                          {t("ow.checkout")}
+                        </button>
+                      ) : null}
+                      {selected.status !== "cancelled" ? (
+                        <button
+                          type="button"
+                          onClick={cancelBooking}
+                          className="min-h-[44px] w-full rounded-xl border border-red-500/40 px-4 py-3 text-sm font-bold text-red-300"
+                        >
+                          {t("ow.cancelBk")}
+                        </button>
+                      ) : null}
+                    </div>
+                  </>
+                ) : null}
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </Dialog>
+      </Transition>
+    </div>
+  );
+}
+
+const inputClass =
+  "min-h-[44px] w-full rounded-xl border border-white/15 bg-white/8 px-4 py-3 text-base text-white focus:border-gold/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold";
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="mb-2 text-sm font-semibold text-white/80">{label}</div>
+      {children}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <dt className="text-white/50">{label}</dt>
+      <dd className="text-right font-semibold text-white">{value}</dd>
+    </div>
+  );
+}
+
+function StatusBadge({
+  status,
+  t,
+}: {
+  status: BookingStatus;
+  t: (k: string) => string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-block rounded-full px-3 py-1 text-xs font-extrabold",
+        statusClass(status)
+      )}
+    >
+      {statusLabel(t, status)}
+    </span>
+  );
+}
