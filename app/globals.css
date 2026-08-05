@@ -1,0 +1,129 @@
+@import "react-day-picker/dist/style.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface-2 text-ink font-sans antialiased text-base;
+  }
+
+  html[lang="th"] body {
+    @apply font-th-body;
+  }
+
+  html[lang="th"] h1,
+  html[lang="th"] h2,
+  html[lang="th"] h3,
+  html[lang="th"] h4,
+  html[lang="th"] .font-display {
+    @apply font-th-display;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  img {
+    @apply block max-w-full;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-surface-2;
+  }
+}
+
+@layer utilities {
+  .hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(14, 38, 32, 0.78) 0%,
+      rgba(14, 38, 32, 0) 55%
+    );
+  }
+
+  .nav-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(14, 38, 32, 0.55) 0%,
+      rgba(14, 38, 32, 0) 100%
+    );
+  }
+
+  .hero-text-shadow {
+    text-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  @keyframes kb {
+    from {
+      transform: scale(1.12);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+}
+
+/* react-day-picker brand overrides */
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #14342B;
+  --rdp-background-color: #E8F5EE;
+  margin: 0;
+}
+
+.tkh-day-picker .rdp-day_selected,
+.tkh-day-picker .rdp-day_selected:focus-visible,
+.tkh-day-picker .rdp-day_selected:hover {
+  background-color: #14342B;
+  color: #ffffff;
+}
+
+.tkh-day-picker .rdp-day_range_middle {
+  background-color: #E8F5EE;
+  color: #14342B;
+}
+
+.tkh-day-picker .rdp-day_range_start,
+.tkh-day-picker .rdp-day_range_end {
+  background-color: #14342B;
+  color: #ffffff;
+}
+
+.tkh-day-picker .rdp-caption_label {
+  font-family: var(--font-fraunces), serif;
+  color: #14342B;
+}
+
+/* scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #B9853D #E7E3DA;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #E7E3DA;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #B9853D;
+  border-radius: 999px;
+  border: 2px solid #E7E3DA;
+}
