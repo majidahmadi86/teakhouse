@@ -14,18 +14,23 @@ const NAV = [
   { href: "/location", key: "nav.location" },
 ] as const;
 
-function LangToggle() {
+function LangToggle({ light }: { light?: boolean }) {
   const { lang, setLang } = useI18n();
 
   return (
-    <div className="flex overflow-hidden rounded-full border border-current opacity-90">
+    <div
+      className={cn(
+        "flex min-h-11 overflow-hidden rounded-full border",
+        light ? "border-white/50 text-white" : "border-ink/20 text-ink"
+      )}
+    >
       {(["en", "th"] as Lang[]).map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => setLang(l)}
           className={cn(
-            "px-3 py-1.5 text-xs font-bold transition",
+            "min-h-11 min-w-11 px-3 text-xs font-bold transition",
             lang === l ? "bg-gold text-white" : "bg-transparent"
           )}
         >
@@ -59,6 +64,15 @@ export function Header() {
     setDrawerOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [drawerOpen]);
+
   const lightNav = onHero && !solid;
 
   return (
@@ -67,14 +81,23 @@ export function Header() {
         className={cn(
           "fixed inset-x-0 top-0 z-[60] transition-all duration-300",
           solid
-            ? "bg-surface-2/95 py-3 shadow-nav backdrop-blur-md"
+            ? "bg-white py-3 text-ink shadow-nav"
             : "py-[18px]",
           lightNav && "text-white"
         )}
       >
-        <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-5 px-6">
+        {lightNav ? (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[rgba(14,38,32,.55)] to-transparent"
+          />
+        ) : null}
+        <div className="relative mx-auto flex max-w-[1180px] items-center justify-between gap-5 px-6">
           <Link href="/" className="shrink-0">
-            <Logo light={lightNav} />
+            <Logo light={lightNav} showTag={false} className="md:hidden" />
+            <span className="hidden md:inline-flex">
+              <Logo light={lightNav} showTag />
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-8 text-[0.92rem] font-semibold md:flex">
@@ -97,16 +120,16 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3.5">
-            <LangToggle />
+            <LangToggle light={lightNav} />
             <Link
               href="/book"
-              className="hidden rounded-full bg-gold px-7 py-3.5 text-[0.92rem] font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#C29A5E] hover:shadow-lg sm:inline-flex"
+              className="hidden min-h-11 items-center rounded-full bg-brand px-7 text-[0.92rem] font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-2 sm:inline-flex"
             >
               {t("nav.book")}
             </Link>
             <button
               type="button"
-              className="p-1.5 md:hidden"
+              className="flex min-h-11 min-w-11 items-center justify-center md:hidden"
               aria-label={t("mobile.menu")}
               onClick={() => setDrawerOpen(true)}
             >
@@ -116,29 +139,60 @@ export function Header() {
         </div>
       </header>
 
-      <div
-        className={cn(
-          "fixed inset-0 z-[70] flex flex-col items-center justify-center gap-7 bg-brand font-display text-[1.4rem] text-white transition-transform duration-500",
-          drawerOpen ? "translate-y-0" : "-translate-y-full"
-        )}
-      >
+      {drawerOpen ? (
         <button
           type="button"
-          className="absolute right-5 top-5 p-2"
           aria-label={t("mobile.close")}
+          className="fixed inset-0 z-[70] bg-ink/40 md:hidden"
           onClick={() => setDrawerOpen(false)}
-        >
-          <X className="h-[30px] w-[30px]" />
-        </button>
-        {NAV.map(({ href, key }) => (
-          <Link key={href} href={href} onClick={() => setDrawerOpen(false)}>
-            {t(key)}
-          </Link>
-        ))}
-        <Link href="/book" onClick={() => setDrawerOpen(false)}>
-          {t("nav.book")}
-        </Link>
-      </div>
+        />
+      ) : null}
+
+      <aside
+        className={cn(
+          "fixed inset-y-0 right-0 z-[80] flex w-[min(100%,360px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 md:hidden",
+          drawerOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+          <Logo showTag={false} />
+          <button
+            type="button"
+            className="flex min-h-11 min-w-11 items-center justify-center"
+            aria-label={t("mobile.close")}
+            onClick={() => setDrawerOpen(false)}
+          >
+            <X className="h-[30px] w-[30px]" />
+          </button>
+        </div>
+        <nav className="flex flex-1 flex-col px-2 pt-2">
+          {[...NAV, { href: "/book", key: "nav.book" as const }].map(
+            ({ href, key }, i) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setDrawerOpen(false)}
+                style={{ transitionDelay: `${i * 50}ms` }}
+                className={cn(
+                  "border-b border-line px-4 py-5 font-display text-[1.55rem] transition",
+                  drawerOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                )}
+              >
+                {t(key)}
+              </Link>
+            )
+          )}
+        </nav>
+        <div className="border-t border-line px-6 py-6 text-sm">
+          <p className="font-semibold text-gold">{t("brand.tag")}</p>
+          <a href="https://line.me/" className="mt-3 block font-bold">
+            LINE @teakhouse
+          </a>
+          <a href="tel:+6620000000" className="mt-1 block font-bold">
+            +66 2 000 0000
+          </a>
+        </div>
+      </aside>
     </>
   );
 }
