@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const fieldClass =
-  "[&_button]:min-h-[44px] [&_button]:border-white/15 [&_button]:bg-white/8 [&_button]:text-white [&_button]:hover:border-gold/40 [&_span.text-strike]:text-white/40 [&_.text-ink]:text-white [&_label]:text-white/80 [&_svg]:text-gold/70";
+  "[&_button]:min-h-[44px] [&_button]:border-white/15 [&_button]:bg-white/8 [&_button]:text-white [&_button]:hover:border-own-blue/40 [&_span.text-strike]:text-white/40 [&_.text-ink]:text-white [&_label]:text-white/80 [&_svg]:text-gold/70";
 
 type OwnerListboxProps = {
   value: string;

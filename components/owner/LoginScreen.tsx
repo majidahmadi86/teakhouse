@@ -84,7 +84,7 @@ export function LoginScreen() {
 
           <button
             type="submit"
-            className="min-h-[44px] w-full rounded-xl bg-gold px-6 py-3 text-base font-extrabold text-white transition hover:bg-gold/90"
+            className="min-h-[44px] w-full rounded-xl bg-own-blue px-6 py-3 text-base font-extrabold text-white transition hover:bg-gold/90"
           >
             {t("ow.signin")}
           </button>
