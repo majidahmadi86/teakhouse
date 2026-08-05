@@ -1,8 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import {
+  AuthFooterLink,
+  AuthShell,
+  authInputClass,
+} from "@/components/AuthShell";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 
@@ -18,96 +22,104 @@ function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [shake, setShake] = useState(false);
+
+  function triggerShake() {
+    setShake(true);
+    window.setTimeout(() => setShake(false), 300);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const err = signUp(name, email, password, bookingId);
     if (err === "exists") {
       setError(t("acc.errExists"));
+      triggerShake();
       return;
     }
     if (err === "missing") {
       setError(t("acc.errMissing"));
+      triggerShake();
       return;
     }
     router.push(next);
   }
 
+  const signinHref =
+    next !== "/account"
+      ? `/account/signin?next=${encodeURIComponent(next)}`
+      : "/account/signin";
+
   return (
-    <section className="section-pad bg-cloud">
-      <div className="mx-auto w-full max-w-md rounded-[14px] bg-white p-8 shadow-panel">
-        <p className="eyebrow mb-2">{t("acc.signup")}</p>
-        <h1 className="font-display text-3xl text-ink">{t("acc.create")}</h1>
-        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-          <label className="block">
-            <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
-              {t("acc.name")}
-            </span>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputClass}
-              autoComplete="name"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
-              {t("acc.email")}
-            </span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
-              autoComplete="email"
-              required
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
-              {t("acc.password")}
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={inputClass}
-              autoComplete="new-password"
-              required
-              minLength={4}
-            />
-          </label>
-          {error ? (
-            <p className="text-sm font-semibold text-coral-deep">{error}</p>
-          ) : null}
-          <button type="submit" className="btn-primary w-full">
-            {t("acc.create")}
-          </button>
-        </form>
-        <p className="mt-6 text-center text-sm text-sub">
-          {t("acc.haveAccount")}{" "}
-          <Link
-            href={`/account/signin${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
-            className="font-bold text-blue underline"
-          >
-            {t("acc.signin")}
-          </Link>
-        </p>
-      </div>
-    </section>
+    <AuthShell
+      eyebrow={t("acc.signup")}
+      title={t("acc.join")}
+      shake={shake}
+      footer={
+        <AuthFooterLink
+          prompt={t("acc.haveAccount")}
+          href={signinHref}
+          label={t("acc.signin")}
+        />
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label className="block">
+          <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+            {t("acc.name")}
+          </span>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={authInputClass}
+            autoComplete="name"
+            required
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+            {t("acc.email")}
+          </span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={authInputClass}
+            autoComplete="email"
+            required
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+            {t("acc.password")}
+          </span>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={authInputClass}
+            autoComplete="new-password"
+            required
+            minLength={4}
+          />
+        </label>
+        {error ? (
+          <p className="text-sm font-semibold text-coral-deep">{error}</p>
+        ) : null}
+        <button type="submit" className="btn-primary mt-2 w-full">
+          {t("acc.create")}
+        </button>
+      </form>
+    </AuthShell>
   );
 }
-
-const inputClass =
-  "w-full rounded-[10px] border-[1.5px] border-line bg-white px-4 py-3 text-sm font-semibold text-ink focus:border-blue focus:outline-none focus:ring-2 focus:ring-sky";
 
 export default function SignUpPage() {
   return (
     <Suspense
       fallback={
-        <div className="section-pad flex justify-center">
+        <div className="flex min-h-[50vh] items-center justify-center">
           <div className="h-10 w-10 animate-spin rounded-full border-2 border-blue border-t-transparent" />
         </div>
       }

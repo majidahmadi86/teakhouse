@@ -22,16 +22,24 @@ export default function GuestLayout({
   const isBook = pathname === "/book";
   const isRoomDetail =
     pathname.startsWith("/rooms/") && pathname !== "/rooms";
+  const isAuth =
+    pathname === "/account/signin" || pathname === "/account/signup";
   const autoDemo = pathname === "/";
-  const showMobileBookBar = !isBook && !isRoomDetail;
+  const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
   return (
     <DemoModal auto={autoDemo}>
       <Header />
-      <main className={isBook || isRoomDetail ? "pb-8" : "pb-24 md:pb-8"}>
+      <main
+        className={
+          isBook || isRoomDetail || isAuth
+            ? "pb-0"
+            : "pb-24 md:pb-8"
+        }
+      >
         <PageFade>{children}</PageFade>
       </main>
-      <Footer />
+      {isAuth ? null : <Footer />}
       {showMobileBookBar ? <MobileBookBar /> : null}
       <Concierge offsetForBookBar={showMobileBookBar} />
     </DemoModal>
