@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { qrMockSvg } from "@/lib/bookingUtils";
+import { useCurrency } from "@/lib/currency";
+import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import type { Room } from "@/lib/rooms";
 import { formatBaht, isoDate } from "@/lib/utils";
 
 export type ReceiptProps = {
   code: string;
+  bookingId?: string;
   guestName: string;
   guestEmail: string;
   guestPhone: string;
@@ -26,6 +29,7 @@ export type ReceiptProps = {
 
 export function Receipt({
   code,
+  bookingId,
   guestName,
   guestEmail,
   guestPhone,
@@ -41,10 +45,16 @@ export function Receipt({
   issuedAt = new Date(),
 }: ReceiptProps) {
   const { t, tr } = useI18n();
+  const { format, currency } = useCurrency();
+  const { user } = useGuestAuth();
 
   function handlePrint() {
     window.print();
   }
+
+  const signupHref = bookingId
+    ? `/account/signup?booking=${encodeURIComponent(bookingId)}&next=/account`
+    : "/account/signup";
 
   return (
     <div className="mx-auto w-full max-w-[640px]">
@@ -106,18 +116,28 @@ export function Receipt({
           <div className="space-y-2 border-t border-line pt-4">
             <div className="flex justify-between">
               <span className="text-sub">
-                {formatBaht(rate)} × {nights} {nights > 1 ? t("bk.nights") : t("bk.night")}
+                {format(rate)} × {nights} {nights > 1 ? t("bk.nights") : t("bk.night")}
               </span>
-              <span className="font-semibold text-ink">{formatBaht(subtotal)}</span>
+              <span className="font-semibold text-ink">{format(subtotal)}</span>
             </div>
             <div className="flex justify-between font-bold text-ink">
               <span>{t("bk.dep")}</span>
-              <span>{formatBaht(deposit)}</span>
+              <span>{format(deposit)}</span>
             </div>
             <div className="flex justify-between text-sub">
               <span>{t("bk.bal")}</span>
-              <span>{formatBaht(balance)}</span>
+              <span>{format(balance)}</span>
             </div>
+            {currency !== "THB" ? (
+              <div className="flex justify-between text-sub">
+                <span>{t("cur.chargedThb")}</span>
+                <span>{formatBaht(subtotal)}</span>
+              </div>
+            ) : (
+              <p className="text-[0.78rem] font-semibold text-sub">
+                {t("cur.chargedThb")}
+              </p>
+            )}
           </div>
 
           <div className="rounded-lg bg-deal-bg px-4 py-3 text-[0.82rem] font-semibold text-deal">
@@ -149,6 +169,17 @@ export function Receipt({
           </footer>
         </div>
       </div>
+
+      {!user ? (
+        <div className="mt-4 rounded-[14px] border border-blue/20 bg-sky/40 px-5 py-4 text-center print:hidden">
+          <Link
+            href={signupHref}
+            className="text-sm font-bold text-blue underline"
+          >
+            {t("acc.createForBooking")}
+          </Link>
+        </div>
+      ) : null}
 
       <div className="mt-6 flex flex-wrap gap-3 print:hidden">
         <button

@@ -1,6 +1,8 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { CurrencyProvider } from "@/lib/currency";
+import { GuestAuthProvider } from "@/lib/guestAuth";
 import { I18nProvider } from "@/lib/i18n";
 import { OwnerProvider } from "@/lib/ownerStore";
 
@@ -45,9 +47,13 @@ export function useConcierge() {
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <I18nProvider>
-      <OwnerProvider>
-        <ConciergeProvider>{children}</ConciergeProvider>
-      </OwnerProvider>
+      <CurrencyProvider>
+        <GuestAuthProvider>
+          <OwnerProvider>
+            <ConciergeProvider>{children}</ConciergeProvider>
+          </OwnerProvider>
+        </GuestAuthProvider>
+      </CurrencyProvider>
     </I18nProvider>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BookingSummary } from "@/components/booking/BookingSummary";
 import { Receipt } from "@/components/booking/Receipt";
 import { RoomDetailsModal } from "@/components/booking/RoomDetailsModal";
@@ -10,12 +10,13 @@ import { RoomSelectCard } from "@/components/booking/RoomSelectCard";
 import { DateRangePicker } from "@/components/ui/DateRangePicker";
 import { ListboxField } from "@/components/ui/ListboxField";
 import { generateBookingCode, qrMockSvg } from "@/lib/bookingUtils";
+import { useCurrency } from "@/lib/currency";
+import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import { useGuestRooms, useOwner } from "@/lib/ownerStore";
 import { getRoomByKey, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
-  formatBaht,
   isoDate,
   nightsBetween,
 } from "@/lib/utils";
@@ -27,9 +28,15 @@ const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
 
 export default function BookPageClient() {
   const { t } = useI18n();
+  const { format } = useCurrency();
+  const { user, attachBooking } = useGuestAuth();
   const searchParams = useSearchParams();
   const rooms = useGuestRooms();
   const { addBooking } = useOwner();
+  const stepperRef = useRef<HTMLElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState(1);
   const [checkIn, setCheckIn] = useState<Date>(() => addDays(new Date(), 1));
@@ -43,8 +50,14 @@ export default function BookPageClient() {
   const [phone, setPhone] = useState("");
   const [payMethod, setPayMethod] = useState<PayMethod>("promptpay");
   const [code, setCode] = useState("");
+  const [bookingId, setBookingId] = useState("");
   const [detailsRoom, setDetailsRoom] = useState<Room | null>(null);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: boolean;
+    email?: boolean;
+    phone?: boolean;
+  }>({});
 
   useEffect(() => {
     const inParam = searchParams.get("in");
@@ -64,6 +77,13 @@ export default function BookPageClient() {
       }
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (user) {
+      setName((prev) => prev || user.name);
+      setEmail((prev) => prev || user.email);
+    }
+  }, [user]);
 
   const nights =
     checkOut && checkOut > checkIn
@@ -96,10 +116,14 @@ export default function BookPageClient() {
   const step3Valid =
     step2Valid && name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
 
+  function scrollToStepper() {
+    stepperRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function goStep(next: number) {
     setStep(next);
     setSummaryExpanded(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    requestAnimationFrame(() => scrollToStepper());
   }
 
   function handleDates(from?: Date, to?: Date) {
@@ -111,12 +135,34 @@ export default function BookPageClient() {
     if (target <= step) goStep(target);
   }
 
+  function scrollToFirstError() {
+    const errors = {
+      name: name.trim().length === 0,
+      email: email.trim().length === 0,
+      phone: phone.trim().length === 0,
+    };
+    setFieldErrors(errors);
+    const first = errors.name
+      ? nameRef.current
+      : errors.email
+        ? emailRef.current
+        : errors.phone
+          ? phoneRef.current
+          : null;
+    first?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   function handlePayDeposit() {
-    if (!selectedRoom || !checkOut || !step3Valid) return;
+    if (!selectedRoom || !checkOut) return;
+    if (!step3Valid) {
+      scrollToFirstError();
+      return;
+    }
 
     const bookingCode = generateBookingCode();
+    const id = `bk-${Date.now()}`;
     addBooking({
-      id: `bk-${Date.now()}`,
+      id,
       code: bookingCode,
       guest: name.trim(),
       phone: phone.trim(),
@@ -129,6 +175,8 @@ export default function BookPageClient() {
       status: "ok",
       notes: "",
     });
+    if (user) attachBooking(id);
+    setBookingId(id);
     setCode(bookingCode);
     goStep(4);
   }
@@ -165,7 +213,8 @@ export default function BookPageClient() {
             <p className="mt-3 max-w-prose text-ink/80">{t("bk.lead")}</p>
 
             <nav
-              className="my-8 flex flex-wrap gap-2"
+              ref={stepperRef}
+              className="my-8 flex scroll-mt-24 flex-wrap gap-2"
               aria-label="Booking steps"
             >
               {steps.map((label, index) => {
@@ -294,35 +343,47 @@ export default function BookPageClient() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label={t("bk.name")}>
                       <input
+                        ref={nameRef}
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          setFieldErrors((f) => ({ ...f, name: false }));
+                        }}
                         placeholder={t("bk.nameph")}
-                        className={inputClass}
+                        className={cn(inputClass, fieldErrors.name && "border-coral-deep")}
                       />
                     </Field>
                     <Field label={t("bk.mail")}>
                       <input
+                        ref={emailRef}
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setFieldErrors((f) => ({ ...f, email: false }));
+                        }}
                         placeholder="you@email.com"
-                        className={inputClass}
+                        className={cn(inputClass, fieldErrors.email && "border-coral-deep")}
                       />
                     </Field>
                     <Field label={t("bk.phone")} className="sm:col-span-2 sm:max-w-sm">
                       <input
+                        ref={phoneRef}
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          setFieldErrors((f) => ({ ...f, phone: false }));
+                        }}
                         placeholder="+66 8x xxx xxxx"
-                        className={inputClass}
+                        className={cn(inputClass, fieldErrors.phone && "border-coral-deep")}
                       />
                     </Field>
                   </div>
 
                   {savings > 0 ? (
                     <div className="my-5 rounded-xl bg-deal-bg px-5 py-4 text-sm font-bold text-deal">
-                      {t("bk.save")}: -{formatBaht(savings)}
+                      {t("bk.save")}: -{format(savings)}
                     </div>
                   ) : null}
 
@@ -388,11 +449,10 @@ export default function BookPageClient() {
                   <div className="mt-5">
                     <button
                       type="button"
-                      disabled={!step3Valid}
                       onClick={handlePayDeposit}
-                      className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
+                      className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark"
                     >
-                      {t("bk.pay")} {formatBaht(deposit)}
+                      {t("bk.pay")} {format(deposit)}
                     </button>
                   </div>
                   <p className="mt-3.5 text-[0.72rem] font-semibold text-sub">
@@ -404,6 +464,7 @@ export default function BookPageClient() {
               {step === 4 && selectedRoom && checkOut ? (
                 <Receipt
                   code={code}
+                  bookingId={bookingId}
                   guestName={name}
                   guestEmail={email}
                   guestPhone={phone}

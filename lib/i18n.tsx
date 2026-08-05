@@ -61,7 +61,7 @@ export const DICT: Record<string, DictEntry> = {
   "room.from": { en: "from", th: "เริ่ม" },
   "chip.direct": { en: "Direct", th: "จองตรง" },
   "chip.via": { en: "on Agoda", th: "บน Agoda" },
-  "chip.save": { en: "Save ฿{z} per night", th: "ประหยัด {z} บาทต่อคืน" },
+  "chip.save": { en: "Save {z} per night", th: "ประหยัด {z} ต่อคืน" },
   "rooms.compare": { en: "Compare our rooms", th: "เปรียบเทียบห้องพัก" },
   "rooms.amenities": { en: "Amenities", th: "สิ่งอำนวยความสะดวก" },
   "rooms.other": { en: "Other rooms", th: "ห้องอื่นๆ" },
@@ -333,7 +333,7 @@ export const DICT: Record<string, DictEntry> = {
   "cg.online": { en: "Online · replies instantly", th: "ออนไลน์ · ตอบทันที" },
   "cg.ph": { en: "Ask anything, any hour…", th: "ถามได้ทุกเรื่อง ทุกเวลา…" },
 
-  "mobile.book": { en: "Book direct · from ฿2,100", th: "จองตรง · เริ่ม ฿2,100" },
+  "mobile.book": { en: "Book direct · from {z}", th: "จองตรง · เริ่ม {z}" },
   "mobile.menu": { en: "Menu", th: "เมนู" },
   "mobile.close": { en: "Close", th: "ปิด" },
 
@@ -498,6 +498,70 @@ export const DICT: Record<string, DictEntry> = {
   },
   "drp.nights": { en: "{n} nights", th: "{n} คืน" },
   "drp.done": { en: "Done", th: "เสร็จสิ้น" },
+
+  "acc.signin": { en: "Sign in", th: "เข้าสู่ระบบ" },
+  "acc.signup": { en: "Sign up", th: "สมัครสมาชิก" },
+  "acc.name": { en: "Full name", th: "ชื่อ-นามสกุล" },
+  "acc.email": { en: "Email", th: "อีเมล" },
+  "acc.password": { en: "Password", th: "รหัสผ่าน" },
+  "acc.create": { en: "Create account", th: "สร้างบัญชี" },
+  "acc.haveAccount": { en: "Already have an account?", th: "มีบัญชีอยู่แล้ว?" },
+  "acc.newHere": { en: "New here?", th: "เพิ่งมาครั้งแรก?" },
+  "acc.welcome": { en: "Welcome back", th: "ยินดีต้อนรับกลับ" },
+  "acc.myBookings": { en: "My bookings", th: "การจองของฉัน" },
+  "acc.profile": { en: "Profile", th: "โปรไฟล์" },
+  "acc.signout": { en: "Sign out", th: "ออกจากระบบ" },
+  "acc.noBookings": { en: "No bookings yet", th: "ยังไม่มีการจอง" },
+  "acc.bookFirst": { en: "Book your first stay", th: "จองการเข้าพักครั้งแรก" },
+  "acc.cancelBooking": { en: "Cancel booking", th: "ยกเลิกการจอง" },
+  "acc.cancelled": { en: "Cancelled", th: "ยกเลิกแล้ว" },
+  "acc.freeCancel": {
+    en: "Free cancellation until 3 days before arrival",
+    th: "ยกเลิกฟรีก่อนเข้าพัก 3 วัน",
+  },
+  "acc.cancelConfirm": {
+    en: "Cancel this booking? The nights will be released.",
+    th: "ยกเลิกการจองนี้? คืนที่จองไว้จะถูกปล่อยให้ว่าง",
+  },
+  "acc.cancelYes": { en: "Yes, cancel", th: "ใช่ ยกเลิก" },
+  "acc.cancelNo": { en: "Keep booking", th: "เก็บการจองไว้" },
+  "acc.createForBooking": {
+    en: "Create an account to manage this booking",
+    th: "สร้างบัญชีเพื่อจัดการการจองนี้",
+  },
+  "acc.saveProfile": { en: "Save profile", th: "บันทึกโปรไฟล์" },
+  "acc.saved": { en: "Saved", th: "บันทึกแล้ว" },
+  "acc.errExists": {
+    en: "An account with this email already exists.",
+    th: "มีบัญชีที่ใช้ อีเมลนี้แล้ว",
+  },
+  "acc.errInvalid": {
+    en: "Email or password is incorrect.",
+    th: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+  },
+  "acc.errMissing": {
+    en: "Please fill in all fields.",
+    th: "กรุณากรอกข้อมูลให้ครบ",
+  },
+  "acc.statusOk": { en: "Confirmed", th: "ยืนยันแล้ว" },
+  "acc.statusIn": { en: "Checked in", th: "เช็คอินแล้ว" },
+  "acc.statusOut": { en: "Checked out", th: "เช็คเอาท์แล้ว" },
+  "cur.chargedThb": {
+    en: "Charged in Thai Baht",
+    th: "ชำระเป็นเงินบาท",
+  },
+  "nav.megaAll": { en: "All rooms", th: "ห้องพักทั้งหมด" },
+  "nav.megaCompare": { en: "Compare rooms", th: "เปรียบเทียบห้องพัก" },
+  "nav.megaOffers": { en: "Special offers", th: "ข้อเสนอพิเศษ" },
+  "nav.roomsCount": { en: "4 rooms", th: "4 ห้อง" },
+  "off.bookOffer": {
+    en: "Book with this offer →",
+    th: "จองด้วยข้อเสนอนี้ →",
+  },
+  "hero.google": {
+    en: "5.0 · Google reviews",
+    th: "5.0 · รีวิว Google",
+  },
 };
 
 type I18nCtx = {
