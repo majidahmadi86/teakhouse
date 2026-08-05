@@ -48,7 +48,7 @@ export function RoomSelectCard({
           sizes="100vw"
         />
         {urgencyKey ? (
-          <span className="absolute left-3 top-3 rounded-full bg-orange px-2.5 py-1 text-[0.68rem] font-bold text-white">
+          <span className="absolute left-3 top-3 rounded-full bg-coral px-2.5 py-1 text-[0.68rem] font-bold text-white">
             {t(urgencyKey)}
           </span>
         ) : null}
@@ -71,7 +71,7 @@ export function RoomSelectCard({
           <div className="flex flex-wrap items-start gap-2">
             <h3 className="font-display text-lg font-semibold text-ink">{tr(room.name)}</h3>
             {urgencyKey ? (
-              <span className="hidden rounded-full bg-orange px-2.5 py-0.5 text-[0.68rem] font-bold text-white md:inline">
+              <span className="hidden rounded-full bg-coral px-2.5 py-0.5 text-[0.68rem] font-bold text-white md:inline">
                 {t(urgencyKey)}
               </span>
             ) : null}

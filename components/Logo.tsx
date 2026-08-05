@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { useI18n } from "@/lib/i18n";
 
 type LogoProps = {
   size?: number;
@@ -21,8 +20,8 @@ export function Logo({
   tagline,
   children,
 }: LogoProps) {
-  const { t } = useI18n();
-  const tag = children ?? tagline ?? t("brand.tag");
+  const tag =
+    children ?? tagline ?? "Riverside Boutique Hotel · Bangkok";
 
   return (
     <div className={cn("inline-flex items-center gap-3", className)}>
@@ -33,7 +32,7 @@ export function Logo({
         strokeWidth={4}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn("shrink-0", light ? "text-white" : "text-navy")}
+        className={cn("shrink-0", light ? "text-gold" : "text-navy")}
         width={size}
         height={size}
         aria-hidden
@@ -46,7 +45,7 @@ export function Logo({
       <div className="min-w-0">
         <div
           className={cn(
-            "font-display text-[18px] font-semibold leading-none tracking-[.04em]",
+            "font-display text-[20px] font-normal leading-none tracking-[.04em]",
             light ? "text-white" : "text-navy"
           )}
         >
@@ -55,8 +54,8 @@ export function Logo({
         {showTag ? (
           <div
             className={cn(
-              "logo-tagline mt-1 text-[9px] font-bold uppercase tracking-[.18em]",
-              light ? "text-amber" : "text-amber"
+              "logo-tagline mt-1 text-[9px] font-bold uppercase tracking-[.22em]",
+              light ? "text-gold" : "text-sub"
             )}
           >
             {tag}
