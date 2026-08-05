@@ -111,7 +111,7 @@ export default function HomePage() {
       </section>
 
       <section className="section-pad bg-white">
-        <div className="mx-auto grid max-w-[1180px] items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="mx-auto grid max-w-[1180px] items-center gap-8 md:gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <Reveal>
             <p className="eyebrow mb-3.5">{t("about.eyebrow")}</p>
             <h2>{t("about.h2")}</h2>
@@ -129,7 +129,7 @@ export default function HomePage() {
                 alt="Teak house interior"
                 width={1200}
                 height={1500}
-                className="aspect-[4/5] w-full object-cover transition duration-500 hover:scale-[1.06]"
+                className="aspect-[5/4] w-full object-cover transition duration-500 hover:scale-[1.06] md:aspect-[4/5]"
               />
             </div>
           </CurtainReveal>

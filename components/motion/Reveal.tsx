@@ -123,7 +123,8 @@ export function MotionCard({
   );
 }
 
-/** Clip-path curtain reveal for split-section images. */
+/** Clip-path curtain reveal for split-section images.
+ *  Starts nearly visible so mobile stacked layouts never show a tall blank gap. */
 export function CurtainReveal({
   children,
   className,
@@ -140,10 +141,10 @@ export function CurtainReveal({
   return (
     <motion.div
       className={className}
-      initial={{ clipPath: "inset(100% 0 0 0)" }}
+      initial={{ clipPath: "inset(18% 0 0 0)" }}
       whileInView={{ clipPath: "inset(0% 0 0 0)" }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.9, ease: [0.7, 0, 0.2, 1] }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.85, ease: [0.7, 0, 0.2, 1] }}
     >
       {children}
     </motion.div>
