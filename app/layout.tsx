@@ -1,42 +1,43 @@
 import type { Metadata } from "next";
 import {
-  Fraunces,
-  IBM_Plex_Sans_Thai,
-  Manrope,
-  Prompt,
+  Kanit,
+  Marcellus,
+  Plus_Jakarta_Sans,
+  Sarabun,
 } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const marcellus = Marcellus({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  variable: "--font-marcellus",
   display: "swap",
-  weight: ["600"],
+  weight: ["400"],
 });
 
-const manrope = Manrope({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  variable: "--font-jakarta",
   display: "swap",
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "700"],
 });
 
-const prompt = Prompt({
+const kanit = Kanit({
   subsets: ["thai", "latin"],
-  variable: "--font-prompt",
+  variable: "--font-kanit",
   display: "swap",
   weight: ["500", "600"],
   preload: false,
 });
 
-const ibmThai = IBM_Plex_Sans_Thai({
+const sarabun = Sarabun({
   subsets: ["thai", "latin"],
-  variable: "--font-ibm-thai",
+  variable: "--font-sarabun",
   display: "swap",
   weight: ["400", "600"],
   preload: false,
 });
+
 export const metadata: Metadata = {
   title: "The Teak House",
   description:
@@ -59,7 +60,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${manrope.variable} ${prompt.variable} ${ibmThai.variable}`}
+      className={`${marcellus.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
