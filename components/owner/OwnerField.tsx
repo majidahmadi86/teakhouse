@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/ListboxField";
 import { cn } from "@/lib/utils";
 
-const fieldClass =
-  "[&_button]:min-h-[44px] [&_button]:border-white/15 [&_button]:bg-white/8 [&_button]:text-white [&_button]:hover:border-own-blue/40 [&_span.text-strike]:text-white/40 [&_.text-ink]:text-white [&_label]:text-white/80 [&_svg]:text-gold/70";
+/** Dark-theme shell for owner selects. Panel stays white via portal. */
+const fieldClass = "own-select w-full";
 
 type OwnerListboxProps = {
   value: string;
@@ -32,6 +32,7 @@ export function OwnerListbox({
         onChange={onChange}
         options={options}
         label={label}
+        labelClassName="text-white/80"
       />
     </div>
   );
