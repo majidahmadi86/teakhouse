@@ -33,7 +33,7 @@ export function Logo({
         strokeWidth={4}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="shrink-0 text-gold"
+        className={cn("shrink-0", light ? "text-white" : "text-navy")}
         width={size}
         height={size}
         aria-hidden
@@ -46,14 +46,19 @@ export function Logo({
       <div className="min-w-0">
         <div
           className={cn(
-            "font-display text-[1.05rem] font-semibold leading-none tracking-[.04em]",
-            light ? "text-white" : "text-ink"
+            "font-display text-[18px] font-semibold leading-none tracking-[.04em]",
+            light ? "text-white" : "text-navy"
           )}
         >
           THE TEAK HOUSE
         </div>
         {showTag ? (
-          <div className="mt-1 text-[9px] font-bold uppercase tracking-[.18em] text-gold">
+          <div
+            className={cn(
+              "logo-tagline mt-1 text-[9px] font-bold uppercase tracking-[.18em]",
+              light ? "text-amber" : "text-amber"
+            )}
+          >
             {tag}
           </div>
         ) : null}

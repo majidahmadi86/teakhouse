@@ -14,51 +14,70 @@ const NAV = [
   { href: "/location", key: "nav.location" },
 ] as const;
 
-function LangToggle({ light }: { light?: boolean }) {
+function LangPair() {
   const { lang, setLang } = useI18n();
 
   return (
-    <div
-      className={cn(
-        "flex min-h-11 overflow-hidden rounded-full border",
-        light ? "border-white/50 text-white" : "border-ink/20 text-ink"
-      )}
-    >
-      {(["en", "th"] as Lang[]).map((l) => (
-        <button
-          key={l}
-          type="button"
-          onClick={() => setLang(l)}
-          className={cn(
-            "min-h-11 min-w-11 px-3 text-xs font-bold transition",
-            lang === l ? "bg-gold text-white" : "bg-transparent"
-          )}
-        >
-          {l === "en" ? "EN" : "ไทย"}
-        </button>
+    <div className="flex items-center gap-1.5">
+      {(["en", "th"] as Lang[]).map((l, i) => (
+        <span key={l} className="inline-flex items-center gap-1.5">
+          {i > 0 ? (
+            <span className="text-[14px] font-bold text-line" aria-hidden>
+              |
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => setLang(l)}
+            className={cn(
+              "text-[14px] font-bold transition",
+              lang === l
+                ? "text-blue underline decoration-2 underline-offset-4"
+                : "text-sub hover:text-ink"
+            )}
+          >
+            {l === "en" ? "EN" : "ไทย"}
+          </button>
+        </span>
       ))}
     </div>
+  );
+}
+
+function NavLink({
+  href,
+  label,
+  active,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "text-[15px] font-semibold transition",
+        active
+          ? "text-blue underline decoration-2 underline-offset-8"
+          : "text-ink hover:text-blue hover:underline hover:decoration-2 hover:underline-offset-8"
+      )}
+    >
+      {label}
+    </Link>
   );
 }
 
 export function Header() {
   const { t } = useI18n();
   const pathname = usePathname();
-  const [solid, setSolid] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const onHero =
-    pathname === "/" ||
-    pathname.startsWith("/rooms") ||
-    pathname.startsWith("/experience") ||
-    pathname.startsWith("/location");
-
-  useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -73,67 +92,46 @@ export function Header() {
     };
   }, [drawerOpen]);
 
-  const lightNav = onHero && !solid;
-
   return (
     <>
-      <header
-        className={cn(
-          "fixed inset-x-0 top-0 z-[60] transition-all duration-300",
-          solid
-            ? "bg-white py-3 text-ink shadow-nav"
-            : "py-[18px]",
-          lightNav && "text-white"
-        )}
-      >
-        {lightNav ? (
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[rgba(14,38,32,.55)] to-transparent"
-          />
-        ) : null}
-        <div className="relative mx-auto flex max-w-[1180px] items-center justify-between gap-5 px-6">
+      <header className="sticky top-0 z-50 h-14 border-b border-line bg-white md:h-16">
+        <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between gap-4 px-5 md:gap-5 md:px-6">
           <Link href="/" className="shrink-0">
-            <Logo light={lightNav} showTag={false} className="md:hidden" />
+            <Logo
+              showTag={false}
+              className="md:hidden [&_.logo-tagline]:hidden"
+            />
             <span className="hidden md:inline-flex">
-              <Logo light={lightNav} showTag />
+              <Logo
+                showTag
+                className="[&_.logo-tagline]:hidden min-[1100px]:[&_.logo-tagline]:block"
+              />
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 text-[0.92rem] font-semibold md:flex">
+          <nav className="hidden items-center gap-8 md:flex">
             {NAV.map(({ href, key }) => (
-              <Link
+              <NavLink
                 key={href}
                 href={href}
-                className={cn(
-                  "opacity-85 transition hover:opacity-100",
-                  pathname === href || pathname.startsWith(href + "/")
-                    ? "text-gold opacity-100"
-                    : lightNav
-                      ? "text-white"
-                      : "text-ink"
-                )}
-              >
-                {t(key)}
-              </Link>
+                label={t(key)}
+                active={isActive(href)}
+              />
             ))}
           </nav>
 
-          <div className="flex items-center gap-3.5">
-            <LangToggle light={lightNav} />
-            <Link
-              href="/book"
-              className="hidden min-h-11 items-center rounded-full bg-brand px-7 text-[0.92rem] font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-2 sm:inline-flex"
-            >
+          <div className="flex items-center gap-4 md:gap-5">
+            <LangPair />
+            <Link href="/book" className="btn-primary hidden sm:inline-flex">
               {t("nav.book")}
             </Link>
             <button
               type="button"
-              className="flex min-h-11 min-w-11 items-center justify-center md:hidden"
+              className="flex h-11 w-11 items-center justify-center md:hidden"
               aria-label={t("mobile.menu")}
               onClick={() => setDrawerOpen(true)}
             >
-              <Menu className="h-[26px] w-[26px]" />
+              <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
             </button>
           </div>
         </div>
@@ -143,54 +141,55 @@ export function Header() {
         <button
           type="button"
           aria-label={t("mobile.close")}
-          className="fixed inset-0 z-[70] bg-ink/40 md:hidden"
+          className="fixed inset-0 z-[55] bg-ink/40 md:hidden"
           onClick={() => setDrawerOpen(false)}
         />
       ) : null}
 
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-[80] flex w-[min(100%,360px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 md:hidden",
+          "fixed inset-y-0 right-0 z-drawer flex w-[min(100%,360px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 md:hidden",
           drawerOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between border-b border-line px-5 py-4">
+        <div className="flex h-14 items-center justify-between border-b border-line px-5">
           <Logo showTag={false} />
           <button
             type="button"
-            className="flex min-h-11 min-w-11 items-center justify-center"
+            className="flex h-11 w-11 items-center justify-center"
             aria-label={t("mobile.close")}
             onClick={() => setDrawerOpen(false)}
           >
-            <X className="h-[30px] w-[30px]" />
+            <X className="h-6 w-6 text-ink" strokeWidth={2} />
           </button>
         </div>
+
         <nav className="flex flex-1 flex-col px-2 pt-2">
-          {[...NAV, { href: "/book", key: "nav.book" as const }].map(
-            ({ href, key }, i) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setDrawerOpen(false)}
-                style={{ transitionDelay: `${i * 50}ms` }}
-                className={cn(
-                  "border-b border-line px-4 py-5 font-display text-[1.55rem] transition",
-                  drawerOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-                )}
-              >
-                {t(key)}
-              </Link>
-            )
-          )}
+          {NAV.map(({ href, key }, i) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setDrawerOpen(false)}
+              style={{ transitionDelay: drawerOpen ? `${i * 50}ms` : "0ms" }}
+              className={cn(
+                "border-b border-line px-4 py-5 font-display text-[1.55rem] transition",
+                isActive(href) ? "text-blue" : "text-ink",
+                drawerOpen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+              )}
+            >
+              {t(key)}
+            </Link>
+          ))}
         </nav>
-        <div className="border-t border-line px-6 py-6 text-sm">
-          <p className="font-semibold text-gold">{t("brand.tag")}</p>
-          <a href="https://line.me/" className="mt-3 block font-bold">
-            LINE @teakhouse
-          </a>
-          <a href="tel:+6620000000" className="mt-1 block font-bold">
-            +66 2 000 0000
-          </a>
+
+        <div className="border-t border-line p-5">
+          <Link
+            href="/book"
+            onClick={() => setDrawerOpen(false)}
+            className="btn-primary w-full"
+          >
+            {t("nav.book")}
+          </Link>
         </div>
       </aside>
     </>
