@@ -124,9 +124,30 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
   return (
     <>
-      <section className="px-6 pb-8 pt-28">
+      <section className="px-6 pb-8 pt-[90px] md:pt-[120px]">
         <div className="mx-auto max-w-[1180px]">
-          <div className="grid gap-3 lg:grid-cols-[1fr_120px]">
+          <nav className="mb-4 text-[13px] font-semibold text-sub">
+            <Link href="/rooms" className="text-blue hover:underline">
+              {t("rooms.crumb")}
+            </Link>
+            <span className="mx-2 text-line">/</span>
+            <span className="text-ink">{tr(room.name)}</span>
+          </nav>
+          <h1 className="font-display text-[clamp(2rem,4vw,3.2rem)] text-ink">
+            {tr(room.name)}
+          </h1>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[room.meta, room.floor].map((chip) => (
+              <span
+                key={chip.en}
+                className="rounded-full border border-line bg-white px-3 py-1 text-xs font-bold text-ink/80"
+              >
+                {tr(chip)}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_120px]">
             <button
               type="button"
               className="relative aspect-[16/10] overflow-hidden rounded-[14px]"
@@ -159,18 +180,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
             <div>
-              <h1 className="text-4xl">{tr(room.name)}</h1>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {[room.meta, room.floor].map((chip) => (
-                  <span
-                    key={chip.en}
-                    className="rounded-full bg-surface px-3 py-1 text-xs font-bold text-ink/80"
-                  >
-                    {tr(chip)}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-5 flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <PriceChip rate={room.rate} ota={room.ota} showSave />
               </div>
               <p className="mt-6 max-w-prose text-[1.05rem] leading-relaxed text-ink/85">
@@ -195,7 +205,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                             : "sec.services";
                     return (
                       <div key={group}>
-                        <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-amber">
+                        <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-blue">
                           {t(sectionKey)}
                         </h3>
                         <ul className="grid gap-3 sm:grid-cols-2">
@@ -228,7 +238,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                   {CONDITIONS.map((item) => (
                     <li
                       key={item.en}
-                      className="flex gap-2 text-sm font-semibold text-ink/85 before:text-amber before:content-['·']"
+                      className="flex gap-2 text-sm font-semibold text-ink/85 before:text-blue before:content-['·']"
                     >
                       {lang === "th" ? item.th : item.en}
                     </li>
