@@ -1,13 +1,22 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Calendar, MessageCircle, User } from "lucide-react";
-import { AvailBar } from "@/components/AvailBar";
 import { RoomCard } from "@/components/RoomCard";
 import { SafeImage } from "@/components/SafeImage";
 import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
 
+const AvailBar = dynamic(
+  () => import("@/components/AvailBar").then((m) => m.AvailBar),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[88px] animate-pulse rounded-2xl bg-white/90 shadow-panel" />
+    ),
+  }
+);
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1600&q=70";
 
