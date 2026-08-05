@@ -6,6 +6,7 @@ import { DemoModal } from "@/components/DemoModal";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MobileBookBar } from "@/components/MobileBookBar";
+import { PageFade } from "@/components/motion/PageFade";
 
 const Concierge = dynamic(
   () => import("@/components/Concierge").then((m) => m.Concierge),
@@ -28,7 +29,7 @@ export default function GuestLayout({
     <DemoModal auto={autoDemo}>
       <Header />
       <main className={isBook || isRoomDetail ? "pb-8" : "pb-24 md:pb-8"}>
-        {children}
+        <PageFade>{children}</PageFade>
       </main>
       <Footer />
       {showMobileBookBar ? <MobileBookBar /> : null}

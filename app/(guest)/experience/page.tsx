@@ -1,9 +1,13 @@
 ﻿"use client";
 
 import Link from "next/link";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { ArrowRight } from "lucide-react";
 import { ConciergeAskButton } from "@/components/Concierge";
 import { PageHero } from "@/components/PageHero";
 import { SafeImage } from "@/components/SafeImage";
+import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +37,7 @@ const SECTIONS = [
     topic: "Thai massage upstairs",
   },
   {
-    image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1200&q=80",
     alt: "Evening on the Chao Phraya",
     title: "xp.4h",
     p1: "xp.4p",
@@ -44,20 +48,58 @@ const SECTIONS = [
 
 const NEIGHBORHOOD = ["xp.n1", "xp.n2", "xp.n3", "xp.n4"] as const;
 
+function ParallaxImage({
+  src,
+  alt,
+  fromLeft,
+}: {
+  src: string;
+  alt: string;
+  fromLeft: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduce ? ["0%", "0%"] : ["-6%", "6%"]
+  );
+
+  return (
+    <motion.div
+      ref={ref}
+      className="relative overflow-hidden rounded-[14px] shadow-panel"
+      initial={reduce ? false : { opacity: 0, x: fromLeft ? -48 : 48 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.div style={{ y }} className="relative aspect-[4/3] w-full">
+        <SafeImage src={src} alt={alt} fill className="object-cover scale-110" />
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function ExperiencePage() {
   const { t } = useI18n();
+  const reduce = useReducedMotion();
 
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1900&q=85"
         alt="Long-tail boat on the river"
         eyebrow={t("nav.experience")}
         title={t("xp.h1")}
         lead={t("xp.lead")}
       />
 
-      <section className="px-6 py-24">
+      <section className="section-pad bg-white">
         <div className="mx-auto max-w-[1180px] space-y-24">
           {SECTIONS.map((section, index) => {
             const reversed = index % 2 === 1;
@@ -69,16 +111,17 @@ export default function ExperiencePage() {
                   reversed && "lg:[&>*:first-child]:order-2"
                 )}
               >
-                <div className="relative overflow-hidden rounded-[14px] shadow-panel">
-                  <SafeImage
-                    src={section.image}
-                    alt={section.alt}
-                    width={1200}
-                    height={900}
-                    className="aspect-[4/3] w-full object-cover"
-                  />
-                </div>
-                <div>
+                <ParallaxImage
+                  src={section.image}
+                  alt={section.alt}
+                  fromLeft={!reversed}
+                />
+                <motion.div
+                  initial={reduce ? false : { opacity: 0, x: reversed ? -40 : 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <h2 className="text-3xl">{t(section.title)}</h2>
                   <p className="mt-4 text-[1.05rem] leading-relaxed text-ink/85">
                     {t(section.p1)}
@@ -88,46 +131,45 @@ export default function ExperiencePage() {
                   </p>
                   <ConciergeAskButton
                     topic={section.topic}
-                    className="mt-8 inline-flex rounded-full border border-blue/30 px-6 py-3 text-sm font-bold text-blue transition hover:bg-deal-bg"
+                    className="group mt-8 inline-flex items-center gap-2 rounded-full border border-blue px-6 py-3 text-sm font-bold text-blue transition hover:bg-sky"
                   >
                     {t("xp.ask")}
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                   </ConciergeAskButton>
-                </div>
+                </motion.div>
               </div>
             );
           })}
         </div>
       </section>
 
-      <section className="bg-surface px-6 py-16">
+      <section className="section-pad bg-cloud">
         <div className="mx-auto max-w-[1180px]">
-          <h2 className="mb-8">{t("xp.nbh")}</h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Reveal>
+            <h2 className="mb-8">{t("xp.nbh")}</h2>
+          </Reveal>
+          <RevealStagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {NEIGHBORHOOD.map((key) => (
-              <article
-                key={key}
-                className="rounded-[14px] bg-white p-6 shadow-[0_8px_30px_rgba(23,33,29,0.07)]"
-              >
-                <h3 className="font-display text-xl">{t(key)}</h3>
-              </article>
+              <RevealItem key={key}>
+                <article className="rounded-[14px] bg-white p-6 shadow-card">
+                  <h3 className="font-display text-xl">{t(key)}</h3>
+                </article>
+              </RevealItem>
             ))}
-          </div>
+          </RevealStagger>
         </div>
       </section>
 
       <section className="px-6 py-16 text-center">
-        <div className="mx-auto max-w-[1180px]">
+        <Reveal>
           <h2>{t("cta.h2")}</h2>
           <p className="mx-auto mt-4 max-w-prose text-[1.08rem] text-ink/80">
             {t("cta.p")}
           </p>
-          <Link
-            href="/book"
-            className="mt-8 inline-flex rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white"
-          >
+          <Link href="/book" className="btn-primary mt-8 inline-flex">
             {t("xp.cta")}
           </Link>
-        </div>
+        </Reveal>
       </section>
     </>
   );

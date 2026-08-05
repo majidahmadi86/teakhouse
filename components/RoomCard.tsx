@@ -29,7 +29,7 @@ export function RoomCard({
   return (
     <article
       className={cn(
-        "tkh-card flex flex-col overflow-hidden",
+        "group tkh-card flex flex-col overflow-hidden",
         className
       )}
     >
@@ -38,7 +38,7 @@ export function RoomCard({
           src={room.photos[0]}
           alt={tr(room.name)}
           fill
-          className="object-cover transition duration-700 hover:scale-105"
+          className="object-cover transition duration-500 group-hover:scale-[1.06]"
           sizes="(max-width:768px) 100vw, 33vw"
         />
         <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-wrap items-end gap-2">
