@@ -14,7 +14,7 @@ import { type CellState, useOwner } from "@/lib/ownerStore";
 import { cn, isoDate } from "@/lib/utils";
 
 function cellColor(state: CellState): string {
-  if (state === "booked") return "bg-gold cursor-default";
+  if (state === "booked") return "bg-own-blue cursor-default";
   if (state === "blocked") return "bg-white/15 hover:bg-white/25";
   return "bg-deal/40 hover:bg-deal/60";
 }
@@ -89,7 +89,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={prevMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-gold/40"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-own-blue/40"
             aria-label="Previous month"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -100,7 +100,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={nextMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-gold/40"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-own-blue/40"
             aria-label="Next month"
           >
             <ChevronRight className="h-5 w-5" />
@@ -169,7 +169,7 @@ export default function OwnerCalendarPage() {
 
         <div className="mt-6 flex flex-wrap gap-5 text-sm font-bold text-white/80">
           <LegendDot color="bg-deal/40" label={t("ow.lg1")} />
-          <LegendDot color="bg-gold" label={t("ow.lg2")} />
+          <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
           <LegendDot color="bg-white/15" label={t("ow.lg3")} />
         </div>
         <p className="mt-3 text-xs font-medium text-white/45">

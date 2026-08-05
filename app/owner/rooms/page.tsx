@@ -159,7 +159,7 @@ export default function OwnerRoomsPage() {
         <button
           type="button"
           onClick={openAdd}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gold/90"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
         >
           <Plus className="h-5 w-5" aria-hidden />
           {t("ow.addRoom")}
@@ -602,7 +602,7 @@ export default function OwnerRoomsPage() {
                   <button
                     type="button"
                     onClick={saveRoom}
-                    className="min-h-[44px] flex-1 rounded-xl bg-gold px-4 py-3 text-sm font-extrabold text-white"
+                    className="min-h-[44px] flex-1 rounded-xl bg-own-blue px-4 py-3 text-sm font-extrabold text-white"
                   >
                     {t("ow.save")}
                   </button>

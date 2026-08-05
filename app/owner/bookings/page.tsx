@@ -28,7 +28,7 @@ function statusLabel(t: (k: string) => string, status: BookingStatus): string {
 }
 
 function statusClass(status: BookingStatus): string {
-  if (status === "in") return "bg-gold/20 text-gold";
+  if (status === "in") return "bg-own-blue/20 text-own-blue";
   if (status === "ok") return "bg-deal/20 text-deal";
   if (status === "out") return "bg-white/10 text-white/60";
   return "bg-red-500/20 text-red-300";
@@ -325,7 +325,7 @@ export default function OwnerBookingsPage() {
         <button
           type="button"
           onClick={openNew}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gold/90"
+          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
         >
           <Plus className="h-5 w-5" aria-hidden />+ {t("ow.new")}
         </button>
@@ -647,7 +647,7 @@ export default function OwnerBookingsPage() {
                   <button
                     type="button"
                     onClick={saveBooking}
-                    className="min-h-[44px] flex-1 rounded-xl bg-gold px-4 py-3 text-sm font-extrabold text-white"
+                    className="min-h-[44px] flex-1 rounded-xl bg-own-blue px-4 py-3 text-sm font-extrabold text-white"
                   >
                     {t("ow.save")}
                   </button>
@@ -826,7 +826,7 @@ export default function OwnerBookingsPage() {
                         <button
                           type="button"
                           onClick={() => setStatus("out")}
-                          className="min-h-[44px] w-full rounded-xl bg-gold px-4 py-3 text-sm font-extrabold text-white"
+                          className="min-h-[44px] w-full rounded-xl bg-own-blue px-4 py-3 text-sm font-extrabold text-white"
                         >
                           {t("ow.checkout")}
                         </button>

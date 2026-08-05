@@ -41,7 +41,7 @@ function useCountUp(target: number, duration = 1200) {
 }
 
 function cellColor(state: CellState): string {
-  if (state === "booked") return "bg-gold";
+  if (state === "booked") return "bg-own-blue";
   if (state === "blocked") return "bg-white/15";
   return "bg-deal/40";
 }
@@ -200,7 +200,7 @@ export default function OwnerDashboardPage() {
 
         <div className="mt-6 flex flex-wrap gap-5 text-sm font-bold text-white/80">
           <LegendDot color="bg-deal/40" label={t("ow.lg1")} />
-          <LegendDot color="bg-gold" label={t("ow.lg2")} />
+          <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
           <LegendDot color="bg-white/15" label={t("ow.lg3")} />
         </div>
       </section>
@@ -224,14 +224,14 @@ function StatCard({
       className={cn(
         "rounded-2xl border p-5 md:p-6",
         gold
-          ? "border-gold/30 bg-gold text-white"
-          : "border-white/10 bg-white/[0.05]"
+          ? "border-gold/40 bg-gold/15 text-white"
+          : "border-white/12 bg-white/[0.05]"
       )}
     >
       <b
         className={cn(
           "mb-3 block text-[0.68rem] font-extrabold uppercase tracking-[0.16em]",
-          gold ? "text-white/85" : "text-gold"
+          gold ? "text-gold" : "text-own-blue"
         )}
       >
         {label}
@@ -241,7 +241,7 @@ function StatCard({
         <p
           className={cn(
             "mt-2 text-xs font-semibold",
-            gold ? "text-white/75" : "text-white/50"
+            gold ? "text-gold/80" : "text-white/50"
           )}
         >
           {sub}

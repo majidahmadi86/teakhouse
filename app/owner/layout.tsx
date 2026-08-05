@@ -31,7 +31,7 @@ const NAV: {
 function Spinner() {
   return (
     <div className="own-theme flex min-h-screen items-center justify-center bg-brand-2">
-      <Loader2 className="h-8 w-8 animate-spin text-gold" aria-hidden />
+      <Loader2 className="h-8 w-8 animate-spin text-own-blue" aria-hidden />
     </div>
   );
 }
@@ -55,7 +55,7 @@ function LangToggle({ compact }: { compact?: boolean }) {
             "rounded-lg text-sm font-extrabold uppercase transition",
             compact ? "min-h-[36px] min-w-[36px] px-2.5" : "min-h-[44px] min-w-[44px] px-3",
             lang === l
-              ? "bg-gold text-white"
+              ? "bg-own-blue text-white"
               : "text-white/60 hover:text-white"
           )}
         >
@@ -89,7 +89,7 @@ function NavLink({
         "flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition",
         mobile ? "shrink-0 whitespace-nowrap" : "w-full",
         active
-          ? "bg-gold/20 text-gold"
+          ? "bg-own-blue/20 text-own-blue"
           : "text-white/70 hover:bg-white/5 hover:text-white"
       )}
     >
@@ -115,7 +115,7 @@ export default function OwnerLayout({
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md lg:hidden">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Logo className="h-6 w-auto shrink-0 invert brightness-0" />
+          <Logo light showTag={false} className="h-6 w-auto shrink-0" />
           <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
             {t("ow.eyebrow")}
           </span>
@@ -127,7 +127,7 @@ export default function OwnerLayout({
             onClick={() => {
               if (window.confirm(t("ow.sure"))) resetDemo();
             }}
-            className="min-h-[36px] flex-1 rounded-xl border border-white/15 px-3 text-xs font-bold text-white/70 transition hover:border-gold/40 hover:text-white"
+            className="min-h-[36px] flex-1 rounded-xl border border-white/15 px-3 text-xs font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
           >
             {t("ow.reset")}
           </button>
@@ -161,7 +161,7 @@ export default function OwnerLayout({
         {/* Desktop sidebar */}
         <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-brand lg:fixed lg:inset-y-0 lg:flex lg:w-72">
           <div className="border-b border-white/10 px-6 py-6">
-            <Logo className="mb-4 h-7 w-auto invert brightness-0" />
+            <Logo light showTag={false} className="mb-4 h-7 w-auto" />
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">
               {t("ow.eyebrow")}
             </p>
@@ -186,7 +186,7 @@ export default function OwnerLayout({
               onClick={() => {
                 if (window.confirm(t("ow.sure"))) resetDemo();
               }}
-              className="min-h-[44px] w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70 transition hover:border-gold/40 hover:text-white"
+              className="min-h-[44px] w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
             >
               {t("ow.reset")}
             </button>
