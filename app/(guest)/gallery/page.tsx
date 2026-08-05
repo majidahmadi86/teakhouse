@@ -14,7 +14,7 @@ const IMAGES: { src: string; cat: Exclude<Cat, "all">; alt: string }[] = [
   { src: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80", cat: "rooms", alt: "Guest room" },
   { src: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1200&q=80", cat: "rooms", alt: "Hotel bed" },
   { src: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=80", cat: "rooms", alt: "Suite detail" },
-  { src: "https://images.unsplash.com/photo-1618220178498-32a9c0df6513?w=1200&q=80", cat: "rooms", alt: "Teak suite" },
+  { src: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=80", cat: "rooms", alt: "Teak suite" },
   { src: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1200&q=80", cat: "rooms", alt: "Garden room" },
   { src: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80", cat: "rooms", alt: "Twin room" },
   { src: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1200&q=80", cat: "pool", alt: "Courtyard pool" },

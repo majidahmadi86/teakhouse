@@ -50,17 +50,44 @@ export default function HomePage() {
       >
         <div className="absolute inset-0">
           <HeroSlideshow />
-          <div className="hero-scrim absolute inset-0" />
+          {/* Mobile cinematic atmosphere */}
+          <div className="hero-scrim-mobile absolute inset-0 md:hidden" />
+          <div className="hero-grade-mobile pointer-events-none absolute inset-0 md:hidden" />
+          {/* Desktop scrim */}
+          <div className="hero-scrim absolute inset-0 hidden md:block" />
         </div>
 
-        {/* Mobile: bottom-anchored content */}
-        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8 pt-24 md:hidden">
-          <p className="eyebrow mb-2 text-gold hero-text-shadow">
+        {/* Mobile: bottom stage — brand, one line, CTA */}
+        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-24 md:hidden">
+          <motion.p
+            className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+          >
+            {t("brand.name")}
+          </motion.p>
+          <motion.p
+            className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/70 hero-text-shadow"
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+          >
             {t("hero.eyebrow")}
-          </p>
-          <HeroHeadline />
+          </motion.p>
+          <div className="mt-3">
+            <HeroHeadline />
+          </div>
+          <motion.p
+            className="mt-3 max-w-[28ch] text-[15px] leading-snug text-white/88 hero-text-shadow"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: subDelay, duration: 0.45 }}
+          >
+            {t("hero.leadShort")}
+          </motion.p>
           <div className="mt-4">
-            <HeroTrustRow className="mt-0 justify-start" />
+            <HeroTrustRow compact className="mt-0 justify-start" />
           </div>
           <motion.div
             className="relative z-20 mt-5"

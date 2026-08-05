@@ -15,12 +15,17 @@ export const DICT: Record<string, DictEntry> = {
   "nav.contact": { en: "Contact", th: "ติดต่อ" },
   "nav.book": { en: "Book direct", th: "จองตรง" },
   "brand.tag": { en: "Riverside Boutique Hotel · Bangkok", th: "โรงแรมบูทีคริมแม่น้ำ · กรุงเทพฯ" },
+  "brand.name": { en: "The Teak House", th: "The Teak House" },
 
   "hero.eyebrow": { en: "Charoenkrung · Chao Phraya riverside", th: "เจริญกรุง · ริมแม่น้ำเจ้าพระยา" },
   "hero.h1": { en: "The river keeps its own time.", th: "ริมน้ำ ที่เวลาเดินช้าลง" },
   "hero.lead": {
     en: "Twelve teak rooms above the Chao Phraya. Book direct with us and always pay less than on any booking site.",
     th: "ห้องพักไม้สัก 12 ห้อง ริมแม่น้ำเจ้าพระยา จองตรงกับเรา ราคาถูกกว่าเว็บจองทุกที่ เสมอ",
+  },
+  "hero.leadShort": {
+    en: "Twelve teak rooms above the Chao Phraya.",
+    th: "ห้องพักไม้สัก 12 ห้อง ริมแม่น้ำเจ้าพระยา",
   },
   "avail.in": { en: "Check-in", th: "เช็คอิน" },
   "avail.out": { en: "Check-out", th: "เช็คเอาท์" },

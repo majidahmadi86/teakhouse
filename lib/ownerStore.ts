@@ -59,10 +59,14 @@ export type OwnerData = {
   bookings: Booking[];
   /** key: `${roomSlug}:${yyyy-mm-dd}` -> blocked only (booked derived) */
   blocks: Record<string, true>;
+  /** Bump when seed room photos/content must refresh stored demos */
+  seedVersion?: number;
 };
 
 const STORAGE_KEY = "tkh-data";
 const AUTH_KEY = "tkh-owner";
+/** v8: Teak Suite photo IDs were 404; refresh seed photos into stored rooms */
+const SEED_VERSION = 8;
 
 function blockKey(roomSlug: string, dateIso: string): string {
   return `${roomSlug}:${dateIso}`;
@@ -73,7 +77,18 @@ function seedData(): OwnerData {
     rooms: structuredClone(SEED_ROOMS),
     bookings: structuredClone(SEED_BOOKINGS) as Booking[],
     blocks: {},
+    seedVersion: SEED_VERSION,
   };
+}
+
+function syncSeedPhotos(data: OwnerData): OwnerData {
+  if ((data.seedVersion ?? 0) >= SEED_VERSION) return data;
+  const rooms = data.rooms.map((room) => {
+    const seed = SEED_ROOMS.find((s) => s.id === room.id);
+    if (!seed) return room;
+    return { ...room, photos: [...seed.photos] };
+  });
+  return { ...data, rooms, seedVersion: SEED_VERSION };
 }
 
 function loadStored(): OwnerData | null {
@@ -82,7 +97,7 @@ function loadStored(): OwnerData | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as OwnerData;
     if (!parsed.rooms || !parsed.bookings || !parsed.blocks) return null;
-    return parsed;
+    return syncSeedPhotos(parsed);
   } catch {
     return null;
   }

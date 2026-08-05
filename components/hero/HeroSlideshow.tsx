@@ -10,16 +10,20 @@ const SLIDES = [
     src: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=2600&q=88&auto=format&fit=crop",
     alt: "Resort pool at dusk",
     zoom: "in" as const,
+    // Mobile: lift horizon; desktop: classic center
+    position: "object-[center_32%] md:object-[center_42%]",
   },
   {
-    src: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=2600&q=88&auto=format&fit=crop",
-    alt: "Warm luxury bedroom",
+    src: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=2600&q=88&auto=format&fit=crop",
+    alt: "Sharp luxury bedroom",
     zoom: "out" as const,
+    position: "object-[center_40%] md:object-[center_45%]",
   },
   {
-    src: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=2600&q=88&auto=format&fit=crop",
-    alt: "Bright morning boats",
+    src: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=2600&q=88&auto=format&fit=crop",
+    alt: "River at dusk",
     zoom: "in" as const,
+    position: "object-[center_38%] md:object-[center_48%]",
   },
 ];
 
@@ -53,7 +57,7 @@ export function HeroSlideshow() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[center_42%] md:object-[center_45%]"
+          className={cn("object-cover", SLIDES[0].position)}
         />
       </div>
     );
@@ -77,8 +81,8 @@ export function HeroSlideshow() {
             >
               <motion.div
                 className="absolute inset-0"
-                initial={{ scale: zoomIn ? 1.06 : 1 }}
-                animate={{ scale: zoomIn ? 1 : 1.06 }}
+                initial={{ scale: zoomIn ? 1.08 : 1 }}
+                animate={{ scale: zoomIn ? 1 : 1.08 }}
                 transition={{ duration: HOLD_MS / 1000, ease: "linear" }}
               >
                 <SafeImage
@@ -87,9 +91,7 @@ export function HeroSlideshow() {
                   fill
                   priority={i === 0}
                   sizes="100vw"
-                  className={cn(
-                    "object-cover object-[center_42%] md:object-[center_45%]"
-                  )}
+                  className={cn("object-cover", slide.position)}
                 />
               </motion.div>
             </motion.div>

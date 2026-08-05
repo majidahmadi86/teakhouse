@@ -5,7 +5,14 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-export function HeroTrustRow({ className }: { className?: string }) {
+export function HeroTrustRow({
+  className,
+  compact,
+}: {
+  className?: string;
+  /** Mobile: rating pill only, no secondary trust chain */
+  compact?: boolean;
+}) {
   const { t } = useI18n();
   const reduce = useReducedMotion();
   const [rating, setRating] = useState(reduce ? 5 : 0);
@@ -39,16 +46,20 @@ export function HeroTrustRow({ className }: { className?: string }) {
       animate={{ opacity: 1 }}
       transition={{ delay: 1.05, duration: 0.4 }}
     >
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/12 px-2.5 py-1 backdrop-blur-md">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/14 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
         <span className="tracking-[1px] text-gold" aria-hidden>
           ★★★★★
         </span>
         <span>{t("hero.google", { n: display })}</span>
       </span>
-      <span aria-hidden>·</span>
-      <span>{t("trust.1")}</span>
-      <span aria-hidden>·</span>
-      <span>{t("trust.freeShort")}</span>
+      {!compact ? (
+        <>
+          <span aria-hidden>·</span>
+          <span>{t("trust.1")}</span>
+          <span aria-hidden>·</span>
+          <span>{t("trust.freeShort")}</span>
+        </>
+      ) : null}
     </motion.p>
   );
 }

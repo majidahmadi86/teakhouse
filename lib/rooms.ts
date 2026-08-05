@@ -115,12 +115,12 @@ export const SEED_ROOMS: Room[] = [
       th: "ห้องมาสเตอร์ดั้งเดิมของบ้าน เพดานสูง อ่างอาบน้ำลึก และกลิ่นไม้สักเก่าหลังฝนตก",
     },
     photos: [
-      unsplash("photo-1618220178498-32a9c0df6513"),
-      unsplash("photo-1584624373636-ae1712614446"),
-      unsplash("photo-1620626011766-99694d1a8e2e"),
-      unsplash("photo-1596394516093-67854e782444"),
-      unsplash("photo-1560185007-cde436f6a4d2"),
-      unsplash("photo-1616486338812-68d4e645c0d8"),
+      unsplash("photo-1611892440504-42a792e24d32"),
+      unsplash("photo-1582719508461-905c673771fd"),
+      unsplash("photo-1540518614846-7eded433c457"),
+      unsplash("photo-1600566752355-35792bedcfea"),
+      unsplash("photo-1552321554-5fefe8c9ef14"),
+      unsplash("photo-1584622650111-993a426fbf0a"),
     ],
     amenities: [
       "aircon",

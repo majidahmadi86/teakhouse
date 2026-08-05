@@ -301,8 +301,41 @@ input.auth-input:-webkit-autofill {
     );
   }
 
+  /* Mobile-only cinematic stack: top vignette + deep bottom stage */
+  .hero-scrim-mobile {
+    background:
+      radial-gradient(
+        120% 55% at 50% 0%,
+        rgba(6, 24, 48, 0.55) 0%,
+        rgba(6, 24, 48, 0) 55%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(8, 32, 64, 0.12) 18%,
+        rgba(8, 32, 64, 0.28) 42%,
+        rgba(8, 28, 56, 0.72) 68%,
+        rgba(6, 22, 48, 0.94) 100%
+      );
+  }
+
+  .hero-grade-mobile {
+    background: linear-gradient(
+      160deg,
+      rgba(232, 200, 122, 0.1) 0%,
+      transparent 42%,
+      rgba(255, 107, 74, 0.08) 100%
+    );
+    mix-blend-mode: soft-light;
+  }
+
   .hero-text-shadow {
     text-shadow: 0 2px 28px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-brand-glow {
+    text-shadow:
+      0 0 40px rgba(232, 200, 122, 0.35),
+      0 2px 24px rgba(0, 0, 0, 0.45);
   }
 
   /* z-index: bar 40, FAB 45, drawer 60, modal/popover 70 */
