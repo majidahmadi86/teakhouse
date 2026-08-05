@@ -125,10 +125,10 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
   return (
     <>
-      <section className="px-6 pb-8 pt-[90px] md:pt-[120px]">
+      <section className="bg-white px-6 pb-8 pt-[calc(3.5rem+40px)] md:pt-[calc(4rem+40px)]">
         <div className="mx-auto max-w-[1180px]">
-          <nav className="mb-4 text-[13px] font-semibold text-sub">
-            <Link href="/rooms" className="text-blue hover:underline">
+          <nav className="mb-2 text-[13px] font-semibold text-sub">
+            <Link href="/rooms" className="link-draw text-blue">
               {t("rooms.crumb")}
             </Link>
             <span className="mx-2 text-line">/</span>
