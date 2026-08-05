@@ -12,11 +12,16 @@ const GRADIENT =
 function AccentWord({ word, italic }: { word: string; italic?: boolean }) {
   return (
     <span
-      className={cn("bg-clip-text text-transparent", italic && "italic")}
+      className={cn(
+        "bg-clip-text text-transparent [text-shadow:none]",
+        italic && "italic"
+      )}
       style={{
         backgroundImage: GRADIENT,
         WebkitBackgroundClip: "text",
         backgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        color: "transparent",
       }}
     >
       {word}

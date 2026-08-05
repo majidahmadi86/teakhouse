@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MobileBookBar } from "@/components/MobileBookBar";
 import { PageFade } from "@/components/motion/PageFade";
+import { cn } from "@/lib/utils";
 
 const Concierge = dynamic(
   () => import("@/components/Concierge").then((m) => m.Concierge),
@@ -33,7 +34,7 @@ export default function GuestLayout({
       <main
         className={
           isBook || isRoomDetail || isAuth
-            ? "pb-0"
+            ? cn("pb-0", isRoomDetail && "bg-white")
             : "pb-24 md:pb-8"
         }
       >

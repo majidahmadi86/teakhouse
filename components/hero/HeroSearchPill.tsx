@@ -89,11 +89,11 @@ export function HeroSearchPill({ className }: { className?: string }) {
 
   const chip = (
     <motion.div
-      className="pointer-events-none absolute -top-3 left-4 z-10 origin-bottom-left"
+      className="pointer-events-none absolute -top-3 left-4 z-10 origin-bottom-left -rotate-[6deg]"
       initial={reduce ? false : { opacity: 0, scale: 0.6, y: 8 }}
       animate={
         chipReady
-          ? { opacity: 1, scale: 1, y: 0, rotate: -6 }
+          ? { opacity: 1, scale: 1, y: 0 }
           : { opacity: 0, scale: 0.6, y: 8 }
       }
       transition={spring}

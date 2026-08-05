@@ -125,7 +125,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
   return (
     <>
-      <section className="bg-white px-6 pb-8 pt-[calc(3.5rem+40px)] md:pt-[calc(4rem+40px)]">
+      <section className="min-h-screen bg-white px-6 pb-8 pt-[calc(3.5rem+40px)] md:pt-[calc(4rem+40px)]">
         <div className="mx-auto max-w-[1180px]">
           <nav className="mb-2 text-[13px] font-semibold text-sub">
             <Link href="/rooms" className="link-draw text-blue">
@@ -134,14 +134,14 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
             <span className="mx-2 text-line">/</span>
             <span className="text-ink">{tr(room.name)}</span>
           </nav>
-          <h1 className="font-display text-[clamp(2rem,4vw,3.2rem)] text-ink">
+          <h1 className="font-display text-[clamp(2rem,4vw,3.2rem)] leading-tight text-ink">
             {tr(room.name)}
           </h1>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             {[room.meta, room.floor].map((chip) => (
               <span
                 key={chip.en}
-                className="rounded-full border border-line bg-white px-3 py-1 text-xs font-bold text-ink/80"
+                className="rounded-full border border-line bg-cloud px-3 py-1 text-xs font-bold text-ink/80"
               >
                 {tr(chip)}
               </span>
