@@ -99,13 +99,13 @@ export function DemoModal({ auto = false, children }: DemoModalProps) {
         >
           <div className="flex flex-col bg-navy px-8 py-10 text-white">
             <Logo light showTag={false} className="mb-6" />
-            <p className="mb-6 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-amber">
+            <p className="mb-6 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-gold">
               Mikaro Studio
             </p>
             <ul className="mt-auto space-y-4">
               {(["dm.l1", "dm.l2", "dm.l3"] as const).map((key) => (
                 <li key={key} className="flex items-start gap-3 text-[0.94rem] font-semibold">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber" strokeWidth={3} />
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" strokeWidth={3} />
                   <span>{t(key)}</span>
                 </li>
               ))}

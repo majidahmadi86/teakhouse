@@ -43,8 +43,8 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
     k: /book|reserve|available|vacan|จอง|ห้องว่าง|ว่างไหม/i,
     r: {
-      en: 'With pleasure. The booking page shows live availability and takes a small deposit by card or PromptPay, and your room is confirmed instantly. <a href="/book" class="font-extrabold text-amber">Book direct here</a>',
-      th: 'ยินดีค่ะ หน้าจองแสดงห้องว่างแบบเรียลไทม์ มัดจำผ่านบัตรหรือพร้อมเพย์ แล้วยืนยันห้องทันทีค่ะ <a href="/book" class="font-extrabold text-amber">จองตรงที่นี่</a>',
+      en: 'With pleasure. The booking page shows live availability and takes a small deposit by card or PromptPay, and your room is confirmed instantly. <a href="/book" class="font-extrabold text-blue">Book direct here</a>',
+      th: 'ยินดีค่ะ หน้าจองแสดงห้องว่างแบบเรียลไทม์ มัดจำผ่านบัตรหรือพร้อมเพย์ แล้วยืนยันห้องทันทีค่ะ <a href="/book" class="font-extrabold text-blue">จองตรงที่นี่</a>',
     },
   },
   {
@@ -64,8 +64,8 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
     k: /where|address|bts|train|boat|get there|map|location|ที่ไหน|เดินทาง|รถไฟฟ้า|เรือ|แผนที่/i,
     r: {
-      en: 'Charoenkrung 44, Bang Rak. BTS Saphan Taksin exit 2, then 6 minutes on foot along the river, or the Chao Phraya boat to Oriental Pier. <a href="/location" class="font-extrabold text-amber">Directions</a>',
-      th: 'เจริญกรุง 44 บางรักค่ะ BTS สะพานตากสิน ทางออก 2 เดินเลียบแม่น้ำ 6 นาที หรือเรือด่วนเจ้าพระยาลงท่าโอเรียนเต็ลค่ะ <a href="/location" class="font-extrabold text-amber">ดูการเดินทาง</a>',
+      en: 'Charoenkrung 44, Bang Rak. BTS Saphan Taksin exit 2, then 6 minutes on foot along the river, or the Chao Phraya boat to Oriental Pier. <a href="/location" class="font-extrabold text-blue">Directions</a>',
+      th: 'เจริญกรุง 44 บางรักค่ะ BTS สะพานตากสิน ทางออก 2 เดินเลียบแม่น้ำ 6 นาที หรือเรือด่วนเจ้าพระยาลงท่าโอเรียนเต็ลค่ะ <a href="/location" class="font-extrabold text-blue">ดูการเดินทาง</a>',
     },
   },
   {

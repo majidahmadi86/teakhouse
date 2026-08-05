@@ -42,7 +42,7 @@ export default function LocationPage() {
           </div>
 
           <div className="rounded-[14px] bg-white p-8 shadow-panel">
-            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-amber">
+            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-blue">
               {t("lc.dir")}
             </p>
             <h2 className="mb-6 text-2xl">{t("lc.h1")}</h2>

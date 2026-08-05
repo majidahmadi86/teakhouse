@@ -148,7 +148,7 @@ export function Concierge({ offsetForBookBar = true }: { offsetForBookBar?: bool
                 <div
                   dangerouslySetInnerHTML={{
                     __html: msg.html.replace(
-                      'class="font-extrabold text-amber"',
+                      'class="font-extrabold text-blue"',
                       'style="color:#B9853D;font-weight:800"'
                     ),
                   }}

@@ -57,7 +57,7 @@ export function Receipt({
           <p className="mt-4 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-white/70">
             {t("bk.receipt")}
           </p>
-          <div className="mt-2 font-display text-[1.75rem] font-semibold tracking-wide text-amber">
+          <div className="mt-2 font-display text-[1.75rem] font-semibold tracking-wide text-gold">
             {code}
           </div>
         </header>

@@ -158,7 +158,7 @@ export default function BookPageClient() {
       <section className="px-4 pb-16 pt-28 sm:px-6 print:pt-4">
         <div className="mx-auto max-w-[1180px]">
           <div className={cn("print:hidden", step === 4 && "hidden lg:block")}>
-            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-amber">
+            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-blue">
               {t("nav.book")}
             </p>
             <h1 className="font-display text-4xl text-ink">{t("bk.h1")}</h1>
@@ -390,7 +390,7 @@ export default function BookPageClient() {
                       type="button"
                       disabled={!step3Valid}
                       onClick={handlePayDeposit}
-                      className="rounded-full bg-amber px-7 py-3.5 text-sm font-bold text-navy hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {t("bk.pay")} {formatBaht(deposit)}
                     </button>
@@ -452,7 +452,7 @@ function Field({
 }) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-amber">
+      <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
         {label}
       </span>
       {children}

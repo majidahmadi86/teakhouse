@@ -32,7 +32,7 @@ export function PageHero({
         <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/20 to-navy/75" />
       </div>
       <div className="mx-auto w-full max-w-[1180px] px-6">
-        <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-amber">
+        <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-gold">
           {eyebrow}
         </p>
         <h1 className="max-w-[16ch] text-balance">{title}</h1>

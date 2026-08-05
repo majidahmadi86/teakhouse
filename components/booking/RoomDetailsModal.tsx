@@ -147,7 +147,7 @@ export function RoomDetailsModal({ room, open, onClose }: RoomDetailsModalProps)
                       : "sec.services";
               return (
                 <div key={group}>
-                  <h4 className="mb-2 text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-amber">
+                  <h4 className="mb-2 text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
                     {t(sectionKey)}
                   </h4>
                   <ul className="grid gap-2 sm:grid-cols-2">
@@ -179,7 +179,7 @@ export function RoomDetailsModal({ room, open, onClose }: RoomDetailsModalProps)
               {CONDITIONS.map((item) => (
                 <li
                   key={item.en}
-                  className="flex gap-2 text-sm font-semibold text-ink/85 before:text-amber before:content-['·']"
+                  className="flex gap-2 text-sm font-semibold text-ink/85 before:text-blue before:content-['·']"
                 >
                   {lang === "th" ? item.th : item.en}
                 </li>
