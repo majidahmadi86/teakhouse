@@ -54,6 +54,11 @@ export default function AccountPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.hash === "#profile") setTab("profile");
+  }, []);
+
   const bookings = useMemo(() => {
     if (!user) return [];
     return data.bookings
