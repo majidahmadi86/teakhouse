@@ -40,3 +40,7 @@ next-env.d.ts
 
 # local QA screenshots
 /qa-shots/
+
+# lighthouse / PSI local artifacts
+.psi-*.json
+.lh-chrome/

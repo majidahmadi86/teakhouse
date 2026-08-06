@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .tkh-page-fade {
+    animation: tkh-page-fade 0.2s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tkh-page-fade {
+      animation: none;
+    }
+  }
+}
+
+@keyframes tkh-page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

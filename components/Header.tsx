@@ -55,7 +55,7 @@ function LangPair({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setLang(l)}
-            aria-label={l === "en" ? "English" : "Thai"}
+            aria-label={l === "en" ? "EN English" : "ไทย Thai"}
             aria-pressed={lang === l}
             className={cn(
               "whitespace-nowrap text-[13px] font-bold transition",
