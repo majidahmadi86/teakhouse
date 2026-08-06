@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, m, useReducedMotion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { SafeImage } from "@/components/SafeImage";
 import { unsplashSrc } from "@/lib/unsplashLoader";
 import { cn } from "@/lib/utils";
@@ -28,39 +28,27 @@ const SLIDES = [
 ];
 
 const HOLD_MS = 7000;
-const FADE_S = 1.2;
 /** Display sizes so 2–3× DPR caps downloads ≤828w mobile / ≤1920w desktop */
-const HERO_SIZES = "(max-width: 768px) 276px, 640px";
+const HERO_SIZES = "(max-width: 768px) 100vw, 100vw";
 
-function KenBurns({
-  zoomIn,
-  children,
-  animate,
-}: {
-  zoomIn: boolean;
-  children: React.ReactNode;
-  animate: boolean;
-}) {
-  if (!animate) {
-    return <div className="absolute inset-0">{children}</div>;
-  }
-  return (
-    <m.div
-      className="absolute inset-0"
-      initial={{ scale: zoomIn ? 1.08 : 1 }}
-      animate={{ scale: zoomIn ? 1 : 1.08 }}
-      transition={{ duration: HOLD_MS / 1000, ease: "linear" }}
-    >
-      {children}
-    </m.div>
-  );
-}
+const HeroCrossfade = dynamic(
+  () => import("./HeroCrossfade").then((m) => m.HeroCrossfade),
+  { ssr: false }
+);
 
 export function HeroSlideshow() {
-  const reduce = useReducedMotion();
+  const [reduce, setReduce] = useState(false);
   const [index, setIndex] = useState(0);
   const [lazyReady, setLazyReady] = useState(false);
   const [kenBurns, setKenBurns] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduce(mq.matches);
+    const onChange = () => setReduce(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // Slides 2–3 + Ken Burns only after idle — never compete with LCP
   useEffect(() => {
@@ -93,55 +81,37 @@ export function HeroSlideshow() {
     return () => window.clearInterval(id);
   }, [reduce, lazyReady]);
 
-  const active = SLIDES[reduce ? 0 : index];
+  const slide0 = SLIDES[0];
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* LCP layer: always painted at opacity 1, no fade-in */}
+      {/* LCP layer: static img, no framer — painted immediately */}
       <div
         className={cn(
-          "absolute inset-0 transition-opacity duration-300",
-          !reduce && index !== 0 ? "opacity-0" : "opacity-100"
+          "absolute inset-0",
+          kenBurns && index === 0 && !reduce && "tkh-ken-burns-in",
+          !reduce && index !== 0 && "opacity-0"
         )}
         aria-hidden={!reduce && index !== 0}
       >
-        <KenBurns zoomIn={SLIDES[0].zoom === "in"} animate={kenBurns && index === 0 && !reduce}>
-          <SafeImage
-            src={SLIDES[0].src}
-            alt={SLIDES[0].alt}
-            fill
-            priority
-            quality={75}
-            sizes={HERO_SIZES}
-            className={cn("object-cover", SLIDES[0].position)}
-          />
-        </KenBurns>
+        <SafeImage
+          src={slide0.src}
+          alt={slide0.alt}
+          fill
+          priority
+          quality={75}
+          sizes={HERO_SIZES}
+          className={cn("object-cover", slide0.position)}
+        />
       </div>
 
-      {!reduce ? (
-        <AnimatePresence initial={false}>
-          {index > 0 && lazyReady ? (
-            <m.div
-              key={`${active.src}-${index}`}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: FADE_S, ease: "easeInOut" }}
-            >
-              <KenBurns zoomIn={active.zoom === "in"} animate={kenBurns}>
-                <SafeImage
-                  src={active.src}
-                  alt={active.alt}
-                  fill
-                  quality={75}
-                  sizes={HERO_SIZES}
-                  className={cn("object-cover", active.position)}
-                />
-              </KenBurns>
-            </m.div>
-          ) : null}
-        </AnimatePresence>
+      {!reduce && lazyReady ? (
+        <HeroCrossfade
+          slides={SLIDES}
+          index={index}
+          holdMs={HOLD_MS}
+          kenBurns={kenBurns}
+        />
       ) : null}
     </div>
   );

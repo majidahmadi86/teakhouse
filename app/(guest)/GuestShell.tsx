@@ -3,11 +3,19 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { DemoModal } from "@/components/DemoModal";
-import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { MobileBookBar } from "@/components/MobileBookBar";
 import { PageFade } from "@/components/motion/PageFade";
 import { cn } from "@/lib/utils";
+
+const Footer = dynamic(
+  () => import("@/components/Footer").then((m) => m.Footer),
+  { ssr: false }
+);
+
+const MobileBookBar = dynamic(
+  () => import("@/components/MobileBookBar").then((m) => m.MobileBookBar),
+  { ssr: false }
+);
 
 const Concierge = dynamic(
   () => import("@/components/Concierge").then((m) => m.Concierge),

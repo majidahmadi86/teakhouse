@@ -34,7 +34,7 @@ export function PageHero({
           fill
           priority
           quality={78}
-          sizes="(max-width: 768px) 276px, 640px"
+          sizes="(max-width: 768px) 100vw, 100vw"
           className="scale-[1.02] object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/20 to-navy/75" />

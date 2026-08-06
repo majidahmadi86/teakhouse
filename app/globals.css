@@ -23,6 +23,26 @@
   }
 }
 
+@keyframes tkh-ken-burns-in {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.tkh-ken-burns-in {
+  animation: tkh-ken-burns-in 7s linear forwards;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tkh-ken-burns-in {
+    animation: none;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import unsplashLoader from "@/lib/unsplashLoader";
 import { cn } from "@/lib/utils";
 
 type SafeImageProps = {
@@ -19,6 +18,10 @@ type SafeImageProps = {
   fallbackSrcs?: string[];
 };
 
+/**
+ * next/image via the Next/Vercel optimizer — AVIF/WebP + breakpoint widths,
+ * edge-cached near the visitor. Origin stays Unsplash; visual quality unchanged.
+ */
 export function SafeImage({
   src,
   alt,
@@ -54,7 +57,6 @@ export function SafeImage({
     return (
       <Image
         key={current}
-        loader={unsplashLoader}
         src={current}
         alt={alt}
         fill
@@ -71,7 +73,6 @@ export function SafeImage({
   return (
     <Image
       key={current}
-      loader={unsplashLoader}
       src={current}
       alt={alt}
       width={width ?? 1200}

@@ -1,12 +1,15 @@
 "use client";
 
-import { LazyMotion, domAnimation } from "framer-motion";
+import { LazyMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
-/** Loads only the ~30kB smaller `domAnimation` feature set. */
+/** Async feature bundle — keeps domAnimation off the critical path. */
+const loadFeatures = () =>
+  import("framer-motion").then((mod) => mod.domAnimation);
+
 export function MotionProvider({ children }: { children: ReactNode }) {
   return (
-    <LazyMotion features={domAnimation} strict>
+    <LazyMotion features={loadFeatures} strict>
       {children}
     </LazyMotion>
   );
