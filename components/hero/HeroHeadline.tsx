@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -74,7 +74,7 @@ export function HeroHeadline({ className }: { className?: string }) {
         const punct = w.slice(bare.length);
         const isAccent = accent(w);
         return (
-          <motion.span
+          <m.span
             key={`${w}-${i}`}
             className="mr-[0.28em] inline-block"
             initial={{ opacity: 0, y: 28 }}
@@ -87,7 +87,7 @@ export function HeroHeadline({ className }: { className?: string }) {
               bare
             )}
             {punct}
-          </motion.span>
+          </m.span>
         );
       })}
     </h1>

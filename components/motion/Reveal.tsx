@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export function Reveal({
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -34,7 +34,7 @@ export function Reveal({
       transition={{ ...spring, delay }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -54,7 +54,7 @@ export function RevealStagger({
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial="hidden"
       whileInView="show"
@@ -65,7 +65,7 @@ export function RevealStagger({
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -83,7 +83,7 @@ export function RevealItem({
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       variants={{
         hidden: { opacity: 0, y: 32 },
@@ -95,7 +95,7 @@ export function RevealItem({
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -113,13 +113,13 @@ export function MotionCard({
   }
 
   return (
-    <motion.div
+    <m.div
       className={cn("group", className)}
       whileHover={{ y: -6 }}
       transition={spring}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -139,7 +139,7 @@ export function CurtainReveal({
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial={{ clipPath: "inset(18% 0 0 0)" }}
       whileInView={{ clipPath: "inset(0% 0 0 0)" }}
@@ -147,7 +147,7 @@ export function CurtainReveal({
       transition={{ duration: 0.85, ease: [0.7, 0, 0.2, 1] }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -165,7 +165,7 @@ export function ScaleIn({
   }
 
   return (
-    <motion.div
+    <m.div
       className={className}
       initial={{ opacity: 0, scale: 0.94 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -173,6 +173,6 @@ export function ScaleIn({
       transition={spring}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

@@ -6,6 +6,7 @@ import {
   Sarabun,
 } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const marcellus = Marcellus({
@@ -39,12 +40,27 @@ const sarabun = Sarabun({
 });
 
 export const metadata: Metadata = {
-  title: "The Teak House",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default:
+      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
+    template: "%s · The Teak House",
+  },
   description:
-    "Twelve teak rooms on the Chao Phraya. Book direct and always pay less than on any booking site.",
+    "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_TH",
+    url: SITE_URL,
+    siteName: "The Teak House",
+    title:
+      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
+    description:
+      "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
   },
   icons: {
     icon: "/favicon.svg",

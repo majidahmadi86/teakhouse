@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +37,7 @@ export function HeroTrustRow({
   const display = rating.toFixed(1);
 
   return (
-    <motion.p
+    <m.p
       className={cn(
         "mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90",
         className
@@ -60,6 +60,6 @@ export function HeroTrustRow({
           <span>{t("trust.freeShort")}</span>
         </>
       ) : null}
-    </motion.p>
+    </m.p>
   );
 }

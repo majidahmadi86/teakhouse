@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { Calendar, MessageCircle, User } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
 import { RoomCard } from "@/components/RoomCard";
@@ -59,26 +59,26 @@ export default function HomePage() {
 
         {/* Mobile: one-screen stack — brand, headline, trust, search pill */}
         <div className="absolute inset-0 flex flex-col justify-end px-5 pb-6 pt-20 md:hidden">
-          <motion.p
+          <m.p
             className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
             {t("brand.name")}
-          </motion.p>
+          </m.p>
           <div className="mt-2">
             <HeroHeadline />
           </div>
           <HeroTrustRow compact className="mt-3 justify-start" />
-          <motion.div
+          <m.div
             className="relative z-20 mt-4"
             initial={reduce ? false : { opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ...spring, delay: pillDelay }}
           >
             <HeroSearchPill />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Desktop overlay */}
@@ -88,16 +88,16 @@ export default function HomePage() {
               {t("hero.eyebrow")}
             </p>
             <HeroHeadline />
-            <motion.p
+            <m.p
               className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/90 hero-text-shadow"
               initial={reduce ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: subDelay, duration: 0.5 }}
             >
               {t("hero.lead")}
-            </motion.p>
+            </m.p>
 
-            <motion.div
+            <m.div
               className="relative z-20 mt-7"
               initial={reduce ? false : { opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
@@ -105,7 +105,7 @@ export default function HomePage() {
             >
               <HeroSearchPill />
               <HeroTrustRow />
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </section>
@@ -125,10 +125,12 @@ export default function HomePage() {
           <CurtainReveal>
             <div className="relative overflow-hidden rounded-[14px] shadow-panel">
               <SafeImage
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80"
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
                 alt="Teak house interior"
                 width={1200}
                 height={1500}
+                quality={75}
+                sizes="(max-width: 768px) 100vw, 560px"
                 className="aspect-[5/4] w-full object-cover transition duration-500 hover:scale-[1.06] md:aspect-[4/5]"
               />
             </div>
@@ -175,7 +177,7 @@ export default function HomePage() {
             >
               {t("off.seeAll")}
               <span className="transition-transform group-hover:translate-x-1">
-                →
+                ?
               </span>
             </Link>
           </Reveal>
@@ -230,7 +232,7 @@ export default function HomePage() {
             {(["1", "2", "3"] as const).map((n) => (
               <RevealItem key={n}>
                 <MotionCard className="rounded-[14px] bg-cloud p-8">
-                  <div className="mb-3 tracking-[3px] text-coral">★★★★★</div>
+                  <div className="mb-3 tracking-[3px] text-coral">?????</div>
                   <p className="text-[0.95rem]">{t(`rev.${n}`)}</p>
                   <footer className="mt-4 text-[0.8rem] font-bold text-strike">
                     {t(`rev.${n}a`)}

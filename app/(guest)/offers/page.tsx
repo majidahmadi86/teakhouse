@@ -14,7 +14,7 @@ export default function OffersPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1900&q=85"
+        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
         alt="River view offers"
         eyebrow={t("off.eyebrow")}
         title={t("off.page")}

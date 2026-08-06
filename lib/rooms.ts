@@ -40,8 +40,8 @@ export const SLUG_TO_SHORT_KEY: Record<string, RoomShortKey> = {
   "courtyard-twin": "twin",
 };
 
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/${id}?w=1200&q=80`;
+/** Base Unsplash URL — width/quality applied by SafeImage loader + sizes. */
+const unsplash = (id: string) => `https://images.unsplash.com/${id}`;
 
 export const SEED_ROOMS: Room[] = [
   {

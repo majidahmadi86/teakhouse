@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
@@ -107,7 +107,7 @@ export default function RoomsPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1631049307264-da0ec9d70304"
         alt="Teak hotel room interior"
         eyebrow={t("rooms.eyebrow")}
         title={t("rp.h1")}

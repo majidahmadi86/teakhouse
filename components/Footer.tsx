@@ -17,19 +17,19 @@ export function Footer() {
             <Link href="/" className="mb-[18px] inline-block">
               <Logo light showTag />
             </Link>
-            <p className="max-w-[34ch] text-[0.9rem] text-white/70">{t("ft.about")}</p>
+            <p className="max-w-[34ch] text-[0.9rem] text-white/80">{t("ft.about")}</p>
           </div>
           <div>
             <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.stay")}
             </h4>
-            <Link href="/rooms" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/rooms" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.rooms")}
             </Link>
-            <Link href="/offers" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/offers" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("nav.offers")}
             </Link>
-            <Link href="/book" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/book" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.book")}
             </Link>
           </div>
@@ -37,13 +37,13 @@ export function Footer() {
             <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.visit")}
             </h4>
-            <Link href="/experience" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/experience" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.exp")}
             </Link>
-            <Link href="/gallery" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/gallery" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("nav.gallery")}
             </Link>
-            <Link href="/location" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/location" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.loc")}
             </Link>
           </div>
@@ -51,22 +51,22 @@ export function Footer() {
             <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.talk")}
             </h4>
-            <Link href="/contact" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <Link href="/contact" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("nav.contact")}
             </Link>
-            <a href="tel:+6620000000" className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white">
+            <a href="tel:+6620000000" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               +66 2 000 0000
             </a>
             <a
               href="mailto:stay@teakhouse.demo"
-              className="block py-1.5 text-[0.9rem] text-white/60 hover:text-white"
+              className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white"
             >
               stay@teakhouse.demo
             </a>
-            <span className="block py-1.5 text-[0.9rem] text-white/60">LINE @teakhouse</span>
+            <span className="block py-1.5 text-[0.9rem] text-white/75">LINE @teakhouse</span>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-[0.78rem] text-white/60">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-[0.78rem] text-white/75">
           <span>{t("ft.copy")}</span>
           <button
             type="button"

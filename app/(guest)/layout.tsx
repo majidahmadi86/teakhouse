@@ -1,50 +1,23 @@
-"use client";
+import type { Metadata } from "next";
+import { GuestShell } from "./GuestShell";
 
-import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
-import { DemoModal } from "@/components/DemoModal";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { MobileBookBar } from "@/components/MobileBookBar";
-import { PageFade } from "@/components/motion/PageFade";
-import { cn } from "@/lib/utils";
-
-const Concierge = dynamic(
-  () => import("@/components/Concierge").then((m) => m.Concierge),
-  { ssr: false }
-);
+export const metadata: Metadata = {
+  title: {
+    default:
+      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
+    template: "%s · The Teak House",
+  },
+  description:
+    "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function GuestLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isBook = pathname === "/book";
-  const isRoomDetail =
-    pathname.startsWith("/rooms/") && pathname !== "/rooms";
-  const isAuth =
-    pathname === "/account/signin" || pathname === "/account/signup";
-  const autoDemo = pathname === "/";
-  const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
-
-  return (
-    <DemoModal auto={autoDemo}>
-      <Header />
-      <main
-        className={
-          isBook || isRoomDetail || isAuth
-            ? cn("pb-0", isRoomDetail && "bg-white")
-            : "pb-24 md:pb-8"
-        }
-      >
-        <PageFade>{children}</PageFade>
-      </main>
-      {isAuth ? null : <Footer />}
-      {showMobileBookBar ? <MobileBookBar /> : null}
-      {isAuth ? null : (
-        <Concierge offsetForBookBar={showMobileBookBar} />
-      )}
-    </DemoModal>
-  );
+  return <GuestShell>{children}</GuestShell>;
 }

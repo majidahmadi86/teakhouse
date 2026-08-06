@@ -33,6 +33,7 @@ export function CurrencySwitcher({
       {({ open }) => (
         <div className={cn("relative", className)}>
           <ListboxButton
+            aria-label={lang === "th" ? "สกุลเงิน" : "Currency"}
             className={cn(
               "icon-hit inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 text-[13px] font-bold text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-sky"
             )}

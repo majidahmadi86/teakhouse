@@ -28,7 +28,15 @@ export function PageHero({
       )}
     >
       <div className="absolute inset-0 -z-10">
-        <SafeImage src={image} alt={alt} fill priority className="scale-[1.02] object-cover" />
+        <SafeImage
+          src={image}
+          alt={alt}
+          fill
+          priority
+          quality={78}
+          sizes="(max-width: 768px) 828px, 1920px"
+          className="scale-[1.02] object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/20 to-navy/75" />
       </div>
       <div className="mx-auto w-full max-w-[1180px] px-6">

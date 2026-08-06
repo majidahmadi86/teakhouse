@@ -82,6 +82,8 @@ export function BookingSummary({
               src={room.photos[0]}
               alt={tr(room.name)}
               fill
+              quality={65}
+              sizes="72px"
               className="object-cover"
             />
           </div>

@@ -160,6 +160,8 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                 fill
                 className="object-cover"
                 priority
+                quality={78}
+                sizes="(max-width: 1024px) 100vw, 960px"
               />
             </button>
             <div className="grid grid-cols-5 gap-2 lg:grid-cols-1 lg:grid-rows-5">
@@ -168,12 +170,20 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                   key={photo}
                   type="button"
                   onClick={() => setActivePhoto(i)}
+                  aria-label={`${tr(room.name)} photo ${i + 1}`}
                   className={cn(
                     "relative aspect-[4/3] overflow-hidden rounded-lg lg:aspect-auto lg:min-h-0 lg:flex-1",
                     activePhoto === i && "ring-2 ring-sky"
                   )}
                 >
-                  <SafeImage src={photo} alt="" fill className="object-cover" />
+                  <SafeImage
+                    src={photo}
+                    alt=""
+                    fill
+                    quality={65}
+                    sizes="120px"
+                    className="object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -272,6 +282,8 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
                     src={other.photos[0]}
                     alt={tr(other.name)}
                     fill
+                    quality={70}
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition group-hover:scale-105"
                   />
                 </div>
@@ -327,6 +339,8 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
               src={photos[activePhoto]}
               alt={tr(room.name)}
               fill
+              quality={80}
+              sizes="(max-width: 768px) 100vw, 1024px"
               className="object-contain"
             />
           </div>

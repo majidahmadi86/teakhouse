@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import {
   BadgePercent,
   CalendarDays,
@@ -55,6 +55,8 @@ function LangPair({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setLang(l)}
+            aria-label={l === "en" ? "English" : "Thai"}
+            aria-pressed={lang === l}
             className={cn(
               "whitespace-nowrap text-[13px] font-bold transition",
               lang === l
@@ -260,7 +262,7 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
 
       <AnimatePresence>
         {open ? (
-          <motion.div
+          <m.div
             id={menuId}
             role="menu"
             initial={reduce ? false : { opacity: 0, y: 10, scale: 0.98 }}
@@ -326,7 +328,7 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
                 </Link>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ) : null}
       </AnimatePresence>
     </div>
@@ -453,6 +455,8 @@ export function Header() {
               type="button"
               className="flex h-10 w-10 items-center justify-center min-[1200px]:hidden"
               aria-label={t("mobile.menu")}
+              aria-expanded={drawerOpen}
+              aria-controls="mobile-nav-drawer"
               onClick={() => setDrawerOpen(true)}
             >
               <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
@@ -472,10 +476,12 @@ export function Header() {
 
       {/* Mobile / tablet drawer */}
       <aside
+        id="mobile-nav-drawer"
         className={cn(
           "fixed inset-y-0 right-0 z-drawer flex w-[min(100%,320px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 min-[1200px]:hidden",
           drawerOpen ? "translate-x-0" : "translate-x-full"
         )}
+        aria-hidden={!drawerOpen}
       >
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-line px-4">
           <Logo showTag={false} size={20} className="[&_div]:text-[16px]" />
@@ -496,7 +502,7 @@ export function Header() {
             const offers = "offers" in item && item.offers;
 
             return (
-              <motion.div
+              <m.div
                 key={item.href}
                 initial={reduce || !drawerOpen ? false : { opacity: 0, x: 12 }}
                 animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
@@ -527,7 +533,7 @@ export function Header() {
                     ) : null}
                   </span>
                 </Link>
-              </motion.div>
+              </m.div>
             );
           })}
 

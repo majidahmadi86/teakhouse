@@ -1,7 +1,18 @@
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ["lucide-react", "@headlessui/react", "date-fns"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@headlessui/react",
+      "date-fns",
+      "framer-motion",
+    ],
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -20,4 +31,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

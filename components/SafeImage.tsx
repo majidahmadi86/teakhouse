@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import unsplashLoader from "@/lib/unsplashLoader";
 import { cn } from "@/lib/utils";
 
 type SafeImageProps = {
@@ -13,6 +14,7 @@ type SafeImageProps = {
   height?: number;
   priority?: boolean;
   sizes?: string;
+  quality?: number;
   /** Tried in order when primary src fails. */
   fallbackSrcs?: string[];
 };
@@ -26,6 +28,7 @@ export function SafeImage({
   height,
   priority,
   sizes,
+  quality = 75,
   fallbackSrcs = [],
 }: SafeImageProps) {
   const sources = [src, ...fallbackSrcs];
@@ -51,13 +54,16 @@ export function SafeImage({
     return (
       <Image
         key={current}
+        loader={unsplashLoader}
         src={current}
         alt={alt}
         fill
         className={cn("object-cover", className)}
         onError={() => setIndex((i) => i + 1)}
         priority={priority}
+        fetchPriority={priority ? "high" : "auto"}
         sizes={sizes ?? "100vw"}
+        quality={quality}
       />
     );
   }
@@ -65,6 +71,7 @@ export function SafeImage({
   return (
     <Image
       key={current}
+      loader={unsplashLoader}
       src={current}
       alt={alt}
       width={width ?? 1200}
@@ -72,7 +79,9 @@ export function SafeImage({
       className={className}
       onError={() => setIndex((i) => i + 1)}
       priority={priority}
+      fetchPriority={priority ? "high" : "auto"}
       sizes={sizes}
+      quality={quality}
     />
   );
 }

@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { SafeImage } from "@/components/SafeImage";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const AUTH_IMAGE =
-  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1600&q=85&auto=format&fit=crop";
+  "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4";
 
 type AuthShellProps = {
   eyebrow: string;
@@ -40,8 +40,8 @@ export function AuthShell({
           sizes="(max-width:768px) 100vw, 45vw"
           className="object-cover object-[center_40%]"
           fallbackSrcs={[
-            "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=1600&q=85&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1600&q=85&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
+            "https://images.unsplash.com/photo-1540541338287-41700207dee6",
           ]}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/35 to-navy/20" />
@@ -60,7 +60,7 @@ export function AuthShell({
 
       {/* Form panel */}
       <div className="flex items-center justify-center px-6 py-10 md:px-10 md:py-16">
-        <motion.div
+        <m.div
           className={cn("w-full max-w-[400px]", shake && "animate-tkh-shake")}
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ export function AuthShell({
           </h1>
           <div className="mt-8">{children}</div>
           <div className="mt-6 text-center text-sm text-sub">{footer}</div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

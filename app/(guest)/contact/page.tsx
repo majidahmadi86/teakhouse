@@ -24,7 +24,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1508009603885-50cf7c579365"
         alt="Contact the house"
         eyebrow={t("ct.page")}
         title={t("ct.page")}
@@ -36,10 +36,11 @@ export default function ContactPage() {
           <Reveal>
             <form onSubmit={onSubmit} className="space-y-4 rounded-card border border-line bg-cloud p-6 md:p-8">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-ink">
+                <label htmlFor="contact-name" className="mb-2 block text-sm font-semibold text-ink">
                   {t("ct.name")}
                 </label>
                 <input
+                  id="contact-name"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -48,10 +49,11 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-ink">
+                <label htmlFor="contact-email" className="mb-2 block text-sm font-semibold text-ink">
                   {t("ct.email")}
                 </label>
                 <input
+                  id="contact-email"
                   required
                   type="email"
                   value={email}
@@ -61,10 +63,11 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-ink">
+                <label htmlFor="contact-message" className="mb-2 block text-sm font-semibold text-ink">
                   {t("ct.message")}
                 </label>
                 <textarea
+                  id="contact-message"
                   required
                   rows={5}
                   value={message}

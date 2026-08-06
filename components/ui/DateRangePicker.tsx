@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Popover,
   PopoverButton,
@@ -16,11 +17,23 @@ import {
   startOfDay,
 } from "date-fns";
 import { CalendarDays } from "lucide-react";
-import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import { useI18n } from "@/lib/i18n";
 import { useIsMobile } from "@/lib/useMediaQuery";
 import { cn } from "@/lib/utils";
+import "react-day-picker/dist/style.css";
+
+const DayPicker = dynamic(
+  () => import("react-day-picker").then((m) => m.DayPicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[280px] items-center justify-center text-sm font-semibold text-sub">
+        …
+      </div>
+    ),
+  }
+);
 
 type DateRangePickerProps = {
   from?: Date;
@@ -190,6 +203,7 @@ export function DateRangePicker({
         <>
           <PopoverButton
             type="button"
+            aria-label={placeholder}
             className="flex w-full items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left text-base text-ink transition hover:border-blue/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky focus-visible:ring-offset-2"
           >
             <CalendarDays className="h-5 w-5 shrink-0 text-blue" aria-hidden />
@@ -211,7 +225,7 @@ export function DateRangePicker({
                 />
                 <div className="relative rounded-t-3xl bg-white px-4 pb-safe pt-3 shadow-2xl">
                   <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-line" />
-                  {picker()}
+                  {open ? picker() : null}
                   <button
                     type="button"
                     onClick={() => close()}
@@ -237,7 +251,7 @@ export function DateRangePicker({
                 anchor={{ to: "bottom start", gap: "8px", padding: "12px" }}
                 className="z-popover w-auto rounded-2xl bg-white p-4 shadow-xl [--anchor-gap:8px]"
               >
-                {picker(close)}
+                {open ? picker(close) : null}
               </PopoverPanel>
             </Transition>
           )}

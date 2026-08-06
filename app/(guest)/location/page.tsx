@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Plane, Ship, Train } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
@@ -21,7 +21,7 @@ export default function LocationPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=1900&q=80"
+        image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
         alt="Old Bangkok riverside"
         eyebrow={t("nav.location")}
         title={t("lc.h1")}

@@ -133,7 +133,7 @@ export default function OwnerRoomsPage() {
       ...form,
       id,
       slug,
-      photos: photos.length ? photos : ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80"],
+      photos: photos.length ? photos : ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304"],
       meta: buildMeta({ ...form, slug }),
     };
 
