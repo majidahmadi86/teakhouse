@@ -20,9 +20,9 @@ export function Footer() {
             <p className="max-w-[34ch] text-[0.9rem] text-white/80">{t("ft.about")}</p>
           </div>
           <div>
-            <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
+            <p className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.stay")}
-            </h4>
+            </p>
             <Link href="/rooms" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.rooms")}
             </Link>
@@ -34,9 +34,9 @@ export function Footer() {
             </Link>
           </div>
           <div>
-            <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
+            <p className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.visit")}
-            </h4>
+            </p>
             <Link href="/experience" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("ft.exp")}
             </Link>
@@ -48,9 +48,9 @@ export function Footer() {
             </Link>
           </div>
           <div>
-            <h4 className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
+            <p className="mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-white">
               {t("ft.talk")}
-            </h4>
+            </p>
             <Link href="/contact" className="block py-1.5 text-[0.9rem] text-white/75 hover:text-white">
               {t("nav.contact")}
             </Link>

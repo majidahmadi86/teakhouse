@@ -104,7 +104,7 @@ export function HeroSearchPill({ className }: { className?: string }) {
       }
       transition={spring}
     >
-      <span className="inline-flex whitespace-nowrap rounded-full bg-coral-deep px-3 py-1 text-[12px] font-bold text-white shadow-card">
+      <span className="inline-flex whitespace-nowrap rounded-full bg-[#C23418] px-3 py-1 text-[13px] font-bold text-white shadow-card">
         {t("hero.tonight", { z: formatPrice(2100) })}
       </span>
     </m.div>

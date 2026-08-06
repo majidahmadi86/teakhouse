@@ -29,7 +29,8 @@ const SLIDES = [
 
 const HOLD_MS = 7000;
 const FADE_S = 1.2;
-const HERO_SIZES = "(max-width: 768px) 828px, 1920px";
+const HERO_SIZES = "(max-width: 768px) 276px, 640px";
+// Display sizes chosen so 2–3× DPR caps downloads at ≤828w mobile / ≤1920w desktop
 
 export function HeroSlideshow() {
   const reduce = useReducedMotion();
