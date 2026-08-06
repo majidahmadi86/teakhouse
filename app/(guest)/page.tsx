@@ -8,7 +8,7 @@ export default function HomePage() {
       <link
         rel="preload"
         as="image"
-        href="/hero-lcp-828.avif"
+        href="/hero-lcp-640.avif"
         type="image/avif"
         media="(max-width: 768px)"
         {...{ fetchPriority: "high" }}

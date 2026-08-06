@@ -45,8 +45,8 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
   const pillDelay = subDelay + 0.35;
 
   useEffect(() => {
-    const cancelSearch = deferHeavy(() => setSearchReady(true), 10000);
-    const cancelBelow = deferHeavy(() => setBelowReady(true), 11000);
+    const cancelSearch = deferHeavy(() => setSearchReady(true), 15000);
+    const cancelBelow = deferHeavy(() => setBelowReady(true), 16000);
     return () => {
       cancelSearch();
       cancelBelow();

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { m, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +50,7 @@ export function OfferCard({ n, large, className }: OfferCardProps) {
         {t(`off.${n}.badge`)}
       </span>
 
-      <m.div
+      <motion.div
         className={cn(
           "mt-4 font-display font-normal leading-none text-white",
           large
@@ -63,7 +63,7 @@ export function OfferCard({ n, large, className }: OfferCardProps) {
         transition={spring}
       >
         {style.numeral}
-      </m.div>
+      </motion.div>
 
       {style.goldLine ? (
         <div className="mt-3 h-0.5 w-12 bg-gold" aria-hidden />

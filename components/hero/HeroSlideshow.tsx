@@ -59,7 +59,7 @@ export function HeroSlideshow({
     return deferHeavy(() => {
       setLazyReady(true);
       setKenBurns(true);
-    }, 10000);
+    }, 15000);
   }, [reduce]);
 
   useEffect(() => {

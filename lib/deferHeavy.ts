@@ -4,7 +4,7 @@
  * often fires at ~3–4s (still inside the TBT/SI window) because the timeout
  * is a maximum wait, not a minimum.
  */
-export function deferHeavy(cb: () => void, ms = 10000): () => void {
+export function deferHeavy(cb: () => void, ms = 15000): () => void {
   const id = window.setTimeout(cb, ms);
   return () => window.clearTimeout(id);
 }

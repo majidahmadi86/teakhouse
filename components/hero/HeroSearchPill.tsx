@@ -21,7 +21,7 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns";
-import { m, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   CalendarDays,
@@ -94,7 +94,7 @@ export function HeroSearchPill({ className }: { className?: string }) {
   const guestLabel = t(`g${guests}` as "g1");
 
   const chip = (
-    <m.div
+    <motion.div
       className="pointer-events-none absolute -top-3 left-4 z-10 origin-bottom-left -rotate-[6deg]"
       initial={reduce ? false : { opacity: 0, scale: 0.6, y: 8 }}
       animate={
@@ -107,7 +107,7 @@ export function HeroSearchPill({ className }: { className?: string }) {
       <span className="inline-flex whitespace-nowrap rounded-full bg-[#C23418] px-3 py-1 text-[13px] font-bold text-white shadow-card">
         {t("hero.tonight", { z: formatPrice(2100) })}
       </span>
-    </m.div>
+    </motion.div>
   );
 
   if (isMobile) {
@@ -129,13 +129,13 @@ export function HeroSearchPill({ className }: { className?: string }) {
         </button>
 
         {!reduce ? (
-          <m.div
+          <motion.div
             className="mt-3 flex justify-center text-white/70"
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 1.1, times: [0, 0.5, 1], repeat: 1 }}
           >
             <ChevronUp className="h-5 w-5" aria-hidden />
-          </m.div>
+          </motion.div>
         ) : null}
 
         <MobileSearchSheet
@@ -432,7 +432,7 @@ function MobileSearchSheet({
         aria-label="Close"
         onClick={onClose}
       />
-      <m.div
+      <motion.div
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
@@ -477,7 +477,7 @@ function MobileSearchSheet({
         >
           {doneLabel}
         </button>
-      </m.div>
+      </motion.div>
     </div>
   );
 }

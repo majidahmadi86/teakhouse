@@ -15,10 +15,10 @@ export function HeroLCP({
           type="image/avif"
         />
         <img
-          src="/hero-lcp-828.avif"
+          src="/hero-lcp-640.avif"
           alt="Resort pool at dusk overlooking the Chao Phraya"
-          width={828}
-          height={1104}
+          width={640}
+          height={427}
           fetchPriority="high"
           decoding="sync"
           className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"

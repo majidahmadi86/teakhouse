@@ -34,7 +34,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
   const autoDemo = pathname === "/";
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
-  useEffect(() => deferHeavy(() => setChromeReady(true), 10000), []);
+  useEffect(() => deferHeavy(() => setChromeReady(true), 15000), []);
 
   return (
     <DemoModal auto={autoDemo}>
