@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 
+/**
+ * Always starts as `false` so SSR HTML matches the first client render.
+ * Updates in useEffect after mount (avoids React #418 hydration errors).
+ */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(query).matches;
-  });
+  const [matches, setMatches] = useState(false);
 
   useEffect(() => {
     const mql = window.matchMedia(query);
