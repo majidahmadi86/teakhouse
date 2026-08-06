@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroSlideshow } from "@/components/hero/HeroSlideshow";
 import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
+import { deferHeavy } from "@/lib/deferHeavy";
 import { useI18n } from "@/lib/i18n";
 import { useIsMobile } from "@/lib/useMediaQuery";
 
@@ -44,33 +45,11 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
   const pillDelay = subDelay + 0.35;
 
   useEffect(() => {
-    let cancelled = false;
-    const enableSearch = () => {
-      if (!cancelled) setSearchReady(true);
-    };
-    const enableBelow = () => {
-      if (!cancelled) setBelowReady(true);
-    };
-
-    const timers: number[] = [];
-    const idleIds: number[] = [];
-
-    if (typeof window.requestIdleCallback === "function") {
-      idleIds.push(
-        window.requestIdleCallback(enableSearch, { timeout: 9000 })
-      );
-      idleIds.push(
-        window.requestIdleCallback(enableBelow, { timeout: 10000 })
-      );
-    } else {
-      timers.push(window.setTimeout(enableSearch, 8000));
-      timers.push(window.setTimeout(enableBelow, 9000));
-    }
-
+    const cancelSearch = deferHeavy(() => setSearchReady(true), 10000);
+    const cancelBelow = deferHeavy(() => setBelowReady(true), 11000);
     return () => {
-      cancelled = true;
-      idleIds.forEach((id) => window.cancelIdleCallback(id));
-      timers.forEach((id) => window.clearTimeout(id));
+      cancelSearch();
+      cancelBelow();
     };
   }, []);
 

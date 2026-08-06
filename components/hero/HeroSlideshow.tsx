@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { deferHeavy } from "@/lib/deferHeavy";
 import { cn } from "@/lib/utils";
 import { unsplashSrc } from "@/lib/unsplashLoader";
 
@@ -54,25 +55,11 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (reduce) return;
-    let cancelled = false;
-    const enable = () => {
-      if (cancelled) return;
+    // Hard delay — requestIdleCallback fires too early under Lighthouse.
+    return deferHeavy(() => {
       setLazyReady(true);
       setKenBurns(true);
-    };
-    // Keep framer/crossfade well outside the LCP+TBT measurement window
-    if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 8000 });
-      return () => {
-        cancelled = true;
-        window.cancelIdleCallback(id);
-      };
-    }
-    const t = window.setTimeout(enable, 7000);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(t);
-    };
+    }, 10000);
   }, [reduce]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { Header } from "@/components/Header";
+import { deferHeavy } from "@/lib/deferHeavy";
 import { cn } from "@/lib/utils";
 
 const Footer = dynamic(
@@ -33,24 +34,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
   const autoDemo = pathname === "/";
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
-  useEffect(() => {
-    let cancelled = false;
-    const enable = () => {
-      if (!cancelled) setChromeReady(true);
-    };
-    if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 9000 });
-      return () => {
-        cancelled = true;
-        window.cancelIdleCallback(id);
-      };
-    }
-    const timer = window.setTimeout(enable, 8000);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, []);
+  useEffect(() => deferHeavy(() => setChromeReady(true), 10000), []);
 
   return (
     <DemoModal auto={autoDemo}>

@@ -56,8 +56,18 @@
   animation: tkh-hero-word 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Transform-only — opacity fades tank Speed Index on mobile Lighthouse. */
+@keyframes tkh-hero-fade {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 .tkh-hero-fade {
-  animation: tkh-page-fade 0.4s ease-out both;
+  animation: tkh-hero-fade 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .tkh-menu-pop {
