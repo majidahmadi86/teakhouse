@@ -21,6 +21,8 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   display: "swap",
   weight: ["400", "500", "700"],
+  // Let the LCP hero win the first bandwidth slice over body text.
+  preload: false,
 });
 
 const kanit = Kanit({

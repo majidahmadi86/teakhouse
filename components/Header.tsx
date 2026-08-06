@@ -1,8 +1,19 @@
 "use client";
 
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ComponentProps,
+} from "react";
+
+/** Prefetch off — viewport Links were downloading every guest route during LH. */
+function Link(props: ComponentProps<typeof NextLink>) {
+  return <NextLink prefetch={false} {...props} />;
+}
 import {
   BadgePercent,
   CalendarDays,

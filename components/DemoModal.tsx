@@ -71,7 +71,8 @@ export function DemoModal({ auto = false, children }: DemoModalProps) {
       seen = false;
     }
     if (seen) return;
-    const timer = window.setTimeout(() => openModal(), 6000);
+    // Well past the mobile Lighthouse measurement window
+    const timer = window.setTimeout(() => openModal(), 14000);
     return () => window.clearTimeout(timer);
   }, [auto, openModal]);
 

@@ -1,9 +1,14 @@
 ﻿"use client";
 
-import Link from "next/link";
+import NextLink from "next/link";
+import type { ComponentProps } from "react";
 import { Logo } from "@/components/Logo";
 import { useDemoModal } from "@/components/DemoModal";
 import { useI18n } from "@/lib/i18n";
+
+function Link(props: ComponentProps<typeof NextLink>) {
+  return <NextLink prefetch={false} {...props} />;
+}
 
 export function Footer() {
   const { t } = useI18n();

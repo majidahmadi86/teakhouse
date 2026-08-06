@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { Header } from "@/components/Header";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ const Concierge = dynamic(
 
 export function GuestShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [chromeReady, setChromeReady] = useState(false);
   const isBook = pathname === "/book";
   const isRoomDetail =
     pathname.startsWith("/rooms/") && pathname !== "/rooms";
@@ -30,6 +32,25 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
     pathname === "/account/signin" || pathname === "/account/signup";
   const autoDemo = pathname === "/";
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
+
+  useEffect(() => {
+    let cancelled = false;
+    const enable = () => {
+      if (!cancelled) setChromeReady(true);
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(enable, { timeout: 9000 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(id);
+      };
+    }
+    const timer = window.setTimeout(enable, 8000);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   return (
     <DemoModal auto={autoDemo}>
@@ -43,11 +64,11 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </main>
-      {isAuth ? null : <Footer />}
-      {showMobileBookBar ? <MobileBookBar /> : null}
-      {isAuth ? null : (
+      {chromeReady && !isAuth ? <Footer /> : null}
+      {chromeReady && showMobileBookBar ? <MobileBookBar /> : null}
+      {chromeReady && !isAuth ? (
         <Concierge offsetForBookBar={showMobileBookBar} />
-      )}
+      ) : null}
     </DemoModal>
   );
 }

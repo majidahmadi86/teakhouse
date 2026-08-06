@@ -20,7 +20,7 @@ export function HeroLCP({
           width={828}
           height={1104}
           fetchPriority="high"
-          decoding="async"
+          decoding="sync"
           className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
         />
       </picture>

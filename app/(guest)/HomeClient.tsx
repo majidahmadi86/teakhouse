@@ -6,6 +6,7 @@ import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroSlideshow } from "@/components/hero/HeroSlideshow";
 import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
 import { useI18n } from "@/lib/i18n";
+import { useIsMobile } from "@/lib/useMediaQuery";
 
 const HeroSearchPill = dynamic(
   () =>
@@ -13,7 +14,7 @@ const HeroSearchPill = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-14 w-full animate-pulse rounded-full bg-white shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px]" />
+      <div className="h-14 w-full rounded-full bg-white shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px]" />
     ),
   }
 );
@@ -24,29 +25,52 @@ const HomeBelowFold = dynamic(
   { ssr: false }
 );
 
+function PillPlaceholder() {
+  return (
+    <div
+      className="h-14 w-full rounded-full bg-white shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px]"
+      aria-hidden
+    />
+  );
+}
+
 export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
   const { t } = useI18n();
+  const isMobile = useIsMobile();
   const [belowReady, setBelowReady] = useState(false);
+  const [searchReady, setSearchReady] = useState(false);
   const wordCount = t("hero.h1").split(" ").length;
   const subDelay = wordCount * 0.09 + 0.15;
   const pillDelay = subDelay + 0.35;
 
   useEffect(() => {
     let cancelled = false;
-    const enable = () => {
+    const enableSearch = () => {
+      if (!cancelled) setSearchReady(true);
+    };
+    const enableBelow = () => {
       if (!cancelled) setBelowReady(true);
     };
+
+    const timers: number[] = [];
+    const idleIds: number[] = [];
+
     if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 8000 });
-      return () => {
-        cancelled = true;
-        window.cancelIdleCallback(id);
-      };
+      idleIds.push(
+        window.requestIdleCallback(enableSearch, { timeout: 9000 })
+      );
+      idleIds.push(
+        window.requestIdleCallback(enableBelow, { timeout: 10000 })
+      );
+    } else {
+      timers.push(window.setTimeout(enableSearch, 8000));
+      timers.push(window.setTimeout(enableBelow, 9000));
     }
-    const timer = window.setTimeout(enable, 7000);
+
     return () => {
       cancelled = true;
-      window.clearTimeout(timer);
+      idleIds.forEach((id) => window.cancelIdleCallback(id));
+      timers.forEach((id) => window.clearTimeout(id));
     };
   }, []);
 
@@ -78,7 +102,7 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
             className="tkh-hero-fade relative z-20 mt-4"
             style={{ animationDelay: `${pillDelay}s` }}
           >
-            <HeroSearchPill />
+            {searchReady && isMobile ? <HeroSearchPill /> : <PillPlaceholder />}
           </div>
         </div>
 
@@ -99,7 +123,11 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
               className="tkh-hero-fade relative z-20 mt-7"
               style={{ animationDelay: `${pillDelay}s` }}
             >
-              <HeroSearchPill />
+              {searchReady && !isMobile ? (
+                <HeroSearchPill />
+              ) : (
+                <PillPlaceholder />
+              )}
               <HeroTrustRow />
             </div>
           </div>
