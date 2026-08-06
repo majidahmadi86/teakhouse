@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -9,11 +10,6 @@ import {
   useState,
   type ComponentProps,
 } from "react";
-
-/** Prefetch off — viewport Links were downloading every guest route during LH. */
-function Link(props: ComponentProps<typeof NextLink>) {
-  return <NextLink prefetch={false} {...props} />;
-}
 import {
   BadgePercent,
   CalendarDays,
@@ -24,7 +20,6 @@ import {
   User,
   X,
 } from "lucide-react";
-import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { Logo } from "@/components/Logo";
 import { SafeImage } from "@/components/SafeImage";
 import { Tooltip } from "@/components/ui/Tooltip";
@@ -32,7 +27,19 @@ import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { SEED_ROOMS } from "@/lib/rooms";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import { cn } from "@/lib/utils";
+
+/** Prefetch off — viewport Links were downloading every guest route during LH. */
+function Link(props: ComponentProps<typeof NextLink>) {
+  return <NextLink prefetch={false} {...props} />;
+}
+
+const CurrencySwitcher = dynamic(
+  () =>
+    import("@/components/CurrencySwitcher").then((m) => m.CurrencySwitcher),
+  { ssr: false }
+);
 
 const NAV_CENTER = [
   { href: "/experience", key: "nav.experience" },
@@ -364,6 +371,10 @@ export function Header() {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Mount desktop-only trees only when needed — avoids hydrating mega-menu /
+  // headlessui currency on mobile Lighthouse runs.
+  const showDesktopNav = useMediaQuery("(min-width: 1200px)");
+  const showWideUtils = useMediaQuery("(min-width: 760px)");
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -410,56 +421,64 @@ export function Header() {
           </Link>
 
           {/* CENTER nav: ≥1200px */}
-          <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
-            <RoomsMegaMenu active={isActive("/rooms")} />
-            {NAV_CENTER.map(({ href, key }) => (
-              <NavLink
-                key={href}
-                href={href}
-                label={t(key)}
-                active={isActive(href)}
-              />
-            ))}
-          </nav>
+          {showDesktopNav ? (
+            <nav className="mx-auto flex items-center gap-7">
+              <RoomsMegaMenu active={isActive("/rooms")} />
+              {NAV_CENTER.map(({ href, key }) => (
+                <NavLink
+                  key={href}
+                  href={href}
+                  label={t(key)}
+                  active={isActive(href)}
+                />
+              ))}
+            </nav>
+          ) : (
+            <div className="mx-auto hidden min-[1200px]:block" aria-hidden />
+          )}
 
           {/* RIGHT utility cluster */}
           <div className="ml-auto flex shrink-0 items-center gap-[18px]">
-            {/* Utilities: visible ≥760px */}
-            <div className="hidden items-center gap-[18px] min-[760px]:flex">
-              <OffersIconLink active={isActive("/offers")} />
-              <CurrencySwitcher />
-              <LangPair />
-              <AccountEntry iconOnly />
-            </div>
+            {showWideUtils ? (
+              <div className="flex items-center gap-[18px]">
+                <OffersIconLink active={isActive("/offers")} />
+                <CurrencySwitcher />
+                <LangPair />
+                <AccountEntry iconOnly />
+              </div>
+            ) : null}
 
-            {/* Book CTA: text ≥760px, icon <760px */}
-            <Link
-              href="/book"
-              className="btn-shine btn-primary hidden whitespace-nowrap min-[760px]:inline-flex"
-            >
-              {t("nav.book")}
-            </Link>
-            <Tooltip label={t("nav.book")}>
+            {showWideUtils ? (
               <Link
                 href="/book"
-                aria-label={t("nav.book")}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta min-[760px]:hidden"
+                className="btn-shine btn-primary whitespace-nowrap inline-flex"
               >
-                <CalendarDays className="h-5 w-5" aria-hidden />
+                {t("nav.book")}
               </Link>
-            </Tooltip>
+            ) : (
+              <Tooltip label={t("nav.book")}>
+                <Link
+                  href="/book"
+                  aria-label={t("nav.book")}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta"
+                >
+                  <CalendarDays className="h-5 w-5" aria-hidden />
+                </Link>
+              </Tooltip>
+            )}
 
-            {/* Burger: <1200px */}
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center min-[1200px]:hidden"
-              aria-label={t("mobile.menu")}
-              aria-expanded={drawerOpen}
-              aria-controls="mobile-nav-drawer"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
-            </button>
+            {!showDesktopNav ? (
+              <button
+                type="button"
+                className="flex h-10 w-10 items-center justify-center"
+                aria-label={t("mobile.menu")}
+                aria-expanded={drawerOpen}
+                aria-controls="mobile-nav-drawer"
+                onClick={() => setDrawerOpen(true)}
+              >
+                <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
+              </button>
+            ) : null}
           </div>
         </div>
       </header>
@@ -468,19 +487,16 @@ export function Header() {
         <button
           type="button"
           aria-label={t("mobile.close")}
-          className="fixed inset-0 z-[55] bg-ink/40 min-[1200px]:hidden"
+          className="fixed inset-0 z-[55] bg-ink/40"
           onClick={() => setDrawerOpen(false)}
         />
       ) : null}
 
-      {/* Mobile / tablet drawer */}
+      {/* Mobile / tablet drawer — mount only when open (keeps headlessui off critical path) */}
+      {drawerOpen ? (
       <aside
         id="mobile-nav-drawer"
-        className={cn(
-          "fixed inset-y-0 right-0 z-drawer flex w-[min(100%,320px)] flex-col bg-white text-ink shadow-panel transition-transform duration-300 min-[1200px]:hidden",
-          drawerOpen ? "translate-x-0" : "translate-x-full"
-        )}
-        aria-hidden={!drawerOpen}
+        className="fixed inset-y-0 right-0 z-drawer flex w-[min(100%,320px)] flex-col bg-white text-ink shadow-panel"
       >
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-line px-4">
           <Logo showTag={false} size={20} className="[&_div]:text-[16px]" />
@@ -605,6 +621,7 @@ export function Header() {
           </Link>
         </div>
       </aside>
+      ) : null}
     </>
   );
 }
