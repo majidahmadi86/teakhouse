@@ -392,21 +392,34 @@ input.auth-input:-webkit-autofill {
     );
   }
 
-  /* Mobile-only cinematic stack: top vignette + deep bottom stage */
+  /* Mobile-only: soft top scrim for headline legibility + deep bottom stage */
   .hero-scrim-mobile {
     background:
-      radial-gradient(
-        120% 55% at 50% 0%,
-        rgba(6, 24, 48, 0.55) 0%,
-        rgba(6, 24, 48, 0) 55%
+      linear-gradient(
+        180deg,
+        rgba(10, 46, 92, 0.35) 0%,
+        transparent 40%
       ),
       linear-gradient(
         180deg,
-        rgba(8, 32, 64, 0.12) 18%,
-        rgba(8, 32, 64, 0.28) 42%,
-        rgba(8, 28, 56, 0.72) 68%,
+        transparent 50%,
+        rgba(8, 32, 64, 0.28) 68%,
+        rgba(8, 28, 56, 0.72) 84%,
         rgba(6, 22, 48, 0.94) 100%
       );
+  }
+
+  /* Mobile hero lead — never truncate; drop to 14px if tight at 360px */
+  .hero-lead-mobile {
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  @media (max-width: 360px) {
+    .hero-lead-mobile {
+      font-size: 14px;
+    }
   }
 
   .hero-grade-mobile {

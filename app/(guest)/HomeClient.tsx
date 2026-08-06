@@ -43,22 +43,42 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
           <div className="hero-scrim absolute inset-0 hidden md:block" />
         </div>
 
-        <div className="absolute inset-0 flex flex-col justify-end px-5 pb-6 pt-20 md:hidden">
-          <p
-            className="tkh-hero-fade font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow"
-            style={{ animationDuration: "0.55s" }}
-          >
-            {t("brand.name")}
-          </p>
-          <div className="mt-2">
-            <HeroHeadline />
+        {/* Mobile · three layers — desktop block below is untouched */}
+        <div className="absolute inset-0 flex flex-col md:hidden">
+          {/* P1 · TOP — eyebrow, H1, rating over the sky */}
+          <div className="relative z-10 px-5 pt-6">
+            <p
+              className="tkh-hero-fade font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow"
+              style={{ animationDuration: "0.55s" }}
+            >
+              {t("brand.name")}
+            </p>
+            <div className="mt-2">
+              <HeroHeadline />
+            </div>
+            <HeroTrustRow compact className="mt-3 justify-start" />
           </div>
-          <HeroTrustRow compact className="mt-3 justify-start" />
+
+          {/* P3 · MIDDLE — photo only */}
+          <div className="min-h-0 flex-1" aria-hidden />
+
+          {/* P2 · BOTTOM — lead + price chip + search pill */}
           <div
-            className="tkh-hero-fade relative z-20 mt-4"
-            style={{ animationDelay: `${pillDelay}s` }}
+            id="tkh-hero-actions"
+            className="relative z-20 px-5 pb-safe"
           >
-            <HeroSearchPill />
+            <p
+              className="hero-lead-mobile tkh-hero-fade text-white/90 hero-text-shadow"
+              style={{ animationDelay: `${subDelay}s` }}
+            >
+              {t("hero.leadShort")}
+            </p>
+            <div
+              className="tkh-hero-fade relative z-20 mt-5"
+              style={{ animationDelay: `${pillDelay}s` }}
+            >
+              <HeroSearchPill />
+            </div>
           </div>
         </div>
 
@@ -80,7 +100,7 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
               style={{ animationDelay: `${pillDelay}s` }}
             >
               <HeroSearchPill />
-              <HeroTrustRow />
+              <HeroTrustRow className="mt-4" />
             </div>
           </div>
         </div>

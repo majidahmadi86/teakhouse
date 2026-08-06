@@ -16,7 +16,7 @@ export function HeroTrustRow({
   return (
     <p
       className={cn(
-        "tkh-hero-fade mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90",
+        "tkh-hero-fade flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90",
         className
       )}
       style={{ animationDelay: "0.35s" }}

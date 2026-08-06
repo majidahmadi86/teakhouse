@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, X } from "lucide-react";
 import { useConcierge } from "@/components/providers";
+import { useHeroFabClearance } from "@/lib/useHeroFabClearance";
 import { useI18n } from "@/lib/i18n";
 import {
   CONCIERGE_CHIPS,
@@ -86,9 +87,13 @@ export function ConciergePanel({
   }, [messages, typing]);
 
   const chips = CONCIERGE_CHIPS[lang];
-  const fabBottom = offsetForBookBar
-    ? "bottom-[76px] md:bottom-6"
-    : "bottom-6";
+  const heroClearance = useHeroFabClearance();
+  const fabBottom =
+    heroClearance !== null
+      ? undefined
+      : offsetForBookBar
+        ? "bottom-[76px] md:bottom-6"
+        : "bottom-6";
 
   return (
     <div
@@ -99,6 +104,9 @@ export function ConciergePanel({
           ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-[18px] scale-[0.98] opacity-0"
       )}
+      style={
+        heroClearance !== null ? { bottom: heroClearance } : undefined
+      }
       role="dialog"
       aria-label="Concierge chat"
       aria-hidden={!isOpen}
