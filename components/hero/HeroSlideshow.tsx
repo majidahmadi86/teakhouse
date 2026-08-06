@@ -94,13 +94,16 @@ export function HeroSlideshow() {
       >
         <picture>
           <source
-            media="(max-width: 768px)"
-            srcSet={slide0.localMobile}
+            media="(min-width: 769px)"
+            srcSet={slide0.localDesktop}
             type="image/avif"
           />
+          {/* Mobile-first src — phones must not download the 1920w asset */}
           <img
-            src={slide0.localDesktop}
+            src={slide0.localMobile}
             alt={slide0.alt}
+            width={828}
+            height={1104}
             fetchPriority="high"
             decoding="async"
             className={cn(
