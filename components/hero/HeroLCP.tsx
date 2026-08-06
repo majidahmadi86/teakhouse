@@ -7,12 +7,11 @@ export function HeroLCP({
   className?: string;
 }) {
   return (
-    <div className={cn("absolute inset-0", className)}>
+    <div className={cn("absolute inset-0 tkh-ken-burns-in", className)}>
       <picture>
-        {/* CSS media (not DPR srcset) — phones stay on the small AVIF. */}
         <source
           media="(max-width: 768px)"
-          srcSet="/hero-lcp-640.avif"
+          srcSet="/hero-lcp-828.avif"
           type="image/avif"
         />
         <source
@@ -21,13 +20,13 @@ export function HeroLCP({
           type="image/avif"
         />
         <img
-          src="/hero-lcp-640.avif"
+          src="/hero-lcp-828.avif"
           alt="Resort pool at dusk overlooking the Chao Phraya"
-          width={640}
-          height={427}
+          width={828}
+          height={1104}
           fetchPriority="high"
-          decoding="sync"
-          className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
+          decoding="async"
+          className="tkh-hero-img absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
         />
       </picture>
     </div>

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SafeImage } from "@/components/SafeImage";
 import { cn } from "@/lib/utils";
 
-const FADE_S = 1.2;
+const FADE_S = 1.45;
 const HERO_SIZES = "(max-width: 768px) 100vw, 100vw";
 
 type Slide = {

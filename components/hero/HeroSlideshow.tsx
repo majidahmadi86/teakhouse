@@ -42,7 +42,6 @@ export function HeroSlideshow({
   const [reduce, setReduce] = useState(false);
   const [index, setIndex] = useState(0);
   const [lazyReady, setLazyReady] = useState(false);
-  const [kenBurns, setKenBurns] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -54,11 +53,8 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (reduce) return;
-    // After first paint — keeps LCP calm without hiding UI from guests.
-    const timer = window.setTimeout(() => {
-      setLazyReady(true);
-      setKenBurns(true);
-    }, 1200);
+    // Warm the crossfade chunk soon — Ken Burns already runs via CSS on LCP.
+    const timer = window.setTimeout(() => setLazyReady(true), 600);
     return () => window.clearTimeout(timer);
   }, [reduce]);
 
@@ -71,12 +67,11 @@ export function HeroSlideshow({
   }, [reduce, lazyReady]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden bg-navy">
       <div
         className={cn(
           "absolute inset-0",
-          kenBurns && index === 0 && !reduce && "tkh-ken-burns-in",
-          !reduce && index !== 0 && "opacity-0"
+          !reduce && index !== 0 && "opacity-0 transition-opacity duration-700"
         )}
         aria-hidden={!reduce && index !== 0}
       >
@@ -88,7 +83,7 @@ export function HeroSlideshow({
           slides={SLIDES}
           index={index}
           holdMs={HOLD_MS}
-          kenBurns={kenBurns}
+          kenBurns={!reduce}
         />
       ) : null}
     </div>

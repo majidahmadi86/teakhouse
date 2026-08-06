@@ -37,9 +37,29 @@
   will-change: transform;
 }
 
+/* Soft reveal so the hero photo never hard-pops onto navy.
+   Opacity only — scale lives on the Ken Burns wrapper. */
+@keyframes tkh-hero-img-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tkh-hero-img {
+  animation: tkh-hero-img-reveal 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tkh-ken-burns-in {
     animation: none;
+  }
+
+  .tkh-hero-img {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -56,18 +76,19 @@
   animation: tkh-hero-word 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Transform-only — opacity fades tank Speed Index on mobile Lighthouse. */
 @keyframes tkh-hero-fade {
   from {
+    opacity: 0;
     transform: translateY(14px);
   }
   to {
+    opacity: 1;
     transform: translateY(0);
   }
 }
 
 .tkh-hero-fade {
-  animation: tkh-hero-fade 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: tkh-hero-fade 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .tkh-menu-pop {
