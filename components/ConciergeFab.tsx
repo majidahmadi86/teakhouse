@@ -17,6 +17,7 @@ export function ConciergeFab({
   const { openConcierge } = useConcierge();
   const heroClearance = useHeroFabClearance();
   const compact = heroClearance !== null;
+  const label = t("cg.fab");
 
   const fabBottomClass =
     heroClearance !== null
@@ -33,16 +34,16 @@ export function ConciergeFab({
         openConcierge();
       }}
       className={cn(
-        "fixed right-[22px] z-fab flex items-center overflow-hidden rounded-full bg-navy text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition-[width,padding,background-color,transform,box-shadow] duration-200 hover:scale-[1.04] hover:bg-blue-dark hover:shadow-[0_18px_48px_rgba(18,33,28,0.45)] max-md:right-2.5",
+        "fixed right-[22px] z-fab flex h-[52px] min-w-[52px] items-center overflow-hidden rounded-full bg-navy text-[0.88rem] font-extrabold text-white shadow-[0_14px_40px_rgba(18,33,28,0.35)] transition-[max-width,padding,gap,background-color,transform,box-shadow] duration-200 ease-out hover:scale-[1.04] hover:bg-blue-dark hover:shadow-[0_18px_48px_rgba(18,33,28,0.45)] max-md:right-2.5",
         compact
-          ? "h-[52px] w-[52px] justify-center gap-0 px-0 py-0"
-          : "h-auto w-auto gap-2.5 px-5 py-3.5",
+          ? "max-w-[52px] justify-center gap-0 px-0"
+          : "max-w-[240px] gap-2.5 px-5",
         fabBottomClass
       )}
       style={
         heroClearance !== null ? { bottom: heroClearance } : undefined
       }
-      aria-label={t("cg.fab")}
+      aria-label={label}
     >
       <span
         className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#7FD79A]"
@@ -50,13 +51,13 @@ export function ConciergeFab({
       />
       <span
         className={cn(
-          "whitespace-nowrap transition-[max-width,opacity,margin] duration-200",
+          "overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin] duration-200 ease-out",
           compact
-            ? "ml-0 max-w-0 opacity-0"
-            : "ml-0 max-w-[12rem] opacity-100"
+            ? "m-0 max-w-0 opacity-0"
+            : "max-w-[12rem] opacity-100"
         )}
       >
-        {t("cg.fab")}
+        {label}
       </span>
     </button>
   );
