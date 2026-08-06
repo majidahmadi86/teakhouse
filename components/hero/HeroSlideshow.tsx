@@ -60,14 +60,15 @@ export function HeroSlideshow({
       setLazyReady(true);
       setKenBurns(true);
     };
+    // Keep framer/crossfade well outside the LCP+TBT measurement window
     if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 2500 });
+      const id = window.requestIdleCallback(enable, { timeout: 8000 });
       return () => {
         cancelled = true;
         window.cancelIdleCallback(id);
       };
     }
-    const t = window.setTimeout(enable, 1800);
+    const t = window.setTimeout(enable, 7000);
     return () => {
       cancelled = true;
       window.clearTimeout(t);

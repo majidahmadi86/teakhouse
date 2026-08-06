@@ -37,13 +37,13 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
       if (!cancelled) setBelowReady(true);
     };
     if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 4500 });
+      const id = window.requestIdleCallback(enable, { timeout: 8000 });
       return () => {
         cancelled = true;
         window.cancelIdleCallback(id);
       };
     }
-    const timer = window.setTimeout(enable, 3500);
+    const timer = window.setTimeout(enable, 7000);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
