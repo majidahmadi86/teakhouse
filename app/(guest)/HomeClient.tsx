@@ -34,7 +34,7 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
     <>
       <section
         id="tkh-hero"
-        className="relative z-[1] h-[100svh] overflow-hidden bg-navy md:h-[min(86svh,820px)]"
+        className="relative z-[1] h-[calc(100svh-3.5rem)] overflow-hidden bg-navy md:h-[min(86svh,820px)]"
       >
         <div className="absolute inset-0">
           <HeroSlideshow lcp={heroLcp} />
