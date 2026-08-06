@@ -1,13 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroSlideshow } from "@/components/hero/HeroSlideshow";
 import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
-import { deferHeavy } from "@/lib/deferHeavy";
 import { useI18n } from "@/lib/i18n";
-import { useIsMobile } from "@/lib/useMediaQuery";
 
 const HeroSearchPill = dynamic(
   () =>
@@ -26,32 +24,11 @@ const HomeBelowFold = dynamic(
   { ssr: false }
 );
 
-function PillPlaceholder() {
-  return (
-    <div
-      className="h-14 w-full rounded-full bg-white shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px]"
-      aria-hidden
-    />
-  );
-}
-
 export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
   const { t } = useI18n();
-  const isMobile = useIsMobile();
-  const [belowReady, setBelowReady] = useState(false);
-  const [searchReady, setSearchReady] = useState(false);
   const wordCount = t("hero.h1").split(" ").length;
   const subDelay = wordCount * 0.09 + 0.15;
   const pillDelay = subDelay + 0.35;
-
-  useEffect(() => {
-    const cancelSearch = deferHeavy(() => setSearchReady(true), 15000);
-    const cancelBelow = deferHeavy(() => setBelowReady(true), 16000);
-    return () => {
-      cancelSearch();
-      cancelBelow();
-    };
-  }, []);
 
   return (
     <>
@@ -81,7 +58,7 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
             className="tkh-hero-fade relative z-20 mt-4"
             style={{ animationDelay: `${pillDelay}s` }}
           >
-            {searchReady && isMobile ? <HeroSearchPill /> : <PillPlaceholder />}
+            <HeroSearchPill />
           </div>
         </div>
 
@@ -102,22 +79,14 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
               className="tkh-hero-fade relative z-20 mt-7"
               style={{ animationDelay: `${pillDelay}s` }}
             >
-              {searchReady && !isMobile ? (
-                <HeroSearchPill />
-              ) : (
-                <PillPlaceholder />
-              )}
+              <HeroSearchPill />
               <HeroTrustRow />
             </div>
           </div>
         </div>
       </section>
 
-      {belowReady ? (
-        <HomeBelowFold />
-      ) : (
-        <div className="min-h-[40vh] bg-white" aria-hidden />
-      )}
+      <HomeBelowFold />
     </>
   );
 }

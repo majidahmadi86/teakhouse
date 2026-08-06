@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { deferHeavy } from "@/lib/deferHeavy";
 import { cn } from "@/lib/utils";
 import { unsplashSrc } from "@/lib/unsplashLoader";
 
@@ -55,11 +54,12 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (reduce) return;
-    // Hard delay — requestIdleCallback fires too early under Lighthouse.
-    return deferHeavy(() => {
+    // After first paint — keeps LCP calm without hiding UI from guests.
+    const timer = window.setTimeout(() => {
       setLazyReady(true);
       setKenBurns(true);
-    }, 15000);
+    }, 1200);
+    return () => window.clearTimeout(timer);
   }, [reduce]);
 
   useEffect(() => {
