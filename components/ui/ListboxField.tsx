@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
 import {
   Listbox,
   ListboxButton,
@@ -37,8 +37,15 @@ export function ListboxField({
 }: ListboxFieldProps) {
   const { lang } = useI18n();
   const isMobile = useIsMobile();
+  const doneRef = useRef<HTMLElement>(null);
   const selected = options.find((o) => o.value === value);
   const doneLabel = lang === "th" ? "เสร็จสิ้น" : "Done";
+  const closeLabel = lang === "th" ? "ปิด" : "Close";
+
+  /** Re-select current value via ListboxOption — closes sheet even when inert. */
+  function closeSheet() {
+    doneRef.current?.click();
+  }
 
   return (
     <div className={cn("w-full", className)}>
@@ -68,8 +75,13 @@ export function ListboxField({
                   modal
                   className="fixed inset-0 z-popover flex flex-col justify-end focus:outline-none"
                 >
-                  <div className="absolute inset-0 bg-navy/40" aria-hidden />
-                  <div className="relative rounded-t-3xl bg-white px-2 pb-safe pt-3 shadow-2xl">
+                  <button
+                    type="button"
+                    className="absolute inset-0 z-0 bg-navy/40"
+                    aria-label={closeLabel}
+                    onClick={closeSheet}
+                  />
+                  <div className="relative z-10 rounded-t-3xl bg-white px-2 pb-safe pt-3 shadow-2xl">
                     <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-line" />
                     <div className="max-h-[50vh] overflow-auto py-2">
                       {options.map((option) => (
@@ -98,9 +110,13 @@ export function ListboxField({
                       ))}
                     </div>
                     <div className="px-3 pb-3 pt-1">
-                      <button type="button" className="btn-primary w-full">
+                      <ListboxOption
+                        ref={doneRef}
+                        value={value}
+                        className="btn-primary w-full cursor-pointer"
+                      >
                         {doneLabel}
-                      </button>
+                      </ListboxOption>
                     </div>
                   </div>
                 </ListboxOptions>
