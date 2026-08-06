@@ -12,6 +12,8 @@ type Slide = {
   alt: string;
   zoom: "in" | "out";
   position: string;
+  localMobile?: string;
+  localDesktop?: string;
 };
 
 /** Loaded only after idle — framer stays off the LCP path. */

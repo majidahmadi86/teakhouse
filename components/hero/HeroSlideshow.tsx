@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { SafeImage } from "@/components/SafeImage";
-import { unsplashSrc } from "@/lib/unsplashLoader";
 import { cn } from "@/lib/utils";
+import { unsplashSrc } from "@/lib/unsplashLoader";
 
 const SLIDES = [
   {
+    // Same-origin AVIF LCP — visually identical to Unsplash slide 1
+    localMobile: "/hero-lcp-828.avif",
+    localDesktop: "/hero-lcp-1920.avif",
     src: unsplashSrc("photo-1520250497591-112f2f40a3f4"),
     alt: "Resort pool at dusk overlooking the Chao Phraya",
     zoom: "in" as const,
@@ -28,8 +30,6 @@ const SLIDES = [
 ];
 
 const HOLD_MS = 7000;
-/** Display sizes so 2–3× DPR caps downloads ≤828w mobile / ≤1920w desktop */
-const HERO_SIZES = "(max-width: 768px) 100vw, 100vw";
 
 const HeroCrossfade = dynamic(
   () => import("./HeroCrossfade").then((m) => m.HeroCrossfade),
@@ -50,7 +50,6 @@ export function HeroSlideshow() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Slides 2–3 + Ken Burns only after idle — never compete with LCP
   useEffect(() => {
     if (reduce) return;
     let cancelled = false;
@@ -85,7 +84,6 @@ export function HeroSlideshow() {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* LCP layer: static img, no framer — painted immediately */}
       <div
         className={cn(
           "absolute inset-0",
@@ -94,15 +92,23 @@ export function HeroSlideshow() {
         )}
         aria-hidden={!reduce && index !== 0}
       >
-        <SafeImage
-          src={slide0.src}
-          alt={slide0.alt}
-          fill
-          priority
-          quality={75}
-          sizes={HERO_SIZES}
-          className={cn("object-cover", slide0.position)}
-        />
+        <picture>
+          <source
+            media="(max-width: 768px)"
+            srcSet={slide0.localMobile}
+            type="image/avif"
+          />
+          <img
+            src={slide0.localDesktop}
+            alt={slide0.alt}
+            fetchPriority="high"
+            decoding="async"
+            className={cn(
+              "absolute inset-0 h-full w-full object-cover",
+              slide0.position
+            )}
+          />
+        </picture>
       </div>
 
       {!reduce && lazyReady ? (
