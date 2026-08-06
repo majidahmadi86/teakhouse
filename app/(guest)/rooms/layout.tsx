@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 
 export const metadata: Metadata = {
   title: "Rooms",
@@ -12,5 +13,5 @@ export default function RoomsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <OwnerStoreProvider>{children}</OwnerStoreProvider>;
 }

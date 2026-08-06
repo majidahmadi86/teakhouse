@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 import { OwnerShell } from "./OwnerShell";
 
 export const metadata: Metadata = {
@@ -12,5 +13,9 @@ export default function OwnerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OwnerShell>{children}</OwnerShell>;
+  return (
+    <OwnerStoreProvider>
+      <OwnerShell>{children}</OwnerShell>
+    </OwnerStoreProvider>
+  );
 }

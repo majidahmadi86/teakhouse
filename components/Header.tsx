@@ -20,7 +20,7 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
-import { useGuestRooms } from "@/lib/ownerStore";
+import { SEED_ROOMS } from "@/lib/rooms";
 import { cn } from "@/lib/utils";
 
 const NAV_CENTER = [
@@ -193,7 +193,7 @@ function OffersIconLink({ active }: { active: boolean }) {
 function RoomsMegaMenu({ active }: { active: boolean }) {
   const { t, tr } = useI18n();
   const { format } = useCurrency();
-  const rooms = useGuestRooms();
+  const rooms = SEED_ROOMS.filter((r) => r.active);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

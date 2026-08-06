@@ -5,7 +5,6 @@ import { MotionProvider } from "@/components/motion/MotionProvider";
 import { CurrencyProvider } from "@/lib/currency";
 import { GuestAuthProvider } from "@/lib/guestAuth";
 import { I18nProvider } from "@/lib/i18n";
-import { OwnerProvider } from "@/lib/ownerStore";
 
 type ConciergeCtx = {
   isOpen: boolean;
@@ -51,9 +50,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <I18nProvider>
         <CurrencyProvider>
           <GuestAuthProvider>
-            <OwnerProvider>
-              <ConciergeProvider>{children}</ConciergeProvider>
-            </OwnerProvider>
+            <ConciergeProvider>{children}</ConciergeProvider>
           </GuestAuthProvider>
         </CurrencyProvider>
       </I18nProvider>
