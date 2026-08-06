@@ -14,6 +14,7 @@ type SafeImageProps = {
   priority?: boolean;
   sizes?: string;
   quality?: number;
+  onLoadingComplete?: () => void;
   /** Tried in order when primary src fails. */
   fallbackSrcs?: string[];
 };
@@ -32,6 +33,7 @@ export function SafeImage({
   priority,
   sizes,
   quality = 75,
+  onLoadingComplete,
   fallbackSrcs = [],
 }: SafeImageProps) {
   const sources = [src, ...fallbackSrcs];
@@ -62,6 +64,7 @@ export function SafeImage({
         fill
         className={cn("object-cover", className)}
         onError={() => setIndex((i) => i + 1)}
+        onLoadingComplete={onLoadingComplete}
         priority={priority}
         fetchPriority={priority ? "high" : "auto"}
         sizes={sizes ?? "100vw"}
@@ -79,6 +82,7 @@ export function SafeImage({
       height={height ?? 800}
       className={className}
       onError={() => setIndex((i) => i + 1)}
+      onLoadingComplete={onLoadingComplete}
       priority={priority}
       fetchPriority={priority ? "high" : "auto"}
       sizes={sizes}

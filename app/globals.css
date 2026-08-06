@@ -23,43 +23,24 @@
   }
 }
 
-@keyframes tkh-ken-burns-in {
+/* Start at scale(1) — never jump in from 1.08 before the photo has painted. */
+@keyframes tkh-ken-burns-live {
   from {
-    transform: scale(1.08);
+    transform: scale(1);
   }
   to {
-    transform: scale(1);
+    transform: scale(1.06);
   }
 }
 
-.tkh-ken-burns-in {
-  animation: tkh-ken-burns-in 7s linear forwards;
+.tkh-ken-burns-live {
+  animation: tkh-ken-burns-live 8s linear forwards;
   will-change: transform;
 }
 
-/* Soft reveal so the hero photo never hard-pops onto navy.
-   Opacity only — scale lives on the Ken Burns wrapper. */
-@keyframes tkh-hero-img-reveal {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.tkh-hero-img {
-  animation: tkh-hero-img-reveal 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tkh-ken-burns-in {
+  .tkh-ken-burns-live {
     animation: none;
-  }
-
-  .tkh-hero-img {
-    animation: none;
-    opacity: 1;
   }
 }
 

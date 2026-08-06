@@ -27,6 +27,7 @@ const SLIDES = [
 ];
 
 const HOLD_MS = 7000;
+const FADE_MS = 1250;
 
 const HeroCrossfade = dynamic(
   () => import("./HeroCrossfade").then((m) => m.HeroCrossfade),
@@ -53,8 +54,8 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (reduce) return;
-    // Warm the crossfade chunk soon — Ken Burns already runs via CSS on LCP.
-    const timer = window.setTimeout(() => setLazyReady(true), 600);
+    // Prefetch slideshow soon — never hide guest UI.
+    const timer = window.setTimeout(() => setLazyReady(true), 900);
     return () => window.clearTimeout(timer);
   }, [reduce]);
 
@@ -70,9 +71,10 @@ export function HeroSlideshow({
     <div className="absolute inset-0 overflow-hidden bg-navy">
       <div
         className={cn(
-          "absolute inset-0",
-          !reduce && index !== 0 && "opacity-0 transition-opacity duration-700"
+          "absolute inset-0 transition-opacity ease-out",
+          !reduce && index !== 0 ? "opacity-0" : "opacity-100"
         )}
+        style={{ transitionDuration: `${FADE_MS}ms` }}
         aria-hidden={!reduce && index !== 0}
       >
         {lcp}
