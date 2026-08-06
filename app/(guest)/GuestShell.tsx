@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { DemoModal } from "@/components/DemoModal";
 import { Header } from "@/components/Header";
-import { PageFade } from "@/components/motion/PageFade";
 import { cn } from "@/lib/utils";
 
 const Footer = dynamic(
@@ -42,7 +41,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
             : "pb-24 md:pb-8"
         }
       >
-        <PageFade>{children}</PageFade>
+        {children}
       </main>
       {isAuth ? null : <Footer />}
       {showMobileBookBar ? <MobileBookBar /> : null}

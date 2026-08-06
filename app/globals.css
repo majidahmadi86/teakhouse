@@ -43,6 +43,48 @@
   }
 }
 
+@keyframes tkh-hero-word {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tkh-hero-word {
+  animation: tkh-hero-word 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tkh-hero-fade {
+  animation: tkh-page-fade 0.4s ease-out both;
+}
+
+.tkh-menu-pop {
+  animation: tkh-menu-pop 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tkh-menu-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tkh-hero-word,
+  .tkh-hero-fade,
+  .tkh-menu-pop {
+    animation: none;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

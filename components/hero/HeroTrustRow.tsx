@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { m, useReducedMotion } from "framer-motion";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -14,11 +13,13 @@ export function HeroTrustRow({
   compact?: boolean;
 }) {
   const { t } = useI18n();
-  const reduce = useReducedMotion();
-  const [rating, setRating] = useState(reduce ? 5 : 0);
+  const [rating, setRating] = useState(0);
+  const [reduce, setReduce] = useState(false);
 
   useEffect(() => {
-    if (reduce) {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduce(mq.matches);
+    if (mq.matches) {
       setRating(5);
       return;
     }
@@ -32,19 +33,17 @@ export function HeroTrustRow({
     }
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reduce]);
+  }, []);
 
-  const display = rating.toFixed(1);
+  const display = (reduce ? 5 : rating).toFixed(1);
 
   return (
-    <m.p
+    <p
       className={cn(
-        "mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90",
+        "tkh-hero-fade mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90",
         className
       )}
-      initial={reduce ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 1.05, duration: 0.4 }}
+      style={{ animationDelay: "1.05s" }}
     >
       <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/14 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
         <span className="tracking-[1px] text-gold" aria-hidden>
@@ -60,6 +59,6 @@ export function HeroTrustRow({
           <span>{t("trust.freeShort")}</span>
         </>
       ) : null}
-    </m.p>
+    </p>
   );
 }

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import {
   BadgePercent,
   CalendarDays,
@@ -169,7 +168,6 @@ function AccountEntry({ iconOnly }: { iconOnly?: boolean }) {
 
 function OffersIconLink({ active }: { active: boolean }) {
   const { t } = useI18n();
-  const reduce = useReducedMotion();
 
   return (
     <Tooltip label={t("nav.offers")}>
@@ -186,9 +184,7 @@ function OffersIconLink({ active }: { active: boolean }) {
           strokeWidth={2}
           aria-hidden
         />
-        {!reduce ? (
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-[pulse_2s_ease-in-out_infinite] rounded-full bg-coral-deep" />
-        ) : null}
+        <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-[pulse_2s_ease-in-out_infinite] rounded-full bg-coral-deep motion-reduce:hidden" />
       </Link>
     </Tooltip>
   );
@@ -199,7 +195,6 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
   const { format } = useCurrency();
   const rooms = useGuestRooms();
   const pathname = usePathname();
-  const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const menuId = useId();
@@ -260,16 +255,11 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
         />
       </Link>
 
-      <AnimatePresence>
-        {open ? (
-          <m.div
+      {open ? (
+          <div
             id={menuId}
             role="menu"
-            initial={reduce ? false : { opacity: 0, y: 10, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduce ? undefined : { opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 280, damping: 24 }}
-            className="absolute left-0 top-full z-[80] mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
+            className="tkh-menu-pop absolute left-0 top-full z-[80] mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
           >
             <div className="grid gap-5 md:grid-cols-[1fr_180px]">
               <div className="grid grid-cols-2 gap-3">
@@ -328,10 +318,9 @@ function RoomsMegaMenu({ active }: { active: boolean }) {
                 </Link>
               </div>
             </div>
-          </m.div>
+          </div>
         ) : null}
-      </AnimatePresence>
-    </div>
+      </div>
   );
 }
 
@@ -364,7 +353,6 @@ export function Header() {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const reduce = useReducedMotion();
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -496,18 +484,13 @@ export function Header() {
         </div>
 
         <nav className="flex flex-1 flex-col overflow-y-auto px-1">
-          {DRAWER_NAV.map((item, i) => {
+          {DRAWER_NAV.map((item) => {
             const active = isActive(item.href);
             const subtitle = "subtitle" in item ? item.subtitle : undefined;
             const offers = "offers" in item && item.offers;
 
             return (
-              <m.div
-                key={item.href}
-                initial={reduce || !drawerOpen ? false : { opacity: 0, x: 12 }}
-                animate={drawerOpen ? { opacity: 1, x: 0 } : undefined}
-                transition={{ delay: i * 0.04, duration: 0.28 }}
-              >
+              <div key={item.href}>
                 <Link
                   href={item.href}
                   onClick={() => setDrawerOpen(false)}
@@ -533,7 +516,7 @@ export function Header() {
                     ) : null}
                   </span>
                 </Link>
-              </m.div>
+              </div>
             );
           })}
 
