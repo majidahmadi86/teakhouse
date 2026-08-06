@@ -65,7 +65,7 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
           {/* P2 · BOTTOM — lead + price chip + search pill */}
           <div
             id="tkh-hero-actions"
-            className="relative z-20 px-5 pb-safe"
+            className="relative z-20 px-5 hero-actions-pb"
           >
             <p
               className="hero-lead-mobile tkh-hero-fade text-white/90 hero-text-shadow"
@@ -73,8 +73,9 @@ export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
             >
               {t("hero.leadShort")}
             </p>
+            {/* mt-3 = 12px above chip; pt-3 reserves room for chip at -top-3 */}
             <div
-              className="tkh-hero-fade relative z-20 mt-5"
+              className="tkh-hero-fade relative z-20 mt-3 pt-3"
               style={{ animationDelay: `${pillDelay}s` }}
             >
               <HeroSearchPill />
