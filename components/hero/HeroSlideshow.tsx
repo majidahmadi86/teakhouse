@@ -7,9 +7,6 @@ import { unsplashSrc } from "@/lib/unsplashLoader";
 
 const SLIDES = [
   {
-    // Same-origin AVIF LCP — visually identical to Unsplash slide 1
-    localMobile: "/hero-lcp-828.avif",
-    localDesktop: "/hero-lcp-1920.avif",
     src: unsplashSrc("photo-1520250497591-112f2f40a3f4"),
     alt: "Resort pool at dusk overlooking the Chao Phraya",
     zoom: "in" as const,
@@ -36,7 +33,12 @@ const HeroCrossfade = dynamic(
   { ssr: false }
 );
 
-export function HeroSlideshow() {
+/** Client slideshow overlays — LCP base image is server-rendered in HeroLCP. */
+export function HeroSlideshow({
+  lcp,
+}: {
+  lcp: React.ReactNode;
+}) {
   const [reduce, setReduce] = useState(false);
   const [index, setIndex] = useState(0);
   const [lazyReady, setLazyReady] = useState(false);
@@ -80,8 +82,6 @@ export function HeroSlideshow() {
     return () => window.clearInterval(id);
   }, [reduce, lazyReady]);
 
-  const slide0 = SLIDES[0];
-
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div
@@ -92,26 +92,7 @@ export function HeroSlideshow() {
         )}
         aria-hidden={!reduce && index !== 0}
       >
-        <picture>
-          <source
-            media="(min-width: 769px)"
-            srcSet={slide0.localDesktop}
-            type="image/avif"
-          />
-          {/* Mobile-first src — phones must not download the 1920w asset */}
-          <img
-            src={slide0.localMobile}
-            alt={slide0.alt}
-            width={828}
-            height={1104}
-            fetchPriority="high"
-            decoding="async"
-            className={cn(
-              "absolute inset-0 h-full w-full object-cover",
-              slide0.position
-            )}
-          />
-        </picture>
+        {lcp}
       </div>
 
       {!reduce && lazyReady ? (

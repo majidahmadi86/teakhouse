@@ -1,6 +1,7 @@
 import HomeClient from "./HomeClient";
+import { HeroLCP } from "@/components/hero/HeroLCP";
 
-/** Server page: preload same-origin AVIF LCP hero before client JS. */
+/** Server page: preload + server-rendered LCP image (no client JS required to paint). */
 export default function HomePage() {
   return (
     <>
@@ -20,7 +21,7 @@ export default function HomePage() {
         media="(min-width: 769px)"
         {...{ fetchPriority: "high" }}
       />
-      <HomeClient />
+      <HomeClient heroLcp={<HeroLCP />} />
     </>
   );
 }

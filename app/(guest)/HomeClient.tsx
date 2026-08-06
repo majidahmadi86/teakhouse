@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroSlideshow } from "@/components/hero/HeroSlideshow";
 import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
@@ -24,7 +24,7 @@ const HomeBelowFold = dynamic(
   { ssr: false }
 );
 
-export default function HomeClient() {
+export default function HomeClient({ heroLcp }: { heroLcp: ReactNode }) {
   const { t } = useI18n();
   const [belowReady, setBelowReady] = useState(false);
   const wordCount = t("hero.h1").split(" ").length;
@@ -37,13 +37,13 @@ export default function HomeClient() {
       if (!cancelled) setBelowReady(true);
     };
     if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(enable, { timeout: 3000 });
+      const id = window.requestIdleCallback(enable, { timeout: 4500 });
       return () => {
         cancelled = true;
         window.cancelIdleCallback(id);
       };
     }
-    const timer = window.setTimeout(enable, 2000);
+    const timer = window.setTimeout(enable, 3500);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
@@ -57,7 +57,7 @@ export default function HomeClient() {
         className="relative z-[1] h-[100svh] overflow-hidden bg-navy md:h-[min(86svh,820px)]"
       >
         <div className="absolute inset-0">
-          <HeroSlideshow />
+          <HeroSlideshow lcp={heroLcp} />
           <div className="hero-scrim-mobile absolute inset-0 md:hidden" />
           <div className="hero-grade-mobile pointer-events-none absolute inset-0 md:hidden" />
           <div className="hero-scrim absolute inset-0 hidden md:block" />
