@@ -8,22 +8,17 @@ export function HeroLCP({
 }) {
   return (
     <div className={cn("absolute inset-0", className)}>
-      <picture>
-        <source
-          media="(min-width: 769px)"
-          srcSet="/hero-lcp-1920.avif"
-          type="image/avif"
-        />
-        <img
-          src="/hero-lcp-640.avif"
-          alt="Resort pool at dusk overlooking the Chao Phraya"
-          width={640}
-          height={427}
-          fetchPriority="high"
-          decoding="sync"
-          className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
-        />
-      </picture>
+      <img
+        src="/hero-lcp-640.avif"
+        srcSet="/hero-lcp-640.avif 640w, /hero-lcp-1920.avif 1920w"
+        sizes="100vw"
+        alt="Resort pool at dusk overlooking the Chao Phraya"
+        width={1920}
+        height={1280}
+        fetchPriority="high"
+        decoding="sync"
+        className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
+      />
     </div>
   );
 }

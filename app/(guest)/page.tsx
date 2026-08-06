@@ -10,15 +10,8 @@ export default function HomePage() {
         as="image"
         href="/hero-lcp-640.avif"
         type="image/avif"
-        media="(max-width: 768px)"
-        {...{ fetchPriority: "high" }}
-      />
-      <link
-        rel="preload"
-        as="image"
-        href="/hero-lcp-1920.avif"
-        type="image/avif"
-        media="(min-width: 769px)"
+        imageSrcSet="/hero-lcp-640.avif 640w, /hero-lcp-1920.avif 1920w"
+        imageSizes="100vw"
         {...{ fetchPriority: "high" }}
       />
       <HomeClient heroLcp={<HeroLCP />} />
