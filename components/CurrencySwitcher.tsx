@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
 import {
   Listbox,
   ListboxButton,
@@ -25,8 +25,14 @@ export function CurrencySwitcher({
 }: CurrencySwitcherProps) {
   const { currency, setCurrency } = useCurrency();
   const { lang } = useI18n();
+  const doneRef = useRef<HTMLElement>(null);
   const selected = CURRENCIES.find((c) => c.code === currency) ?? CURRENCIES[0];
   const doneLabel = lang === "th" ? "เสร็จสิ้น" : "Done";
+
+  /** Re-select current value via ListboxOption — closes sheet even when inert. */
+  function closeSheet() {
+    doneRef.current?.click();
+  }
 
   return (
     <Listbox value={currency} onChange={(v: Currency) => setCurrency(v)}>
@@ -50,8 +56,13 @@ export function CurrencySwitcher({
                 modal
                 className="fixed inset-0 z-[80] flex flex-col justify-end focus:outline-none"
               >
-                <div className="absolute inset-0 bg-navy/40" aria-hidden />
-                <div className="relative rounded-t-3xl bg-white px-2 pb-safe pt-3 shadow-2xl">
+                <button
+                  type="button"
+                  className="absolute inset-0 z-0 bg-navy/40"
+                  aria-label={lang === "th" ? "ปิด" : "Close"}
+                  onClick={closeSheet}
+                />
+                <div className="relative z-10 rounded-t-3xl bg-white px-2 pb-safe pt-3 shadow-2xl">
                   <div className="mx-auto mb-2 h-1.5 w-12 rounded-full bg-line" />
                   <div className="py-2">
                     {CURRENCIES.map((c) => (
@@ -80,9 +91,13 @@ export function CurrencySwitcher({
                     ))}
                   </div>
                   <div className="px-3 pb-3 pt-1">
-                    <button type="button" className="btn-primary w-full">
+                    <ListboxOption
+                      ref={doneRef}
+                      value={currency}
+                      className="btn-primary w-full cursor-pointer"
+                    >
                       {doneLabel}
-                    </button>
+                    </ListboxOption>
                   </div>
                 </div>
               </ListboxOptions>
