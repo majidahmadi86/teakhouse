@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# The Teak House · sellable hotel system (v8)
 
-## Getting Started
+Direct-booking demo hotel: live availability, bilingual concierge,
+owner dashboard, Prisma data layer. Showcase system by Mikaro Studio.
 
-First, run the development server:
+## Quickstart
 
 ```bash
+git clone <repo-url>
+cd teakhouse
+npm install
+cp .env.example .env.local
+# edit .env.local if needed · SQLite default works out of the box
+
+npx prisma migrate dev
+npx prisma db seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Owner desk: [http://localhost:3000/owner](http://localhost:3000/owner)
+(PIN from `NEXT_PUBLIC_OWNER_PIN`, default `1234`).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Config guide · hotel presets
 
-## Learn More
+Single re-brand switch in `config/hotel.config.ts`:
 
-To learn more about Next.js, take a look at the following resources:
+```ts
+export { config as hotelConfig } from "./presets/tropical-resort";
+// export { config as hotelConfig } from "./presets/city-boutique";
+// export { config as hotelConfig } from "./presets/minimal-zen";
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Uncomment exactly one preset. Each preset owns name, palette, fonts,
+photos, contact, policies, and concierge voice. Guest chrome reads
+from `hotelConfig` · do not hardcode brand strings into components.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Cursor prompts for common buyer tasks live in `/prompts`:
+- `re-skin.md`
+- `add-room-type.md`
+- `add-language.md`
+- `deploy-vercel.md`
 
-## Deploy on Vercel
+## Demo mode
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set both (or at least the public flag for the UI bar):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+DEMO_MODE=true
+NEXT_PUBLIC_DEMO_MODE=true
+```
+
+When on:
+- Guest ⇄ Owner switcher bar appears
+- Owner PIN gate is bypassed for demos
+- Hourly reseed via `/api/cron/reseed` (Vercel cron + `CRON_SECRET`)
+- In-app reset path reseeds when last reset is older than 60 minutes
+
+Leave both `false` for a sticky client database.
+
+## Provider setup
+
+### Database · SQLite → Postgres
+
+Local default (`prisma/schema.prisma`):
+
+```
+provider = "sqlite"
+DATABASE_URL="file:./dev.db"
+```
+
+Production / Supabase / Neon:
+
+1. Set `provider = "postgresql"` in `prisma/schema.prisma`
+2. Set `DATABASE_URL` to your Postgres URL (`sslmode=require` as needed)
+3. `npx prisma migrate deploy` then seed once
+
+### AI concierge
+
+Optional. Without keys, the chat panel uses local intent matching.
+
+```
+AI_PROVIDER=anthropic   # or openai | groq
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+GROQ_API_KEY=
+# AI_MODEL=               # optional override
+```
+
+Route: `POST /api/concierge` with `{ message, lang }`. Facts come from
+`hotel.config` plus live room rates from Prisma · the model must not
+invent prices. 6s timeout returns the configured fallback message.
+
+### Email stub
+
+```
+EMAIL_PROVIDER=stub
+EMAIL_API_KEY=
+EMAIL_FROM=stay@example.com
+```
+
+`lib/email.ts` logs confirmation payloads until a real provider is
+wired. Safe for demos.
+
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Next.js dev server |
+| `npm run build` | `prisma generate` + production build |
+| `npm run db:migrate` | Prisma migrate dev |
+| `npm run db:seed` | Seed rooms, bookings, templates |
+| `npm run db:reset` | Migrate reset + seed |
+| `npm run presets:shots` | Screenshot preset sweep |
+
+## License
+
+Copyright © Mikaro Studio. All rights reserved.
+
+This repository is provided as a demonstration system for licensed
+clients. Redistribution, resale, or production use outside an active
+Mikaro agreement requires written permission. Contact
+stay@teakhouse.demo (placeholder) for licensing.
