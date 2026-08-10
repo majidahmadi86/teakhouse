@@ -51,9 +51,9 @@ export function RoomCard({
           />
         </div>
       </div>
-      <div className="flex flex-1 flex-col gap-2.5 p-6">
+      <div className="flex min-h-[210px] flex-1 flex-col gap-2.5 p-6 md:min-h-[230px]">
         <h3 className="font-display text-xl text-ink">{tr(room.name)}</h3>
-        <p className="flex flex-wrap gap-3.5 text-[0.8rem] font-semibold text-sub">
+        <p className="flex min-h-[1.25rem] flex-wrap gap-3.5 text-[0.8rem] font-semibold text-sub">
           <span>{room.sizeM2} m²</span>
           <span>{tr(room.bedType)}</span>
           <span>{tr(room.view)}</span>
@@ -62,7 +62,7 @@ export function RoomCard({
           ) : null}
         </p>
         {variant === "full" && descriptionKey ? (
-          <p className="text-[0.93rem] text-sub">{t(descriptionKey)}</p>
+          <p className="min-h-[3.4rem] text-[0.93rem] text-sub">{t(descriptionKey)}</p>
         ) : null}
         {variant === "full" ? (
           <div className="flex gap-3 text-blue">
