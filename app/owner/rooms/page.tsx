@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -8,7 +8,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { Plus, X } from "lucide-react";
+import { ChevronDown, Plus, X } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { SafeImage } from "@/components/SafeImage";
 import {
@@ -18,6 +18,7 @@ import {
   type AmenityGroup,
 } from "@/lib/amenities";
 import { useI18n } from "@/lib/i18n";
+import type { SeasonalPriceRuleDto } from "@/lib/ownerTypes";
 import { type Room, type RoomShortKey } from "@/lib/rooms";
 import { useOwner } from "@/lib/ownerStore";
 import { cn, formatBaht } from "@/lib/utils";
@@ -68,6 +69,22 @@ function buildMeta(form: RoomForm): Room["meta"] {
   };
 }
 
+type PricingDraft = {
+  label: string;
+  startDate: string;
+  endDate: string;
+  multiplier: string;
+};
+
+function emptyPricing(): PricingDraft {
+  return {
+    label: "",
+    startDate: "",
+    endDate: "",
+    multiplier: "1.2",
+  };
+}
+
 export default function OwnerRoomsPage() {
   const { t, tr } = useI18n();
   const { data, addRoom, updateRoom, deleteRoom } = useOwner();
@@ -75,11 +92,30 @@ export default function OwnerRoomsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Room | null>(null);
   const [form, setForm] = useState<RoomForm>(emptyRoom);
+  const [pricingOpen, setPricingOpen] = useState<string | null>(null);
+  const [pricingByRoom, setPricingByRoom] = useState<
+    Record<string, SeasonalPriceRuleDto[]>
+  >({});
+  const [pricingDraft, setPricingDraft] = useState<PricingDraft>(emptyPricing);
+  const [pricingBusy, setPricingBusy] = useState(false);
+  const [pricingMsg, setPricingMsg] = useState("");
 
   const sortedRooms = useMemo(
     () => [...data.rooms].sort((a, b) => a.name.en.localeCompare(b.name.en)),
     [data.rooms]
   );
+
+  const loadPricing = useCallback(async (roomId: string) => {
+    const res = await fetch(`/api/rooms/${roomId}/pricing`);
+    if (!res.ok) return;
+    const rows = (await res.json()) as SeasonalPriceRuleDto[];
+    setPricingByRoom((prev) => ({ ...prev, [roomId]: rows }));
+  }, []);
+
+  useEffect(() => {
+    if (!pricingOpen) return;
+    void loadPricing(pricingOpen);
+  }, [pricingOpen, loadPricing]);
 
   function openAdd() {
     setEditing(null);
@@ -133,7 +169,9 @@ export default function OwnerRoomsPage() {
       ...form,
       id,
       slug,
-      photos: photos.length ? photos : ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304"],
+      photos: photos.length
+        ? photos
+        : ["https://images.unsplash.com/photo-1631049307264-da0ec9d70304"],
       meta: buildMeta({ ...form, slug }),
     };
 
@@ -148,6 +186,65 @@ export default function OwnerRoomsPage() {
   function handleDelete(room: Room) {
     if (!window.confirm(t("ow.sure"))) return;
     deleteRoom(room.id);
+  }
+
+  function togglePricing(roomId: string) {
+    setPricingMsg("");
+    setPricingDraft(emptyPricing());
+    setPricingOpen((prev) => (prev === roomId ? null : roomId));
+  }
+
+  async function addPriceRule(roomId: string) {
+    const mult = parseFloat(pricingDraft.multiplier);
+    if (
+      !pricingDraft.startDate ||
+      !pricingDraft.endDate ||
+      !Number.isFinite(mult)
+    ) {
+      setPricingMsg("Start, end, and multiplier are required");
+      return;
+    }
+    setPricingBusy(true);
+    setPricingMsg("");
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/pricing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label: pricingDraft.label.trim(),
+          startDate: pricingDraft.startDate,
+          endDate: pricingDraft.endDate,
+          multiplier: mult,
+        }),
+      });
+      if (!res.ok) {
+        setPricingMsg("Could not add rule");
+        return;
+      }
+      setPricingDraft(emptyPricing());
+      await loadPricing(roomId);
+      setPricingMsg("Rule added");
+    } finally {
+      setPricingBusy(false);
+    }
+  }
+
+  async function deletePriceRule(roomId: string, ruleId: string) {
+    if (!window.confirm("Delete this pricing rule?")) return;
+    setPricingBusy(true);
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/pricing?id=${ruleId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        setPricingMsg("Could not delete rule");
+        return;
+      }
+      await loadPricing(roomId);
+      setPricingMsg("Rule deleted");
+    } finally {
+      setPricingBusy(false);
+    }
   }
 
   return (
@@ -167,85 +264,211 @@ export default function OwnerRoomsPage() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {sortedRooms.map((room) => (
-          <article
-            key={room.id}
-            className={cn(
-              "overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition",
-              !room.active && "opacity-60"
-            )}
-          >
-            <div className="relative aspect-[4/3]">
-              <SafeImage
-                src={room.photos[0] ?? ""}
-                alt={tr(room.name)}
-                fill
-                sizes="(max-width:768px) 100vw, 33vw"
-                className="object-cover"
-              />
-              {!room.active ? (
-                <span className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white/80">
-                  Inactive
-                </span>
-              ) : null}
-            </div>
-
-            <div className="p-5">
-              <h2 className="font-display text-xl font-semibold text-white">
-                {tr(room.name)}
-              </h2>
-              <p className="mt-1 text-sm text-white/50">{tr(room.meta)}</p>
-              <p className="mt-3 font-display text-2xl font-semibold text-gold">
-                {formatBaht(room.rate)}
-                <span className="ml-2 text-sm font-sans font-semibold text-white/40">
-                  OTA {formatBaht(room.ota)}
-                </span>
-              </p>
-
-              <div className="mt-5 flex items-center justify-between gap-3">
-                <label className="flex min-h-[44px] cursor-pointer items-center gap-3">
-                  <span className="text-sm font-bold text-white/70">
-                    {t("ow.active")}
+        {sortedRooms.map((room) => {
+          const open = pricingOpen === room.id;
+          const rules = pricingByRoom[room.id] ?? [];
+          return (
+            <article
+              key={room.id}
+              className={cn(
+                "overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition",
+                !room.active && "opacity-60"
+              )}
+            >
+              <div className="relative aspect-[4/3]">
+                <SafeImage
+                  src={room.photos[0] ?? ""}
+                  alt={tr(room.name)}
+                  fill
+                  sizes="(max-width:768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+                {!room.active ? (
+                  <span className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white/80">
+                    Inactive
                   </span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={room.active}
-                    onClick={() => toggleActive(room)}
-                    className={cn(
-                      "relative h-7 w-12 rounded-full transition",
-                      room.active ? "bg-deal" : "bg-white/20"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition",
-                        room.active ? "left-[22px]" : "left-0.5"
-                      )}
-                    />
-                  </button>
-                </label>
-
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => openEdit(room)}
-                    className="min-h-[44px] rounded-xl border border-white/15 px-4 py-2 text-sm font-bold text-white"
-                  >
-                    {t("ow.edit")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(room)}
-                    className="min-h-[44px] rounded-xl border border-red-500/30 px-4 py-2 text-sm font-bold text-red-300"
-                  >
-                    {t("ow.del")}
-                  </button>
-                </div>
+                ) : null}
               </div>
-            </div>
-          </article>
-        ))}
+
+              <div className="p-5">
+                <h2 className="font-display text-xl font-semibold text-white">
+                  {tr(room.name)}
+                </h2>
+                <p className="mt-1 text-sm text-white/50">{tr(room.meta)}</p>
+                <p className="mt-3 font-display text-2xl font-semibold text-gold">
+                  {formatBaht(room.rate)}
+                  <span className="ml-2 text-sm font-sans font-semibold text-white/40">
+                    OTA {formatBaht(room.ota)}
+                  </span>
+                </p>
+
+                <div className="mt-5 flex items-center justify-between gap-3">
+                  <label className="flex min-h-[44px] cursor-pointer items-center gap-3">
+                    <span className="text-sm font-bold text-white/70">
+                      {t("ow.active")}
+                    </span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={room.active}
+                      onClick={() => toggleActive(room)}
+                      className={cn(
+                        "relative h-7 w-12 rounded-full transition",
+                        room.active ? "bg-deal" : "bg-white/20"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition",
+                          room.active ? "left-[22px]" : "left-0.5"
+                        )}
+                      />
+                    </button>
+                  </label>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openEdit(room)}
+                      className="min-h-[44px] rounded-xl border border-white/15 px-4 py-2 text-sm font-bold text-white"
+                    >
+                      {t("ow.edit")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(room)}
+                      className="min-h-[44px] rounded-xl border border-red-500/30 px-4 py-2 text-sm font-bold text-red-300"
+                    >
+                      {t("ow.del")}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => togglePricing(room.id)}
+                  className="mt-4 flex min-h-[44px] w-full items-center justify-between rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/80 transition hover:border-own-blue/40"
+                  aria-expanded={open}
+                >
+                  Seasonal pricing
+                  <ChevronDown
+                    className={cn("h-4 w-4 transition", open && "rotate-180")}
+                    aria-hidden
+                  />
+                </button>
+
+                {open ? (
+                  <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
+                    {rules.length === 0 ? (
+                      <p className="text-xs text-white/45">No rules yet</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {rules.map((rule) => (
+                          <li
+                            key={rule.id}
+                            className="flex items-start justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
+                          >
+                            <div>
+                              <p className="font-bold text-white">
+                                {rule.label || "Season"} · ×{rule.multiplier}
+                              </p>
+                              <p className="text-white/50">
+                                {rule.startDate} to {rule.endDate}
+                              </p>
+                              <p className="mt-0.5 text-gold">
+                                ≈{" "}
+                                {formatBaht(
+                                  Math.round(room.rate * rule.multiplier)
+                                )}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              disabled={pricingBusy}
+                              onClick={() =>
+                                void deletePriceRule(room.id, rule.id)
+                              }
+                              className="shrink-0 text-red-300 hover:underline"
+                            >
+                              Delete
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <div className="space-y-2">
+                      <input
+                        placeholder="Label (e.g. Songkran)"
+                        value={pricingDraft.label}
+                        onChange={(e) =>
+                          setPricingDraft((p) => ({
+                            ...p,
+                            label: e.target.value,
+                          }))
+                        }
+                        className="min-h-[40px] w-full px-3 py-2 text-sm"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="date"
+                          value={pricingDraft.startDate}
+                          onChange={(e) =>
+                            setPricingDraft((p) => ({
+                              ...p,
+                              startDate: e.target.value,
+                            }))
+                          }
+                          className="min-h-[40px] w-full px-3 py-2 text-sm"
+                          aria-label="Start date"
+                        />
+                        <input
+                          type="date"
+                          value={pricingDraft.endDate}
+                          onChange={(e) =>
+                            setPricingDraft((p) => ({
+                              ...p,
+                              endDate: e.target.value,
+                            }))
+                          }
+                          className="min-h-[40px] w-full px-3 py-2 text-sm"
+                          aria-label="End date"
+                        />
+                      </div>
+                      <input
+                        type="number"
+                        step="0.05"
+                        min="0.1"
+                        placeholder="Multiplier"
+                        value={pricingDraft.multiplier}
+                        onChange={(e) =>
+                          setPricingDraft((p) => ({
+                            ...p,
+                            multiplier: e.target.value,
+                          }))
+                        }
+                        className="min-h-[40px] w-full px-3 py-2 text-sm"
+                      />
+                      <button
+                        type="button"
+                        disabled={pricingBusy}
+                        onClick={() => void addPriceRule(room.id)}
+                        className="min-h-[40px] w-full rounded-xl bg-own-blue/90 px-3 py-2 text-sm font-extrabold text-white disabled:opacity-60"
+                      >
+                        Add rule
+                      </button>
+                      {pricingMsg && pricingOpen === room.id ? (
+                        <p className="text-xs font-semibold text-deal">
+                          {pricingMsg}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <Transition show={modalOpen} as={Fragment}>
@@ -551,7 +774,10 @@ export default function OwnerRoomsPage() {
                         onChange={(e) =>
                           setForm((p) => ({
                             ...p,
-                            description: { ...p.description, en: e.target.value },
+                            description: {
+                              ...p.description,
+                              en: e.target.value,
+                            },
                           }))
                         }
                         className={inputClass}
@@ -564,7 +790,10 @@ export default function OwnerRoomsPage() {
                         onChange={(e) =>
                           setForm((p) => ({
                             ...p,
-                            description: { ...p.description, th: e.target.value },
+                            description: {
+                              ...p.description,
+                              th: e.target.value,
+                            },
                           }))
                         }
                         className={inputClass}

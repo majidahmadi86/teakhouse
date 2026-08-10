@@ -52,3 +52,41 @@ export type OwnerData = {
   blocks: Record<string, true>;
   seedVersion?: number;
 };
+
+export type HotelDto = {
+  id: string;
+  name: string;
+  tagline: string;
+  email: string;
+  phone: string;
+  lineId: string;
+  address: string;
+  addressLine: string;
+  city: string;
+  country: string;
+  postalCode: string;
+  lat: number;
+  lng: number;
+  checkInTime: string;
+  checkOutTime: string;
+  cancelPolicy: string;
+  petsPolicy: string;
+  depositPct: number;
+};
+
+export type SeasonalPriceRuleDto = {
+  id: string;
+  roomId: string;
+  label: string;
+  startDate: string;
+  endDate: string;
+  multiplier: number;
+};
+
+export type EmailTemplateDto = {
+  id: string;
+  hotelId: string;
+  key: string;
+  subject: string;
+  body: string;
+};

@@ -19,6 +19,26 @@ function cellColor(state: CellState): string {
   return "bg-deal/40 hover:bg-deal/60";
 }
 
+/** Heat intensity from occupancy % (0-100). */
+function heatStyle(pct: number): { className: string; style?: React.CSSProperties } {
+  if (pct <= 0) {
+    return { className: "bg-white/[0.06] border border-white/10" };
+  }
+  if (pct < 25) {
+    return { className: "bg-own-blue/25" };
+  }
+  if (pct < 50) {
+    return { className: "bg-own-blue/45" };
+  }
+  if (pct < 75) {
+    return { className: "bg-own-blue/70" };
+  }
+  if (pct < 100) {
+    return { className: "bg-own-blue" };
+  }
+  return { className: "bg-gold" };
+}
+
 export default function OwnerCalendarPage() {
   const { t, tr } = useI18n();
   const { data, getCell, toggleBlock } = useOwner();
@@ -30,6 +50,7 @@ export default function OwnerCalendarPage() {
     return d;
   });
   const [roomFilter, setRoomFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"rooms" | "heat">("rooms");
 
   const days = useMemo(
     () =>
@@ -55,6 +76,24 @@ export default function OwnerCalendarPage() {
     ],
     [data.rooms, t, tr]
   );
+
+  const heatByDay = useMemo(() => {
+    const active = data.rooms.filter((r) => r.active);
+    const total = active.length || 1;
+    const map: Record<string, { pct: number; booked: number }> = {};
+    for (const d of days) {
+      const dateIso = isoDate(d);
+      let booked = 0;
+      for (const room of active) {
+        if (getCell(room.slug, dateIso) === "booked") booked += 1;
+      }
+      map[dateIso] = {
+        booked,
+        pct: Math.round((booked / total) * 100),
+      };
+    }
+    return map;
+  }, [days, data.rooms, getCell]);
 
   function prevMonth() {
     setMonth((m) => {
@@ -108,74 +147,159 @@ export default function OwnerCalendarPage() {
         </div>
       </div>
 
-      <div className="owner-panel mb-6 max-w-xs rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-        <OwnerListbox
-          label={t("col.room")}
-          value={roomFilter}
-          onChange={setRoomFilter}
-          options={roomOptions}
-        />
+      <div className="owner-panel mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-xs flex-1">
+          <OwnerListbox
+            label={t("col.room")}
+            value={roomFilter}
+            onChange={setRoomFilter}
+            options={roomOptions}
+          />
+        </div>
+        <div
+          className="flex rounded-xl border border-white/12 bg-white/5 p-1"
+          role="group"
+          aria-label="Calendar view mode"
+        >
+          <button
+            type="button"
+            onClick={() => setViewMode("rooms")}
+            className={cn(
+              "min-h-[40px] rounded-lg px-4 text-sm font-bold transition",
+              viewMode === "rooms"
+                ? "bg-own-blue text-white"
+                : "text-white/60 hover:text-white"
+            )}
+          >
+            Rooms
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("heat")}
+            className={cn(
+              "min-h-[40px] rounded-lg px-4 text-sm font-bold transition",
+              viewMode === "heat"
+                ? "bg-own-blue text-white"
+                : "text-white/60 hover:text-white"
+            )}
+          >
+            Heat
+          </button>
+        </div>
       </div>
 
-      <section className="owner-panel overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
-        <div className="overflow-x-auto">
-          <div
-            className="grid min-w-[640px] gap-1"
-            style={{
-              gridTemplateColumns: `minmax(120px, 160px) repeat(${days.length}, minmax(28px, 1fr))`,
-            }}
-          >
-            <div />
-            {days.map((d) => (
+      {viewMode === "heat" ? (
+        <section className="owner-panel overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+          <p className="mb-4 text-sm text-white/55">
+            Occupancy heat · darker = fuller house that night
+          </p>
+          <div className="grid grid-cols-7 gap-2 sm:gap-3">
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
               <div
-                key={isoDate(d)}
-                className="py-2 text-center text-[0.65rem] font-bold text-white/50"
+                key={d}
+                className="text-center text-[0.65rem] font-extrabold uppercase tracking-[0.12em] text-white/40"
               >
-                {format(d, "d")}
-                <br />
-                <span className="uppercase">{format(d, "EEE")}</span>
+                {d}
               </div>
             ))}
-
-            {rooms.map((room) => (
-              <Fragment key={room.slug}>
-                <div className="flex items-center py-1 pr-2 text-sm font-bold text-white/80">
-                  {tr(room.name)}
-                </div>
-                {days.map((d) => {
-                  const dateIso = isoDate(d);
-                  const state = getCell(room.slug, dateIso);
-                  const isBooked = state === "booked";
-                  return (
-                    <button
-                      key={`${room.slug}-${dateIso}`}
-                      type="button"
-                      disabled={isBooked}
-                      onClick={() => handleCellClick(room.slug, dateIso)}
-                      title={`${tr(room.name)} · ${format(d, "d MMM")} · ${state}`}
-                      className={cn(
-                        "aspect-square min-h-[28px] min-w-[28px] rounded-sm transition",
-                        cellColor(state),
-                        isBooked && "opacity-90"
-                      )}
-                      aria-label={`${tr(room.name)} ${format(d, "d MMM")} ${state}`}
-                    />
-                  );
-                })}
-              </Fragment>
+            {Array.from({ length: startOfMonth(month).getDay() }).map((_, i) => (
+              <div key={`pad-${i}`} />
             ))}
+            {days.map((d) => {
+              const dateIso = isoDate(d);
+              const heat = heatByDay[dateIso] ?? { pct: 0, booked: 0 };
+              const style = heatStyle(heat.pct);
+              return (
+                <div
+                  key={dateIso}
+                  title={`${format(d, "d MMM")} · ${heat.pct}% occupancy · ${heat.booked} booked`}
+                  className={cn(
+                    "flex aspect-square flex-col items-center justify-center rounded-xl transition",
+                    style.className
+                  )}
+                >
+                  <span className="text-sm font-bold text-white">
+                    {format(d, "d")}
+                  </span>
+                  <span className="text-[0.65rem] font-semibold text-white/70">
+                    {heat.pct}%
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        </div>
 
-        <div className="mt-6 flex flex-wrap gap-5 text-sm font-bold text-white/80">
-          <LegendDot color="bg-deal/40" label={t("ow.lg1")} />
-          <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
-          <LegendDot color="bg-white/15" label={t("ow.lg3")} />
-        </div>
-        <p className="mt-3 text-xs font-medium text-white/45">
-          Tap available or blocked cells to toggle. Booked nights cannot be changed.
-        </p>
-      </section>
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold text-white/70">
+            <span className="text-white/45">Intensity</span>
+            <LegendDot color="bg-white/[0.06]" label="0%" />
+            <LegendDot color="bg-own-blue/25" label="1-24%" />
+            <LegendDot color="bg-own-blue/45" label="25-49%" />
+            <LegendDot color="bg-own-blue/70" label="50-74%" />
+            <LegendDot color="bg-own-blue" label="75-99%" />
+            <LegendDot color="bg-gold" label="100%" />
+          </div>
+        </section>
+      ) : (
+        <section className="owner-panel overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+          <div className="overflow-x-auto">
+            <div
+              className="grid min-w-[640px] gap-1"
+              style={{
+                gridTemplateColumns: `minmax(120px, 160px) repeat(${days.length}, minmax(28px, 1fr))`,
+              }}
+            >
+              <div />
+              {days.map((d) => (
+                <div
+                  key={isoDate(d)}
+                  className="py-2 text-center text-[0.65rem] font-bold text-white/50"
+                >
+                  {format(d, "d")}
+                  <br />
+                  <span className="uppercase">{format(d, "EEE")}</span>
+                </div>
+              ))}
+
+              {rooms.map((room) => (
+                <Fragment key={room.slug}>
+                  <div className="flex items-center py-1 pr-2 text-sm font-bold text-white/80">
+                    {tr(room.name)}
+                  </div>
+                  {days.map((d) => {
+                    const dateIso = isoDate(d);
+                    const state = getCell(room.slug, dateIso);
+                    const isBooked = state === "booked";
+                    return (
+                      <button
+                        key={`${room.slug}-${dateIso}`}
+                        type="button"
+                        disabled={isBooked}
+                        onClick={() => handleCellClick(room.slug, dateIso)}
+                        title={`${tr(room.name)} · ${format(d, "d MMM")} · ${state}`}
+                        className={cn(
+                          "aspect-square min-h-[28px] min-w-[28px] rounded-sm transition",
+                          cellColor(state),
+                          isBooked && "opacity-90"
+                        )}
+                        aria-label={`${tr(room.name)} ${format(d, "d MMM")} ${state}`}
+                      />
+                    );
+                  })}
+                </Fragment>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-5 text-sm font-bold text-white/80">
+            <LegendDot color="bg-deal/40" label={t("ow.lg1")} />
+            <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
+            <LegendDot color="bg-white/15" label={t("ow.lg3")} />
+          </div>
+          <p className="mt-3 text-xs font-medium text-white/45">
+            Tap available or blocked cells to toggle. Booked nights cannot be changed.
+          </p>
+        </section>
+      )}
     </div>
   );
 }

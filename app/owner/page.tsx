@@ -1,14 +1,14 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { useI18n } from "@/lib/i18n";
 import {
   type Booking,
   type CellState,
   useOwner,
 } from "@/lib/ownerStore";
-import { addDays, cn, formatBaht, isoDate } from "@/lib/utils";
+import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
 
 function bookingTouchesMonth(booking: Booking, ref: Date): boolean {
   if (booking.status === "cancelled") return false;
@@ -46,6 +46,71 @@ function cellColor(state: CellState): string {
   return "bg-deal/40";
 }
 
+function monthKey(d: Date): string {
+  return format(d, "yyyy-MM");
+}
+
+function monthLabel(key: string): string {
+  const [y, m] = key.split("-").map(Number);
+  return format(new Date(y, m - 1, 1), "MMM");
+}
+
+/** Allocate booking amount across stay months by night share. */
+function revenueByMonth(
+  bookings: Booking[],
+  months: string[]
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const k of months) out[k] = 0;
+
+  for (const b of bookings) {
+    if (b.status === "cancelled") continue;
+    const nights = nightsBetween(b.checkIn, b.checkOut);
+    const perNight = b.amount / nights;
+    let cursor = parseISO(b.checkIn);
+    const end = parseISO(b.checkOut);
+    while (cursor < end) {
+      const key = monthKey(cursor);
+      if (key in out) out[key] += perNight;
+      cursor = addDays(cursor, 1);
+    }
+  }
+
+  for (const k of months) out[k] = Math.round(out[k]);
+  return out;
+}
+
+function occupancyPctForMonth(
+  bookings: Booking[],
+  roomCount: number,
+  ref: Date
+): number {
+  if (roomCount === 0) return 0;
+  const daysInMonth = new Date(
+    ref.getFullYear(),
+    ref.getMonth() + 1,
+    0
+  ).getDate();
+  const capacity = roomCount * daysInMonth;
+  let occupiedNights = 0;
+  const monthStart = new Date(ref.getFullYear(), ref.getMonth(), 1);
+  const monthEnd = new Date(ref.getFullYear(), ref.getMonth() + 1, 0);
+
+  for (const b of bookings) {
+    if (b.status === "cancelled") continue;
+    const inDate = parseISO(b.checkIn);
+    const outDate = parseISO(b.checkOut);
+    let cursor = inDate > monthStart ? inDate : monthStart;
+    const end = outDate < addDays(monthEnd, 1) ? outDate : addDays(monthEnd, 1);
+    while (cursor < end) {
+      occupiedNights += 1;
+      cursor = addDays(cursor, 1);
+    }
+  }
+
+  return Math.round((occupiedNights / capacity) * 100);
+}
+
 export default function OwnerDashboardPage() {
   const { t, tr } = useI18n();
   const {
@@ -61,6 +126,8 @@ export default function OwnerDashboardPage() {
   const directPct = directCountMonth();
   const otaSaved = otaSavedMonth();
   const animatedOta = useCountUp(otaSaved);
+
+  const activeRooms = data.rooms.filter((r) => r.active);
 
   const channelMix = useMemo(() => {
     const now = new Date();
@@ -79,7 +146,54 @@ export default function OwnerDashboardPage() {
     return Array.from({ length: 7 }, (_, i) => addDays(start, i));
   }, []);
 
-  const activeRooms = data.rooms.filter((r) => r.active);
+  const revenue = useMemo(() => {
+    const now = new Date();
+    const months: string[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(monthKey(d));
+    }
+    const byMonth = revenueByMonth(data.bookings, months);
+    const max = Math.max(1, ...months.map((m) => byMonth[m]));
+    const thisMonthKey = monthKey(now);
+    const thisMonthRevenue = byMonth[thisMonthKey] ?? 0;
+    const monthBookings = data.bookings.filter((b) =>
+      bookingTouchesMonth(b, now)
+    );
+    const roomNights = monthBookings.reduce(
+      (sum, b) => sum + nightsBetween(b.checkIn, b.checkOut),
+      0
+    );
+    const adr =
+      roomNights > 0 ? Math.round(thisMonthRevenue / roomNights) : 0;
+    const occupancyPct = occupancyPctForMonth(
+      data.bookings,
+      activeRooms.length,
+      now
+    );
+
+    const sourceCounts: Record<string, number> = {
+      Direct: 0,
+      Agoda: 0,
+      Booking: 0,
+    };
+    for (const b of monthBookings) {
+      sourceCounts[b.source] = (sourceCounts[b.source] ?? 0) + 1;
+    }
+    const sourceTotal = monthBookings.length || 1;
+
+    return {
+      months,
+      byMonth,
+      max,
+      thisMonthRevenue,
+      adr,
+      occupancyPct,
+      sourceCounts,
+      sourceTotal,
+      bookingCount: monthBookings.length,
+    };
+  }, [data.bookings, activeRooms.length]);
 
   return (
     <div>
@@ -121,6 +235,110 @@ export default function OwnerDashboardPage() {
           </span>
         </StatCard>
       </div>
+
+      {/* Revenue dashboard */}
+      <section className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+        <h2 className="mb-2 font-display text-xl font-semibold text-white">
+          Revenue
+        </h2>
+        <p className="mb-6 text-sm text-white/55">
+          Last 6 months · night-weighted booking totals
+        </p>
+
+        <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <MiniStat
+            label="This month"
+            value={formatBaht(revenue.thisMonthRevenue)}
+          />
+          <MiniStat label="Occupancy" value={`${revenue.occupancyPct}%`} />
+          <MiniStat label="ADR" value={formatBaht(revenue.adr)} />
+          <MiniStat
+            label="Bookings"
+            value={String(revenue.bookingCount)}
+          />
+        </div>
+
+        <div className="mb-8">
+          <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+            Monthly revenue
+          </p>
+          <div
+            className="flex h-40 items-end gap-2 sm:gap-3"
+            role="img"
+            aria-label="Monthly revenue bar chart"
+          >
+            {revenue.months.map((key) => {
+              const value = revenue.byMonth[key] ?? 0;
+              const pct = Math.max(4, (value / revenue.max) * 100);
+              return (
+                <div
+                  key={key}
+                  className="flex flex-1 flex-col items-center gap-2"
+                >
+                  <span className="text-[0.65rem] font-bold text-white/50">
+                    {value > 0 ? formatBaht(value) : "·"}
+                  </span>
+                  <div className="flex h-28 w-full items-end justify-center">
+                    <div
+                      className="w-full max-w-[48px] rounded-t-md bg-own-blue/80 transition-all duration-500"
+                      style={{ height: `${pct}%` }}
+                      title={`${monthLabel(key)} · ${formatBaht(value)}`}
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-white/70">
+                    {monthLabel(key)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+            Bookings by source
+          </p>
+          <p className="mb-4 text-xs text-white/45">
+            Placeholder mix for this month · wire OTA webhooks later
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {(["Direct", "Agoda", "Booking"] as const).map((src) => {
+              const count = revenue.sourceCounts[src] ?? 0;
+              const pct = Math.round((count / revenue.sourceTotal) * 100);
+              return (
+                <div
+                  key={src}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={cn(
+                        "text-sm font-bold",
+                        src === "Direct" ? "text-deal" : "text-gold"
+                      )}
+                    >
+                      {src}
+                    </span>
+                    <span className="text-sm font-semibold text-white">
+                      {count}
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className={cn(
+                        "h-full rounded-full",
+                        src === "Direct" ? "bg-deal" : "bg-gold"
+                      )}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-white/45">{pct}%</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       <section className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
         <h2 className="mb-4 font-display text-xl font-semibold text-white">
@@ -204,6 +422,19 @@ export default function OwnerDashboardPage() {
           <LegendDot color="bg-white/15" label={t("ow.lg3")} />
         </div>
       </section>
+    </div>
+  );
+}
+
+function MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+      <b className="mb-1 block text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-own-blue">
+        {label}
+      </b>
+      <span className="font-display text-2xl font-semibold text-white">
+        {value}
+      </span>
     </div>
   );
 }

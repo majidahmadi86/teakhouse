@@ -9,7 +9,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { format, parseISO } from "date-fns";
-import { Plus, X } from "lucide-react";
+import { Download, Plus, X } from "lucide-react";
 import { OwnerDateRange, OwnerListbox } from "@/components/owner/OwnerField";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -19,6 +19,61 @@ import {
   useOwner,
 } from "@/lib/ownerStore";
 import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
+
+function csvEscape(value: string | number | undefined | null): string {
+  const s = value == null ? "" : String(value);
+  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function bookingsToCsv(
+  bookings: Booking[],
+  roomName: (slug: string) => string
+): string {
+  const header = [
+    "code",
+    "guest",
+    "email",
+    "phone",
+    "room",
+    "checkIn",
+    "checkOut",
+    "source",
+    "amount",
+    "status",
+    "passportId",
+    "nationality",
+    "adults",
+    "children",
+    "arrivalTime",
+    "specialRequests",
+    "notes",
+  ];
+  const rows = bookings.map((b) =>
+    [
+      b.code,
+      b.guest,
+      b.email,
+      b.phone,
+      roomName(b.roomSlug),
+      b.checkIn,
+      b.checkOut,
+      b.source,
+      b.amount,
+      b.status,
+      b.passportId,
+      b.nationality,
+      b.adults,
+      b.children,
+      b.arrivalTime,
+      b.specialRequests,
+      b.notes,
+    ]
+      .map(csvEscape)
+      .join(",")
+  );
+  return [header.join(","), ...rows].join("\n");
+}
 
 const STATUSES: BookingStatus[] = ["ok", "in", "out", "cancelled"];
 const SOURCES: BookingSource[] = ["Direct", "Agoda", "Booking"];
@@ -316,19 +371,40 @@ export default function OwnerBookingsPage() {
     setDrawerOpen(false);
   }
 
+  function exportCsv() {
+    const csv = bookingsToCsv(filtered, roomName);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `teakhouse-bookings-${isoDate(new Date())}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="font-display text-3xl font-semibold text-white">
           {t("ow.bk")}
         </h1>
-        <button
-          type="button"
-          onClick={openNew}
-          className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
-        >
-          <Plus className="h-5 w-5" aria-hidden />+ {t("ow.new")}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white transition hover:border-own-blue/40"
+          >
+            <Download className="h-5 w-5" aria-hidden />
+            Export CSV
+          </button>
+          <button
+            type="button"
+            onClick={openNew}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
+          >
+            <Plus className="h-5 w-5" aria-hidden />+ {t("ow.new")}
+          </button>
+        </div>
       </div>
 
       <div className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
