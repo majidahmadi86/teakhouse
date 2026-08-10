@@ -10,6 +10,8 @@ type PageHeroProps = {
   title: string;
   lead: string;
   className?: string;
+  /** CSS object-position for art direction under the title. */
+  objectPosition?: string;
 };
 
 export function PageHero({
@@ -19,6 +21,7 @@ export function PageHero({
   title,
   lead,
   className,
+  objectPosition = "center",
 }: PageHeroProps) {
   return (
     <section
@@ -34,8 +37,9 @@ export function PageHero({
           fill
           priority
           quality={78}
-          sizes="(max-width: 768px) 100vw, 100vw"
+          sizes="(max-width: 768px) 100vw, 1600px"
           className="scale-[1.02] object-cover"
+          style={{ objectPosition }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-navy/50 to-navy/85" />
       </div>

@@ -24,11 +24,12 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        image="https://images.unsplash.com/photo-1508009603885-50cf7c579365"
+        image="/images/contact-hero.jpg"
         alt="Contact the house"
         eyebrow={t("ct.page")}
         title={t("ct.page")}
         lead={t("ct.lead")}
+        objectPosition="center 38%"
       />
 
       <section className="section-pad bg-white">

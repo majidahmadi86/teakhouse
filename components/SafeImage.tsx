@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 type SafeImageProps = {
@@ -14,6 +14,7 @@ type SafeImageProps = {
   priority?: boolean;
   sizes?: string;
   quality?: number;
+  style?: CSSProperties;
   onLoadingComplete?: () => void;
   /** Tried in order when primary src fails. */
   fallbackSrcs?: string[];
@@ -21,7 +22,7 @@ type SafeImageProps = {
 
 /**
  * next/image via the Next/Vercel optimizer — AVIF/WebP + breakpoint widths,
- * edge-cached near the visitor. Origin stays Unsplash; visual quality unchanged.
+ * edge-cached near the visitor.
  */
 export function SafeImage({
   src,
@@ -33,6 +34,7 @@ export function SafeImage({
   priority,
   sizes,
   quality = 75,
+  style,
   onLoadingComplete,
   fallbackSrcs = [],
 }: SafeImageProps) {
@@ -63,6 +65,7 @@ export function SafeImage({
         alt={alt}
         fill
         className={cn("object-cover", className)}
+        style={style}
         onError={() => setIndex((i) => i + 1)}
         onLoadingComplete={onLoadingComplete}
         priority={priority}
@@ -81,6 +84,7 @@ export function SafeImage({
       width={width ?? 1200}
       height={height ?? 800}
       className={className}
+      style={style}
       onError={() => setIndex((i) => i + 1)}
       onLoadingComplete={onLoadingComplete}
       priority={priority}
