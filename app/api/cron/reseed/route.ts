@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-/** Vercel cron fallback · hourly reseed when DEMO_MODE=true */
+/** Vercel cron fallback · daily on Hobby · DEMO_MODE reseeds on API if >60m */
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
   const secret = process.env.CRON_SECRET;

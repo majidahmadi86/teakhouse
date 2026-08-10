@@ -32,8 +32,9 @@ cron reseed optional for DEMO_MODE.
      `GROQ_API_KEY` (optional `AI_MODEL`)
    - Email stub: `EMAIL_PROVIDER`, `EMAIL_API_KEY`, `EMAIL_FROM`
 6. Seed once after first migrate: `npx prisma db seed` via Vercel CLI
-   or a one-off job. For DEMO_MODE, hourly cron hits
-   `/api/cron/reseed` (see `vercel.json`).
+   or a one-off job. For DEMO_MODE, daily cron hits
+   `/api/cron/reseed` (see `vercel.json`; Hobby = daily max).
+   Primary reseed is still on API access when last reset > 60 min.
 7. Verify: `/` loads, `/book` writes a booking, owner PIN (or demo
    bypass) works, concierge returns 503→local intents or AI reply.
 

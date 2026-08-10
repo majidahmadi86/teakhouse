@@ -54,8 +54,9 @@ NEXT_PUBLIC_DEMO_MODE=true
 When on:
 - Guest ⇄ Owner switcher bar appears
 - Owner PIN gate is bypassed for demos
-- Hourly reseed via `/api/cron/reseed` (Vercel cron + `CRON_SECRET`)
-- In-app reset path reseeds when last reset is older than 60 minutes
+- API access reseeds when last reset is older than 60 minutes
+- Daily cron fallback via `/api/cron/reseed` (Vercel cron + `CRON_SECRET`;
+  Hobby plans allow daily only · Pro can raise frequency)
 
 Leave both `false` for a sticky client database.
 
