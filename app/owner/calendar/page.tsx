@@ -128,7 +128,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={prevMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-own-blue/40"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/10 text-white transition hover:border-own-blue/40"
             aria-label="Previous month"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -139,7 +139,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={nextMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 text-white transition hover:border-own-blue/40"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/10 text-white transition hover:border-own-blue/40"
             aria-label="Next month"
           >
             <ChevronRight className="h-5 w-5" />
@@ -157,7 +157,7 @@ export default function OwnerCalendarPage() {
           />
         </div>
         <div
-          className="flex rounded-xl border border-white/12 bg-white/5 p-1"
+          className="flex rounded-xl border border-white/10 bg-white/5 p-1"
           role="group"
           aria-label="Calendar view mode"
         >

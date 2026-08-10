@@ -392,7 +392,7 @@ export default function OwnerBookingsPage() {
           <button
             type="button"
             onClick={exportCsv}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-white/15 px-5 py-3 text-sm font-bold text-white transition hover:border-own-blue/40"
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-bold text-white transition hover:border-own-blue/40"
           >
             <Download className="h-5 w-5" aria-hidden />
             Export CSV
@@ -716,7 +716,7 @@ export default function OwnerBookingsPage() {
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
-                    className="min-h-[44px] flex-1 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70"
+                    className="min-h-[44px] flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70"
                   >
                     {t("ow.cancel")}
                   </button>
@@ -885,7 +885,7 @@ export default function OwnerBookingsPage() {
                           openEdit(selected);
                           setDrawerOpen(false);
                         }}
-                        className="min-h-[44px] w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white"
+                        className="min-h-[44px] w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white"
                       >
                         {t("ow.edit")}
                       </button>

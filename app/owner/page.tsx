@@ -456,7 +456,7 @@ function StatCard({
         "rounded-2xl border p-5 md:p-6",
         gold
           ? "border-gold/40 bg-gold/15 text-white"
-          : "border-white/12 bg-white/[0.05]"
+          : "border-white/10 bg-white/[0.05]"
       )}
     >
       <b

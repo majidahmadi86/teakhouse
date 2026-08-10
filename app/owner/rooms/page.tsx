@@ -330,7 +330,7 @@ export default function OwnerRoomsPage() {
                     <button
                       type="button"
                       onClick={() => openEdit(room)}
-                      className="min-h-[44px] rounded-xl border border-white/15 px-4 py-2 text-sm font-bold text-white"
+                      className="min-h-[44px] rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white"
                     >
                       {t("ow.edit")}
                     </button>
@@ -756,7 +756,7 @@ export default function OwnerRoomsPage() {
                             <button
                               type="button"
                               onClick={() => removePhotoRow(i)}
-                              className="min-h-[44px] shrink-0 rounded-xl border border-white/15 px-3 text-sm font-bold text-white/60"
+                              className="min-h-[44px] shrink-0 rounded-xl border border-white/10 px-3 text-sm font-bold text-white/60"
                             >
                               {t("ow.del")}
                             </button>
@@ -824,7 +824,7 @@ export default function OwnerRoomsPage() {
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
-                    className="min-h-[44px] flex-1 rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70"
+                    className="min-h-[44px] flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70"
                   >
                     {t("ow.cancel")}
                   </button>

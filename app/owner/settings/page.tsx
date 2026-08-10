@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { EmailTemplateDto, HotelDto } from "@/lib/ownerTypes";
-import { cn } from "@/lib/utils";
 
 const PLACEHOLDERS = [
   "{{guestName}}",
@@ -15,8 +14,12 @@ const PLACEHOLDERS = [
   "{{deposit}}",
 ];
 
-const inputClass = "min-h-[44px] w-full px-4 py-3 text-base";
-const textareaClass = "w-full px-4 py-3 text-base";
+const inputClass =
+  "min-h-[44px] w-full rounded-[10px] border border-white/10 bg-white/5 px-4 py-3 text-base text-white caret-white";
+const textareaClass =
+  "relative z-0 w-full resize-y rounded-[10px] border border-white/10 bg-white/5 px-4 py-3 text-base text-white caret-white";
+const emailBodyClass =
+  "relative z-0 min-h-[280px] w-full resize-y rounded-[10px] border border-white/10 bg-brand-2 px-4 py-3 font-mono text-sm leading-relaxed text-white caret-white shadow-none";
 
 export default function OwnerSettingsPage() {
   const [hotel, setHotel] = useState<HotelDto | null>(null);
@@ -349,12 +352,16 @@ export default function OwnerSettingsPage() {
             </Field>
             <Field label="Body">
               <textarea
-                rows={10}
+                rows={12}
                 value={template.body}
                 onChange={(e) =>
                   setTemplate((t) => (t ? { ...t, body: e.target.value } : t))
                 }
-                className={cn(textareaClass, "font-mono text-sm")}
+                spellCheck={false}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                className={emailBodyClass}
               />
             </Field>
             <div className="flex flex-wrap items-center gap-3">

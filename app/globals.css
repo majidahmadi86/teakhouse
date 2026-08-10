@@ -196,27 +196,52 @@ input.auth-input:-webkit-autofill {
 
 .own-theme input:not([type="checkbox"]):not([type="radio"]),
 .own-theme textarea {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
   color: #fff;
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
 }
 
 .own-theme input::placeholder,
 .own-theme textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.45);
+  opacity: 1;
 }
 
 .own-theme input:focus,
 .own-theme textarea:focus {
   border-color: #4d9fff;
-  box-shadow: 0 0 0 3px rgba(77, 159, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(77, 159, 255, 0.28);
+  outline: none;
+}
+
+/* Kill autofill ghost-overlap on navy skin (light fill + dark glyphs). */
+.own-theme input:-webkit-autofill,
+.own-theme input:-webkit-autofill:hover,
+.own-theme input:-webkit-autofill:focus,
+.own-theme textarea:-webkit-autofill,
+.own-theme textarea:-webkit-autofill:hover,
+.own-theme textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0a1b2e inset !important;
+  box-shadow: 0 0 0 1000px #0a1b2e inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+.own-theme *:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #071421, 0 0 0 4px rgba(77, 159, 255, 0.55);
 }
 
 /* Owner Listbox / date triggers: dark surface, white value text.
    Open panels stay white (portal outside .own-theme) with ink text. */
 .own-theme .own-select button[type="button"] {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
 }
 
