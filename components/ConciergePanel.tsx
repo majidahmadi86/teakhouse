@@ -25,7 +25,7 @@ function nowLabel(): string {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-/** Chat panel only — loaded after idle or first FAB interaction. */
+/** Chat panel only · loaded after idle or first FAB interaction. */
 export function ConciergePanel({
   offsetForBookBar = true,
 }: {
@@ -52,6 +52,11 @@ export function ConciergePanel({
     ]);
   }, []);
 
+  const localReply = useCallback(
+    (text: string) => pick(matchConciergeIntent(text) ?? CONCIERGE_FALLBACK),
+    [pick]
+  );
+
   const respond = useCallback(
     (text: string) => {
       setMessages((prev) => [
@@ -59,13 +64,32 @@ export function ConciergePanel({
         { id: `${Date.now()}-u`, role: "user", html: text, time: nowLabel() },
       ]);
       setTyping(true);
-      window.setTimeout(() => {
-        const reply = matchConciergeIntent(text) ?? CONCIERGE_FALLBACK;
-        pushAi(pick(reply));
-        setTyping(false);
-      }, 700 + Math.random() * 500);
+
+      const controller = new AbortController();
+      const kill = window.setTimeout(() => controller.abort(), 8000);
+
+      void (async () => {
+        try {
+          const res = await fetch("/api/concierge", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ message: text, lang }),
+            signal: controller.signal,
+          });
+          if (!res.ok) throw new Error(`concierge ${res.status}`);
+          const data = (await res.json()) as { reply?: string };
+          if (!data.reply?.trim()) throw new Error("empty reply");
+          pushAi(data.reply.trim());
+        } catch {
+          // AI unavailable / network / 503 · keep existing intent matcher
+          pushAi(localReply(text));
+        } finally {
+          window.clearTimeout(kill);
+          setTyping(false);
+        }
+      })();
     },
-    [pick, pushAi]
+    [lang, localReply, pushAi]
   );
 
   useEffect(() => {
