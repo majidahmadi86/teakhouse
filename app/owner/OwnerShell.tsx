@@ -117,8 +117,8 @@ export function OwnerShell({
 
   return (
     <div className="own-theme min-h-screen bg-brand-2 text-white">
-      {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md lg:hidden">
+      {/* Mobile top bar · sticks below demo bar when present */}
+      <header className="sticky top-[var(--demo-bar-h)] z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md lg:hidden">
         <div className="flex items-center gap-3 px-4 py-3">
           <Logo light showTag={false} className="h-6 w-auto shrink-0" />
           <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
@@ -164,7 +164,7 @@ export function OwnerShell({
 
       <div className="lg:flex">
         {/* Desktop sidebar */}
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-brand lg:fixed lg:inset-y-0 lg:flex lg:w-72">
+        <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-brand lg:fixed lg:bottom-0 lg:top-[var(--demo-bar-h)] lg:flex lg:w-72">
           <div className="border-b border-white/10 px-6 py-6">
             <Logo light showTag={false} className="mb-4 h-7 w-auto" />
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">

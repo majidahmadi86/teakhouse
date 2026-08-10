@@ -6,9 +6,12 @@ import { hotelConfig } from "@/config/hotel.config";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+/** Fixed demo bar height · kept in sync with --demo-bar-h in globals / layout. */
+export const DEMO_BAR_HEIGHT_PX = 40;
+
 /**
  * Persistent demo switcher · Guest ⇄ Owner · PIN bypassed when DEMO_MODE.
- * Styled to site palette (navy/gold). Lives above page content · does not cover nav.
+ * Fixed to the viewport top · layout reserves its height via body padding.
  */
 export function DemoModeBar() {
   const pathname = usePathname();
@@ -17,11 +20,11 @@ export function DemoModeBar() {
 
   return (
     <div
-      className="sticky top-0 z-[100] border-b border-line/80 bg-navy text-white"
+      className="fixed inset-x-0 top-0 z-[100] h-10 border-b border-line/80 bg-navy text-white"
       role="navigation"
       aria-label="Demo mode switcher"
     >
-      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3 px-4 py-2 text-[12px] sm:px-6">
+      <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between gap-3 px-4 text-[12px] sm:px-6">
         <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
           <span className="font-semibold tracking-wide">Viewing:</span>
           <Link

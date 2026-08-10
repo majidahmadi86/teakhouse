@@ -405,7 +405,7 @@ export function Header() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 h-14 border-b transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16",
+          "sticky top-[var(--demo-bar-h)] z-50 h-14 border-b transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16",
           scrolled
             ? "border-line/80 bg-white/85 shadow-[0_1px_0_rgba(16,24,40,.06)] backdrop-blur-md"
             : "border-line bg-white"

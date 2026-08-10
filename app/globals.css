@@ -98,6 +98,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    --demo-bar-h: 0px;
+  }
+
+  /* Demo bar is fixed · body padding reserves its height so nothing hides under it. */
+  html[data-demo="true"] {
+    --demo-bar-h: 2.5rem; /* 40px · matches DemoModeBar h-10 */
+  }
+
+  html[data-demo="true"] body {
+    padding-top: var(--demo-bar-h);
   }
 
   body {

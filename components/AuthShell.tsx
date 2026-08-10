@@ -29,7 +29,7 @@ export function AuthShell({
   const reduce = useReducedMotion();
 
   return (
-    <div className="min-h-[calc(100svh-3.5rem)] bg-white md:min-h-[calc(100svh-4rem)] md:grid md:grid-cols-[45fr_55fr]">
+    <div className="min-h-[calc(100svh-3.5rem-var(--demo-bar-h))] bg-white md:min-h-[calc(100svh-4rem-var(--demo-bar-h))] md:grid md:grid-cols-[45fr_55fr]">
       {/* Desktop left panel / mobile banner */}
       <div className="relative h-[200px] overflow-hidden md:h-auto md:min-h-full">
         <SafeImage

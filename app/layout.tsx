@@ -67,6 +67,8 @@ export const metadata: Metadata = {
   },
 };
 
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -77,6 +79,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-demo={DEMO_MODE ? "true" : undefined}
       className={`${marcellus.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
     >
       <head>

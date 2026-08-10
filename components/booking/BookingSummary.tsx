@@ -131,7 +131,7 @@ export function BookingSummary({
     return (
       <div
         className={cn(
-          "sticky top-14 z-30 border-b border-line bg-white shadow-nav lg:hidden",
+          "sticky top-[calc(3.5rem+var(--demo-bar-h))] z-30 border-b border-line bg-white shadow-nav lg:hidden",
           className
         )}
       >
