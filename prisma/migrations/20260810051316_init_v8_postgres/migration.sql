@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Hotel" (
-    "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'default',
+    "id" TEXT NOT NULL DEFAULT 'default',
     "name" TEXT NOT NULL,
     "tagline" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -11,20 +11,22 @@ CREATE TABLE "Hotel" (
     "city" TEXT NOT NULL,
     "country" TEXT NOT NULL,
     "postalCode" TEXT NOT NULL DEFAULT '',
-    "lat" REAL NOT NULL,
-    "lng" REAL NOT NULL,
+    "lat" DOUBLE PRECISION NOT NULL,
+    "lng" DOUBLE PRECISION NOT NULL,
     "checkInTime" TEXT NOT NULL DEFAULT '14:00',
     "checkOutTime" TEXT NOT NULL DEFAULT '12:00',
     "cancelPolicy" TEXT NOT NULL,
     "petsPolicy" TEXT NOT NULL DEFAULT '',
     "depositPct" INTEGER NOT NULL DEFAULT 30,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Hotel_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Room" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "hotelId" TEXT NOT NULL DEFAULT 'default',
     "slug" TEXT NOT NULL,
     "shortKey" TEXT NOT NULL,
@@ -52,27 +54,29 @@ CREATE TABLE "Room" (
     "active" BOOLEAN NOT NULL DEFAULT true,
     "urgencyEn" TEXT,
     "urgencyTh" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Room_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Room_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "SeasonalPriceRule" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "roomId" TEXT NOT NULL,
     "label" TEXT NOT NULL DEFAULT '',
     "startDate" TEXT NOT NULL,
     "endDate" TEXT NOT NULL,
-    "multiplier" REAL NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "SeasonalPriceRule_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "multiplier" DOUBLE PRECISION NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SeasonalPriceRule_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Booking" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "hotelId" TEXT NOT NULL DEFAULT 'default',
     "code" TEXT NOT NULL,
     "guest" TEXT NOT NULL,
@@ -91,67 +95,75 @@ CREATE TABLE "Booking" (
     "children" INTEGER,
     "arrivalTime" TEXT,
     "specialRequests" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "Booking_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Booking_roomSlug_fkey" FOREIGN KEY ("roomSlug") REFERENCES "Room" ("slug") ON DELETE RESTRICT ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Booking_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "RoomBlock" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "roomId" TEXT NOT NULL,
     "dateIso" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "RoomBlock_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RoomBlock_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "GuestBooking" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "bookingId" TEXT NOT NULL,
-    CONSTRAINT "GuestBooking_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "GuestBooking_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "Booking" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+
+    CONSTRAINT "GuestBooking_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Guest" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT,
     "phone" TEXT,
     "passportId" TEXT,
     "nationality" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Guest_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "EmailTemplate" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "hotelId" TEXT NOT NULL DEFAULT 'default',
     "key" TEXT NOT NULL DEFAULT 'booking_confirmation',
     "subject" TEXT NOT NULL,
     "body" TEXT NOT NULL,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "EmailTemplate_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "EmailTemplate_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "DemoMeta" (
-    "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'demo',
-    "lastReset" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "id" TEXT NOT NULL DEFAULT 'demo',
+    "lastReset" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "DemoMeta_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -171,3 +183,27 @@ CREATE UNIQUE INDEX "GuestBooking_userId_bookingId_key" ON "GuestBooking"("userI
 
 -- CreateIndex
 CREATE UNIQUE INDEX "EmailTemplate_hotelId_key_key" ON "EmailTemplate"("hotelId", "key");
+
+-- AddForeignKey
+ALTER TABLE "Room" ADD CONSTRAINT "Room_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SeasonalPriceRule" ADD CONSTRAINT "SeasonalPriceRule_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Booking" ADD CONSTRAINT "Booking_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Booking" ADD CONSTRAINT "Booking_roomSlug_fkey" FOREIGN KEY ("roomSlug") REFERENCES "Room"("slug") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RoomBlock" ADD CONSTRAINT "RoomBlock_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GuestBooking" ADD CONSTRAINT "GuestBooking_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GuestBooking" ADD CONSTRAINT "GuestBooking_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "Booking"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EmailTemplate" ADD CONSTRAINT "EmailTemplate_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

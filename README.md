@@ -10,9 +10,9 @@ git clone <repo-url>
 cd teakhouse
 npm install
 cp .env.example .env.local
-# edit .env.local if needed · SQLite default works out of the box
+# set DATABASE_URL (pooled) + DIRECT_URL (direct) from Supabase
 
-npx prisma migrate dev
+npx prisma migrate deploy
 npx prisma db seed
 npm run dev
 ```
@@ -61,20 +61,23 @@ Leave both `false` for a sticky client database.
 
 ## Provider setup
 
-### Database · SQLite → Postgres
+### Database · Postgres (Supabase)
 
-Local default (`prisma/schema.prisma`):
+Default in `prisma/schema.prisma`:
 
 ```
-provider = "sqlite"
-DATABASE_URL="file:./dev.db"
+provider  = "postgresql"
+url       = env("DATABASE_URL")   # pooled · port 6543
+directUrl = env("DIRECT_URL")     # direct · port 5432 · migrations
 ```
 
-Production / Supabase / Neon:
+URL-encode special characters in the password (`@` → `%40`).
 
-1. Set `provider = "postgresql"` in `prisma/schema.prisma`
-2. Set `DATABASE_URL` to your Postgres URL (`sslmode=require` as needed)
-3. `npx prisma migrate deploy` then seed once
+Local SQLite swap (optional):
+
+1. Set `provider = "sqlite"` and remove `directUrl`
+2. `DATABASE_URL="file:./dev.db"`
+3. `npx prisma migrate dev` then seed
 
 ### AI concierge
 
