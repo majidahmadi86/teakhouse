@@ -27,11 +27,13 @@ export function PriceChip({
 
   return (
     <div className={cn("space-y-2", className)}>
-      {urgency ? <span className="urgency-chip">{tr(urgency)}</span> : null}
+      <div className="min-h-[1.5rem]">
+        {urgency ? <span className="urgency-chip">{tr(urgency)}</span> : null}
+      </div>
       <div
         className={cn(
-          "inline-flex flex-wrap items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 shadow-card",
-          compact && "px-2.5 py-1"
+          "inline-flex min-h-[34px] flex-wrap items-center gap-2 rounded-full border border-line bg-white px-3 py-1.5 shadow-card",
+          compact && "min-h-[30px] px-2.5 py-1"
         )}
       >
         <span className="text-sm font-bold text-blue">

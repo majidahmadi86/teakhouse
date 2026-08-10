@@ -42,7 +42,7 @@ export function RoomCard({
           className="object-cover transition duration-500 group-hover:scale-[1.06]"
           sizes="(max-width:768px) 100vw, 33vw"
         />
-        <div className="absolute bottom-3.5 left-3.5 right-3.5 flex flex-wrap items-end gap-2">
+        <div className="absolute bottom-3.5 left-3.5 right-3.5 flex min-h-[56px] flex-wrap items-end gap-2">
           <PriceChip
             rate={room.rate}
             ota={room.ota}

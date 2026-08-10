@@ -2,6 +2,7 @@
 
 import React, {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -152,9 +153,13 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       void (async () => {
         try {
           const loaded = await fetchData();
-          if (!cancelled) setData(loaded);
+          if (!cancelled) {
+            startTransition(() => setData(loaded));
+          }
         } catch {
-          if (!cancelled) setData(emptyData());
+          if (!cancelled) {
+            startTransition(() => setData(emptyData()));
+          }
         } finally {
           if (!cancelled) {
             try {
@@ -162,7 +167,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
             } catch {
               setIsAuthed(false);
             }
-            setHydrated(true);
+            startTransition(() => setHydrated(true));
           }
         }
       })();
