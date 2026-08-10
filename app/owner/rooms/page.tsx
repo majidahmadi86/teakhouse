@@ -294,7 +294,7 @@ export default function OwnerRoomsPage() {
                 <h2 className="font-display text-xl font-semibold text-white">
                   {tr(room.name)}
                 </h2>
-                <p className="mt-1 text-sm text-white/50">{tr(room.meta)}</p>
+                <p className="mt-1 text-sm text-white/60">{tr(room.meta)}</p>
                 <p className="mt-3 font-display text-2xl font-semibold text-gold">
                   {formatBaht(room.rate)}
                   <span className="ml-2 text-sm font-sans font-semibold text-white/55">
@@ -372,7 +372,7 @@ export default function OwnerRoomsPage() {
                               <p className="font-bold text-white">
                                 {rule.label || "Season"} · ×{rule.multiplier}
                               </p>
-                              <p className="text-white/50">
+                              <p className="text-white/60">
                                 {rule.startDate} to {rule.endDate}
                               </p>
                               <p className="mt-0.5 text-gold">

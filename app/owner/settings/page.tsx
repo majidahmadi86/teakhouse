@@ -311,7 +311,7 @@ export default function OwnerSettingsPage() {
             </div>
           </div>
         ) : (
-          <p className="text-white/50">Hotel record unavailable.</p>
+          <p className="text-white/60">Hotel record unavailable.</p>
         )}
       </section>
 
@@ -379,7 +379,7 @@ export default function OwnerSettingsPage() {
             </div>
           </div>
         ) : (
-          <p className="text-white/50">Template unavailable.</p>
+          <p className="text-white/60">Template unavailable.</p>
         )}
       </section>
     </div>

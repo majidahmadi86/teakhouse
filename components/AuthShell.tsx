@@ -86,7 +86,7 @@ export function AuthShell({
 }
 
 export const authInputClass =
-  "auth-input w-full rounded-[10px] border-[1.5px] border-line bg-white px-4 h-11 text-sm font-semibold text-ink placeholder:text-[#93A0B4] focus:border-blue focus:outline-none focus:ring-2 focus:ring-sky";
+  "auth-input w-full rounded-[10px] border-[1.5px] border-line bg-white px-4 h-11 text-sm font-semibold text-ink placeholder:text-sub focus:border-blue focus:outline-none focus:ring-2 focus:ring-sky";
 
 export function AuthFooterLink({
   prompt,

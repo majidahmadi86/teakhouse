@@ -213,7 +213,7 @@ export default function OwnerDashboardPage() {
         <StatCard label={t("ow.s1")}>
           <span className="font-display text-4xl font-semibold text-white">
             {occ.occupied}
-            <small className="text-xl text-white/50">/{occ.total}</small>
+            <small className="text-xl text-white/60">/{occ.total}</small>
           </span>
         </StatCard>
 
@@ -275,7 +275,7 @@ export default function OwnerDashboardPage() {
                   key={key}
                   className="flex flex-1 flex-col items-center gap-2"
                 >
-                  <span className="text-[0.65rem] font-bold text-white/50">
+                  <span className="text-[0.65rem] font-bold text-white/60">
                     {value > 0 ? formatBaht(value) : "·"}
                   </span>
                   <div className="flex h-28 w-full items-end justify-center">
@@ -381,7 +381,7 @@ export default function OwnerDashboardPage() {
             {days.map((d) => (
               <div
                 key={isoDate(d)}
-                className="py-2 text-center text-white/50"
+                className="py-2 text-center text-white/60"
               >
                 {format(d, "d")}
                 <br />
@@ -472,7 +472,7 @@ function StatCard({
         <p
           className={cn(
             "mt-2 text-xs font-semibold",
-            gold ? "text-gold/80" : "text-white/50"
+            gold ? "text-gold/80" : "text-white/60"
           )}
         >
           {sub}

@@ -452,7 +452,7 @@ export default function OwnerBookingsPage() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-4 py-12 text-center font-semibold text-white/50"
+                    className="px-4 py-12 text-center font-semibold text-white/60"
                   >
                     {t("ow.noMatch")}
                   </td>
@@ -492,7 +492,7 @@ export default function OwnerBookingsPage() {
       {/* Mobile cards */}
       <div className="space-y-3 md:hidden">
         {filtered.length === 0 ? (
-          <p className="py-12 text-center font-semibold text-white/50">
+          <p className="py-12 text-center font-semibold text-white/60">
             {t("ow.noMatch")}
           </p>
         ) : (
@@ -840,7 +840,7 @@ export default function OwnerBookingsPage() {
                           />
                           <DetailRow label={t("col.src")} value={selected.source} />
                           <div className="flex items-center gap-3">
-                            <dt className="text-white/50">{t("col.st")}</dt>
+                            <dt className="text-white/60">{t("col.st")}</dt>
                             <dd>
                               <StatusBadge status={selected.status} t={t} />
                             </dd>
@@ -967,7 +967,7 @@ function DetailRow({
 
   return (
     <div className="flex justify-between gap-4">
-      <dt className="text-white/50">{label}</dt>
+      <dt className="text-white/60">{label}</dt>
       <dd
         className={cn(
           "text-right font-semibold",

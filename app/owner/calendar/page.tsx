@@ -252,7 +252,7 @@ export default function OwnerCalendarPage() {
               {days.map((d) => (
                 <div
                   key={isoDate(d)}
-                  className="py-2 text-center text-[0.65rem] font-bold text-white/50"
+                  className="py-2 text-center text-[0.65rem] font-bold text-white/60"
                 >
                   {format(d, "d")}
                   <br />
