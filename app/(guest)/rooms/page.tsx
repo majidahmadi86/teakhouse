@@ -4,9 +4,8 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { RoomCard } from "@/components/RoomCard";
 import { useCurrency } from "@/lib/currency";
-import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
-import type { Room } from "@/lib/rooms";
+import { SEED_ROOMS, type Room } from "@/lib/rooms";
 
 const DESC_KEYS: Record<string, string> = {
   "river-loft": "rp.r1p",
@@ -102,7 +101,8 @@ function CompareTable({
 export default function RoomsPage() {
   const { t, tr } = useI18n();
   const { format } = useCurrency();
-  const rooms = useGuestRooms();
+  // Static seed for the marketing grid · avoids CLS when OwnerStore hydrates.
+  const rooms = SEED_ROOMS.filter((r) => r.active);
 
   return (
     <>
