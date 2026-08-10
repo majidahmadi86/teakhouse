@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 import { CurrencyProvider } from "@/lib/currency";
 import { GuestAuthProvider } from "@/lib/guestAuth";
 import { I18nProvider } from "@/lib/i18n";
+import { MotionProvider } from "@/components/motion/MotionProvider";
 
 type ConciergeCtx = {
   isOpen: boolean;
@@ -48,7 +49,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <I18nProvider>
       <CurrencyProvider>
         <GuestAuthProvider>
-          <ConciergeProvider>{children}</ConciergeProvider>
+          <ConciergeProvider>
+            <MotionProvider>{children}</MotionProvider>
+          </ConciergeProvider>
         </GuestAuthProvider>
       </CurrencyProvider>
     </I18nProvider>

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -12,11 +13,16 @@ import {
   NotebookPen,
   Settings,
 } from "lucide-react";
-import { LoginScreen } from "@/components/owner/LoginScreen";
 import { Logo } from "@/components/Logo";
 import { useI18n } from "@/lib/i18n";
 import { useOwner } from "@/lib/ownerStore";
 import { cn } from "@/lib/utils";
+
+const LoginScreen = dynamic(
+  () =>
+    import("@/components/owner/LoginScreen").then((m) => m.LoginScreen),
+  { ssr: false }
+);
 
 const NAV: {
   href: string;

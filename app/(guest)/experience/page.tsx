@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { ConciergeAskButton } from "@/components/ConciergeFab";
@@ -70,7 +70,7 @@ function ParallaxImage({
   );
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       className="relative overflow-hidden rounded-[14px] shadow-panel"
       initial={reduce ? false : { opacity: 0, x: fromLeft ? -48 : 48 }}
@@ -78,10 +78,10 @@ function ParallaxImage({
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      <motion.div style={{ y }} className="relative aspect-[4/3] w-full">
+      <m.div style={{ y }} className="relative aspect-[4/3] w-full">
         <SafeImage src={src} alt={alt} fill className="object-cover scale-110" />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -116,7 +116,7 @@ export default function ExperiencePage() {
                   alt={section.alt}
                   fromLeft={!reversed}
                 />
-                <motion.div
+                <m.div
                   initial={reduce ? false : { opacity: 0, x: reversed ? -40 : 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
@@ -136,7 +136,7 @@ export default function ExperiencePage() {
                     {t("xp.ask")}
                     <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                   </ConciergeAskButton>
-                </motion.div>
+                </m.div>
               </div>
             );
           })}

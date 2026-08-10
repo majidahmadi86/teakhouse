@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { SafeImage } from "@/components/SafeImage";
 import { useI18n } from "@/lib/i18n";
@@ -60,7 +60,7 @@ export function AuthShell({
 
       {/* Form panel */}
       <div className="flex items-center justify-center px-6 py-10 md:px-10 md:py-16">
-        <motion.div
+        <m.div
           className={cn("w-full max-w-[400px]", shake && "animate-tkh-shake")}
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ export function AuthShell({
           </h1>
           <div className="mt-8">{children}</div>
           <div className="mt-6 text-center text-sm text-sub">{footer}</div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );
