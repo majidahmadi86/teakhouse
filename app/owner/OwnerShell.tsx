@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   CalendarDays,
@@ -31,6 +32,22 @@ const NAV: {
   { href: "/owner/settings", label: "Settings", icon: Settings },
 ];
 
+const LG_QUERY = "(min-width: 1024px)";
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia(LG_QUERY);
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return isDesktop;
+}
+
 function Spinner() {
   return (
     <div className="own-theme flex min-h-screen items-center justify-center bg-brand-2">
@@ -45,7 +62,7 @@ function LangToggle({ compact }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "flex rounded-xl border border-white/12 bg-white/5 p-1",
+        "flex rounded-xl border border-white/10 bg-white/5 p-1",
         compact ? "shrink-0" : "w-full"
       )}
     >
@@ -56,7 +73,9 @@ function LangToggle({ compact }: { compact?: boolean }) {
           onClick={() => setLang(l)}
           className={cn(
             "rounded-lg text-sm font-extrabold uppercase transition",
-            compact ? "min-h-[36px] min-w-[36px] px-2.5" : "min-h-[44px] min-w-[44px] px-3",
+            compact
+              ? "min-h-[36px] min-w-[36px] px-2.5"
+              : "min-h-[44px] min-w-[44px] px-3",
             lang === l
               ? "bg-own-blue text-white"
               : "text-white/60 hover:text-white"
@@ -102,6 +121,29 @@ function NavLink({
   );
 }
 
+function OwnerNavList({
+  mobile,
+  t,
+}: {
+  mobile?: boolean;
+  t: (key: string) => string;
+}) {
+  return (
+    <>
+      {NAV.map(({ href, labelKey, label, icon, exact }) => (
+        <NavLink
+          key={href}
+          href={href}
+          label={label ?? (labelKey ? t(labelKey) : href)}
+          icon={icon}
+          exact={exact}
+          mobile={mobile}
+        />
+      ))}
+    </>
+  );
+}
+
 export function OwnerShell({
   children,
 }: {
@@ -109,89 +151,48 @@ export function OwnerShell({
 }) {
   const { t } = useI18n();
   const { hydrated, isAuthed, logout, resetDemo } = useOwner();
-  const demoMode =
-    process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  const isDesktop = useIsDesktop();
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
-  if (!hydrated) return <Spinner />;
+  if (!hydrated || isDesktop === null) return <Spinner />;
   if (!isAuthed && !demoMode) return <LoginScreen />;
 
-  return (
-    <div className="own-theme min-h-screen bg-brand-2 text-white">
-      {/* Mobile top bar · sticks below demo bar when present */}
-      <header className="sticky top-[var(--demo-bar-h)] z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md lg:hidden">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <Logo light showTag={false} className="h-6 w-auto shrink-0" />
-          <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
-            {t("ow.eyebrow")}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 px-4 pb-3">
-          <LangToggle compact />
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm(t("ow.sure"))) resetDemo();
-            }}
-            className="min-h-[36px] flex-1 rounded-xl border border-white/15 px-3 text-xs font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
-          >
-            {t("ow.reset")}
-          </button>
-        </div>
-        <nav
-          className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          aria-label="Owner navigation"
-        >
-          {NAV.map(({ href, labelKey, label, icon, exact }) => (
-            <NavLink
-              key={href}
-              href={href}
-              label={label ?? (labelKey ? t(labelKey) : href)}
-              icon={icon}
-              exact={exact}
-              mobile
-            />
-          ))}
-          <button
-            type="button"
-            onClick={logout}
-            className="flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/5 hover:text-white"
-          >
-            <LogOut className="h-5 w-5" aria-hidden />
-            {t("ow.out")}
-          </button>
-        </nav>
-      </header>
+  const onReset = () => {
+    if (window.confirm(t("ow.sure"))) resetDemo();
+  };
 
-      <div className="lg:flex">
-        {/* Desktop sidebar */}
-        <aside className="hidden w-64 shrink-0 flex-col border-r border-white/10 bg-brand lg:fixed lg:bottom-0 lg:top-[var(--demo-bar-h)] lg:flex lg:w-72">
-          <div className="border-b border-white/10 px-6 py-6">
+  return (
+    <div
+      className={cn(
+        "own-theme min-h-screen bg-brand-2 text-white",
+        isDesktop && "flex"
+      )}
+    >
+      {isDesktop ? (
+        <aside
+          className="sticky top-[var(--demo-bar-h)] z-30 flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-brand"
+          aria-label="Owner sidebar"
+        >
+          <div className="shrink-0 border-b border-white/10 px-6 py-6">
             <Logo light showTag={false} className="mb-4 h-7 w-auto" />
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">
               {t("ow.eyebrow")}
             </p>
           </div>
 
-          <nav className="flex-1 space-y-1 px-4 py-6" aria-label="Owner navigation">
-            {NAV.map(({ href, labelKey, label, icon, exact }) => (
-              <NavLink
-                key={href}
-                href={href}
-                label={label ?? (labelKey ? t(labelKey) : href)}
-                icon={icon}
-                exact={exact}
-              />
-            ))}
+          <nav
+            className="flex flex-1 flex-col space-y-1 px-4 py-6"
+            aria-label="Owner navigation"
+          >
+            <OwnerNavList t={t} />
           </nav>
 
-          <div className="space-y-4 border-t border-white/10 px-4 py-6">
+          <div className="mt-auto space-y-4 border-t border-white/10 px-4 py-6">
             <LangToggle />
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm(t("ow.sure"))) resetDemo();
-              }}
-              className="min-h-[44px] w-full rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
+              onClick={onReset}
+              className="min-h-[44px] w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
             >
               {t("ow.reset")}
             </button>
@@ -211,14 +212,52 @@ export function OwnerShell({
             </button>
           </div>
         </aside>
-
-        {/* Main content */}
-        <main className="min-h-screen flex-1 lg:ml-72">
-          <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
-            {children}
+      ) : (
+        <header className="sticky top-[var(--demo-bar-h)] z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md">
+          <div className="flex items-center gap-3 px-4 py-3">
+            <Logo light showTag={false} className="h-6 w-auto shrink-0" />
+            <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
+              {t("ow.eyebrow")}
+            </span>
           </div>
-        </main>
-      </div>
+          <div className="flex items-center gap-2 px-4 pb-3">
+            <LangToggle compact />
+            <button
+              type="button"
+              onClick={onReset}
+              className="min-h-[36px] flex-1 rounded-xl border border-white/10 px-3 text-xs font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
+            >
+              {t("ow.reset")}
+            </button>
+            <Link
+              href="/"
+              className="min-h-[36px] shrink-0 rounded-xl px-2 text-xs font-semibold text-white/50 transition hover:text-white"
+            >
+              {t("ow.back")}
+            </Link>
+          </div>
+          <nav
+            className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            aria-label="Owner navigation"
+          >
+            <OwnerNavList t={t} mobile />
+            <button
+              type="button"
+              onClick={logout}
+              className="flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white/70 transition hover:bg-white/5 hover:text-white"
+            >
+              <LogOut className="h-5 w-5" aria-hidden />
+              {t("ow.out")}
+            </button>
+          </nav>
+        </header>
+      )}
+
+      <main className="min-w-0 flex-1">
+        <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }
