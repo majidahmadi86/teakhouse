@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
+import { hotelConfig } from "@/config/hotel.config";
+import { DemoModeBar } from "@/components/DemoModeBar";
+import { Providers } from "@/components/providers";
+import { paletteStyleString } from "@/lib/paletteCss";
+import { SITE_URL } from "@/lib/site";
+import "./globals.css";
 import {
   Kanit,
   Marcellus,
   Plus_Jakarta_Sans,
   Sarabun,
 } from "next/font/google";
-import { Providers } from "@/components/providers";
-import { SITE_URL } from "@/lib/site";
-import "./globals.css";
+import type { Metadata } from "next";
 
 const marcellus = Marcellus({
   subsets: ["latin"],
@@ -42,12 +45,10 @@ const sarabun = Sarabun({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default:
-      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
-    template: "%s · The Teak House",
+    default: hotelConfig.metadata.title,
+    template: `%s · ${hotelConfig.name}`,
   },
-  description:
-    "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
+  description: hotelConfig.metadata.description,
   robots: {
     index: true,
     follow: true,
@@ -56,14 +57,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_TH",
     url: SITE_URL,
-    siteName: "The Teak House",
-    title:
-      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
-    description:
-      "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
+    siteName: hotelConfig.name,
+    title: hotelConfig.metadata.title,
+    description: hotelConfig.metadata.description,
   },
   icons: {
-    icon: "/favicon.svg",
+    icon: hotelConfig.logoPath,
     apple: "/apple-touch-icon.png",
   },
 };
@@ -73,6 +72,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const paletteStyle = paletteStyleString(hotelConfig.palette);
+
   return (
     <html
       lang="en"
@@ -81,9 +82,17 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root{${paletteStyle}}`,
+          }}
+        />
       </head>
       <body className="font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <DemoModeBar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

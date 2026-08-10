@@ -9,6 +9,7 @@ import {
   Loader2,
   LogOut,
   NotebookPen,
+  Settings,
 } from "lucide-react";
 import { LoginScreen } from "@/components/owner/LoginScreen";
 import { Logo } from "@/components/Logo";
@@ -18,7 +19,8 @@ import { cn } from "@/lib/utils";
 
 const NAV: {
   href: string;
-  labelKey: string;
+  labelKey?: string;
+  label?: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
 }[] = [
@@ -26,6 +28,7 @@ const NAV: {
   { href: "/owner/bookings", labelKey: "ow.bk", icon: NotebookPen },
   { href: "/owner/rooms", labelKey: "ow.rooms", icon: DoorOpen },
   { href: "/owner/calendar", labelKey: "ow.cal", icon: CalendarDays },
+  { href: "/owner/settings", label: "Settings", icon: Settings },
 ];
 
 function Spinner() {
@@ -106,9 +109,11 @@ export function OwnerShell({
 }) {
   const { t } = useI18n();
   const { hydrated, isAuthed, logout, resetDemo } = useOwner();
+  const demoMode =
+    process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
   if (!hydrated) return <Spinner />;
-  if (!isAuthed) return <LoginScreen />;
+  if (!isAuthed && !demoMode) return <LoginScreen />;
 
   return (
     <div className="own-theme min-h-screen bg-brand-2 text-white">
@@ -136,11 +141,11 @@ export function OwnerShell({
           className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           aria-label="Owner navigation"
         >
-          {NAV.map(({ href, labelKey, icon, exact }) => (
+          {NAV.map(({ href, labelKey, label, icon, exact }) => (
             <NavLink
               key={href}
               href={href}
-              label={t(labelKey)}
+              label={label ?? (labelKey ? t(labelKey) : href)}
               icon={icon}
               exact={exact}
               mobile
@@ -168,11 +173,11 @@ export function OwnerShell({
           </div>
 
           <nav className="flex-1 space-y-1 px-4 py-6" aria-label="Owner navigation">
-            {NAV.map(({ href, labelKey, icon, exact }) => (
+            {NAV.map(({ href, labelKey, label, icon, exact }) => (
               <NavLink
                 key={href}
                 href={href}
-                label={t(labelKey)}
+                label={label ?? (labelKey ? t(labelKey) : href)}
                 icon={icon}
                 exact={exact}
               />
