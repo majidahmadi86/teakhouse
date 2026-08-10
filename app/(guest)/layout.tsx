@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 import { GuestShell } from "./GuestShell";
 
 /** Home defaults live in root layout; child routes set their own titles. */
@@ -13,5 +14,9 @@ export default function GuestLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <GuestShell>{children}</GuestShell>;
+  return (
+    <OwnerStoreProvider>
+      <GuestShell>{children}</GuestShell>
+    </OwnerStoreProvider>
+  );
 }

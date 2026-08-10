@@ -13,11 +13,10 @@ export type GuestUser = {
   id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   bookingIds: string[];
 };
 
-const USERS_KEY = "tkh-users";
 const SESSION_KEY = "tkh-user";
 
 type GuestAuthCtx = {
@@ -29,33 +28,14 @@ type GuestAuthCtx = {
     email: string,
     password: string,
     bookingId?: string
-  ) => string | null;
-  signIn: (email: string, password: string) => string | null;
+  ) => Promise<string | null>;
+  signIn: (email: string, password: string) => Promise<string | null>;
   signOut: () => void;
   attachBooking: (bookingId: string, userId?: string) => void;
   updateUser: (patch: Partial<Pick<GuestUser, "name" | "email">>) => void;
 };
 
 const Ctx = createContext<GuestAuthCtx | null>(null);
-
-function loadUsers(): GuestUser[] {
-  try {
-    const raw = localStorage.getItem(USERS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as GuestUser[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveUsers(users: GuestUser[]): void {
-  try {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  } catch {
-    /* ignore */
-  }
-}
 
 function loadSessionId(): string | null {
   try {
@@ -75,106 +55,130 @@ function saveSessionId(id: string | null): void {
 }
 
 export function GuestAuthProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<GuestUser[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [user, setUser] = useState<GuestUser | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const loaded = loadUsers();
-    setUsers(loaded);
-    const sid = loadSessionId();
-    if (sid && loaded.some((u) => u.id === sid)) setSessionId(sid);
-    setHydrated(true);
+    let cancelled = false;
+    (async () => {
+      const sid = loadSessionId();
+      if (sid) {
+        try {
+          const res = await fetch(`/api/users?id=${encodeURIComponent(sid)}`);
+          if (res.ok) {
+            const u = (await res.json()) as GuestUser;
+            if (!cancelled) setUser(u);
+          } else {
+            saveSessionId(null);
+          }
+        } catch {
+          /* keep null */
+        }
+      }
+      if (!cancelled) setHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
-
-  const persistUsers = useCallback((next: GuestUser[]) => {
-    setUsers(next);
-    saveUsers(next);
-  }, []);
-
-  const user = useMemo(
-    () => users.find((u) => u.id === sessionId) ?? null,
-    [users, sessionId]
-  );
 
   const signUp = useCallback(
-    (
+    async (
       name: string,
       email: string,
       password: string,
       bookingId?: string
-    ): string | null => {
+    ): Promise<string | null> => {
       const trimmedEmail = email.trim().toLowerCase();
       const trimmedName = name.trim();
-      if (!trimmedName || !trimmedEmail || !password) {
-        return "missing";
-      }
-      if (users.some((u) => u.email === trimmedEmail)) {
-        return "exists";
-      }
-      const next: GuestUser = {
-        id: `gu-${Date.now()}`,
-        name: trimmedName,
-        email: trimmedEmail,
-        password,
-        bookingIds: bookingId ? [bookingId] : [],
-      };
-      persistUsers([...users, next]);
-      setSessionId(next.id);
-      saveSessionId(next.id);
+      if (!trimmedName || !trimmedEmail || !password) return "missing";
+
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "signup",
+          name: trimmedName,
+          email: trimmedEmail,
+          password,
+          bookingId,
+        }),
+      });
+      if (res.status === 409) return "exists";
+      if (!res.ok) return "missing";
+      const u = (await res.json()) as GuestUser;
+      setUser(u);
+      saveSessionId(u.id);
       return null;
     },
-    [users, persistUsers]
+    []
   );
 
   const signIn = useCallback(
-    (email: string, password: string): string | null => {
+    async (email: string, password: string): Promise<string | null> => {
       const trimmedEmail = email.trim().toLowerCase();
-      const found = users.find(
-        (u) => u.email === trimmedEmail && u.password === password
-      );
-      if (!found) return "invalid";
-      setSessionId(found.id);
-      saveSessionId(found.id);
+      if (!trimmedEmail || !password) return "missing";
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "signin",
+          email: trimmedEmail,
+          password,
+        }),
+      });
+      if (res.status === 401) return "invalid";
+      if (!res.ok) return "invalid";
+      const u = (await res.json()) as GuestUser;
+      setUser(u);
+      saveSessionId(u.id);
       return null;
     },
-    [users]
+    []
   );
 
   const signOut = useCallback(() => {
-    setSessionId(null);
+    setUser(null);
     saveSessionId(null);
   }, []);
 
   const attachBooking = useCallback(
     (bookingId: string, userId?: string) => {
-      const target = userId ?? sessionId ?? loadSessionId();
+      const target = userId ?? user?.id ?? loadSessionId();
       if (!target) return;
-      persistUsers(
-        users.map((u) =>
-          u.id === target && !u.bookingIds.includes(bookingId)
-            ? { ...u, bookingIds: [...u.bookingIds, bookingId] }
-            : u
-        )
+      setUser((prev) =>
+        prev && prev.id === target && !prev.bookingIds.includes(bookingId)
+          ? { ...prev, bookingIds: [...prev.bookingIds, bookingId] }
+          : prev
       );
+      void fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "attach",
+          userId: target,
+          bookingId,
+        }),
+      });
     },
-    [sessionId, users, persistUsers]
+    [user]
   );
 
   const updateUser = useCallback(
     (patch: Partial<Pick<GuestUser, "name" | "email">>) => {
-      if (!sessionId) return;
-      persistUsers(
-        users.map((u) => {
-          if (u.id !== sessionId) return u;
-          const next = { ...u, ...patch };
-          if (patch.email) next.email = patch.email.trim().toLowerCase();
-          if (patch.name) next.name = patch.name.trim();
-          return next;
-        })
-      );
+      if (!user) return;
+      setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+      void fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update",
+          userId: user.id,
+          patch,
+        }),
+      });
     },
-    [sessionId, users, persistUsers]
+    [user]
   );
 
   const value = useMemo(

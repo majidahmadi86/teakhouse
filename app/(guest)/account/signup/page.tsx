@@ -29,9 +29,9 @@ function SignUpForm() {
     window.setTimeout(() => setShake(false), 300);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const err = signUp(name, email, password, bookingId);
+    const err = await signUp(name, email, password, bookingId);
     if (err === "exists") {
       setError(t("acc.errExists"));
       triggerShake();

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 
 export const metadata: Metadata = {
   title: "Book Direct",
   description:
-    "Check live availability, pay a deposit, and confirm your teak room — direct booking demo by Mikaro Studio.",
+    "Check live availability, pay a deposit, and confirm your teak room · direct booking demo by Mikaro Studio.",
   alternates: { canonical: "/book" },
 };
 
@@ -13,5 +12,5 @@ export default function BookLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OwnerStoreProvider>{children}</OwnerStoreProvider>;
+  return children;
 }

@@ -8,107 +8,38 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { SEED_BOOKINGS } from "./seedBookings";
 import { SEED_ROOMS } from "./rooms";
+import type {
+  Booking,
+  BookingInput,
+  CellState,
+  OwnerData,
+  RoomData,
+} from "./ownerTypes";
 import { isoDate, nightsBetween } from "./utils";
 
-export type BookingStatus = "in" | "ok" | "out" | "cancelled";
-export type BookingSource = "Direct" | "Agoda" | "Booking";
-export type Booking = {
-  id: string;
-  code: string;
-  guest: string;
-  phone: string;
-  email: string;
-  roomSlug: string;
-  checkIn: string;
-  checkOut: string;
-  source: BookingSource;
-  amount: number;
-  status: BookingStatus;
-  notes: string;
-  passportId?: string;
-  nationality?: string;
-  adults?: number;
-  children?: number;
-  arrivalTime?: string;
-  specialRequests?: string;
-};
+export type {
+  Booking,
+  BookingInput,
+  BookingSource,
+  BookingStatus,
+  CellState,
+  OwnerData,
+  RoomData,
+} from "./ownerTypes";
 
-export type BookingInput = Partial<Booking> &
-  Pick<
-    Booking,
-    | "id"
-    | "code"
-    | "guest"
-    | "roomSlug"
-    | "checkIn"
-    | "checkOut"
-    | "source"
-    | "amount"
-    | "status"
-  > & {
-    phone?: string;
-    email?: string;
-    notes?: string;
-  };
-export type RoomData = import("./rooms").Room;
-export type CellState = "available" | "booked" | "blocked";
-export type OwnerData = {
-  rooms: RoomData[];
-  bookings: Booking[];
-  /** key: `${roomSlug}:${yyyy-mm-dd}` -> blocked only (booked derived) */
-  blocks: Record<string, true>;
-  /** Bump when seed room photos/content must refresh stored demos */
-  seedVersion?: number;
-};
-
-const STORAGE_KEY = "tkh-data";
 const AUTH_KEY = "tkh-owner";
-/** v8: Teak Suite photo IDs were 404; refresh seed photos into stored rooms */
-const SEED_VERSION = 8;
 
 function blockKey(roomSlug: string, dateIso: string): string {
   return `${roomSlug}:${dateIso}`;
 }
 
-function seedData(): OwnerData {
+function emptyData(): OwnerData {
   return {
     rooms: structuredClone(SEED_ROOMS),
-    bookings: structuredClone(SEED_BOOKINGS) as Booking[],
+    bookings: [],
     blocks: {},
-    seedVersion: SEED_VERSION,
   };
-}
-
-function syncSeedPhotos(data: OwnerData): OwnerData {
-  if ((data.seedVersion ?? 0) >= SEED_VERSION) return data;
-  const rooms = data.rooms.map((room) => {
-    const seed = SEED_ROOMS.find((s) => s.id === room.id);
-    if (!seed) return room;
-    return { ...room, photos: [...seed.photos] };
-  });
-  return { ...data, rooms, seedVersion: SEED_VERSION };
-}
-
-function loadStored(): OwnerData | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as OwnerData;
-    if (!parsed.rooms || !parsed.bookings || !parsed.blocks) return null;
-    return syncSeedPhotos(parsed);
-  } catch {
-    return null;
-  }
-}
-
-function persist(data: OwnerData): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    /* ignore quota errors in demo */
-  }
 }
 
 function dateOverlapsBooking(dateIso: string, booking: Booking): boolean {
@@ -125,7 +56,10 @@ function bookingTouchesMonth(booking: Booking, ref: Date): boolean {
   return inDate <= monthEnd && outDate > monthStart;
 }
 
-function computeOccupancyTonight(data: OwnerData): { occupied: number; total: number } {
+function computeOccupancyTonight(data: OwnerData): {
+  occupied: number;
+  total: number;
+} {
   const today = isoDate(new Date());
   const activeRooms = data.rooms.filter((r) => r.active);
   const occupiedSlugs = new Set<string>();
@@ -149,7 +83,9 @@ function computeArrivalsToday(data: OwnerData): number {
 
 function computeDirectCountMonth(data: OwnerData): number {
   const now = new Date();
-  const monthBookings = data.bookings.filter((b) => bookingTouchesMonth(b, now));
+  const monthBookings = data.bookings.filter((b) =>
+    bookingTouchesMonth(b, now)
+  );
   if (monthBookings.length === 0) return 0;
   const direct = monthBookings.filter((b) => b.source === "Direct").length;
   return Math.round((direct / monthBookings.length) * 100);
@@ -176,6 +112,12 @@ function computeOtaSavedMonth(data: OwnerData): number {
   return total;
 }
 
+async function fetchData(): Promise<OwnerData> {
+  const res = await fetch("/api/data", { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to load data");
+  return res.json();
+}
+
 type OwnerCtx = {
   data: OwnerData;
   hydrated: boolean;
@@ -200,38 +142,46 @@ type OwnerCtx = {
 const Ctx = createContext<OwnerCtx | null>(null);
 
 export function OwnerProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<OwnerData>(seedData);
+  const [data, setData] = useState<OwnerData>(emptyData);
   const [hydrated, setHydrated] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
-    const stored = loadStored();
-    setData(stored ?? seedData());
-    try {
-      setIsAuthed(localStorage.getItem(AUTH_KEY) === "1");
-    } catch {
-      setIsAuthed(false);
-    }
-    setHydrated(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        const loaded = await fetchData();
+        if (!cancelled) setData(loaded);
+      } catch {
+        if (!cancelled) setData(emptyData());
+      } finally {
+        if (!cancelled) {
+          try {
+            setIsAuthed(localStorage.getItem(AUTH_KEY) === "1");
+          } catch {
+            setIsAuthed(false);
+          }
+          setHydrated(true);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const commit = useCallback(
-    (next: OwnerData | ((prev: OwnerData) => OwnerData)) => {
-      setData((prev) => {
-        const updated = typeof next === "function" ? next(prev) : next;
-        if (hydrated) persist(updated);
-        return updated;
-      });
-    },
-    [hydrated]
-  );
-
-  useEffect(() => {
-    if (hydrated) persist(data);
-  }, [data, hydrated]);
+  const refresh = useCallback(async () => {
+    try {
+      const loaded = await fetchData();
+      setData(loaded);
+    } catch {
+      /* keep current */
+    }
+  }, []);
 
   const login = useCallback((email: string, pin: string) => {
-    if (pin !== "1234") return false;
+    const expected = process.env.NEXT_PUBLIC_OWNER_PIN ?? "1234";
+    if (pin !== expected) return false;
     try {
       localStorage.setItem(AUTH_KEY, "1");
       localStorage.setItem(`${AUTH_KEY}-email`, email);
@@ -253,71 +203,109 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetDemo = useCallback(() => {
-    const fresh = seedData();
-    commit(fresh);
-  }, [commit]);
+    void (async () => {
+      const res = await fetch("/api/data/reset", { method: "POST" });
+      if (res.ok) {
+        const loaded = (await res.json()) as OwnerData;
+        setData(loaded);
+      }
+    })();
+  }, []);
 
-  const addBooking = useCallback(
-    (booking: BookingInput) => {
-      const full: Booking = {
-        phone: "",
-        email: "",
-        notes: "",
-        ...booking,
-      };
-      commit((prev) => ({
-        ...prev,
-        bookings: [...prev.bookings, full],
-      }));
-    },
-    [commit]
-  );
+  const addBooking = useCallback((booking: BookingInput) => {
+    const full: Booking = {
+      phone: "",
+      email: "",
+      notes: "",
+      ...booking,
+    };
+    setData((prev) => ({
+      ...prev,
+      bookings: [...prev.bookings, full],
+    }));
+    void (async () => {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(full),
+      });
+      if (!res.ok) await refresh();
+    })();
+  }, [refresh]);
 
   const updateBooking = useCallback(
     (id: string, patch: Partial<Booking>) => {
-      commit((prev) => ({
+      setData((prev) => ({
         ...prev,
         bookings: prev.bookings.map((b) =>
           b.id === id ? { ...b, ...patch } : b
         ),
       }));
+      void (async () => {
+        const res = await fetch(`/api/bookings/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patch),
+        });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const deleteBooking = useCallback(
     (id: string) => {
-      commit((prev) => ({
+      setData((prev) => ({
         ...prev,
         bookings: prev.bookings.filter((b) => b.id !== id),
       }));
+      void (async () => {
+        const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const addRoom = useCallback(
     (room: RoomData) => {
-      commit((prev) => ({
+      setData((prev) => ({
         ...prev,
         rooms: [...prev.rooms, room],
       }));
+      void (async () => {
+        const res = await fetch("/api/rooms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(room),
+        });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const updateRoom = useCallback(
     (id: string, patch: Partial<RoomData>) => {
-      commit((prev) => ({
+      setData((prev) => ({
         ...prev,
         rooms: prev.rooms.map((r) => (r.id === id ? { ...r, ...patch } : r)),
       }));
+      void (async () => {
+        const res = await fetch(`/api/rooms/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patch),
+        });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const deleteRoom = useCallback(
     (id: string) => {
-      commit((prev) => {
+      setData((prev) => {
         const room = prev.rooms.find((r) => r.id === id);
         if (!room) return prev;
         return {
@@ -326,24 +314,33 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
           bookings: prev.bookings.filter((b) => b.roomSlug !== room.slug),
         };
       });
+      void (async () => {
+        const res = await fetch(`/api/rooms/${id}`, { method: "DELETE" });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const toggleBlock = useCallback(
     (roomSlug: string, dateIso: string) => {
       const key = blockKey(roomSlug, dateIso);
-      commit((prev) => {
+      setData((prev) => {
         const blocks = { ...prev.blocks };
-        if (blocks[key]) {
-          delete blocks[key];
-        } else {
-          blocks[key] = true;
-        }
+        if (blocks[key]) delete blocks[key];
+        else blocks[key] = true;
         return { ...prev, blocks };
       });
+      void (async () => {
+        const res = await fetch("/api/blocks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ roomSlug, dateIso }),
+        });
+        if (!res.ok) await refresh();
+      })();
     },
-    [commit]
+    [refresh]
   );
 
   const getCell = useCallback(

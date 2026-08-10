@@ -12,15 +12,15 @@ import {
   RevealItem,
   RevealStagger,
 } from "@/components/motion/Reveal";
-import { SEED_ROOMS } from "@/lib/rooms";
+import { useGuestRooms } from "@/lib/ownerStore";
 import { useI18n } from "@/lib/i18n";
 
 const OFFERS = ["1", "2", "3"] as const;
 
-/** Below-fold home sections — dynamically imported so hero LCP stays light. */
+/** Below-fold home sections · dynamically imported so hero LCP stays light. */
 export function HomeBelowFold() {
   const { t } = useI18n();
-  const rooms = SEED_ROOMS.filter((r) => r.active).slice(0, 3);
+  const rooms = useGuestRooms().slice(0, 3);
 
   return (
     <>

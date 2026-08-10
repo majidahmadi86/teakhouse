@@ -14,7 +14,7 @@ import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import { useGuestRooms, useOwner } from "@/lib/ownerStore";
-import { getRoomByKey, type Room, type RoomShortKey } from "@/lib/rooms";
+import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
   isoDate,
@@ -59,6 +59,15 @@ export default function BookPageClient() {
     phone?: boolean;
   }>({});
 
+  function findRoomByParam(param: string): Room | undefined {
+    return (
+      rooms.find((r) => r.slug === param || r.shortKey === param) ??
+      rooms.find(
+        (r) => r.slug === (SHORT_KEY_TO_SLUG[param as RoomShortKey] ?? param)
+      )
+    );
+  }
+
   useEffect(() => {
     const inParam = searchParams.get("in");
     const outParam = searchParams.get("out");
@@ -70,13 +79,14 @@ export default function BookPageClient() {
     if (gParam) setGuests(gParam);
 
     if (roomParam) {
-      const room = getRoomByKey(roomParam);
+      const room = findRoomByParam(roomParam);
       if (room) {
         setRoomKey(room.shortKey);
         setStep(2);
       }
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, rooms]);
 
   useEffect(() => {
     if (user) {
@@ -89,7 +99,9 @@ export default function BookPageClient() {
     checkOut && checkOut > checkIn
       ? nightsBetween(isoDate(checkIn), isoDate(checkOut))
       : 0;
-  const selectedRoom = roomKey ? getRoomByKey(roomKey) ?? null : null;
+  const selectedRoom = roomKey
+    ? rooms.find((r) => r.shortKey === roomKey) ?? null
+    : null;
   const rate = selectedRoom?.rate ?? 0;
   const subtotal = selectedRoom && nights > 0 ? selectedRoom.rate * nights : 0;
   const savings =

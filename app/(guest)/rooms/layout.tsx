@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 
 export const metadata: Metadata = {
   title: "Rooms",
   description:
-    "Four teak rooms on the Chao Phraya — River Loft, Teak Suite, Garden Room, and Courtyard Twin. Compare rates and book direct.",
+    "Four teak rooms on the Chao Phraya · River Loft, Teak Suite, Garden Room, and Courtyard Twin. Compare rates and book direct.",
   alternates: { canonical: "/rooms" },
 };
 
@@ -13,5 +12,5 @@ export default function RoomsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OwnerStoreProvider>{children}</OwnerStoreProvider>;
+  return children;
 }

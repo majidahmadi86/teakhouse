@@ -1,0 +1,178 @@
+// TEAK HOUSE v8 · data layer
+// Default local: SQLite (file:./dev.db via DATABASE_URL).
+// Production / Supabase demo: change provider to "postgresql" and set
+// DATABASE_URL to your Postgres connection string. See README.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id          String   @id @default("default")
+  name        String
+  tagline     String
+  email       String
+  phone       String
+  lineId      String   @default("")
+  address     String
+  addressLine String   @default("")
+  city        String
+  country     String
+  postalCode  String   @default("")
+  lat         Float
+  lng         Float
+  checkInTime  String  @default("14:00")
+  checkOutTime String  @default("12:00")
+  cancelPolicy String
+  petsPolicy   String  @default("")
+  depositPct   Int     @default(30)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rooms       Room[]
+  bookings    Booking[]
+  emailTemplates EmailTemplate[]
+}
+
+model Room {
+  id          String   @id
+  hotelId     String   @default("default")
+  hotel       Hotel    @relation(fields: [hotelId], references: [id])
+  slug        String   @unique
+  shortKey    String
+  nameEn      String
+  nameTh      String
+  rate        Int
+  ota         Int
+  metaEn      String
+  metaTh      String
+  descriptionEn String
+  descriptionTh String
+  /// JSON string array of photo URLs
+  photos      String
+  /// JSON string array of amenity ids
+  amenities   String
+  capacity    Int
+  bedTypeEn   String
+  bedTypeTh   String
+  sizeM2      Int
+  viewEn      String
+  viewTh      String
+  floorEn     String
+  floorTh     String
+  bathtub     Boolean  @default(false)
+  balcony     Boolean  @default(false)
+  pets        Boolean  @default(false)
+  active      Boolean  @default(true)
+  urgencyEn   String?
+  urgencyTh   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+  blocks      RoomBlock[]
+  priceRules  SeasonalPriceRule[]
+}
+
+model SeasonalPriceRule {
+  id          String   @id @default(cuid())
+  roomId      String
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  label       String   @default("")
+  startDate   String
+  endDate     String
+  multiplier  Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id              String   @id
+  hotelId         String   @default("default")
+  hotel           Hotel    @relation(fields: [hotelId], references: [id])
+  code            String   @unique
+  guest           String
+  phone           String   @default("")
+  email           String   @default("")
+  roomSlug        String
+  room            Room     @relation(fields: [roomSlug], references: [slug])
+  checkIn         String
+  checkOut        String
+  source          String
+  amount          Int
+  status          String
+  notes           String   @default("")
+  passportId      String?
+  nationality     String?
+  adults          Int?
+  children        Int?
+  arrivalTime     String?
+  specialRequests String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  guestLinks      GuestBooking[]
+}
+
+model RoomBlock {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  dateIso   String
+  createdAt DateTime @default(now())
+
+  @@unique([roomId, dateIso])
+}
+
+/// Guest account (site signup) · was tkh-users
+model User {
+  id         String   @id
+  name       String
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  bookings   GuestBooking[]
+}
+
+model GuestBooking {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookingId])
+}
+
+/// Optional denormalized guest CRM row (from booking guest fields)
+model Guest {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  passportId  String?
+  nationality String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  hotelId   String   @default("default")
+  hotel     Hotel    @relation(fields: [hotelId], references: [id])
+  key       String   @default("booking_confirmation")
+  subject   String
+  body      String
+  updatedAt DateTime @updatedAt
+
+  @@unique([hotelId, key])
+}
+
+/// Demo sandbox hourly reseed marker
+model DemoMeta {
+  id        String   @id @default("demo")
+  lastReset DateTime @default(now())
+}

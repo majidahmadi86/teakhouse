@@ -27,9 +27,9 @@ function SignInForm() {
     window.setTimeout(() => setShake(false), 300);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const err = signIn(email, password);
+    const err = await signIn(email, password);
     if (err === "invalid") {
       setError(t("acc.errInvalid"));
       triggerShake();
