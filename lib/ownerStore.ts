@@ -148,25 +148,28 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const loaded = await fetchData();
-        if (!cancelled) setData(loaded);
-      } catch {
-        if (!cancelled) setData(emptyData());
-      } finally {
-        if (!cancelled) {
-          try {
-            setIsAuthed(localStorage.getItem(AUTH_KEY) === "1");
-          } catch {
-            setIsAuthed(false);
+    const timeoutId = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const loaded = await fetchData();
+          if (!cancelled) setData(loaded);
+        } catch {
+          if (!cancelled) setData(emptyData());
+        } finally {
+          if (!cancelled) {
+            try {
+              setIsAuthed(localStorage.getItem(AUTH_KEY) === "1");
+            } catch {
+              setIsAuthed(false);
+            }
+            setHydrated(true);
           }
-          setHydrated(true);
         }
-      }
-    })();
+      })();
+    }, 250);
     return () => {
       cancelled = true;
+      window.clearTimeout(timeoutId);
     };
   }, []);
 

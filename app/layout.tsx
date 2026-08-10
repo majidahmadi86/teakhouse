@@ -1,5 +1,5 @@
 import { hotelConfig } from "@/config/hotel.config";
-import { DemoModeBar } from "@/components/DemoModeBar";
+import { DemoModeBarLazy } from "@/components/DemoModeBarLazy";
 import { Providers } from "@/components/providers";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { SITE_URL } from "@/lib/site";
@@ -90,7 +90,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <Providers>
-          <DemoModeBar />
+          <DemoModeBarLazy />
           {children}
         </Providers>
       </body>
