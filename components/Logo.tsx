@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { hotelConfig } from "@/config/hotel.config";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {
@@ -20,8 +21,7 @@ export function Logo({
   tagline,
   children,
 }: LogoProps) {
-  const tag =
-    children ?? tagline ?? "Riverside Boutique Hotel · Bangkok";
+  const tag = children ?? tagline ?? hotelConfig.tagline.en;
 
   return (
     <div className={cn("inline-flex items-center gap-3", className)}>
@@ -49,7 +49,7 @@ export function Logo({
             light ? "text-white" : "text-navy"
           )}
         >
-          THE TEAK HOUSE
+          {hotelConfig.nameDisplay}
         </div>
         {showTag ? (
           <div

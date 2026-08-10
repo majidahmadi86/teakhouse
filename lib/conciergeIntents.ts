@@ -1,4 +1,6 @@
-﻿export type ConciergeReply = {
+﻿import { hotelConfig } from "@/config/hotel.config";
+
+export type ConciergeReply = {
   en: string;
   th: string;
 };
@@ -8,15 +10,9 @@ export const CONCIERGE_CHIPS = {
   th: ["ราคาคืนนี้", "รถรับสนามบิน", "เช็คอินดึก", "จองห้องพัก"],
 };
 
-export const CONCIERGE_HELLO: ConciergeReply = {
-  en: "Sawasdee kha, welcome to The Teak House. I answer every hour of the night, in English and Thai. How can I help?",
-  th: "สวัสดีค่ะ ยินดีต้อนรับสู่ The Teak House ค่ะ น้ำตอบทุกคำถามตลอด 24 ชั่วโมง ทั้งภาษาไทยและอังกฤษ ให้ช่วยอะไรดีคะ",
-};
+export const CONCIERGE_HELLO: ConciergeReply = hotelConfig.concierge.hello;
 
-export const CONCIERGE_FALLBACK: ConciergeReply = {
-  en: "I want to get that exactly right for you, so I have passed it to the family. They reply within the hour on LINE (@teakhouse). Meanwhile, may I help with rates, rooms or getting here?",
-  th: "เรื่องนี้น้ำขอส่งต่อให้เจ้าของบ้านตอบให้ชัวร์ที่สุดนะคะ ทีมจะตอบกลับใน 1 ชั่วโมงทาง LINE (@teakhouse) ค่ะ ระหว่างนี้ให้น้ำช่วยเรื่องราคา ห้องพัก หรือการเดินทางไหมคะ",
-};
+export const CONCIERGE_FALLBACK: ConciergeReply = hotelConfig.concierge.fallback;
 
 const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
@@ -36,8 +32,8 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
     k: /check[- ]?in|check[- ]?out|late|arriv|midnight|เช็คอิน|เช็คเอาท์|ดึก|เที่ยงคืน|กี่โมง/i,
     r: {
-      en: "Check-in from 14:00, check-out by 12:00. Arriving late is never a problem: the house desk is staffed 24 hours, and I hold your room until you knock. Tell me your arrival time and it will be noted.",
-      th: "เช็คอินตั้งแต่ 14:00 น. เช็คเอาท์ก่อน 12:00 น. ค่ะ มาดึกแค่ไหนก็ไม่มีปัญหา ฟรอนต์มีคนดูแลตลอด 24 ชั่วโมง และน้ำจะเก็บห้องไว้ให้จนกว่าคุณจะมาถึงค่ะ บอกเวลาถึงได้เลยนะคะ",
+      en: `Check-in from ${hotelConfig.policies.checkIn}, check-out by ${hotelConfig.policies.checkOut}. Arriving late is never a problem: the house desk is staffed 24 hours, and I hold your room until you knock. Tell me your arrival time and it will be noted.`,
+      th: `เช็คอินตั้งแต่ ${hotelConfig.policies.checkIn} น. เช็คเอาท์ก่อน ${hotelConfig.policies.checkOut} น. ค่ะ มาดึกแค่ไหนก็ไม่มีปัญหา ฟรอนต์มีคนดูแลตลอด 24 ชั่วโมง และน้ำจะเก็บห้องไว้ให้จนกว่าคุณจะมาถึงค่ะ บอกเวลาถึงได้เลยนะคะ`,
     },
   },
   {
@@ -64,29 +60,23 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
     k: /where|address|bts|train|boat|get there|map|location|ที่ไหน|เดินทาง|รถไฟฟ้า|เรือ|แผนที่/i,
     r: {
-      en: 'Charoenkrung 44, Bang Rak. BTS Saphan Taksin exit 2, then 6 minutes on foot along the river, or the Chao Phraya boat to Oriental Pier. <a href="/location" class="font-extrabold text-blue">Directions</a>',
-      th: 'เจริญกรุง 44 บางรักค่ะ BTS สะพานตากสิน ทางออก 2 เดินเลียบแม่น้ำ 6 นาที หรือเรือด่วนเจ้าพระยาลงท่าโอเรียนเต็ลค่ะ <a href="/location" class="font-extrabold text-blue">ดูการเดินทาง</a>',
+      en: `${hotelConfig.contact.addressShort.en}. <a href="/location" class="font-extrabold text-blue">Directions</a>`,
+      th: `${hotelConfig.contact.addressShort.th} ค่ะ <a href="/location" class="font-extrabold text-blue">ดูการเดินทาง</a>`,
     },
   },
   {
     k: /pet|dog|cat|สัตว์เลี้ยง|หมา|สุนัข|แมว/i,
-    r: {
-      en: "Small, well-mannered dogs are welcome in the two Garden Rooms (฿500/stay). The courtyard is theirs at dawn.",
-      th: "น้องหมาตัวเล็กที่เรียบร้อยพักได้ที่ Garden Room ทั้ง 2 ห้องค่ะ (ค่าธรรมเนียม 500.- ต่อการเข้าพัก) ตอนเช้าตรู่คอร์ทยาร์ดเป็นของน้องเลยค่ะ",
-    },
+    r: hotelConfig.policies.pets,
   },
   {
     k: /cancel|refund|policy|ยกเลิก|คืนเงิน|เงื่อนไข/i,
-    r: {
-      en: "Free cancellation up to 3 days before arrival, full deposit refunded. Inside 3 days the deposit converts to a credit for a future stay, valid one year.",
-      th: "ยกเลิกฟรีก่อนเข้าพัก 3 วัน คืนมัดจำเต็มจำนวนค่ะ หากยกเลิกภายใน 3 วัน มัดจำจะเปลี่ยนเป็นเครดิตสำหรับการเข้าพักครั้งหน้า ใช้ได้ 1 ปีค่ะ",
-    },
+    r: hotelConfig.policies.cancel,
   },
   {
     k: /hello|hi|hey|สวัสดี|หวัดดี|ดีค|ดีครับ/i,
     r: {
-      en: "Sawasdee kha. It is a quiet evening on the river. What may I help you with: rates, rooms, or getting here?",
-      th: "สวัสดีค่ะ ค่ำคืนริมน้ำเงียบสงบดีค่ะ ให้น้ำช่วยเรื่องไหนดีคะ ราคา ห้องพัก หรือการเดินทางคะ",
+      en: `Welcome to ${hotelConfig.name}. What may I help you with: rates, rooms, or getting here?`,
+      th: hotelConfig.concierge.hello.th,
     },
   },
 ];
@@ -96,4 +86,9 @@ export function matchConciergeIntent(message: string): ConciergeReply | null {
     if (intent.k.test(message)) return intent.r;
   }
   return null;
+}
+
+/** Facts for AI system prompt · config + never invent prices. */
+export function conciergeConfigFacts(): string {
+  return hotelConfig.concierge.facts.map((f) => f.en).join(" ");
 }

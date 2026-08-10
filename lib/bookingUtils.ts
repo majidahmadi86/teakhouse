@@ -1,3 +1,5 @@
+import { hotelConfig } from "@/config/hotel.config";
+
 export function qrMockSvg(): string {
   let cells = "";
   let seed = 7;
@@ -29,5 +31,11 @@ export function qrMockSvg(): string {
 }
 
 export function generateBookingCode(): string {
-  return `TKH-${1000 + Math.floor(Math.random() * 9000)}`;
+  const prefix =
+    hotelConfig.id === "tropical-resort"
+      ? "TKH"
+      : hotelConfig.id === "city-boutique"
+        ? "MLN"
+        : "QTH";
+  return `${prefix}-${1000 + Math.floor(Math.random() * 9000)}`;
 }

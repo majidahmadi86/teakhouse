@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { hotelConfig } from "@/config/hotel.config";
 
 export type Lang = "en" | "th";
 
@@ -579,6 +580,33 @@ export const DICT: Record<string, DictEntry> = {
     en: "Free cancellation",
     th: "ยกเลิกฟรี",
   },
+};
+
+/** Overlay brand/contact/policy strings from hotel.config presets. */
+DICT["brand.tag"] = hotelConfig.tagline;
+DICT["brand.name"] = { en: hotelConfig.name, th: hotelConfig.name };
+DICT["ft.copy"] = {
+  en: `© ${hotelConfig.name} · demo by Mikaro Studio`,
+  th: `© ${hotelConfig.name} · ตัวอย่างโดย Mikaro Studio`,
+};
+DICT["bk.cancel"] = hotelConfig.policies.cancel;
+DICT["cg.name"] = hotelConfig.concierge.name;
+DICT["ow.eyebrow"] = {
+  en: `${hotelConfig.name} · owner view`,
+  th: `${hotelConfig.name} · มุมมองเจ้าของ`,
+};
+DICT["ct.address"] = hotelConfig.contact.address;
+DICT["ct.phone"] = {
+  en: hotelConfig.contact.phone,
+  th: hotelConfig.contact.phone,
+};
+DICT["ct.mail"] = {
+  en: hotelConfig.contact.email,
+  th: hotelConfig.contact.email,
+};
+DICT["ct.line"] = {
+  en: `LINE ${hotelConfig.contact.line}`,
+  th: `LINE ${hotelConfig.contact.line}`,
 };
 
 type I18nCtx = {

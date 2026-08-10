@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { hotelConfig } from "@/config/hotel.config";
 
 export type Currency = "THB" | "USD" | "EUR";
 
@@ -15,11 +16,15 @@ export const CURRENCIES: {
   code: Currency;
   symbol: string;
   label: string;
-}[] = [
-  { code: "THB", symbol: "฿", label: "฿ THB" },
-  { code: "USD", symbol: "$", label: "$ USD" },
-  { code: "EUR", symbol: "€", label: "€ EUR" },
-];
+}[] = (
+  [
+    { code: "THB", symbol: "฿", label: "฿ THB" },
+    { code: "USD", symbol: "$", label: "$ USD" },
+    { code: "EUR", symbol: "€", label: "€ EUR" },
+  ] as const
+).filter((c) => hotelConfig.currencies.includes(c.code));
+
+
 
 const STORAGE_KEY = "tkh-cur";
 
