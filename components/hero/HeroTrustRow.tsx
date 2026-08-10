@@ -21,7 +21,7 @@ export function HeroTrustRow({
       )}
       style={{ animationDelay: "0.35s" }}
     >
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/14 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
         <span className="tracking-[1px] text-gold" aria-hidden>
           ★★★★★
         </span>

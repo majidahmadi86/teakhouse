@@ -37,7 +37,7 @@ export function DemoModeBar() {
           >
             Guest site
           </Link>
-          <span className="text-white/40" aria-hidden>
+          <span className="text-white/55" aria-hidden>
             ⇄
           </span>
           <Link
@@ -54,7 +54,7 @@ export function DemoModeBar() {
         <span className="shrink-0 rounded-full bg-gold/20 px-2.5 py-1 text-[11px] font-semibold text-gold">
           Sandbox · resets hourly · edit anything
         </span>
-        <span className="hidden text-white/50 sm:inline">
+        <span className="hidden text-white/60 sm:inline">
           {hotelConfig.name}
         </span>
       </div>

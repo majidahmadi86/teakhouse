@@ -198,7 +198,7 @@ export function OwnerShell({
             </button>
             <Link
               href="/"
-              className="flex min-h-[44px] items-center text-sm font-semibold text-white/50 transition hover:text-white"
+              className="flex min-h-[44px] items-center text-sm font-semibold text-white/60 transition hover:text-white"
             >
               {t("ow.back")}
             </Link>
@@ -231,7 +231,7 @@ export function OwnerShell({
             </button>
             <Link
               href="/"
-              className="min-h-[36px] shrink-0 rounded-xl px-2 text-xs font-semibold text-white/50 transition hover:text-white"
+              className="min-h-[36px] shrink-0 rounded-xl px-2 text-xs font-semibold text-white/60 transition hover:text-white"
             >
               {t("ow.back")}
             </Link>

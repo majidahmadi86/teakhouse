@@ -49,7 +49,7 @@ export function RoomSelectCard({
           sizes="100vw"
         />
         {urgencyKey ? (
-          <span className="absolute left-3 top-3 rounded-full bg-coral px-2.5 py-1 text-[0.68rem] font-bold text-white">
+          <span className="absolute left-3 top-3 rounded-full bg-coral-deep px-2.5 py-1 text-[0.68rem] font-bold text-white">
             {t(urgencyKey)}
           </span>
         ) : null}

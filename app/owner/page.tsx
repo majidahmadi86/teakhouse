@@ -298,7 +298,7 @@ export default function OwnerDashboardPage() {
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
             Bookings by source
           </p>
-          <p className="mb-4 text-xs text-white/45">
+          <p className="mb-4 text-xs text-white/55">
             Placeholder mix for this month · wire OTA webhooks later
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -332,7 +332,7 @@ export default function OwnerDashboardPage() {
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-white/45">{pct}%</p>
+                  <p className="mt-1 text-xs text-white/55">{pct}%</p>
                 </div>
               );
             })}

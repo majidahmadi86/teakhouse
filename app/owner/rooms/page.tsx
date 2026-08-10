@@ -297,7 +297,7 @@ export default function OwnerRoomsPage() {
                 <p className="mt-1 text-sm text-white/50">{tr(room.meta)}</p>
                 <p className="mt-3 font-display text-2xl font-semibold text-gold">
                   {formatBaht(room.rate)}
-                  <span className="ml-2 text-sm font-sans font-semibold text-white/40">
+                  <span className="ml-2 text-sm font-sans font-semibold text-white/55">
                     OTA {formatBaht(room.ota)}
                   </span>
                 </p>
@@ -360,7 +360,7 @@ export default function OwnerRoomsPage() {
                 {open ? (
                   <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
                     {rules.length === 0 ? (
-                      <p className="text-xs text-white/45">No rules yet</p>
+                      <p className="text-xs text-white/55">No rules yet</p>
                     ) : (
                       <ul className="space-y-2">
                         {rules.map((rule) => (

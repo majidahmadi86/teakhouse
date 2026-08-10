@@ -86,7 +86,7 @@ export const TEAK_PALETTE: HotelPalette = {
   gold: "#E8A93D",
   deal: "#067647",
   dealBg: "#E6F4EE",
-  strike: "#9AA4B2",
+  strike: "#667284",
   line: "#E3E8EF",
   brand: "#0A1B2E",
   brand2: "#071421",

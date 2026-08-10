@@ -197,7 +197,7 @@ export default function OwnerCalendarPage() {
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
               <div
                 key={d}
-                className="text-center text-[0.65rem] font-extrabold uppercase tracking-[0.12em] text-white/40"
+                className="text-center text-[0.65rem] font-extrabold uppercase tracking-[0.12em] text-white/55"
               >
                 {d}
               </div>
@@ -230,7 +230,7 @@ export default function OwnerCalendarPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold text-white/70">
-            <span className="text-white/45">Intensity</span>
+            <span className="text-white/55">Intensity</span>
             <LegendDot color="bg-white/[0.06]" label="0%" />
             <LegendDot color="bg-own-blue/25" label="1-24%" />
             <LegendDot color="bg-own-blue/45" label="25-49%" />
@@ -295,7 +295,7 @@ export default function OwnerCalendarPage() {
             <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
             <LegendDot color="bg-white/15" label={t("ow.lg3")} />
           </div>
-          <p className="mt-3 text-xs font-medium text-white/45">
+          <p className="mt-3 text-xs font-medium text-white/55">
             Tap available or blocked cells to toggle. Booked nights cannot be changed.
           </p>
         </section>

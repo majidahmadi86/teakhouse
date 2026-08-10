@@ -971,7 +971,7 @@ function DetailRow({
       <dd
         className={cn(
           "text-right font-semibold",
-          missing ? "text-white/40 italic" : "text-white"
+          missing ? "text-white/55 italic" : "text-white"
         )}
       >
         {display}

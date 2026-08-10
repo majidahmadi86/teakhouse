@@ -37,14 +37,16 @@ export function PageHero({
           sizes="(max-width: 768px) 100vw, 100vw"
           className="scale-[1.02] object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/20 to-navy/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-navy/50 to-navy/85" />
       </div>
       <div className="mx-auto w-full max-w-[1180px] px-6">
-        <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-gold">
+        <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-gold hero-text-shadow">
           {eyebrow}
         </p>
-        <h1 className="max-w-[16ch] text-balance">{title}</h1>
-        <p className="mt-5 max-w-[56ch] text-[1.08rem] leading-relaxed text-white/90">{lead}</p>
+        <h1 className="max-w-[16ch] text-balance text-white hero-text-shadow">{title}</h1>
+        <p className="mt-5 max-w-[56ch] text-[1.08rem] leading-relaxed text-white/90 hero-text-shadow">
+          {lead}
+        </p>
       </div>
     </section>
   );
