@@ -1,20 +1,11 @@
-import Link from "next/link";
 import { HomeHero } from "@/components/home/HomeHero";
+import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
+import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
 
-function SearchCta() {
-  return (
-    <Link
-      href="/book"
-      prefetch={false}
-      className="flex h-14 w-full items-center justify-center rounded-full bg-white text-[15px] font-bold text-navy shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px] md:text-[17px]"
-    >
-      Check rates
-    </Link>
-  );
-}
-
-/** Server page: preload + RSC hero · zero client JS required for LCP. */
+/** Server page: preload + RSC hero · booking widget shell paints with zero JS. */
 export default function HomePage() {
+  const dateLabel = defaultSearchDateLabel();
+
   return (
     <>
       <link
@@ -31,7 +22,16 @@ export default function HomePage() {
         type="image/avif"
         media="(min-width: 769px)"
       />
-      <HomeHero searchSlot={<SearchCta />} />
+      <HomeHero
+        searchSlot={
+          <DeferredHeroSearch
+            checkInLabel={dateLabel}
+            guestLabel="2 guests"
+            checkRatesLabel="Check rates"
+            tonightLabel="Tonight from ฿2,100"
+          />
+        }
+      />
     </>
   );
 }
