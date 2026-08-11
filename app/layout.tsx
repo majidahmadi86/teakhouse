@@ -1,5 +1,4 @@
 import { hotelConfig } from "@/config/hotel.config";
-import { ProvidersGate } from "@/components/ProvidersGate";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -23,6 +22,7 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   display: "swap",
   weight: ["400", "700"],
+  preload: false,
 });
 
 const kanit = Kanit({
@@ -90,9 +90,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">
-        <ProvidersGate>{children}</ProvidersGate>
-      </body>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }

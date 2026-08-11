@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { HomeHero } from "@/components/home/HomeHero";
-import { HomeLate } from "@/components/home/HomeLate";
 
 function SearchCta() {
   return (
@@ -23,7 +22,6 @@ export default function HomePage() {
         as="image"
         href="/hero-lcp-640.avif"
         type="image/avif"
-        // LH mobile is ~412px · always preload the small AVIF first
         {...{ fetchPriority: "high" }}
       />
       <link
@@ -34,7 +32,6 @@ export default function HomePage() {
         media="(min-width: 769px)"
       />
       <HomeHero searchSlot={<SearchCta />} />
-      <HomeLate />
     </>
   );
 }

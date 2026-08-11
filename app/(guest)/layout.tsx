@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import { DemoModeBar } from "@/components/DemoModeBar";
-import { GuestChrome } from "@/components/GuestChrome";
 import { HeaderShell } from "@/components/header/HeaderShell";
+import { Providers } from "@/components/providers";
+import { GuestShell } from "./GuestShell";
 
-/** Home defaults live in root layout; child routes set their own titles. */
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
-};
+export const metadata: Metadata = {};
 
+/** Non-home guest routes · full providers + interactive chrome. */
 export default function GuestLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <Providers>
       <DemoModeBar variant="guest" />
-      <GuestChrome headerShell={<HeaderShell />}>{children}</GuestChrome>
-    </>
+      <GuestShell headerShell={<HeaderShell />}>{children}</GuestShell>
+    </Providers>
   );
 }

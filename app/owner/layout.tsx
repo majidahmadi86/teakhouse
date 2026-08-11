@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DemoModeBar } from "@/components/DemoModeBar";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
+import { Providers } from "@/components/providers";
 import { OwnerShell } from "./OwnerShell";
 
 export const metadata: Metadata = {
@@ -15,11 +16,11 @@ export default function OwnerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <Providers>
       <DemoModeBar variant="owner" />
       <OwnerStoreProvider>
         <OwnerShell>{children}</OwnerShell>
       </OwnerStoreProvider>
-    </>
+    </Providers>
   );
 }
