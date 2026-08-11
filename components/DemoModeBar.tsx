@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
-/** Demo funnel · buy link for the Hotelier product (demo builds only). */
-const BUY_URL = "https://majid862.gumroad.com/l/ujwupv";
+/** Demo funnel · link to the Hotelier product page (demo builds only). */
+const ABOUT_URL = "https://mikaro.studio/hotelier";
 
 /** Fixed demo bar height · kept in sync with --demo-bar-h in globals / layout. */
 export const DEMO_BAR_HEIGHT_PX = 40;
@@ -59,12 +59,12 @@ export function DemoModeBar({
           Sandbox · resets hourly · edit anything
         </span>
         <a
-          href={BUY_URL}
+          href={ABOUT_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-gold px-3 py-1 text-[11px] font-bold text-navy shadow-[0_1px_10px_rgba(232,169,61,.45)] transition hover:brightness-110"
         >
-          <span className="hidden min-[380px]:inline">Get this system&nbsp;·&nbsp;</span>$149
+          Hotelier<span className="hidden min-[380px]:inline">&nbsp;·&nbsp;about this system</span>
         </a>
       </div>
     </div>

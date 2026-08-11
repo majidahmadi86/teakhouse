@@ -7,8 +7,8 @@ import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
-/** Demo funnel · buy link for the Hotelier product (demo builds only). */
-const BUY_URL = "https://majid862.gumroad.com/l/ujwupv";
+/** Demo funnel · link to the Hotelier product page (demo builds only). */
+const ABOUT_URL = "https://mikaro.studio/hotelier";
 
 const SECONDARY_BTN =
   "inline-flex min-h-11 items-center justify-center rounded-full border border-line px-7 text-[15px] font-bold text-ink transition hover:border-blue hover:text-blue";
@@ -64,12 +64,12 @@ export function DemoModalPanel({
           <div className="flex flex-wrap gap-3">
             {DEMO ? (
               <a
-                href={BUY_URL}
+                href={ABOUT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
               >
-                Get this system · $149
+                About this system · Hotelier
               </a>
             ) : null}
             <button
