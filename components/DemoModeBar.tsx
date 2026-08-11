@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { hotelConfig } from "@/config/hotel.config";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+/** Demo funnel · buy link for the Hotelier product (demo builds only). */
+const BUY_URL = "https://majid862.gumroad.com/l/ujwupv";
 
 /** Fixed demo bar height · kept in sync with --demo-bar-h in globals / layout. */
 export const DEMO_BAR_HEIGHT_PX = 40;
@@ -53,12 +55,17 @@ export function DemoModeBar({
             Owner panel
           </Link>
         </div>
-        <span className="shrink-0 rounded-full bg-gold/20 px-2.5 py-1 text-[11px] font-semibold text-gold">
+        <span className="hidden shrink-0 rounded-full bg-gold/20 px-2.5 py-1 text-[11px] font-semibold text-gold sm:inline-block">
           Sandbox · resets hourly · edit anything
         </span>
-        <span className="hidden text-white/60 sm:inline">
-          {hotelConfig.name}
-        </span>
+        <a
+          href={BUY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-gold px-3 py-1 text-[11px] font-bold text-navy shadow-[0_1px_10px_rgba(232,169,61,.45)] transition hover:brightness-110"
+        >
+          <span className="hidden min-[380px]:inline">Get this system&nbsp;·&nbsp;</span>$149
+        </a>
       </div>
     </div>
   );

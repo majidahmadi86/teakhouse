@@ -6,6 +6,13 @@ import { Logo } from "@/components/Logo";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
+const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+/** Demo funnel · buy link for the Hotelier product (demo builds only). */
+const BUY_URL = "https://majid862.gumroad.com/l/ujwupv";
+
+const SECONDARY_BTN =
+  "inline-flex min-h-11 items-center justify-center rounded-full border border-line px-7 text-[15px] font-bold text-ink transition hover:border-blue hover:text-blue";
+
 export function DemoModalPanel({
   open,
   onClose,
@@ -55,14 +62,24 @@ export function DemoModalPanel({
           </h3>
           <p className="mb-8 text-[0.95rem] text-sub">{t("dm.p")}</p>
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={onClose} className="btn-primary">
+            {DEMO ? (
+              <a
+                href={BUY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                Get this system · $149
+              </a>
+            ) : null}
+            <button
+              type="button"
+              onClick={onClose}
+              className={DEMO ? SECONDARY_BTN : "btn-primary"}
+            >
               {t("dm.cta")}
             </button>
-            <Link
-              href="/owner"
-              onClick={onClose}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-line px-7 text-[15px] font-bold text-ink transition hover:border-blue hover:text-blue"
-            >
+            <Link href="/owner" onClick={onClose} className={SECONDARY_BTN}>
               {t("dm.owner")}
             </Link>
           </div>
