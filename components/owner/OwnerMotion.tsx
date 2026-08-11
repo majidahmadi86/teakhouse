@@ -1,6 +1,6 @@
 "use client";
 
-import { m, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { premiumEase } from "@/components/motion/Reveal";
 
@@ -23,7 +23,7 @@ export function OwnerStagger({
   if (reduce) return <div className={className}>{children}</div>;
 
   return (
-    <m.div
+    <motion.div
       className={className}
       initial="hidden"
       animate="show"
@@ -33,7 +33,7 @@ export function OwnerStagger({
       }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -48,7 +48,7 @@ export function OwnerRise({
   if (reduce) return <div className={className}>{children}</div>;
 
   return (
-    <m.div
+    <motion.div
       className={className}
       variants={{
         hidden: { opacity: 0, y: 12 },
@@ -56,6 +56,6 @@ export function OwnerRise({
       }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }

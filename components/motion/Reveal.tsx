@@ -1,6 +1,6 @@
 "use client";
 
-import { m, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export function Reveal({
   }
 
   return (
-    <m.div
+    <motion.div
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -40,7 +40,7 @@ export function Reveal({
       transition={{ ...rise, delay }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -60,7 +60,7 @@ export function RevealStagger({
   }
 
   return (
-    <m.div
+    <motion.div
       className={className}
       initial="hidden"
       whileInView="show"
@@ -71,7 +71,7 @@ export function RevealStagger({
       }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -89,7 +89,7 @@ export function RevealItem({
   }
 
   return (
-    <m.div
+    <motion.div
       className={className}
       variants={{
         hidden: { opacity: 0, y: 16 },
@@ -101,7 +101,7 @@ export function RevealItem({
       }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -119,13 +119,13 @@ export function MotionCard({
   }
 
   return (
-    <m.div
+    <motion.div
       className={cn("group", className)}
       whileHover={{ y: -4 }}
       transition={rise}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -145,7 +145,7 @@ export function CurtainReveal({
   }
 
   return (
-    <m.div
+    <motion.div
       className={className}
       initial={{ clipPath: "inset(18% 0 0 0)" }}
       whileInView={{ clipPath: "inset(0% 0 0 0)" }}
@@ -153,7 +153,7 @@ export function CurtainReveal({
       transition={{ duration: 0.85, ease: premiumEase }}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }
 
@@ -171,7 +171,7 @@ export function ScaleIn({
   }
 
   return (
-    <m.div
+    <motion.div
       className={className}
       initial={{ opacity: 0, scale: 0.96 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -179,6 +179,6 @@ export function ScaleIn({
       transition={rise}
     >
       {children}
-    </m.div>
+    </motion.div>
   );
 }

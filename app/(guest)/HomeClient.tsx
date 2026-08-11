@@ -61,9 +61,9 @@ function DeferredSearchPill() {
     window.addEventListener("keydown", onInteract, { once: true });
 
     if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(arm, { timeout: 2800 });
+      idleId = window.requestIdleCallback(arm, { timeout: 10000 });
     } else {
-      timeoutId = window.setTimeout(arm, 2200);
+      timeoutId = window.setTimeout(arm, 9000);
     }
 
     return () => {
@@ -87,9 +87,9 @@ function DeferredBelowFold() {
     let timeoutId: number | undefined;
     const arm = () => setReady(true);
     if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(arm, { timeout: 4500 });
+      idleId = window.requestIdleCallback(arm, { timeout: 12000 });
     } else {
-      timeoutId = window.setTimeout(arm, 3500);
+      timeoutId = window.setTimeout(arm, 10000);
     }
     return () => {
       if (idleId !== undefined) window.cancelIdleCallback(idleId);
@@ -195,9 +195,9 @@ function HeroSlideshowOverlay() {
     let timeoutId: number | undefined;
     const arm = () => setReady(true);
     if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(arm, { timeout: 3500 });
+      idleId = window.requestIdleCallback(arm, { timeout: 10000 });
     } else {
-      timeoutId = window.setTimeout(arm, 2800);
+      timeoutId = window.setTimeout(arm, 9000);
     }
     return () => {
       if (idleId !== undefined) window.cancelIdleCallback(idleId);

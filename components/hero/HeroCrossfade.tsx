@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, m } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SafeImage } from "@/components/SafeImage";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +40,7 @@ export function HeroCrossfade({
 
   return (
     <AnimatePresence mode="sync">
-      <m.div
+      <motion.div
         key={`${active.src}-${index}`}
         className="absolute inset-0"
         initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export function HeroCrossfade({
         exit={{ opacity: 0 }}
         transition={{ duration: FADE_S, ease: EASE }}
       >
-        <m.div
+        <motion.div
           className="absolute inset-0 origin-center"
           initial={{ scale: 1 }}
           animate={
@@ -71,8 +71,8 @@ export function HeroCrossfade({
             onLoadingComplete={() => setLoaded(true)}
             className={cn("object-cover", active.position)}
           />
-        </m.div>
-      </m.div>
+        </motion.div>
+      </motion.div>
     </AnimatePresence>
   );
 }

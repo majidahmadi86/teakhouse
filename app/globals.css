@@ -34,7 +34,7 @@
 }
 
 .tkh-ken-burns-live {
-  animation: tkh-ken-burns-live 8s linear forwards;
+  animation: tkh-ken-burns-live 8s linear 1.2s forwards;
   will-change: transform;
 }
 

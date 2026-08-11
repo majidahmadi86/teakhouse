@@ -9,6 +9,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { getSeedGuestRooms } from "./guestRooms";
 import { SEED_ROOMS } from "./rooms";
 import type {
   Booking,
@@ -430,5 +431,5 @@ export function useGuestRooms(): RoomData[] {
   if (ctx?.hydrated) {
     return ctx.data.rooms.filter((r) => r.active);
   }
-  return SEED_ROOMS.filter((r) => r.active);
+  return getSeedGuestRooms();
 }

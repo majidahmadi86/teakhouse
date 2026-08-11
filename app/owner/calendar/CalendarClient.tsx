@@ -7,7 +7,7 @@ import {
   format,
   startOfMonth,
 } from "date-fns";
-import { AnimatePresence, m, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { premiumEase } from "@/components/motion/Reveal";
@@ -192,7 +192,7 @@ export default function OwnerCalendarPage() {
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
-        <m.div
+        <motion.div
           key={viewMode}
           initial={reduce ? false : { opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
@@ -312,7 +312,7 @@ export default function OwnerCalendarPage() {
           </p>
         </section>
       )}
-        </m.div>
+        </motion.div>
       </AnimatePresence>
     </div>
   );
