@@ -76,10 +76,12 @@ export function HomeHero({ searchSlot }: { searchSlot: React.ReactNode }) {
         <div className="min-h-0 flex-1" aria-hidden />
 
         <div id="tkh-hero-actions" className="relative z-20 px-5 hero-actions-pb">
-          <p className="hero-lead-mobile text-white/90 hero-text-shadow">
-            Twelve teak rooms above the Chao Phraya.
-          </p>
-          <div className="relative z-20 mt-3 pt-3">{searchSlot}</div>
+          <div className="hero-copy-panel">
+            <p className="hero-lead-mobile text-white hero-text-shadow">
+              Twelve teak rooms above the Chao Phraya.
+            </p>
+            <div className="relative z-20 mt-3 pt-1">{searchSlot}</div>
+          </div>
         </div>
       </div>
 
@@ -117,13 +119,13 @@ export function HomeHero({ searchSlot }: { searchSlot: React.ReactNode }) {
               );
             })}
           </h1>
-          <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/90 hero-text-shadow">
+          <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white hero-text-shadow hero-copy-panel">
             Twelve teak rooms above the Chao Phraya. Book direct with us and
             always pay less than on any booking site.
           </p>
           <div className="relative z-20 mt-7">
             {searchSlot}
-            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90">
+            <p className="hero-copy-panel mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
                 <span className="tracking-[1px] text-gold" aria-hidden>
                   ★★★★★
