@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { HeroHeadline } from "@/components/hero/HeroHeadline";
 import { HeroTrustRow } from "@/components/hero/HeroTrustRow";
-import { DeferredSearchPill } from "@/components/home/HomeDeferredIslands";
+import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
+import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
 import { useI18n } from "@/lib/i18n";
 
 /** Thai copy overlay · loaded only when lang=th. */
@@ -23,6 +24,15 @@ export function HomeHeroThaiOverlayInner() {
 
   if (!root) return null;
 
+  const search = (
+    <DeferredHeroSearch
+      checkInLabel={defaultSearchDateLabel()}
+      guestLabel={t("g2")}
+      checkRatesLabel={t("avail.go")}
+      tonightLabel={t("hero.tonight", { z: "฿2,100" })}
+    />
+  );
+
   return createPortal(
     <>
       <div className="absolute inset-0 z-[2] flex flex-col md:hidden">
@@ -37,11 +47,11 @@ export function HomeHeroThaiOverlayInner() {
         </div>
         <div className="min-h-0 flex-1" aria-hidden />
         <div className="relative z-20 px-5 hero-actions-pb">
-          <p className="hero-lead-mobile text-white/90 hero-text-shadow">
-            {t("hero.leadShort")}
-          </p>
-          <div className="relative z-20 mt-3 pt-3">
-            <DeferredSearchPill />
+          <div className="hero-copy-panel">
+            <p className="hero-lead-mobile text-white hero-text-shadow">
+              {t("hero.leadShort")}
+            </p>
+            <div className="relative z-20 mt-3 pt-1">{search}</div>
           </div>
         </div>
       </div>
@@ -52,12 +62,14 @@ export function HomeHeroThaiOverlayInner() {
             {t("hero.eyebrow")}
           </p>
           <HeroHeadline />
-          <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white/90 hero-text-shadow">
+          <p className="hero-copy-panel mt-5 max-w-[52ch] text-lg leading-relaxed text-white hero-text-shadow">
             {t("hero.lead")}
           </p>
           <div className="relative z-20 mt-7">
-            <DeferredSearchPill />
-            <HeroTrustRow className="mt-4" />
+            {search}
+            <div className="hero-copy-panel mt-4">
+              <HeroTrustRow />
+            </div>
           </div>
         </div>
       </div>
