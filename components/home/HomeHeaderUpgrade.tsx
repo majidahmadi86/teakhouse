@@ -2,17 +2,23 @@
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 
-const LATE_MS = 15000;
+const LATE_MS = 20000;
 
-/** Static shell first · full Header after LCP window / interaction. */
+/**
+ * Shell first · full Header (Logo + RoomsMegaMenu + lang/currency) after
+ * interaction or LATE_MS. Hovering nav also triggers upgrade so mega-menu works.
+ */
 export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
   const [header, setHeader] = useState<ReactNode>(null);
 
   useEffect(() => {
     let cancelled = false;
     let timeoutId: number | undefined;
+    let loading = false;
 
     const load = () => {
+      if (loading || cancelled) return;
+      loading = true;
       void Promise.all([
         import("@/components/providers"),
         import("@/components/Header"),
@@ -34,6 +40,12 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       load();
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("mouseover", onNavHover);
+    };
+
+    const onNavHover = (e: Event) => {
+      const t = e.target as HTMLElement | null;
+      if (t?.closest?.("header")) load();
     };
 
     window.addEventListener("pointerdown", onInteract, {
@@ -41,12 +53,14 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       passive: true,
     });
     window.addEventListener("keydown", onInteract, { once: true });
+    window.addEventListener("mouseover", onNavHover, { passive: true });
     timeoutId = window.setTimeout(load, LATE_MS);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("mouseover", onNavHover);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
