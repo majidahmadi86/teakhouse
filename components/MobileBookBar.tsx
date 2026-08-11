@@ -42,7 +42,7 @@ export function MobileBookBar() {
   if (!visible) return null;
 
   return (
-    <div className="z-bar fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-3 pb-safe shadow-nav backdrop-blur-md md:hidden">
+    <div className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-3 pb-safe shadow-nav backdrop-blur-md md:hidden">
       <Link
         href="/book"
         prefetch={false}

@@ -22,7 +22,7 @@ export function Tooltip({
       <span
         role="tooltip"
         className={cn(
-          "pointer-events-none absolute left-1/2 z-[80] -translate-x-1/2 whitespace-nowrap rounded-full bg-navy px-2.5 py-1 text-[12px] font-semibold text-white opacity-0 shadow-card transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100",
+          "pointer-events-none absolute left-1/2 z-modal -translate-x-1/2 whitespace-nowrap rounded-full bg-navy px-2.5 py-1 text-[12px] font-semibold text-white opacity-0 shadow-card transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100",
           side === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
         )}
       >

@@ -48,7 +48,7 @@ export function CurrencySwitcher({
                 static
                 portal
                 modal
-                className="fixed inset-0 z-[80] flex flex-col justify-end focus:outline-none"
+                className="fixed inset-0 z-modal flex flex-col justify-end focus:outline-none"
               >
                 <div className="absolute inset-0 bg-navy/40" aria-hidden />
                 <div className="relative rounded-t-3xl bg-white px-2 pb-safe pt-3 shadow-2xl">
@@ -97,7 +97,7 @@ export function CurrencySwitcher({
               <ListboxOptions
                 portal
                 anchor={{ to: "bottom end", gap: "8px", padding: "12px" }}
-                className="z-[80] min-w-[120px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl focus:outline-none"
+                className="z-modal min-w-[120px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl focus:outline-none"
               >
                 {CURRENCIES.map((c) => (
                   <ListboxOption

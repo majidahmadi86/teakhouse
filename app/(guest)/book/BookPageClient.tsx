@@ -206,16 +206,27 @@ export default function BookPageClient() {
     balance,
   };
 
+  function handleSelectRoom(room: Room) {
+    setRoomKey(room.shortKey);
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`room-${room.shortKey}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
   return (
     <>
-      <BookingSummary
-        {...summaryProps}
-        mobile
-        expanded={summaryExpanded}
-        onToggle={() => setSummaryExpanded((v) => !v)}
-      />
+      {step < 4 ? (
+        <BookingSummary
+          {...summaryProps}
+          mobile
+          expanded={summaryExpanded}
+          onToggle={() => setSummaryExpanded((v) => !v)}
+        />
+      ) : null}
 
-      <section className="px-4 pb-16 pt-28 sm:px-6 print:pt-4">
+      <section className="px-4 pb-16 pt-28 sm:px-6 max-lg:pb-28 print:pt-4">
         <div className="mx-auto max-w-[1180px]">
           <div className={cn("print:hidden", step === 4 && "hidden lg:block")}>
             <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-blue">
@@ -242,7 +253,7 @@ export default function BookPageClient() {
                     disabled={!clickable}
                     onClick={() => handleStepClick(n)}
                     className={cn(
-                      "rounded-full px-4 py-2 text-[0.76rem] font-extrabold tracking-wide transition",
+                      "inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-[0.76rem] font-extrabold tracking-wide transition",
                       current
                         ? "bg-blue text-white"
                         : done
@@ -307,7 +318,7 @@ export default function BookPageClient() {
                     type="button"
                     disabled={!step1Valid}
                     onClick={() => goStep(2)}
-                    className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
+                    className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40 max-lg:hidden"
                   >
                     {t("bk.seeRooms")} →
                   </button>
@@ -326,16 +337,17 @@ export default function BookPageClient() {
                   ) : null}
                   <div className="space-y-4">
                     {rooms.map((room) => (
-                      <RoomSelectCard
-                        key={room.id}
-                        room={room}
-                        selected={roomKey === room.shortKey}
-                        onSelect={() => setRoomKey(room.shortKey)}
-                        onViewDetails={() => setDetailsRoom(room)}
-                      />
+                      <div key={room.id} id={`room-${room.shortKey}`} className="scroll-mt-24">
+                        <RoomSelectCard
+                          room={room}
+                          selected={roomKey === room.shortKey}
+                          onSelect={() => handleSelectRoom(room)}
+                          onViewDetails={() => setDetailsRoom(room)}
+                        />
+                      </div>
                     ))}
                   </div>
-                  <div className="mt-6">
+                  <div className="mt-6 max-lg:hidden">
                     <button
                       type="button"
                       disabled={!step2Valid}
@@ -458,7 +470,7 @@ export default function BookPageClient() {
                     </div>
                   )}
 
-                  <div className="mt-5">
+                  <div className="mt-5 max-lg:hidden">
                     <button
                       type="button"
                       onClick={handlePayDeposit}
@@ -499,6 +511,62 @@ export default function BookPageClient() {
           </div>
         </div>
       </section>
+
+      {/* Mobile sticky action bar · a visible next action at every step */}
+      {step < 4 ? (
+        <div
+          className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-3 backdrop-blur-md [padding-bottom:max(0.75rem,env(safe-area-inset-bottom))] lg:hidden print:hidden"
+          data-booking-action-bar
+        >
+          <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3">
+            <div className="min-w-0">
+              {selectedRoom && nights > 0 ? (
+                <>
+                  <div className="truncate font-display text-lg font-bold leading-tight text-ink">
+                    {format(subtotal)}
+                  </div>
+                  <div className="text-[0.72rem] font-semibold text-sub">
+                    {t("bk.dep")} {format(deposit)}
+                  </div>
+                </>
+              ) : (
+                <div className="text-[0.85rem] font-semibold text-sub">
+                  {datesValid
+                    ? t("bk.nightsCount", { n: nights })
+                    : t("avail.selectDates")}
+                </div>
+              )}
+            </div>
+            {step === 1 ? (
+              <button
+                type="button"
+                disabled={!step1Valid}
+                onClick={() => goStep(2)}
+                className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t("bk.seeRooms")} →
+              </button>
+            ) : step === 2 ? (
+              <button
+                type="button"
+                disabled={!step2Valid}
+                onClick={() => goStep(3)}
+                className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {t("bk.continue")} →
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handlePayDeposit}
+                className="inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark"
+              >
+                {t("bk.pay")} {format(deposit)}
+              </button>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       {detailsRoom ? (
         <RoomDetailsModal
@@ -548,7 +616,7 @@ function StepBack({
     return (
       <Link
         href={homeHref}
-        className="mb-6 inline-flex text-sm font-bold text-blue hover:text-blue-dark"
+        className="mb-4 inline-flex min-h-[44px] items-center text-sm font-bold text-blue hover:text-blue-dark"
       >
         {label}
       </Link>

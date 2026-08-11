@@ -472,7 +472,7 @@ export default function OwnerRoomsPage() {
       </div>
 
       <Transition show={modalOpen} as={Fragment}>
-        <Dialog onClose={() => setModalOpen(false)} className="relative z-50">
+        <Dialog onClose={() => setModalOpen(false)} className="relative z-modal">
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-200"

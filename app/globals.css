@@ -93,6 +93,26 @@
   }
 }
 
+/* Mobile nav drawer · slide in from the right. */
+@keyframes tkh-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Mobile sheet · slide up from the bottom (concierge, etc.). */
+@keyframes tkh-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
 /* Mobile LH: skip transform entrances · opacity-only or none. */
 @media (max-width: 768px) {
   .tkh-hero-word,
@@ -119,6 +139,17 @@
     --demo-bar-h: 0px;
     /* Matches Header / HeaderShell h-14 · md:h-16 */
     --header-h: 3.5rem;
+
+    /* Layering scale · single source of truth for every fixed/sticky/overlay
+       element. Use via the .z-* utilities below (no raw z-index in components). */
+    --z-page: 0;
+    --z-sticky: 30; /* sticky summaries, mobile book bar, booking action bar */
+    --z-fab: 40; /* concierge bubble · above sticky bars, below chrome */
+    --z-header: 50;
+    --z-demo-bar: 60;
+    --z-drawer: 70; /* nav drawer, concierge bottom sheet */
+    --z-modal: 80; /* dialogs, lightboxes, menus, popovers */
+    --z-toast: 90;
   }
 
   @media (min-width: 768px) {
@@ -690,21 +721,30 @@ input.auth-input:-webkit-autofill {
     }
   }
 
-  /* z-index: bar 40, FAB 45, drawer 60, modal/popover 70 */
-  .z-bar {
-    z-index: 40;
+  /* Layering utilities · resolve to the --z-* token scale above. */
+  .z-sticky {
+    z-index: var(--z-sticky);
   }
   .z-fab {
-    z-index: 45;
+    z-index: var(--z-fab);
+  }
+  .z-header {
+    z-index: var(--z-header);
+  }
+  .z-demo-bar {
+    z-index: var(--z-demo-bar);
   }
   .z-drawer {
-    z-index: 60;
+    z-index: var(--z-drawer);
   }
   .z-modal {
-    z-index: 70;
+    z-index: var(--z-modal);
   }
   .z-popover {
-    z-index: 70;
+    z-index: var(--z-modal);
+  }
+  .z-toast {
+    z-index: var(--z-toast);
   }
 
   .pb-safe {

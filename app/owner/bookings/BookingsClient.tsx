@@ -524,7 +524,7 @@ export default function OwnerBookingsPage() {
 
       {/* New / Edit modal */}
       <Transition show={modalOpen} as={Fragment}>
-        <Dialog onClose={() => setModalOpen(false)} className="relative z-50">
+        <Dialog onClose={() => setModalOpen(false)} className="relative z-modal">
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-200"
@@ -736,7 +736,7 @@ export default function OwnerBookingsPage() {
 
       {/* Detail drawer */}
       <Transition show={drawerOpen} as={Fragment}>
-        <Dialog onClose={() => setDrawerOpen(false)} className="relative z-50">
+        <Dialog onClose={() => setDrawerOpen(false)} className="relative z-modal">
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-200"

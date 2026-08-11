@@ -80,7 +80,7 @@ function LangToggle({ compact }: { compact?: boolean }) {
           className={cn(
             "rounded-lg text-sm font-extrabold uppercase transition",
             compact
-              ? "min-h-[36px] min-w-[36px] px-2.5"
+              ? "min-h-[44px] min-w-[44px] px-2.5"
               : "min-h-[44px] min-w-[44px] px-3",
             lang === l
               ? "bg-own-blue text-white"
@@ -176,7 +176,7 @@ export function OwnerShell({
     >
       {isDesktop ? (
         <aside
-          className="sticky top-[var(--demo-bar-h)] z-30 flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto bg-brand shadow-[8px_0_32px_rgba(0,0,0,.35)]"
+          className="sticky top-[var(--demo-bar-h)] z-sticky flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto bg-brand shadow-[8px_0_32px_rgba(0,0,0,.35)]"
           aria-label="Owner sidebar"
         >
           <div className="owner-split-b shrink-0 px-6 py-6">
@@ -219,7 +219,7 @@ export function OwnerShell({
           </div>
         </aside>
       ) : (
-        <header className="sticky top-[var(--demo-bar-h)] z-40 bg-brand-2/95 shadow-[0_8px_24px_rgba(0,0,0,.28)] backdrop-blur-md">
+        <header className="sticky top-[var(--demo-bar-h)] z-header bg-brand-2/95 shadow-[0_8px_24px_rgba(0,0,0,.28)] backdrop-blur-md">
           <div className="flex items-center gap-3 px-4 py-3">
             <Logo light showTag={false} className="h-6 w-auto shrink-0" />
             <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
@@ -231,13 +231,13 @@ export function OwnerShell({
             <button
               type="button"
               onClick={onReset}
-              className="owner-control min-h-[36px] flex-1 rounded-xl px-3 text-xs font-bold text-white/70 transition hover:text-white"
+              className="owner-control min-h-[44px] flex-1 rounded-xl px-3 text-xs font-bold text-white/70 transition hover:text-white"
             >
               {t("ow.reset")}
             </button>
             <Link
               href="/"
-              className="min-h-[36px] shrink-0 rounded-xl px-2 text-xs font-semibold text-white/60 transition hover:text-white"
+              className="min-h-[44px] shrink-0 rounded-xl px-2 text-xs font-semibold text-white/60 transition hover:text-white"
             >
               {t("ow.back")}
             </Link>

@@ -263,7 +263,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
         </div>
       </section>
 
-      <div className="z-bar fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-4 pb-safe backdrop-blur-md lg:hidden">
+      <div className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-4 pb-safe backdrop-blur-md lg:hidden">
         {bookingRail}
       </div>
 
@@ -300,7 +300,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
 
       {lightboxOpen ? (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-navy/90"
+          className="fixed inset-0 z-modal flex items-center justify-center bg-navy/90"
           role="dialog"
           aria-modal="true"
           onClick={() => setLightboxOpen(false)}

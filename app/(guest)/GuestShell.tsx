@@ -40,7 +40,10 @@ export function GuestShell({
       {isAuth ? null : <Footer />}
       {showMobileBookBar ? <DeferredMobileBookBar /> : null}
       {isAuth ? null : (
-        <DeferredConcierge offsetForBookBar={showMobileBookBar} />
+        <DeferredConcierge
+          offsetForBookBar={showMobileBookBar}
+          onBook={isBook || isRoomDetail}
+        />
       )}
     </DemoModal>
   );

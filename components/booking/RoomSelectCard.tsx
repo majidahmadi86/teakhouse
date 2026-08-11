@@ -1,5 +1,6 @@
 "use client";
 
+import { Check } from "lucide-react";
 import { SafeImage } from "@/components/SafeImage";
 import { AmenityIcon } from "@/components/ui/AmenityIcon";
 import { AMENITIES, type AmenityId } from "@/lib/amenities";
@@ -35,8 +36,10 @@ export function RoomSelectCard({
   return (
     <article
       className={cn(
-        "overflow-hidden rounded-[14px] border-2 bg-white transition",
-        selected ? "border-blue bg-sky/40" : "border-line hover:border-blue/40"
+        "relative overflow-hidden rounded-[14px] border-2 bg-white transition",
+        selected
+          ? "border-blue bg-sky/40 shadow-[0_0_0_3px_rgba(10,108,222,0.18)]"
+          : "border-line hover:border-blue/40"
       )}
     >
       {/* Mobile: photo full-width 16:9 top */}
@@ -109,23 +112,31 @@ export function RoomSelectCard({
             <button
               type="button"
               onClick={onViewDetails}
-              className="rounded-lg px-4 py-2.5 text-sm font-bold text-blue hover:bg-sky/60"
+              className="inline-flex min-h-[44px] items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold text-blue hover:bg-sky/60"
             >
               {t("bk.viewDetails")}
             </button>
             <button
               type="button"
               onClick={onSelect}
+              aria-pressed={selected}
               className={cn(
-                "rounded-lg px-4 py-2.5 text-sm font-bold text-white transition",
+                "inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold text-white transition",
                 selected ? "bg-blue-dark" : "bg-blue hover:bg-blue-dark"
               )}
             >
+              {selected ? <Check className="h-4 w-4" strokeWidth={3} aria-hidden /> : null}
               {t("bk.select")}
             </button>
           </div>
         </div>
       </div>
+
+      {selected ? (
+        <span className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue text-white shadow-[0_4px_12px_rgba(10,108,222,0.4)] md:hidden">
+          <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
+        </span>
+      ) : null}
     </article>
   );
 }

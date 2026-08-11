@@ -84,7 +84,7 @@ export function RoomsMegaMenu({ active }: { active: boolean }) {
         <div
           id={menuId}
           role="menu"
-          className="tkh-menu-pop absolute left-0 top-full z-[80] mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
+          className="tkh-menu-pop absolute left-0 top-full z-modal mt-3 w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl"
         >
           <div className="grid gap-5 md:grid-cols-[1fr_180px]">
             <div className="grid grid-cols-2 gap-3">

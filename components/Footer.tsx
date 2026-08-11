@@ -18,7 +18,7 @@ function Link(props: ComponentProps<typeof NextLink>) {
  * #FFFFFFBF ≈ 75% · #FFFFFFA6 ≈ 65% · #FFFFFF8C ≈ 55% · #FFFFFF66 ≈ 40%.
  */
 const linkClass =
-  "block py-1.5 text-[0.9rem] text-[#FFFFFFBF] transition hover:text-white hover:underline hover:underline-offset-2";
+  "flex min-h-[44px] items-center text-[0.9rem] text-[#FFFFFFBF] transition hover:text-white hover:underline hover:underline-offset-2";
 
 const headingClass =
   "mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-gold";

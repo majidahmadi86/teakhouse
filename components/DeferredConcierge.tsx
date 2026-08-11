@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ComponentType } from "react";
 
-type ConciergeProps = { offsetForBookBar?: boolean };
+type ConciergeProps = { offsetForBookBar?: boolean; onBook?: boolean };
 
 /**
  * Keeps Concierge (and FAB clearance observers) out of the initial bundle.
@@ -10,6 +10,7 @@ type ConciergeProps = { offsetForBookBar?: boolean };
  */
 export function DeferredConcierge({
   offsetForBookBar = true,
+  onBook = false,
 }: ConciergeProps) {
   const [Comp, setComp] = useState<ComponentType<ConciergeProps> | null>(null);
 
@@ -52,5 +53,5 @@ export function DeferredConcierge({
   }, []);
 
   if (!Comp) return null;
-  return <Comp offsetForBookBar={offsetForBookBar} />;
+  return <Comp offsetForBookBar={offsetForBookBar} onBook={onBook} />;
 }

@@ -9,7 +9,7 @@ import { t, type Lang } from "@/lib/serverLocale";
  */
 export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
   return (
-    <header className="sticky top-[var(--demo-bar-h)] z-50 h-14 border-b border-line bg-white md:h-16">
+    <header className="sticky top-[var(--demo-bar-h)] z-header h-14 border-b border-line bg-white md:h-16">
       <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 min-[760px]:px-5 xl:px-6">
         <Link href="/" prefetch={false} className="shrink-0 whitespace-nowrap">
           <LogoMark

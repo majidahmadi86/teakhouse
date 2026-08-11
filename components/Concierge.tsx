@@ -14,7 +14,13 @@ const ConciergePanel = dynamic(
  * FAB renders immediately (CSS-only). Chat panel mounts after idle
  * or on first open — never on the critical path.
  */
-export function Concierge({ offsetForBookBar = true }: { offsetForBookBar?: boolean }) {
+export function Concierge({
+  offsetForBookBar = true,
+  onBook = false,
+}: {
+  offsetForBookBar?: boolean;
+  onBook?: boolean;
+}) {
   const { isOpen } = useConcierge();
   const [panelReady, setPanelReady] = useState(false);
 
@@ -45,7 +51,11 @@ export function Concierge({ offsetForBookBar = true }: { offsetForBookBar?: bool
 
   return (
     <>
-      <ConciergeFab offsetForBookBar={offsetForBookBar} onOpen={ensurePanel} />
+      <ConciergeFab
+        offsetForBookBar={offsetForBookBar}
+        onBook={onBook}
+        onOpen={ensurePanel}
+      />
       {panelReady ? <ConciergePanel offsetForBookBar={offsetForBookBar} /> : null}
     </>
   );

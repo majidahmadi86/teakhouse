@@ -149,7 +149,7 @@ function AccountEntry({ iconOnly }: { iconOnly?: boolean }) {
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 z-[80] mt-2 min-w-[180px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl"
+          className="absolute right-0 z-modal mt-2 min-w-[180px] overflow-hidden rounded-xl border border-line bg-white py-1 shadow-xl"
         >
           <Link
             href="/account"
@@ -238,6 +238,7 @@ export function Header() {
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const touchStartX = useRef<number | null>(null);
   // Mount desktop-only trees only when needed — avoids hydrating mega-menu /
   // headlessui currency on mobile Lighthouse runs.
   const showDesktopNav = useMediaQuery("(min-width: 1200px)");
@@ -272,7 +273,7 @@ export function Header() {
     <>
       <header
         className={cn(
-          "sticky top-[var(--demo-bar-h)] z-50 h-14 border-b transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16",
+          "sticky top-[var(--demo-bar-h)] z-header h-14 border-b transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16",
           scrolled
             ? "border-line/80 bg-white/85 shadow-[0_1px_0_rgba(16,24,40,.06)] backdrop-blur-md"
             : "border-line bg-white"
@@ -350,20 +351,24 @@ export function Header() {
         </div>
       </header>
 
-      {drawerOpen ? (
-        <button
-          type="button"
-          aria-label={t("mobile.close")}
-          className="fixed inset-0 z-[55] bg-ink/40"
-          onClick={() => setDrawerOpen(false)}
-        />
-      ) : null}
-
-      {/* Mobile / tablet drawer — mount only when open (keeps headlessui off critical path) */}
+      {/* Mobile / tablet drawer · full-screen solid sheet · mount only when open */}
       {drawerOpen ? (
       <aside
         id="mobile-nav-drawer"
-        className="fixed inset-y-0 right-0 z-drawer flex w-[min(100%,320px)] flex-col bg-white text-ink shadow-panel"
+        className="fixed inset-0 z-drawer flex h-[100dvh] w-full flex-col bg-white text-ink animate-[tkh-drawer-in_.28s_cubic-bezier(.22,1,.36,1)] [padding-top:env(safe-area-inset-top)]"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchMove={(e) => {
+          if (touchStartX.current === null) return;
+          if (e.touches[0].clientX - touchStartX.current > 60) {
+            setDrawerOpen(false);
+            touchStartX.current = null;
+          }
+        }}
+        onTouchEnd={() => {
+          touchStartX.current = null;
+        }}
       >
         <div className="flex h-12 shrink-0 items-center justify-between border-b border-line px-4">
           <Logo showTag={false} size={20} className="[&_div]:text-[16px]" />
@@ -478,7 +483,7 @@ export function Header() {
           </div>
         </nav>
 
-        <div className="shrink-0 border-t border-line p-4">
+        <div className="shrink-0 border-t border-line p-4 [padding-bottom:max(1rem,env(safe-area-inset-bottom))]">
           <Link
             href="/book"
             onClick={() => setDrawerOpen(false)}

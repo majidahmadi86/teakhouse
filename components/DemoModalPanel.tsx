@@ -54,6 +54,9 @@ export function DemoModalPanel({
               </li>
             ))}
           </ul>
+          <p className="mt-6 w-fit rounded-full bg-gold/20 px-3 py-1.5 text-[0.72rem] font-semibold text-gold">
+            Sandbox · resets hourly · edit anything
+          </p>
         </div>
 
         <div className="flex flex-col justify-center px-8 py-10">

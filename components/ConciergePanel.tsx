@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, X } from "lucide-react";
 import { useConcierge } from "@/components/providers";
-import { useHeroFabClearance } from "@/lib/useHeroFabClearance";
 import { useI18n } from "@/lib/i18n";
 import {
   CONCIERGE_CHIPS,
@@ -111,26 +110,19 @@ export function ConciergePanel({
   }, [messages, typing]);
 
   const chips = CONCIERGE_CHIPS[lang];
-  const heroClearance = useHeroFabClearance();
-  const fabBottom =
-    heroClearance !== null
-      ? undefined
-      : offsetForBookBar
-        ? "bottom-[76px] md:bottom-6"
-        : "bottom-6";
 
   return (
     <div
       className={cn(
-        "fixed right-[22px] z-fab flex h-[min(560px,72svh)] w-[min(390px,calc(100vw-32px))] flex-col overflow-hidden rounded-[18px] bg-white shadow-[0_30px_80px_rgba(18,33,28,0.35)] transition max-md:right-2.5",
-        fabBottom,
+        "fixed z-drawer flex flex-col overflow-hidden bg-white shadow-[0_30px_80px_rgba(18,33,28,0.35)] transition duration-300",
+        // Mobile · full-height bottom sheet
+        "inset-x-0 bottom-0 h-[90dvh] w-full rounded-t-[20px]",
+        // Desktop · floating right panel (blessed)
+        "md:inset-x-auto md:right-[22px] md:bottom-6 md:h-[min(560px,72svh)] md:w-[min(390px,calc(100vw-32px))] md:rounded-[20px]",
         isOpen
-          ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
-          : "pointer-events-none translate-y-[18px] scale-[0.98] opacity-0"
+          ? "pointer-events-auto translate-y-0 opacity-100 md:scale-100"
+          : "pointer-events-none translate-y-full opacity-0 md:translate-y-4 md:scale-[0.98]"
       )}
-      style={
-        heroClearance !== null ? { bottom: heroClearance } : undefined
-      }
       role="dialog"
       aria-label="Concierge chat"
       aria-hidden={!isOpen}
