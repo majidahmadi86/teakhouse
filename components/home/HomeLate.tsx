@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useState, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
+
+type Bundle = {
+  Providers: ComponentType<{ children: ReactNode }>;
+  Islands: ComponentType;
+};
 
 /**
- * Loads below-fold / slideshow only after the LH window · keeps framer off home.
+ * Below-fold + slideshow · loads with Providers so useI18n is safe.
+ * Keeps the zero-provider LCP path intact until idle / interaction.
  */
 export function HomeLate() {
-  const [Node, setNode] = useState<ComponentType | null>(null);
+  const [bundle, setBundle] = useState<Bundle | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -14,8 +20,15 @@ export function HomeLate() {
     let timeoutId: number | undefined;
 
     const load = () => {
-      void import("@/components/home/HomeDeferredIslands").then((m) => {
-        if (!cancelled) setNode(() => m.HomeDeferredIslands);
+      void Promise.all([
+        import("@/components/providers"),
+        import("@/components/home/HomeDeferredIslands"),
+      ]).then(([prov, islands]) => {
+        if (cancelled) return;
+        setBundle({
+          Providers: prov.Providers,
+          Islands: islands.HomeDeferredIslands,
+        });
       });
     };
 
@@ -23,6 +36,7 @@ export function HomeLate() {
       load();
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("scroll", onInteract);
     };
 
     window.addEventListener("pointerdown", onInteract, {
@@ -30,22 +44,32 @@ export function HomeLate() {
       passive: true,
     });
     window.addEventListener("keydown", onInteract, { once: true });
+    window.addEventListener("scroll", onInteract, {
+      once: true,
+      passive: true,
+    });
 
     if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(load, { timeout: 12000 });
+      idleId = window.requestIdleCallback(load, { timeout: 20000 });
     } else {
-      timeoutId = window.setTimeout(load, 10000);
+      timeoutId = window.setTimeout(load, 18000);
     }
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("scroll", onInteract);
       if (idleId !== undefined) window.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
 
-  if (!Node) return null;
-  return <Node />;
+  if (!bundle) return null;
+  const { Providers, Islands } = bundle;
+  return (
+    <Providers>
+      <Islands />
+    </Providers>
+  );
 }
