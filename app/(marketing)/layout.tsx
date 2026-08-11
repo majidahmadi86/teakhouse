@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { DemoModeBar } from "@/components/DemoModeBar";
 import { HeaderShell } from "@/components/header/HeaderShell";
-import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
 import { HomeLate } from "@/components/home/HomeLate";
 
 export const metadata: Metadata = {
@@ -11,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * Home-only layout · no i18n/currency providers on the server tree.
- * Header + below-fold mount after 15s / interaction.
+ * Home-only layout · server chrome + late below-fold islands.
+ * No Header upgrade client on the LCP path.
  */
 export default function MarketingLayout({
   children,
@@ -22,7 +21,7 @@ export default function MarketingLayout({
   return (
     <>
       <DemoModeBar variant="guest" />
-      <HomeHeaderUpgrade shell={<HeaderShell />} />
+      <HeaderShell />
       <main className="pb-0">{children}</main>
       <HomeLate />
     </>

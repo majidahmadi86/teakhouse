@@ -2,8 +2,7 @@ import Link from "next/link";
 import { hotelConfig } from "@/config/hotel.config";
 
 /**
- * Zero-JS header chrome for first paint / deferred hydration.
- * Real interactive Header mounts on idle or first interaction.
+ * Zero-JS header chrome · enough for home LCP and guest deferred Header swap.
  */
 export function HeaderShell() {
   return (
@@ -16,6 +15,43 @@ export function HeaderShell() {
         >
           {hotelConfig.name}
         </Link>
+        <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
+          <Link
+            href="/rooms"
+            prefetch={false}
+            className="text-[15px] font-semibold text-ink"
+          >
+            Rooms
+          </Link>
+          <Link
+            href="/experience"
+            prefetch={false}
+            className="text-[15px] font-semibold text-ink"
+          >
+            Experience
+          </Link>
+          <Link
+            href="/gallery"
+            prefetch={false}
+            className="text-[15px] font-semibold text-ink"
+          >
+            Gallery
+          </Link>
+          <Link
+            href="/location"
+            prefetch={false}
+            className="text-[15px] font-semibold text-ink"
+          >
+            Location
+          </Link>
+          <Link
+            href="/contact"
+            prefetch={false}
+            className="text-[15px] font-semibold text-ink"
+          >
+            Contact
+          </Link>
+        </nav>
         <div className="ml-auto flex shrink-0 items-center gap-3">
           <Link
             href="/book"
