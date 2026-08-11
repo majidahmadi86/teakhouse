@@ -1,5 +1,4 @@
 import { hotelConfig } from "@/config/hotel.config";
-import { DemoModeBar } from "@/components/DemoModeBar";
 import { Providers } from "@/components/providers";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { SITE_URL } from "@/lib/site";
@@ -23,7 +22,7 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
   display: "swap",
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
 });
 
 const kanit = Kanit({
@@ -92,10 +91,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <Providers>
-          <DemoModeBar />
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

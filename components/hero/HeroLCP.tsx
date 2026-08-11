@@ -1,32 +1,14 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * LCP hero stays visible immediately (no opacity hide).
- * Ken Burns starts only after decode, and always from scale(1) — no jump.
+ * Server LCP hero · zero client JS.
+ * Ken Burns is CSS-only (`.tkh-ken-burns-live` respects prefers-reduced-motion).
  */
-export function HeroLCP({
-  className,
-}: {
-  className?: string;
-}) {
-  const imgRef = useRef<HTMLImageElement>(null);
-  const [live, setLive] = useState(false);
-
-  useEffect(() => {
-    const img = imgRef.current;
-    if (img?.complete && img.naturalWidth > 0) {
-      setLive(true);
-    }
-  }, []);
-
+export function HeroLCP({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "absolute inset-0 origin-center will-change-transform",
-        live && "tkh-ken-burns-live",
+        "absolute inset-0 origin-center tkh-ken-burns-live",
         className
       )}
     >
@@ -42,14 +24,13 @@ export function HeroLCP({
           type="image/avif"
         />
         <img
-          ref={imgRef}
           src="/hero-lcp-828.avif"
           alt="Resort pool at dusk overlooking the Chao Phraya"
           width={828}
           height={1104}
+          sizes="(max-width: 768px) 100vw, 1920px"
           fetchPriority="high"
-          decoding="async"
-          onLoad={() => setLive(true)}
+          decoding="sync"
           className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
         />
       </picture>

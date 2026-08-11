@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { cn } from "@/lib/utils";
 import { unsplashSrc } from "@/lib/unsplashLoader";
 
 const SLIDES = [
@@ -27,21 +26,23 @@ const SLIDES = [
 ];
 
 const HOLD_MS = 7000;
-const FADE_MS = 1250;
 
 const HeroCrossfade = dynamic(
   () => import("./HeroCrossfade").then((m) => m.HeroCrossfade),
   { ssr: false }
 );
 
-/** Client slideshow overlays — LCP base image is server-rendered in HeroLCP. */
+/**
+ * Overlay-only slideshow · server HeroLCP stays underneath.
+ * Starts at slide 1 so we never re-fetch the LCP frame via Unsplash.
+ */
 export function HeroSlideshow({
-  lcp,
+  lcp: _lcp,
 }: {
-  lcp: React.ReactNode;
+  lcp?: React.ReactNode;
 }) {
   const [reduce, setReduce] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(1);
   const [lazyReady, setLazyReady] = useState(false);
 
   useEffect(() => {
@@ -54,40 +55,31 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (reduce) return;
-    // Prefetch slideshow soon — never hide guest UI.
-    const timer = window.setTimeout(() => setLazyReady(true), 900);
+    const timer = window.setTimeout(() => setLazyReady(true), 400);
     return () => window.clearTimeout(timer);
   }, [reduce]);
 
   useEffect(() => {
     if (reduce || !lazyReady) return;
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % SLIDES.length);
+      setIndex((i) => {
+        const next = (i + 1) % SLIDES.length;
+        return next === 0 ? 1 : next;
+      });
     }, HOLD_MS);
     return () => window.clearInterval(id);
   }, [reduce, lazyReady]);
 
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-navy">
-      <div
-        className={cn(
-          "absolute inset-0 transition-opacity ease-out",
-          !reduce && index !== 0 ? "opacity-0" : "opacity-100"
-        )}
-        style={{ transitionDuration: `${FADE_MS}ms` }}
-        aria-hidden={!reduce && index !== 0}
-      >
-        {lcp}
-      </div>
+  if (reduce || !lazyReady) return null;
 
-      {!reduce && lazyReady ? (
-        <HeroCrossfade
-          slides={SLIDES}
-          index={index}
-          holdMs={HOLD_MS}
-          kenBurns={!reduce}
-        />
-      ) : null}
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <HeroCrossfade
+        slides={SLIDES}
+        index={index}
+        holdMs={HOLD_MS}
+        kenBurns={!reduce}
+      />
     </div>
   );
 }

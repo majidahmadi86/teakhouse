@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { hotelConfig } from "@/config/hotel.config";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -11,12 +8,15 @@ export const DEMO_BAR_HEIGHT_PX = 40;
 
 /**
  * Persistent demo switcher · Guest ⇄ Owner · PIN bypassed when DEMO_MODE.
- * Fixed to the viewport top · layout reserves its height via body padding.
+ * Pure server component · no client JS · no /owner prefetch on guest pages.
  */
-export function DemoModeBar() {
-  const pathname = usePathname();
+export function DemoModeBar({
+  variant = "guest",
+}: {
+  variant?: "guest" | "owner";
+}) {
   if (!DEMO) return null;
-  const onOwner = pathname.startsWith("/owner");
+  const onOwner = variant === "owner";
 
   return (
     <div
@@ -29,6 +29,7 @@ export function DemoModeBar() {
           <span className="font-semibold tracking-wide">Viewing:</span>
           <Link
             href="/"
+            prefetch={false}
             className={
               !onOwner
                 ? "rounded-full bg-white/15 px-2.5 py-1 font-bold"
@@ -42,6 +43,7 @@ export function DemoModeBar() {
           </span>
           <Link
             href="/owner"
+            prefetch={false}
             className={
               onOwner
                 ? "rounded-full bg-white/15 px-2.5 py-1 font-bold"

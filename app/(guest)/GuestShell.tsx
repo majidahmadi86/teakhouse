@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { DemoModal } from "@/components/DemoModal";
+import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { Header } from "@/components/Header";
 import { cn } from "@/lib/utils";
 
@@ -13,11 +14,6 @@ const Footer = dynamic(
 
 const MobileBookBar = dynamic(
   () => import("@/components/MobileBookBar").then((m) => m.MobileBookBar),
-  { ssr: false }
-);
-
-const Concierge = dynamic(
-  () => import("@/components/Concierge").then((m) => m.Concierge),
   { ssr: false }
 );
 
@@ -46,7 +42,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
       {isAuth ? null : <Footer />}
       {showMobileBookBar ? <MobileBookBar /> : null}
       {isAuth ? null : (
-        <Concierge offsetForBookBar={showMobileBookBar} />
+        <DeferredConcierge offsetForBookBar={showMobileBookBar} />
       )}
     </DemoModal>
   );

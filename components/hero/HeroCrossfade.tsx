@@ -67,7 +67,7 @@ export function HeroCrossfade({
             fill
             quality={78}
             sizes={HERO_SIZES}
-            priority={index === 1}
+            priority={false}
             onLoadingComplete={() => setLoaded(true)}
             className={cn("object-cover", active.position)}
           />
