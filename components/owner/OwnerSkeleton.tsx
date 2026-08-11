@@ -12,13 +12,13 @@ export function OwnerSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="own-shimmer h-28 rounded-2xl border border-white/10"
+            className="owner-panel own-shimmer h-28 rounded-2xl"
           />
         ))}
       </div>
 
-      <div className="own-shimmer h-64 rounded-2xl border border-white/10" />
-      <div className="own-shimmer h-48 rounded-2xl border border-white/10" />
+      <div className="owner-panel own-shimmer h-64 rounded-2xl" />
+      <div className="owner-panel own-shimmer h-48 rounded-2xl" />
     </div>
   );
 }

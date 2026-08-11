@@ -24,7 +24,7 @@ function cellColor(state: CellState): string {
 /** Heat intensity from occupancy % (0-100). */
 function heatStyle(pct: number): { className: string; style?: React.CSSProperties } {
   if (pct <= 0) {
-    return { className: "bg-white/[0.06] border border-white/10" };
+    return { className: "bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" };
   }
   if (pct < 25) {
     return { className: "bg-own-blue/25" };
@@ -131,7 +131,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={prevMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/10 text-white transition hover:border-own-blue/40"
+            className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
             aria-label="Previous month"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -142,7 +142,7 @@ export default function OwnerCalendarPage() {
           <button
             type="button"
             onClick={nextMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/10 text-white transition hover:border-own-blue/40"
+            className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
             aria-label="Next month"
           >
             <ChevronRight className="h-5 w-5" />

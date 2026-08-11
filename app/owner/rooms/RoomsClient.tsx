@@ -330,7 +330,7 @@ export default function OwnerRoomsPage() {
                     <button
                       type="button"
                       onClick={() => openEdit(room)}
-                      className="min-h-[44px] rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white"
+                      className="owner-control min-h-[44px] rounded-xl px-4 py-2 text-sm font-bold text-white"
                     >
                       {t("ow.edit")}
                     </button>
@@ -347,7 +347,7 @@ export default function OwnerRoomsPage() {
                 <button
                   type="button"
                   onClick={() => togglePricing(room.id)}
-                  className="mt-4 flex min-h-[44px] w-full items-center justify-between rounded-xl border border-white/10 px-4 py-2 text-sm font-bold text-white/80 transition hover:border-own-blue/40"
+                  className="owner-control mt-4 flex min-h-[44px] w-full items-center justify-between rounded-xl px-4 py-2 text-sm font-bold text-white/80 transition"
                   aria-expanded={open}
                 >
                   Seasonal pricing
@@ -358,7 +358,7 @@ export default function OwnerRoomsPage() {
                 </button>
 
                 {open ? (
-                  <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
+                  <div className="owner-split-t mt-3 space-y-3 pt-3">
                     {rules.length === 0 ? (
                       <p className="text-xs text-white/55">No rules yet</p>
                     ) : (
@@ -495,7 +495,7 @@ export default function OwnerRoomsPage() {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-4"
             >
-              <DialogPanel className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-brand p-6 shadow-panel">
+              <DialogPanel className="own-theme owner-panel max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-brand p-6">
                 <div className="mb-6 flex items-center justify-between">
                   <DialogTitle className="font-display text-xl font-semibold text-white">
                     {editing ? t("ow.edit") : t("ow.addRoom")}
@@ -714,7 +714,7 @@ export default function OwnerRoomsPage() {
                             .map((a) => (
                               <label
                                 key={a.id}
-                                className="flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm text-white/80"
+                                className="owner-inset flex min-h-[44px] cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm text-white/80"
                               >
                                 <input
                                   type="checkbox"
@@ -756,7 +756,7 @@ export default function OwnerRoomsPage() {
                             <button
                               type="button"
                               onClick={() => removePhotoRow(i)}
-                              className="min-h-[44px] shrink-0 rounded-xl border border-white/10 px-3 text-sm font-bold text-white/60"
+                              className="owner-control min-h-[44px] shrink-0 rounded-xl px-3 text-sm font-bold text-white/60"
                             >
                               {t("ow.del")}
                             </button>
@@ -824,7 +824,7 @@ export default function OwnerRoomsPage() {
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
-                    className="min-h-[44px] flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70"
+                    className="owner-control min-h-[44px] flex-1 rounded-xl px-4 py-3 text-sm font-bold text-white/70"
                   >
                     {t("ow.cancel")}
                   </button>

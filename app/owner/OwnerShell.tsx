@@ -179,7 +179,7 @@ export function OwnerShell({
           className="sticky top-[var(--demo-bar-h)] z-30 flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto bg-brand shadow-[8px_0_32px_rgba(0,0,0,.35)]"
           aria-label="Owner sidebar"
         >
-          <div className="shrink-0 border-b border-white/10 px-6 py-6">
+          <div className="owner-split-b shrink-0 px-6 py-6">
             <Logo light showTag={false} className="mb-4 h-7 w-auto" />
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">
               {t("ow.eyebrow")}
@@ -193,12 +193,12 @@ export function OwnerShell({
             <OwnerNavList t={t} />
           </nav>
 
-          <div className="mt-auto space-y-4 border-t border-white/10 px-4 py-6">
+          <div className="owner-split-t mt-auto space-y-4 px-4 py-6">
             <LangToggle />
             <button
               type="button"
               onClick={onReset}
-              className="min-h-[44px] w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
+              className="owner-control min-h-[44px] w-full rounded-xl px-4 py-3 text-sm font-bold text-white/70 transition hover:text-white"
             >
               {t("ow.reset")}
             </button>
@@ -231,7 +231,7 @@ export function OwnerShell({
             <button
               type="button"
               onClick={onReset}
-              className="min-h-[36px] flex-1 rounded-xl border border-white/10 px-3 text-xs font-bold text-white/70 transition hover:border-own-blue/40 hover:text-white"
+              className="owner-control min-h-[36px] flex-1 rounded-xl px-3 text-xs font-bold text-white/70 transition hover:text-white"
             >
               {t("ow.reset")}
             </button>

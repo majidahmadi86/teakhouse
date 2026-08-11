@@ -36,7 +36,7 @@ export function HomeHeroThaiOverlayInner() {
   return createPortal(
     <>
       <div className="absolute inset-0 z-[2] flex flex-col md:hidden">
-        <div className="relative z-10 px-5 pt-6">
+        <div className="hero-chrome-pad relative z-10 px-5">
           <p className="font-th-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow">
             {t("brand.name")}
           </p>
@@ -56,7 +56,7 @@ export function HomeHeroThaiOverlayInner() {
         </div>
       </div>
 
-      <div className="absolute inset-0 z-[2] hidden flex-col justify-end px-6 pb-10 pt-28 md:flex">
+      <div className="hero-chrome-pad absolute inset-0 z-[2] hidden flex-col justify-end px-6 pb-10 md:flex">
         <div className="relative z-10 mx-auto w-full max-w-[1180px]">
           <p className="eyebrow mb-3 text-gold hero-text-shadow">
             {t("hero.eyebrow")}

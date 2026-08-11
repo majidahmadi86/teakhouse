@@ -392,7 +392,7 @@ export default function OwnerBookingsPage() {
           <button
             type="button"
             onClick={exportCsv}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-bold text-white transition hover:border-own-blue/40"
+            className="owner-control inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold text-white transition"
           >
             <Download className="h-5 w-5" aria-hidden />
             Export CSV
@@ -434,7 +434,7 @@ export default function OwnerBookingsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left">
+              <tr className="text-left text-white/50">
                 {[t("col.code"), t("col.guest"), t("col.room"), t("col.dates"), t("col.src"), t("col.amt"), t("col.st")].map(
                   (h) => (
                     <th
@@ -462,7 +462,7 @@ export default function OwnerBookingsPage() {
                   <tr
                     key={b.id}
                     onClick={() => openDrawer(b)}
-                    className="cursor-pointer border-b border-white/5 transition hover:bg-white/[0.03]"
+                    className="cursor-pointer transition hover:bg-white/[0.04]"
                   >
                     <td className="px-4 py-4 font-bold text-white">{b.code}</td>
                     <td className="px-4 py-4 text-white/90">{b.guest}</td>
@@ -501,7 +501,7 @@ export default function OwnerBookingsPage() {
               key={b.id}
               type="button"
               onClick={() => openDrawer(b)}
-              className="w-full owner-panel rounded-2xl p-4 text-left transition hover:border-gold/30"
+              className="owner-panel w-full rounded-2xl p-4 text-left transition hover:bg-white/[0.09]"
             >
               <div className="mb-2 flex items-start justify-between gap-3">
                 <span className="font-bold text-white">{b.code}</span>
@@ -547,7 +547,7 @@ export default function OwnerBookingsPage() {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-4"
             >
-              <DialogPanel className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-brand p-6 shadow-panel">
+              <DialogPanel className="own-theme owner-panel max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-brand p-6">
                 <div className="mb-6 flex items-center justify-between">
                   <DialogTitle className="font-display text-xl font-semibold text-white">
                     {editMode ? t("ow.edit") : t("ow.new")}
@@ -666,7 +666,7 @@ export default function OwnerBookingsPage() {
                     />
                   </Field>
 
-                  <div className="border-t border-white/10 pt-4">
+                  <div className="owner-split-t pt-4">
                     <OwnerListbox
                       label={t("col.room")}
                       value={form.roomSlug}
@@ -716,7 +716,7 @@ export default function OwnerBookingsPage() {
                   <button
                     type="button"
                     onClick={() => setModalOpen(false)}
-                    className="min-h-[44px] flex-1 rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white/70"
+                    className="owner-control min-h-[44px] flex-1 rounded-xl px-4 py-3 text-sm font-bold text-white/70"
                   >
                     {t("ow.cancel")}
                   </button>
@@ -759,10 +759,10 @@ export default function OwnerBookingsPage() {
               leaveFrom="opacity-100 translate-x-0"
               leaveTo="opacity-0 translate-x-full"
             >
-              <DialogPanel className="flex h-full w-full max-w-md flex-col border-l border-white/10 bg-brand-2 shadow-panel">
+              <DialogPanel className="own-theme flex h-full w-full max-w-md flex-col bg-brand-2 shadow-[-12px_0_40px_rgba(0,0,0,.45)]">
                 {selected ? (
                   <>
-                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                    <div className="owner-split-b flex items-center justify-between px-5 py-4">
                       <DialogTitle className="font-display text-xl font-semibold text-white">
                         {selected.code}
                       </DialogTitle>
@@ -878,14 +878,14 @@ export default function OwnerBookingsPage() {
                       </section>
                     </div>
 
-                    <div className="space-y-2 border-t border-white/10 p-5">
+                    <div className="owner-split-t space-y-2 p-5">
                       <button
                         type="button"
                         onClick={() => {
                           openEdit(selected);
                           setDrawerOpen(false);
                         }}
-                        className="min-h-[44px] w-full rounded-xl border border-white/10 px-4 py-3 text-sm font-bold text-white"
+                        className="owner-control min-h-[44px] w-full rounded-xl px-4 py-3 text-sm font-bold text-white"
                       >
                         {t("ow.edit")}
                       </button>

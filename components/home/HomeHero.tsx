@@ -15,7 +15,7 @@ export function HomeHero({ searchSlot }: { searchSlot: React.ReactNode }) {
   return (
     <section
       id="tkh-hero"
-      className="relative z-[1] h-[calc(100svh-3.5rem-var(--demo-bar-h))] overflow-hidden bg-navy md:h-[min(calc(86svh-var(--demo-bar-h)),820px)]"
+      className="relative z-[1] -mt-[calc(var(--demo-bar-h)+var(--header-h))] h-[100svh] overflow-hidden bg-navy md:h-[min(100svh,820px)]"
     >
       <div className="absolute inset-0">
         <div className="absolute inset-0">
@@ -28,7 +28,7 @@ export function HomeHero({ searchSlot }: { searchSlot: React.ReactNode }) {
       </div>
 
       <div className="tkh-hero-en absolute inset-0 flex flex-col md:hidden">
-        <div className="relative z-10 px-5 pt-6">
+        <div className="hero-chrome-pad relative z-10 px-5">
           <p className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow">
             {hotelConfig.name}
           </p>
@@ -85,7 +85,7 @@ export function HomeHero({ searchSlot }: { searchSlot: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="tkh-hero-en absolute inset-0 hidden flex-col justify-end px-6 pb-10 pt-28 md:flex">
+      <div className="tkh-hero-en hero-chrome-pad absolute inset-0 hidden flex-col justify-end px-6 pb-10 md:flex">
         <div className="mx-auto w-full max-w-[1180px]">
           <p className="eyebrow mb-3 text-gold hero-text-shadow">
             Charoenkrung · Chao Phraya riverside

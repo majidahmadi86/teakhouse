@@ -465,10 +465,10 @@ function StatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border p-5 md:p-6",
+        "rounded-2xl p-5 md:p-6",
         gold
-          ? "border-gold/40 bg-gold/15 text-white"
-          : "border-white/10 bg-white/[0.05]"
+          ? "bg-gold/15 text-white shadow-[0_12px_32px_rgba(0,0,0,.35),inset_0_1px_0_rgba(232,200,122,.25)]"
+          : "owner-panel"
       )}
     >
       <b

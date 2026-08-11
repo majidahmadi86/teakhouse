@@ -24,12 +24,12 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-brand-2 px-4 py-12">
+    <div className="own-theme flex min-h-screen flex-col items-center justify-center bg-brand-2 px-4 py-12">
       <div className="mb-10 text-white">
         <Logo className="h-8 w-auto brightness-0 invert" />
       </div>
 
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 shadow-panel backdrop-blur-sm">
+      <div className="owner-panel w-full max-w-md rounded-2xl p-8 backdrop-blur-sm">
         <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-gold">
           {t("ow.eyebrow")}
         </p>
