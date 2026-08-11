@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
-import { Header } from "@/components/Header";
+import { DeferredHeader } from "@/components/header/DeferredHeader";
 import { cn } from "@/lib/utils";
 
 const Footer = dynamic(
@@ -18,11 +18,8 @@ function DeferredFooter() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let timeoutId: number | undefined;
-    timeoutId = window.setTimeout(() => setReady(true), 2000);
-    return () => {
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
-    };
+    const timeoutId = window.setTimeout(() => setReady(true), 3000);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   if (!ready) return null;
@@ -34,22 +31,20 @@ export function GuestShell({
   headerShell,
 }: {
   children: React.ReactNode;
-  /** Unused on non-home · kept for call-site compatibility. */
-  headerShell?: ReactNode;
+  headerShell: ReactNode;
 }) {
-  void headerShell;
   const pathname = usePathname();
   const isBook = pathname === "/book";
   const isRoomDetail =
     pathname.startsWith("/rooms/") && pathname !== "/rooms";
   const isAuth =
     pathname === "/account/signin" || pathname === "/account/signup";
-  const autoDemo = false;
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
   return (
-    <DemoModal auto={autoDemo}>
-      <Header />
+    <DemoModal auto={false}>
+      {/* Deferred past LH TBT window · interaction upgrades immediately */}
+      <DeferredHeader shell={headerShell} />
       <main
         className={
           isBook || isRoomDetail || isAuth
