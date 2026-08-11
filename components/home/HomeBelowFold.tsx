@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Calendar, MessageCircle, User } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
 import { HomeRoomCard } from "@/components/home/HomeRoomCard";
-import { SafeImage } from "@/components/SafeImage";
 import {
   CurtainReveal,
   MotionCard,
@@ -39,13 +38,14 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
           </Reveal>
           <CurtainReveal>
             <div className="relative overflow-hidden rounded-[14px] shadow-panel">
-              <SafeImage
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1120&q=70&auto=format&fit=crop"
                 alt="Teak house interior"
-                width={1200}
-                height={1500}
-                quality={75}
-                sizes="(max-width: 768px) 100vw, 560px"
+                width={1120}
+                height={1400}
+                loading="lazy"
+                decoding="async"
                 className="aspect-[5/4] w-full object-cover transition duration-500 hover:scale-[1.06] md:aspect-[4/5]"
               />
             </div>

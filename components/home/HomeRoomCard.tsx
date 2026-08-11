@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SafeImage } from "@/components/SafeImage";
 import {
   formatThb,
   translate,
@@ -19,12 +18,13 @@ export function HomeRoomCard({ room, locale }: { room: Room; locale: Lang }) {
   return (
     <article className="group tkh-card flex flex-col overflow-hidden">
       <div className="relative aspect-[4/3] overflow-hidden">
-        <SafeImage
-          src={room.photos[0]}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={`${room.photos[0]}?w=640&q=70&auto=format&fit=crop`}
           alt={translateEntry(locale, room.name)}
-          fill
-          className="object-cover transition duration-500 group-hover:scale-[1.06]"
-          sizes="(max-width:768px) 100vw, 33vw"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.06]"
         />
         <div className="absolute bottom-3.5 left-3.5 right-3.5 flex min-h-[56px] flex-wrap items-end gap-2">
           <div className="space-y-2">
