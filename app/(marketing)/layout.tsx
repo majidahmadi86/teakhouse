@@ -3,6 +3,7 @@ import { DemoModeBar } from "@/components/DemoModeBar";
 import { HeaderShell } from "@/components/header/HeaderShell";
 import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
 import { HomeLate } from "@/components/home/HomeLate";
+import { getServerLocale } from "@/lib/serverLocale";
 
 export const metadata: Metadata = {
   alternates: {
@@ -11,18 +12,21 @@ export const metadata: Metadata = {
 };
 
 /**
- * Home layout · SSR HeaderShell (logo + Rooms trigger) · upgrades to full
- * Header with Rooms mega-menu on interaction / hover.
+ * Home layout · hero + below-fold are server components (rendered in the page)
+ * so no provider sits on the LCP path. The SSR HeaderShell renders in the
+ * resolved locale and upgrades to the full interactive Header on idle /
+ * interaction; the crossfade slideshow stays deferred in HomeLate.
  */
 export default function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = getServerLocale();
   return (
     <>
       <DemoModeBar variant="guest" />
-      <HomeHeaderUpgrade shell={<HeaderShell />} />
+      <HomeHeaderUpgrade shell={<HeaderShell locale={locale} />} />
       <main className="pb-0">{children}</main>
       <HomeLate />
     </>

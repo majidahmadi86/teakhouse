@@ -308,6 +308,89 @@ input.auth-input:-webkit-autofill {
   padding-top: calc(var(--demo-bar-h) + var(--header-h) + 0.75rem);
 }
 
+/* Below-fold sections are server-rendered (real height + scrollbar at load) but
+   skip paint/layout and image loading until scrolled near · keeps the hero LCP
+   uncontended. contain-intrinsic-size reserves height so the scrollbar is
+   correct from first paint. */
+.tkh-below-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
+
+/* JS-free entrance for the server-rendered below-fold · content is visible in
+   the initial HTML; a one-shot animation plays on load. transform+opacity only
+   (no CLS). See components/home/HomeReveal.tsx. */
+@keyframes tkh-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tkh-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tkh-curtain {
+  from {
+    clip-path: inset(18% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.tkh-reveal,
+.tkh-reveal-stagger > * {
+  animation: tkh-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.tkh-reveal-stagger > :nth-child(2) {
+  animation-delay: 0.08s;
+}
+.tkh-reveal-stagger > :nth-child(3) {
+  animation-delay: 0.16s;
+}
+.tkh-reveal-stagger > :nth-child(4) {
+  animation-delay: 0.24s;
+}
+.tkh-reveal-stagger > :nth-child(5) {
+  animation-delay: 0.32s;
+}
+.tkh-reveal-stagger > :nth-child(6) {
+  animation-delay: 0.4s;
+}
+.tkh-pop {
+  animation: tkh-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.tkh-curtain {
+  animation: tkh-curtain 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.tkh-lift {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tkh-lift:hover {
+  transform: translateY(-4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tkh-reveal,
+  .tkh-reveal-stagger > *,
+  .tkh-pop,
+  .tkh-curtain {
+    animation: none;
+  }
+  .tkh-lift {
+    transition: none;
+  }
+}
+
 /* Owner Listbox / date triggers: dark surface, white value text.
    Open panels stay white (portal outside .own-theme) with ink text. */
 .own-theme .own-select button[type="button"] {

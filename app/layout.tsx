@@ -1,5 +1,6 @@
 import { hotelConfig } from "@/config/hotel.config";
 import { paletteStyleString } from "@/lib/paletteCss";
+import { getServerLocale } from "@/lib/serverLocale";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 import {
@@ -74,10 +75,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const paletteStyle = paletteStyleString(hotelConfig.palette);
+  const locale = getServerLocale();
 
   return (
     <html
-      lang="en"
+      lang={locale}
       data-demo={DEMO_MODE ? "true" : undefined}
       className={`${marcellus.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
     >

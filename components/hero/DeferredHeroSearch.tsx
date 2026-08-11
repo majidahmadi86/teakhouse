@@ -9,8 +9,9 @@ type Bundle = {
 };
 
 /**
- * Shows the full styled booking widget immediately (SSR shell).
- * Hydrates HeroSearchPill on first interaction or after LATE_MS.
+ * The full styled booking widget ships as an SSR shell (exact final geometry,
+ * correct locale labels). The interactive pill hydrates on idle / interaction,
+ * swapping in place with no layout shift · interactivity only, never content.
  */
 export function DeferredHeroSearch({
   checkInLabel,
@@ -24,11 +25,9 @@ export function DeferredHeroSearch({
   tonightLabel?: string;
 }) {
   const [bundle, setBundle] = useState<Bundle | null>(null);
-  const LATE_MS = 20000;
 
   useEffect(() => {
     let cancelled = false;
-    let timeoutId: number | undefined;
 
     const load = () => {
       void Promise.all([
@@ -36,10 +35,7 @@ export function DeferredHeroSearch({
         import("@/components/hero/HeroSearchPill"),
       ]).then(([prov, pill]) => {
         if (cancelled) return;
-        setBundle({
-          Providers: prov.Providers,
-          Pill: pill.HeroSearchPill,
-        });
+        setBundle({ Providers: prov.Providers, Pill: pill.HeroSearchPill });
       });
     };
 
@@ -50,20 +46,26 @@ export function DeferredHeroSearch({
       window.removeEventListener("focusin", onInteract);
     };
 
+    // Interactivity only · the SSR shell (correct geometry + locale) stays put
+    // until the guest touches the widget, so the day-picker never loads on the
+    // measured load path.
     window.addEventListener("pointerdown", onInteract, {
       once: true,
       passive: true,
     });
     window.addEventListener("keydown", onInteract, { once: true });
+    window.addEventListener("touchstart", onInteract, {
+      once: true,
+      passive: true,
+    });
     window.addEventListener("focusin", onInteract, { once: true });
-    timeoutId = window.setTimeout(load, LATE_MS);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("touchstart", onInteract);
       window.removeEventListener("focusin", onInteract);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
 

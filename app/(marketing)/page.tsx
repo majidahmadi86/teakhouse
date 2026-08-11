@@ -1,9 +1,12 @@
 import { HomeHero } from "@/components/home/HomeHero";
+import { HomeBelowFold } from "@/components/home/HomeBelowFold";
 import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
 import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
+import { getServerLocale, t } from "@/lib/serverLocale";
 
-/** Server page: preload + RSC hero · booking widget shell paints with zero JS. */
+/** Server page · locale + hero + below-fold all render server-side in one paint. */
 export default function HomePage() {
+  const locale = getServerLocale();
   const dateLabel = defaultSearchDateLabel();
 
   return (
@@ -23,15 +26,17 @@ export default function HomePage() {
         media="(min-width: 769px)"
       />
       <HomeHero
+        locale={locale}
         searchSlot={
           <DeferredHeroSearch
             checkInLabel={dateLabel}
-            guestLabel="2 guests"
-            checkRatesLabel="Check rates"
-            tonightLabel="Tonight from ฿2,100"
+            guestLabel={t(locale, "g2")}
+            checkRatesLabel={t(locale, "avail.go")}
+            tonightLabel={t(locale, "hero.tonight", { z: "฿2,100" })}
           />
         }
       />
+      <HomeBelowFold locale={locale} />
     </>
   );
 }

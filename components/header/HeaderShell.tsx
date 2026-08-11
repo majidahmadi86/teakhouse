@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/LogoMark";
+import { t, type Lang } from "@/lib/serverLocale";
 
 /**
  * Zero-JS header chrome · v7 logo identity + Rooms trigger lookalike.
+ * Server-rendered in the resolved locale so nav labels never flash English.
  * Full Header (mega-menu, lang, currency) upgrades on interaction.
  */
-export function HeaderShell() {
+export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
   return (
     <header className="sticky top-[var(--demo-bar-h)] z-50 h-14 border-b border-line bg-white md:h-16">
       <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 min-[760px]:px-5 xl:px-6">
@@ -22,7 +24,7 @@ export function HeaderShell() {
             prefetch={false}
             className="group relative inline-flex items-center gap-1 whitespace-nowrap text-[15px] font-semibold text-ink"
           >
-            Rooms
+            {t(locale, "nav.rooms")}
             <svg
               className="h-3.5 w-3.5"
               viewBox="0 0 24 24"
@@ -40,28 +42,28 @@ export function HeaderShell() {
             prefetch={false}
             className="text-[15px] font-semibold text-ink"
           >
-            Experience
+            {t(locale, "nav.experience")}
           </Link>
           <Link
             href="/gallery"
             prefetch={false}
             className="text-[15px] font-semibold text-ink"
           >
-            Gallery
+            {t(locale, "nav.gallery")}
           </Link>
           <Link
             href="/location"
             prefetch={false}
             className="text-[15px] font-semibold text-ink"
           >
-            Location
+            {t(locale, "nav.location")}
           </Link>
           <Link
             href="/contact"
             prefetch={false}
             className="text-[15px] font-semibold text-ink"
           >
-            Contact
+            {t(locale, "nav.contact")}
           </Link>
         </nav>
 
@@ -71,7 +73,7 @@ export function HeaderShell() {
             prefetch={false}
             className="inline-flex h-10 items-center justify-center rounded-full bg-blue px-4 text-[14px] font-bold text-white shadow-cta"
           >
-            Book direct
+            {t(locale, "nav.book")}
           </Link>
         </div>
       </div>

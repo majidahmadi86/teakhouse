@@ -1,30 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
 import { DeferredHeader } from "@/components/header/DeferredHeader";
+import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
-
-const Footer = dynamic(
-  () => import("@/components/Footer").then((m) => m.Footer),
-  { ssr: false }
-);
-
-function DeferredFooter() {
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => setReady(true), 3000);
-    return () => window.clearTimeout(timeoutId);
-  }, []);
-
-  if (!ready) return null;
-  return <Footer />;
-}
 
 export function GuestShell({
   children,
@@ -54,7 +37,7 @@ export function GuestShell({
       >
         {children}
       </main>
-      {isAuth ? null : <DeferredFooter />}
+      {isAuth ? null : <Footer />}
       {showMobileBookBar ? <DeferredMobileBookBar /> : null}
       {isAuth ? null : (
         <DeferredConcierge offsetForBookBar={showMobileBookBar} />

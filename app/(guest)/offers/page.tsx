@@ -9,7 +9,7 @@ import { useI18n } from "@/lib/i18n";
 const OFFERS = ["1", "2", "3"] as const;
 
 export default function OffersPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   return (
     <>
@@ -26,7 +26,7 @@ export default function OffersPage() {
           <RevealStagger className="grid gap-7 md:grid-cols-3">
             {OFFERS.map((n) => (
               <RevealItem key={n}>
-                <OfferCard n={n} large />
+                <OfferCard n={n} large locale={lang} />
               </RevealItem>
             ))}
           </RevealStagger>

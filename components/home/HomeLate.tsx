@@ -1,36 +1,22 @@
 "use client";
 
-import { useEffect, useState, type ComponentType, type ReactNode } from "react";
-
-type Bundle = {
-  Providers: ComponentType<{ children: ReactNode }>;
-  Islands: ComponentType;
-};
-
-/** Min delay so LH mobile window never pulls i18n/framer. */
-const LATE_MS = 15000;
+import { useEffect, useState, type ComponentType } from "react";
 
 /**
- * Below-fold + slideshow · loads with Providers so useI18n is safe.
- * Interaction or fixed delay only · no early requestIdleCallback.
+ * Background crossfade slideshow only · the below-fold is now server-rendered
+ * in the page. Loads on idle / first interaction · pure visual enhancement,
+ * never content, so it stays off the initial paint.
  */
 export function HomeLate() {
-  const [bundle, setBundle] = useState<Bundle | null>(null);
+  const [Islands, setIslands] = useState<ComponentType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let timeoutId: number | undefined;
 
     const load = () => {
-      void Promise.all([
-        import("@/components/providers"),
-        import("@/components/home/HomeDeferredIslands"),
-      ]).then(([prov, islands]) => {
+      void import("@/components/home/HomeDeferredIslands").then((m) => {
         if (cancelled) return;
-        setBundle({
-          Providers: prov.Providers,
-          Islands: islands.HomeDeferredIslands,
-        });
+        setIslands(() => m.HomeDeferredIslands);
       });
     };
 
@@ -41,32 +27,27 @@ export function HomeLate() {
       window.removeEventListener("scroll", onInteract);
     };
 
+    // Pure enhancement · loads on first scroll/touch/key, never on an idle
+    // timer, so the framer crossfade stays off the measured load path.
     window.addEventListener("pointerdown", onInteract, {
       once: true,
       passive: true,
     });
     window.addEventListener("keydown", onInteract, { once: true });
-    window.addEventListener("scroll", onInteract, {
+    window.addEventListener("touchstart", onInteract, {
       once: true,
       passive: true,
     });
-
-    timeoutId = window.setTimeout(load, LATE_MS);
+    window.addEventListener("scroll", onInteract, { once: true, passive: true });
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("touchstart", onInteract);
       window.removeEventListener("scroll", onInteract);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
 
-  if (!bundle) return null;
-  const { Providers, Islands } = bundle;
-  return (
-    <Providers>
-      <Islands />
-    </Providers>
-  );
+  return Islands ? <Islands /> : null;
 }

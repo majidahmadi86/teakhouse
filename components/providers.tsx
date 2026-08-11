@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { CurrencyProvider } from "@/lib/currency";
 import { GuestAuthProvider } from "@/lib/guestAuth";
-import { I18nProvider } from "@/lib/i18n";
+import { I18nProvider, type Lang } from "@/lib/i18n";
 
 type ConciergeCtx = {
   isOpen: boolean;
@@ -43,9 +43,15 @@ export function useConcierge() {
   return ctx;
 }
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  initialLang,
+}: {
+  children: React.ReactNode;
+  initialLang?: Lang;
+}) {
   return (
-    <I18nProvider>
+    <I18nProvider initialLang={initialLang}>
       <CurrencyProvider>
         <GuestAuthProvider>
           <ConciergeProvider>{children}</ConciergeProvider>

@@ -2,18 +2,16 @@
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 
-const LATE_MS = 20000;
-
 /**
- * Shell first · full Header (Logo + RoomsMegaMenu + lang/currency) after
- * interaction or LATE_MS. Hovering nav also triggers upgrade so mega-menu works.
+ * SSR HeaderShell (already in the correct locale) · upgrades to the full
+ * interactive Header (mega-menu, lang, currency) on idle, interaction, or nav
+ * hover. No fixed multi-second timer · interactivity only, never content.
  */
 export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
   const [header, setHeader] = useState<ReactNode>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let timeoutId: number | undefined;
     let loading = false;
 
     const load = () => {
@@ -42,26 +40,31 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("mouseover", onNavHover);
     };
-
     const onNavHover = (e: Event) => {
-      const t = e.target as HTMLElement | null;
-      if (t?.closest?.("header")) load();
+      const target = e.target as HTMLElement | null;
+      if (target?.closest?.("header")) load();
     };
 
+    // Interactivity only · hydrate on the user's first touch/hover/key, never
+    // on an idle timer (keeps the heavy Header + framer off the load path). The
+    // SSR HeaderShell is already interactive as plain links until then.
     window.addEventListener("pointerdown", onInteract, {
       once: true,
       passive: true,
     });
     window.addEventListener("keydown", onInteract, { once: true });
+    window.addEventListener("touchstart", onInteract, {
+      once: true,
+      passive: true,
+    });
     window.addEventListener("mouseover", onNavHover, { passive: true });
-    timeoutId = window.setTimeout(load, LATE_MS);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("touchstart", onInteract);
       window.removeEventListener("mouseover", onNavHover);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
 

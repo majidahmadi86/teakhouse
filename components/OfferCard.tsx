@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
-import { useI18n } from "@/lib/i18n";
+import { translate, type Lang } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 
 const OFFER_STYLES = {
@@ -23,17 +20,15 @@ const OFFER_STYLES = {
   },
 } as const;
 
-const spring = { type: "spring" as const, stiffness: 120, damping: 14 };
-
 type OfferCardProps = {
   n: "1" | "2" | "3";
+  locale: Lang;
   large?: boolean;
   className?: string;
 };
 
-export function OfferCard({ n, large, className }: OfferCardProps) {
-  const { t } = useI18n();
-  const reduce = useReducedMotion();
+/** Pure · renders server-side (RSC home) or client-side (offers page). */
+export function OfferCard({ n, locale, large, className }: OfferCardProps) {
   const style = OFFER_STYLES[n];
 
   return (
@@ -47,23 +42,19 @@ export function OfferCard({ n, large, className }: OfferCardProps) {
       style={{ background: style.gradient }}
     >
       <span className="inline-flex w-fit items-center rounded-full bg-white/20 px-3 py-1 text-[0.7rem] font-bold text-white backdrop-blur-sm">
-        {t(`off.${n}.badge`)}
+        {translate(locale, `off.${n}.badge`)}
       </span>
 
-      <motion.div
+      <div
         className={cn(
-          "mt-4 font-display font-normal leading-none text-white",
+          "tkh-pop mt-4 font-display font-normal leading-none text-white",
           large
             ? "text-[clamp(3.5rem,5vw,5rem)]"
             : "text-[clamp(3rem,4vw,4rem)]"
         )}
-        initial={reduce ? false : { scale: 0.6, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={spring}
       >
         {style.numeral}
-      </motion.div>
+      </div>
 
       {style.goldLine ? (
         <div className="mt-3 h-0.5 w-12 bg-gold" aria-hidden />
@@ -75,14 +66,14 @@ export function OfferCard({ n, large, className }: OfferCardProps) {
           large ? "text-2xl md:text-[1.75rem]" : "text-xl"
         )}
       >
-        {t(`off.${n}.title`)}
+        {translate(locale, `off.${n}.title`)}
       </h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-white/90">
-        {t(`off.${n}.body`)}
+        {translate(locale, `off.${n}.body`)}
       </p>
 
       <span className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-white transition group-hover:gap-2">
-        {t("off.bookOffer")}
+        {translate(locale, "off.bookOffer")}
       </span>
     </Link>
   );
