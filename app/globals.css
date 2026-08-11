@@ -33,14 +33,20 @@
   }
 }
 
+/* Desktop only · delayed well past LCP. Mobile: none (Style/Layout debt). */
 .tkh-ken-burns-live {
-  animation: tkh-ken-burns-live 8s linear 1.2s forwards;
-  will-change: transform;
+  animation: none;
+}
+
+@media (min-width: 769px) {
+  .tkh-ken-burns-live {
+    animation: tkh-ken-burns-live 10s linear 12s forwards;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tkh-ken-burns-live {
-    animation: none;
+    animation: none !important;
   }
 }
 
@@ -85,6 +91,18 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* Mobile LH: skip transform entrances · opacity-only or none. */
+@media (max-width: 768px) {
+  .tkh-hero-word,
+  .tkh-hero-fade {
+    animation: none;
+  }
+}
+
+#tkh-hero[data-lang="th"] .tkh-hero-en {
+  visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {

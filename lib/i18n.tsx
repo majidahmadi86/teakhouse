@@ -639,7 +639,14 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   }, [lang, ready]);
 
-  const setLang = useCallback((l: Lang) => setLangState(l), []);
+  const setLang = useCallback((l: Lang) => {
+    setLangState(l);
+    try {
+      window.dispatchEvent(new CustomEvent("tkh:lang", { detail: l }));
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const t = useCallback(
     (key: string, vars?: Record<string, string | number>) => {

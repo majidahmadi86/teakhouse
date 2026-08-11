@@ -1,16 +1,28 @@
-import HomeClient from "./HomeClient";
-import { HeroLCP } from "@/components/hero/HeroLCP";
+import { HomeHero } from "@/components/home/HomeHero";
+import {
+  DeferredSearchPill,
+  HomeDeferredIslands,
+} from "@/components/home/HomeDeferredIslands";
+import { HomeHeroThaiGate } from "@/components/home/HomeHeroThaiGate";
 
-/** Server page: preload + server-rendered LCP image (no client JS required to paint). */
+/** Server page: preload + RSC hero · client islands deferred past LCP. */
 export default function HomePage() {
   return (
     <>
       <link
         rel="preload"
         as="image"
+        href="/hero-lcp-640.avif"
+        type="image/avif"
+        media="(max-width: 640px)"
+        {...{ fetchPriority: "high" }}
+      />
+      <link
+        rel="preload"
+        as="image"
         href="/hero-lcp-828.avif"
         type="image/avif"
-        media="(max-width: 768px)"
+        media="(min-width: 641px) and (max-width: 768px)"
         {...{ fetchPriority: "high" }}
       />
       <link
@@ -21,7 +33,9 @@ export default function HomePage() {
         media="(min-width: 769px)"
         {...{ fetchPriority: "high" }}
       />
-      <HomeClient heroLcp={<HeroLCP />} />
+      <HomeHero searchSlot={<DeferredSearchPill />} />
+      <HomeHeroThaiGate />
+      <HomeDeferredIslands />
     </>
   );
 }

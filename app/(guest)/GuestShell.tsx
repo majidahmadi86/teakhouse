@@ -2,10 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
-import { Header } from "@/components/Header";
+import { DeferredHeader } from "@/components/header/DeferredHeader";
 import { cn } from "@/lib/utils";
 
 const Footer = dynamic(
@@ -13,7 +14,35 @@ const Footer = dynamic(
   { ssr: false }
 );
 
-export function GuestShell({ children }: { children: React.ReactNode }) {
+function DeferredFooter() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+    const arm = () => setReady(true);
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(arm, { timeout: 14000 });
+    } else {
+      timeoutId = window.setTimeout(arm, 12000);
+    }
+    return () => {
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  if (!ready) return null;
+  return <Footer />;
+}
+
+export function GuestShell({
+  children,
+  headerShell,
+}: {
+  children: React.ReactNode;
+  headerShell: ReactNode;
+}) {
   const pathname = usePathname();
   const isBook = pathname === "/book";
   const isRoomDetail =
@@ -25,7 +54,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
 
   return (
     <DemoModal auto={autoDemo}>
-      <Header />
+      <DeferredHeader shell={headerShell} />
       <main
         className={
           isBook || isRoomDetail || isAuth
@@ -35,7 +64,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </main>
-      {isAuth ? null : <Footer />}
+      {isAuth ? null : <DeferredFooter />}
       {showMobileBookBar ? <DeferredMobileBookBar /> : null}
       {isAuth ? null : (
         <DeferredConcierge offsetForBookBar={showMobileBookBar} />

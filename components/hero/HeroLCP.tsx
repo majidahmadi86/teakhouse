@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Server LCP hero · zero client JS.
- * Ken Burns is CSS-only (`.tkh-ken-burns-live` respects prefers-reduced-motion).
+ * Ken Burns is CSS-only and disabled on mobile (LH style/layout debt).
  */
 export function HeroLCP({ className }: { className?: string }) {
   return (
@@ -14,6 +14,11 @@ export function HeroLCP({ className }: { className?: string }) {
     >
       <picture>
         <source
+          media="(max-width: 640px)"
+          srcSet="/hero-lcp-640.avif"
+          type="image/avif"
+        />
+        <source
           media="(max-width: 768px)"
           srcSet="/hero-lcp-828.avif"
           type="image/avif"
@@ -24,11 +29,11 @@ export function HeroLCP({ className }: { className?: string }) {
           type="image/avif"
         />
         <img
-          src="/hero-lcp-828.avif"
+          src="/hero-lcp-640.avif"
           alt="Resort pool at dusk overlooking the Chao Phraya"
-          width={828}
-          height={1104}
-          sizes="(max-width: 768px) 100vw, 1920px"
+          width={640}
+          height={853}
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1920px"
           fetchPriority="high"
           decoding="sync"
           className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
