@@ -13,9 +13,8 @@ export default function RoomsPage() {
   return (
     <>
       <PageHero
-        image="/images/contact-hero.jpg"
-        imageAvif="/images/contact-hero.avif"
-        imageWebp="/images/contact-hero.webp"
+        image="/hero-lcp-640.avif"
+        imageAvif="/hero-lcp-640.avif"
         alt="Teak hotel room interior"
         eyebrow="Stay"
         title="Rooms and rates"
