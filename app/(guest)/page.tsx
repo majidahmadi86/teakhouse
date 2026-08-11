@@ -1,11 +1,20 @@
+import Link from "next/link";
 import { HomeHero } from "@/components/home/HomeHero";
-import {
-  DeferredSearchPill,
-  HomeDeferredIslands,
-} from "@/components/home/HomeDeferredIslands";
-import { HomeHeroThaiGate } from "@/components/home/HomeHeroThaiGate";
+import { HomeLate } from "@/components/home/HomeLate";
 
-/** Server page: preload + RSC hero · client islands deferred past LCP. */
+function SearchCta() {
+  return (
+    <Link
+      href="/book"
+      prefetch={false}
+      className="flex h-14 w-full items-center justify-center rounded-full bg-white text-[15px] font-bold text-navy shadow-[0_16px_44px_rgba(10,46,92,.20)] md:h-[72px] md:max-w-[720px] md:text-[17px]"
+    >
+      Check rates
+    </Link>
+  );
+}
+
+/** Server page: preload + RSC hero · zero client JS required for LCP. */
 export default function HomePage() {
   return (
     <>
@@ -14,15 +23,7 @@ export default function HomePage() {
         as="image"
         href="/hero-lcp-640.avif"
         type="image/avif"
-        media="(max-width: 640px)"
-        {...{ fetchPriority: "high" }}
-      />
-      <link
-        rel="preload"
-        as="image"
-        href="/hero-lcp-828.avif"
-        type="image/avif"
-        media="(min-width: 641px) and (max-width: 768px)"
+        // LH mobile is ~412px · always preload the small AVIF first
         {...{ fetchPriority: "high" }}
       />
       <link
@@ -31,11 +32,9 @@ export default function HomePage() {
         href="/hero-lcp-1920.avif"
         type="image/avif"
         media="(min-width: 769px)"
-        {...{ fetchPriority: "high" }}
       />
-      <HomeHero searchSlot={<DeferredSearchPill />} />
-      <HomeHeroThaiGate />
-      <HomeDeferredIslands />
+      <HomeHero searchSlot={<SearchCta />} />
+      <HomeLate />
     </>
   );
 }

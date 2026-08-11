@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DemoModeBar } from "@/components/DemoModeBar";
+import { GuestChrome } from "@/components/GuestChrome";
 import { HeaderShell } from "@/components/header/HeaderShell";
-import { GuestShell } from "./GuestShell";
 
 /** Home defaults live in root layout; child routes set their own titles. */
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function GuestLayout({
   return (
     <>
       <DemoModeBar variant="guest" />
-      <GuestShell headerShell={<HeaderShell />}>{children}</GuestShell>
+      <GuestChrome headerShell={<HeaderShell />}>{children}</GuestChrome>
     </>
   );
 }

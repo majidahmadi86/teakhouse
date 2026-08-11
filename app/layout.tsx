@@ -1,5 +1,5 @@
 import { hotelConfig } from "@/config/hotel.config";
-import { Providers } from "@/components/providers";
+import { ProvidersGate } from "@/components/ProvidersGate";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -91,7 +91,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <Providers>{children}</Providers>
+        <ProvidersGate>{children}</ProvidersGate>
       </body>
     </html>
   );
