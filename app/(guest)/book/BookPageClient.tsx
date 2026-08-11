@@ -1,13 +1,30 @@
 ﻿"use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BookingSummary } from "@/components/booking/BookingSummary";
-import { Receipt } from "@/components/booking/Receipt";
-import { RoomDetailsModal } from "@/components/booking/RoomDetailsModal";
 import { RoomSelectCard } from "@/components/booking/RoomSelectCard";
-import { DateRangePicker } from "@/components/ui/DateRangePicker";
+
+// Heavy / later-step pieces load on demand · keeps the /book initial JS light.
+const DateRangePicker = dynamic(
+  () => import("@/components/ui/DateRangePicker").then((m) => m.DateRangePicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[332px] w-full animate-pulse rounded-xl bg-cloud" aria-hidden />
+    ),
+  }
+);
+const Receipt = dynamic(
+  () => import("@/components/booking/Receipt").then((m) => m.Receipt),
+  { ssr: false }
+);
+const RoomDetailsModal = dynamic(
+  () => import("@/components/booking/RoomDetailsModal").then((m) => m.RoomDetailsModal),
+  { ssr: false }
+);
 import { ListboxField } from "@/components/ui/ListboxField";
 import { generateBookingCode, qrMockSvg } from "@/lib/bookingUtils";
 import { useCurrency } from "@/lib/currency";
