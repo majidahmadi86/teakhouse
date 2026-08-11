@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Calendar, MessageCircle, User } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
@@ -10,16 +12,21 @@ import {
   RevealStagger,
 } from "@/components/home/HomeReveal";
 import { getSeedGuestRooms } from "@/lib/guestRooms";
-import { t, type Lang } from "@/lib/serverLocale";
+import { useI18n } from "@/lib/i18n";
+import { translate as t } from "@/lib/translate";
 
 const OFFERS = ["1", "2", "3"] as const;
 
 /**
- * Below-fold home sections · server-rendered in the resolved locale so the
- * document has its full height (and a scrollbar) at first paint. Fully zero-JS
- * RSC · cards render server-side (base-currency price) so nothing hydrates here.
+ * Below-fold home sections · loaded on first scroll / idle behind an exact-
+ * height skeleton (HomeBelowFoldDeferred), so the hero LCP paints uncontended
+ * while the scrollbar height is reserved from first paint. Locale comes from the
+ * cookie-seeded context, so it renders in the right language with no flash and
+ * follows the atomic EN/ไทย toggle.
  */
-export function HomeBelowFold({ locale }: { locale: Lang }) {
+export function HomeBelowFold() {
+  const { lang } = useI18n();
+  const locale = lang;
   const rooms = getSeedGuestRooms().slice(0, 3);
 
   return (
