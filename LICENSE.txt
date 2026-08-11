@@ -1,0 +1,75 @@
+HOTELIER · COMMERCIAL LICENSE AGREEMENT
+Version 1.0 · Single-Project License
+
+Licensor: Mikaro Studio ("Licensor")
+Product:  Hotelier v1 · a Next.js hotel booking website and owner dashboard,
+          including its source code, configuration, presets, prompts, and
+          documentation (the "Software").
+
+By downloading, copying, installing, or using the Software, you (the
+"Licensee") agree to the terms below. If you do not agree, do not use the
+Software.
+
+1. GRANT OF LICENSE (SINGLE PROJECT)
+   Subject to payment and these terms, Licensor grants the Licensee a
+   perpetual, worldwide, non-exclusive, non-transferable license to use the
+   Software to build, deploy, and operate ONE (1) website for ONE (1) hotel,
+   property, or business owned or operated by the Licensee (the "Project").
+   The Licensee may modify the source code for the Project and may deploy it to
+   the Licensee's own hosting.
+
+2. RESTRICTIONS
+   The Licensee shall NOT:
+   (a) resell, sublicense, rent, lease, or otherwise redistribute the Software
+       or its source code, in whole or in part, whether modified or not;
+   (b) publish or share the source code publicly (including public code
+       repositories, template marketplaces, or "starter kits");
+   (c) use the Software to build, deliver, or operate websites for more than one
+       property or for third-party clients (see Section 3, Agency License);
+   (d) remove or obscure this license, or misrepresent authorship of the
+       Software.
+   Compiled, deployed output of the single licensed Project (a live website) is
+   not considered redistribution of source.
+
+3. AGENCY LICENSE (SEPARATE TIER)
+   Use of the Software to build or operate websites for multiple properties or
+   for third-party clients (agency, freelancer-for-hire, or reseller use)
+   requires a separate Agency License from Licensor. Terms and pricing for the
+   Agency License are available on request · contact hello@mikaro.studio.
+   [Agency tier · placeholder: number of projects, per-client terms, and price
+   to be set by Licensor.]
+
+4. OWNERSHIP
+   The Software is licensed, not sold. Licensor retains all right, title, and
+   interest in and to the Software, including all intellectual property rights.
+   The Licensee owns the content, data, and brand assets the Licensee adds.
+
+5. DEMO CONTENT
+   Sample brands ("The Teak House" and the included presets), demo copy, demo
+   images, and the demo credit are provided for illustration only and are not
+   part of the license grant. The Licensee must replace them with the
+   Licensee's own content and branding before public launch. Third-party assets
+   (for example stock photography referenced by URL) are subject to their own
+   licenses and are the Licensee's responsibility to license for production use.
+
+6. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+7. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+   IN THE SOFTWARE.
+
+8. TERMINATION
+   This license terminates automatically if the Licensee breaches any term. On
+   termination the Licensee must stop using and delete all copies of the
+   Software source (the live Project may remain in operation if the breach is
+   cured).
+
+9. SUPPORT
+   Support and license questions: hello@mikaro.studio
+
+(c) Mikaro Studio. All rights reserved.

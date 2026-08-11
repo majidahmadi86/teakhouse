@@ -16,6 +16,9 @@
 # production
 /build
 
+# packaged product output (scripts/package-hotelier.mjs)
+/dist
+
 # misc
 .DS_Store
 *.pem
