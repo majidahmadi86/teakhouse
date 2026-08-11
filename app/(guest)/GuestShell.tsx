@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
-import { DemoModal } from "@/components/DemoModal";
 import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
 import { DeferredHeader } from "@/components/header/DeferredHeader";
@@ -25,8 +24,8 @@ export function GuestShell({
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
   return (
-    <DemoModal auto={false}>
-      {/* Deferred past LH TBT window · interaction upgrades immediately */}
+    <>
+      {/* SSR shell stays visible · upgrades to interactive Header on idle */}
       <DeferredHeader shell={headerShell} />
       <main
         className={
@@ -45,6 +44,6 @@ export function GuestShell({
           onBook={isBook || isRoomDetail}
         />
       )}
-    </DemoModal>
+    </>
   );
 }

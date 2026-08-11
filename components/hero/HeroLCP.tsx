@@ -35,7 +35,7 @@ export function HeroLCP({ className }: { className?: string }) {
           height={853}
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1920px"
           fetchPriority="high"
-          decoding="sync"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
         />
       </picture>

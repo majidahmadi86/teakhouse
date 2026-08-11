@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
+import { onIdleOrInteract } from "@/lib/deferMount";
 
 type ConciergeProps = { offsetForBookBar?: boolean; onBook?: boolean };
 
 /**
  * Keeps Concierge (and FAB clearance observers) out of the initial bundle.
- * Loads on first pointer/key interaction or requestIdleCallback.
+ * The FAB appears on idle / interaction, within 1500ms even with no input.
  */
 export function DeferredConcierge({
   offsetForBookBar = true,
@@ -16,39 +17,15 @@ export function DeferredConcierge({
 
   useEffect(() => {
     let cancelled = false;
-    let idleId: number | undefined;
-    let timeoutId: number | undefined;
-
     const load = () => {
       void import("@/components/Concierge").then((m) => {
         if (!cancelled) setComp(() => m.Concierge);
       });
     };
-
-    const onInteract = () => {
-      load();
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-    };
-
-    window.addEventListener("pointerdown", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", onInteract, { once: true });
-
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(load, { timeout: 12000 });
-    } else {
-      timeoutId = window.setTimeout(load, 10000);
-    }
-
+    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      cleanup();
     };
   }, []);
 

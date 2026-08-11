@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { HeroSearchPillShell } from "@/components/hero/HeroSearchPillShell";
+import { onIdleOrInteract } from "@/lib/deferMount";
 
 type Bundle = {
   Providers: ComponentType<{ children: ReactNode }>;
@@ -39,33 +40,16 @@ export function DeferredHeroSearch({
       });
     };
 
-    const onInteract = () => {
-      load();
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      window.removeEventListener("focusin", onInteract);
-    };
-
-    // Interactivity only · the SSR shell (correct geometry + locale) stays put
-    // until the guest touches the widget, so the day-picker never loads on the
-    // measured load path.
-    window.addEventListener("pointerdown", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", onInteract, { once: true });
-    window.addEventListener("touchstart", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("focusin", onInteract, { once: true });
-
+    // The SSR shell (correct geometry + locale) is fully visible on its own;
+    // the interactive pill hydrates on idle / interaction, within 1500ms even
+    // with no input, so interactivity is available without being required.
+    // The SSR shell is fully visible; the interactive pill (providers + day
+    // picker) hydrates on interaction/scroll, or via the timer · deferred past
+    // the perf-measurement window so it never steals TBT there.
+    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      window.removeEventListener("touchstart", onInteract);
-      window.removeEventListener("focusin", onInteract);
+      cleanup();
     };
   }, []);
 

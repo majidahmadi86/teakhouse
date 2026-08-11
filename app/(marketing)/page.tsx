@@ -1,5 +1,5 @@
 import { HomeHero } from "@/components/home/HomeHero";
-import { HomeBelowFoldDeferred } from "@/components/home/HomeBelowFoldDeferred";
+import { HomeBelowFold } from "@/components/home/HomeBelowFold";
 import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
 import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
 import { getServerLocale, t } from "@/lib/serverLocale";
@@ -36,7 +36,7 @@ export default function HomePage() {
           />
         }
       />
-      <HomeBelowFoldDeferred />
+      <HomeBelowFold locale={locale} />
     </>
   );
 }

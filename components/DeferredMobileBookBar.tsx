@@ -1,49 +1,26 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
+import { onIdleOrInteract } from "@/lib/deferMount";
 
 /**
- * Mobile book bar stays out of the initial home bundle.
- * Loads on interaction or late idle (after LH TBT window).
+ * Mobile book bar stays out of the initial bundle · appears on idle /
+ * interaction, within 1500ms even with no input.
  */
 export function DeferredMobileBookBar() {
   const [Comp, setComp] = useState<ComponentType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let idleId: number | undefined;
-    let timeoutId: number | undefined;
-
     const load = () => {
       void import("@/components/MobileBookBar").then((m) => {
         if (!cancelled) setComp(() => m.MobileBookBar);
       });
     };
-
-    const onInteract = () => {
-      load();
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-    };
-
-    window.addEventListener("pointerdown", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", onInteract, { once: true });
-
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(load, { timeout: 10000 });
-    } else {
-      timeoutId = window.setTimeout(load, 9000);
-    }
-
+    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      cleanup();
     };
   }, []);
 

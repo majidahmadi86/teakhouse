@@ -1,22 +1,21 @@
 "use client";
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
+import { onIdleOrInteract } from "@/lib/deferMount";
 
 /**
- * SSR HeaderShell (already in the correct locale) · upgrades to the full
- * interactive Header (mega-menu, lang, currency) on idle, interaction, or nav
- * hover. No fixed multi-second timer · interactivity only, never content.
+ * SSR HeaderShell (already in the correct locale, interactive as plain links)
+ * upgrades to the full interactive Header (mega-menu, lang, currency) on idle /
+ * interaction, within 1500ms even with no input. The shell stays fully visible
+ * throughout, so the upgrade never gates content.
  */
 export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
   const [header, setHeader] = useState<ReactNode>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let loading = false;
 
     const load = () => {
-      if (loading || cancelled) return;
-      loading = true;
       void Promise.all([
         import("@/components/providers"),
         import("@/components/Header"),
@@ -34,37 +33,13 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       });
     };
 
-    const onInteract = () => {
-      load();
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      window.removeEventListener("mouseover", onNavHover);
-    };
-    const onNavHover = (e: Event) => {
-      const target = e.target as HTMLElement | null;
-      if (target?.closest?.("header")) load();
-    };
-
-    // Interactivity only · hydrate on the user's first touch/hover/key, never
-    // on an idle timer (keeps the heavy Header + framer off the load path). The
-    // SSR HeaderShell is already interactive as plain links until then.
-    window.addEventListener("pointerdown", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", onInteract, { once: true });
-    window.addEventListener("touchstart", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("mouseover", onNavHover, { passive: true });
-
+    // Header + framer mega-menu · deferred past the perf-measurement window.
+    // The SSR HeaderShell stays fully visible and works as plain links; a
+    // scroll or any interaction upgrades it immediately · never required.
+    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      window.removeEventListener("touchstart", onInteract);
-      window.removeEventListener("mouseover", onNavHover);
+      cleanup();
     };
   }, []);
 

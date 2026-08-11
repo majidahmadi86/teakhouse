@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { DemoModal } from "@/components/DemoModal";
 import { DemoModeBar } from "@/components/DemoModeBar";
 import { HeaderShell } from "@/components/header/HeaderShell";
 import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
 import { HomeLate } from "@/components/home/HomeLate";
+import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale } from "@/lib/serverLocale";
 
 export const metadata: Metadata = {
@@ -25,10 +27,12 @@ export default function MarketingLayout({
   const locale = getServerLocale();
   return (
     <>
-      <DemoModeBar variant="guest" />
+      <DemoModeBar variant="guest" locale={locale} />
       <HomeHeaderUpgrade shell={<HeaderShell locale={locale} />} />
       <main className="pb-0">{children}</main>
       <HomeLate />
+      {/* Order modal host · CTA opens it via the shared window event. */}
+      <DemoModal strings={getDemoStrings(locale)} />
     </>
   );
 }

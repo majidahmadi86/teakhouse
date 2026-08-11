@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Calendar, MessageCircle, User } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
@@ -12,21 +10,18 @@ import {
   RevealStagger,
 } from "@/components/home/HomeReveal";
 import { getSeedGuestRooms } from "@/lib/guestRooms";
-import { useI18n } from "@/lib/i18n";
-import { translate as t } from "@/lib/translate";
+import { translate as t, type Lang } from "@/lib/translate";
 
 const OFFERS = ["1", "2", "3"] as const;
 
 /**
- * Below-fold home sections · loaded on first scroll / idle behind an exact-
- * height skeleton (HomeBelowFoldDeferred), so the hero LCP paints uncontended
- * while the scrollbar height is reserved from first paint. Locale comes from the
- * cookie-seeded context, so it renders in the right language with no flash and
- * follows the atomic EN/ไทย toggle.
+ * Below-fold home sections · server-rendered directly in the page (RSC) with the
+ * resolved locale, so they are fully visible static HTML at first paint · no
+ * skeleton, no interaction, no content JS. The JS-free CSS reveals (HomeReveal)
+ * play on load and fail open (content is visible even if animation never runs).
+ * content-visibility keeps off-screen render cost off the LCP path.
  */
-export function HomeBelowFold() {
-  const { lang } = useI18n();
-  const locale = lang;
+export function HomeBelowFold({ locale }: { locale: Lang }) {
   const rooms = getSeedGuestRooms().slice(0, 3);
 
   return (

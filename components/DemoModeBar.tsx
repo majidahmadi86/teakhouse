@@ -1,24 +1,26 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { translate, type Lang } from "@/lib/translate";
+import { DemoOrderCta } from "@/components/DemoOrderCta";
 
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
-
-/** Demo funnel · link to the Hotelier product page (demo builds only). */
-const ABOUT_URL = "https://mikaro.studio/teakhouse";
 
 /** Fixed demo bar height · kept in sync with --demo-bar-h in globals / layout. */
 export const DEMO_BAR_HEIGHT_PX = 40;
 
 /**
- * Persistent demo switcher · Guest <-> Owner · PIN bypassed when DEMO_MODE.
- * One compact 40px row that never wraps. <640px: segmented Guest|Owner toggle
- * left + Hotelier pill (icon + short label) right; "Viewing:" and the sandbox
- * note are hidden (the note lives in the demo modal). Pure server component.
+ * Presentation bar · Guest <-> Owner switcher (the wow) on the left, order CTA
+ * on the right. One compact 40px row that never wraps · "Viewing:" collapses
+ * below sm and the CTA shows a short label under 380px. Language follows the
+ * resolved site locale (server prop). Pure server component · the CTA button is
+ * the only client island. PIN is bypassed when DEMO_MODE.
  */
 export function DemoModeBar({
   variant = "guest",
+  locale,
 }: {
   variant?: "guest" | "owner";
+  locale: Lang;
 }) {
   if (!DEMO) return null;
   const onOwner = variant === "owner";
@@ -33,19 +35,22 @@ export function DemoModeBar({
       aria-label="Demo mode switcher"
     >
       <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between gap-2 px-3 text-[12px] sm:gap-3 sm:px-6">
-        {/* Left · segmented Guest|Owner toggle */}
+        {/* Left · segmented Guest|Owner switcher */}
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <span className="hidden font-semibold tracking-wide sm:inline">
-            Viewing:
+            {translate(locale, "db.viewing")}
           </span>
           <div className="flex items-center rounded-full bg-white/10 p-0.5">
             <Link
               href="/"
               prefetch={false}
               aria-current={!onOwner ? "page" : undefined}
-              className={cn(seg, !onOwner ? "bg-white/20 text-white" : "text-white/65 hover:text-white")}
+              className={cn(
+                seg,
+                !onOwner ? "bg-white/20 text-white" : "text-white/65 hover:text-white"
+              )}
             >
-              Guest<span className="hidden sm:inline"> site</span>
+              {translate(locale, "db.guest")}
             </Link>
             <span className="px-1 text-white/45" aria-hidden>
               ⇄
@@ -54,38 +59,21 @@ export function DemoModeBar({
               href="/owner"
               prefetch={false}
               aria-current={onOwner ? "page" : undefined}
-              className={cn(seg, onOwner ? "bg-white/20 text-white" : "text-white/65 hover:text-white")}
+              className={cn(
+                seg,
+                onOwner ? "bg-white/20 text-white" : "text-white/65 hover:text-white"
+              )}
             >
-              Owner<span className="hidden sm:inline"> panel</span>
+              {translate(locale, "db.owner")}
             </Link>
           </div>
         </div>
 
-        {/* Sandbox note · desktop only (moves into the demo modal on mobile) */}
-        <span className="hidden shrink-0 rounded-full bg-gold/20 px-2.5 py-1 text-[11px] font-semibold text-gold sm:inline-block">
-          Sandbox · resets hourly · edit anything
-        </span>
-
-        {/* Right · Hotelier product pill */}
-        <a
-          href={ABOUT_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold px-2.5 py-1 text-[11px] font-bold text-navy shadow-[0_1px_10px_rgba(232,169,61,.45)] transition hover:brightness-110 sm:px-3"
-        >
-          <svg
-            className="h-3 w-3 shrink-0"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.6"
-            aria-hidden
-          >
-            <path d="M7 17L17 7M17 7H8M17 7v9" />
-          </svg>
-          <span className="min-[380px]:hidden">Platform</span>
-          <span className="hidden min-[380px]:inline">Explore this platform</span>
-        </a>
+        {/* Right · order CTA (opens the order modal) */}
+        <DemoOrderCta
+          label={translate(locale, "db.cta")}
+          shortLabel={translate(locale, "db.ctaShort")}
+        />
       </div>
     </div>
   );

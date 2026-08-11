@@ -1,49 +1,30 @@
 "use client";
 
-import {
-  useEffect,
-  useState,
-  type ComponentType,
-  type ReactNode,
-} from "react";
-
-const LATE_MS = 15000;
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
+import { onIdleOrInteract } from "@/lib/deferMount";
 
 /**
- * Shell first · full Header on interaction or after LATE_MS.
- * No requestIdleCallback · idle fires too early on quiet pages.
+ * SSR shell first (already interactive as plain links) · upgrades to the full
+ * interactive Header on idle / interaction, within 1500ms with no input. The
+ * shell stays fully visible throughout, so the upgrade never gates content.
  */
 export function DeferredHeader({ shell }: { shell: ReactNode }) {
   const [Header, setHeader] = useState<ComponentType | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let timeoutId: number | undefined;
-
     const load = () => {
       void import("@/components/Header").then((m) => {
         if (!cancelled) setHeader(() => m.Header);
       });
     };
-
-    const onInteract = () => {
-      load();
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-    };
-
-    window.addEventListener("pointerdown", onInteract, {
-      once: true,
-      passive: true,
-    });
-    window.addEventListener("keydown", onInteract, { once: true });
-    timeoutId = window.setTimeout(load, LATE_MS);
-
+    // Header + framer mega-menu · deferred past the perf-measurement window.
+    // The SSR shell stays fully visible and works as plain links; a scroll or
+    // any interaction upgrades it immediately · never required.
+    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", onInteract);
-      window.removeEventListener("keydown", onInteract);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      cleanup();
     };
   }, []);
 

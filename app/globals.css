@@ -348,26 +348,24 @@ input.auth-input:-webkit-autofill {
   contain-intrinsic-size: auto 640px;
 }
 
-/* JS-free entrance for the server-rendered below-fold · content is visible in
-   the initial HTML; a one-shot animation plays on load. transform+opacity only
-   (no CLS). See components/home/HomeReveal.tsx. */
+/* JS-free entrance for the server-rendered below-fold · fail-open by design.
+   Transform-only (no opacity), so content is ALWAYS visible even if the
+   animation never advances · content-visibility:auto freezes off-screen
+   animations at time 0, and a frozen 16px slide is still fully legible. The
+   animation plays (slides to rest) as each section becomes relevant. No CLS. */
 @keyframes tkh-rise {
   from {
-    opacity: 0;
     transform: translateY(16px);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
 @keyframes tkh-pop {
   from {
-    opacity: 0;
     transform: scale(0.6);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -401,6 +399,19 @@ input.auth-input:-webkit-autofill {
 .tkh-pop {
   animation: tkh-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+@keyframes tkh-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.tkh-scale {
+  animation: tkh-scale 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
 .tkh-curtain {
   animation: tkh-curtain 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -414,6 +425,7 @@ input.auth-input:-webkit-autofill {
   .tkh-reveal,
   .tkh-reveal-stagger > *,
   .tkh-pop,
+  .tkh-scale,
   .tkh-curtain {
     animation: none;
   }

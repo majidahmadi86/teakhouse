@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import dynamic from "next/dynamic";
+import type { DemoStrings } from "@/lib/demoStrings";
 
 const DM_KEY = "tkh-dm2";
 const DEMO_OPEN_EVENT = "tkh:demo-open";
@@ -35,11 +36,12 @@ const DemoModalPanel = dynamic(
 
 type DemoModalProps = {
   auto?: boolean;
-  children: ReactNode;
+  strings: DemoStrings;
+  children?: ReactNode;
 };
 
-/** Light provider — modal UI loads only when opened (or after auto-timer). */
-export function DemoModal({ auto = false, children }: DemoModalProps) {
+/** Light provider — order modal UI loads only when opened (or after auto-timer). */
+export function DemoModal({ auto = false, strings, children }: DemoModalProps) {
   const [open, setOpen] = useState(false);
   const [panelReady, setPanelReady] = useState(false);
 
@@ -85,7 +87,9 @@ export function DemoModal({ auto = false, children }: DemoModalProps) {
   return (
     <Ctx.Provider value={value}>
       {children}
-      {panelReady ? <DemoModalPanel open={open} onClose={closeModal} /> : null}
+      {panelReady ? (
+        <DemoModalPanel open={open} onClose={closeModal} strings={strings} />
+      ) : null}
     </Ctx.Provider>
   );
 }

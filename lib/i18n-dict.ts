@@ -167,6 +167,29 @@ export const DICT: Record<string, DictEntry> = {
   "dm.cta": { en: "Explore the demo", th: "ชมเว็บตัวอย่าง" },
   "dm.owner": { en: "Open the owner dashboard", th: "เปิดแดชบอร์ดเจ้าของ" },
 
+  "db.viewing": { en: "Viewing:", th: "มุมมอง:" },
+  "db.guest": { en: "Guest site", th: "หน้าเว็บลูกค้า" },
+  "db.owner": { en: "Owner panel", th: "ระบบหลังบ้าน" },
+  "db.cta": {
+    en: "Get this for your property",
+    th: "รับเว็บแบบนี้สำหรับที่พักของคุณ",
+  },
+  "db.ctaShort": { en: "Get this", th: "รับเว็บแบบนี้" },
+  "do.title": {
+    en: "A site like this, for your property",
+    th: "เว็บแบบนี้ สำหรับที่พักของคุณ",
+  },
+  "do.line": {
+    en: "Direct bookings, owner dashboard and AI concierge · designed, launched and maintained by Mikaro Studio.",
+    th: "ระบบจองตรง พร้อมหลังบ้านและ AI ผู้ช่วย · ออกแบบ ติดตั้ง และดูแลโดย Mikaro Studio",
+  },
+  "do.primary": { en: "Chat on LINE", th: "คุยทาง LINE" },
+  "do.secondary": { en: "Platform details", th: "รายละเอียดแพลตฟอร์ม" },
+  "ow.demoData": {
+    en: "Demo data · resets hourly",
+    th: "ข้อมูลตัวอย่าง · รีเซ็ตทุกชั่วโมง",
+  },
+
   "rp.h1": { en: "Rooms and rates", th: "ห้องพักและราคา" },
   "rp.lead": {
     en: "Four room types, twelve rooms in the house. Direct rates below beat every booking site, every night.",

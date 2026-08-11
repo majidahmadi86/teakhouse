@@ -1,78 +1,49 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** Premium ease · no bounce. */
+/**
+ * JS-free entrance wrappers · fail-open by construction.
+ *
+ * Content is present and visible in the initial HTML; a one-shot CSS animation
+ * (transform + opacity, defined in globals.css) plays on load. If JS never runs
+ * the content is still fully visible · there is no opacity-0 resting state that
+ * depends on hydration, and prefers-reduced-motion drops the animation to a
+ * plain visible element. Same public API as the former framer version, so no
+ * consumer changes are needed.
+ */
 export const premiumEase = [0.22, 1, 0.36, 1] as const;
-
-const rise = {
-  duration: 0.4,
-  ease: premiumEase,
-};
 
 export function Reveal({
   children,
   className,
   delay = 0,
-  y = 16,
-  once = true,
 }: {
   children: ReactNode;
   className?: string;
   delay?: number;
+  /** Accepted for API compatibility · CSS handles the offset. */
   y?: number;
   once?: boolean;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
+  const style: CSSProperties | undefined =
+    delay > 0 ? { animationDelay: `${delay}s` } : undefined;
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-40px" }}
-      transition={{ ...rise, delay }}
-    >
+    <div className={cn("tkh-reveal", className)} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 export function RevealStagger({
   children,
   className,
-  stagger = 0.08,
 }: {
   children: ReactNode;
   className?: string;
+  /** Accepted for API compatibility · CSS handles the per-child stagger. */
   stagger?: number;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-40px" }}
-      variants={{
-        hidden: {},
-        show: { transition: { staggerChildren: stagger } },
-      }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("tkh-reveal-stagger", className)}>{children}</div>;
 }
 
 export function RevealItem({
@@ -82,27 +53,7 @@ export function RevealItem({
   children: ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      variants={{
-        hidden: { opacity: 0, y: 16 },
-        show: {
-          opacity: 1,
-          y: 0,
-          transition: rise,
-        },
-      }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 export function MotionCard({
@@ -112,25 +63,9 @@ export function MotionCard({
   children: ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={cn("group", className)}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={cn("group", className)}
-      whileHover={{ y: -4 }}
-      transition={rise}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("group tkh-lift", className)}>{children}</div>;
 }
 
-/** Clip-path curtain reveal for split-section images.
- *  Starts nearly visible so mobile stacked layouts never show a tall blank gap. */
 export function CurtainReveal({
   children,
   className,
@@ -138,23 +73,7 @@ export function CurtainReveal({
   children: ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ clipPath: "inset(18% 0 0 0)" }}
-      whileInView={{ clipPath: "inset(0% 0 0 0)" }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.85, ease: premiumEase }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("tkh-curtain", className)}>{children}</div>;
 }
 
 export function ScaleIn({
@@ -164,21 +83,5 @@ export function ScaleIn({
   children: ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, scale: 0.96 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={rise}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={cn("tkh-scale", className)}>{children}</div>;
 }

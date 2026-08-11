@@ -184,6 +184,11 @@ export function OwnerShell({
             <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-gold">
               {t("ow.eyebrow")}
             </p>
+            {demoMode ? (
+              <p className="mt-1.5 text-[0.68rem] font-semibold text-white/45">
+                {t("ow.demoData")}
+              </p>
+            ) : null}
           </div>
 
           <nav
@@ -225,6 +230,11 @@ export function OwnerShell({
             <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
               {t("ow.eyebrow")}
             </span>
+            {demoMode ? (
+              <span className="ml-auto text-[0.66rem] font-semibold text-white/45">
+                {t("ow.demoData")}
+              </span>
+            ) : null}
           </div>
           <div className="flex items-center gap-2 px-4 pb-3">
             <LangToggle compact />
