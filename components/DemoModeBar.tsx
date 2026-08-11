@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 /** Demo funnel · link to the Hotelier product page (demo builds only). */
-const ABOUT_URL = "https://mikaro.studio/hotelier";
+const ABOUT_URL = "https://mikaro.studio/teakhouse";
 
 /** Fixed demo bar height · kept in sync with --demo-bar-h in globals / layout. */
 export const DEMO_BAR_HEIGHT_PX = 40;
