@@ -72,7 +72,7 @@ export function DemoModalPanel({
                 rel="noopener noreferrer"
                 className="btn-primary"
               >
-                About this system · Hotelier
+                About this platform
               </a>
             ) : null}
             <button

@@ -83,7 +83,8 @@ export function DemoModeBar({
           >
             <path d="M7 17L17 7M17 7H8M17 7v9" />
           </svg>
-          Hotelier<span className="hidden min-[380px]:inline">&nbsp;·&nbsp;about this system</span>
+          <span className="min-[380px]:hidden">Platform</span>
+          <span className="hidden min-[380px]:inline">Explore this platform</span>
         </a>
       </div>
     </div>
