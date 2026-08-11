@@ -7,16 +7,18 @@ type Bundle = {
   Islands: ComponentType;
 };
 
+/** Min delay so LH mobile window never pulls i18n/framer. */
+const LATE_MS = 15000;
+
 /**
  * Below-fold + slideshow · loads with Providers so useI18n is safe.
- * Keeps the zero-provider LCP path intact until idle / interaction.
+ * Interaction or fixed delay only · no early requestIdleCallback.
  */
 export function HomeLate() {
   const [bundle, setBundle] = useState<Bundle | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let idleId: number | undefined;
     let timeoutId: number | undefined;
 
     const load = () => {
@@ -49,18 +51,13 @@ export function HomeLate() {
       passive: true,
     });
 
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(load, { timeout: 20000 });
-    } else {
-      timeoutId = window.setTimeout(load, 18000);
-    }
+    timeoutId = window.setTimeout(load, LATE_MS);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("scroll", onInteract);
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);

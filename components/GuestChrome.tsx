@@ -5,9 +5,10 @@ import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 
 type ShellProps = { children: ReactNode; headerShell: ReactNode };
 
+const LATE_MS = 15000;
+
 /**
- * Home: static header shell only · no GuestShell graph on LCP.
- * After idle/interaction, upgrade to full Header (with Providers).
+ * Home: static header shell on LCP · upgrade Header only after delay/interact.
  * Other routes: full GuestShell.
  */
 export function GuestChrome({
@@ -39,7 +40,6 @@ export function GuestChrome({
   useEffect(() => {
     if (!isHome) return;
     let cancelled = false;
-    let idleId: number | undefined;
     let timeoutId: number | undefined;
 
     const load = () => {
@@ -65,17 +65,12 @@ export function GuestChrome({
     });
     window.addEventListener("keydown", onInteract, { once: true });
 
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(load, { timeout: 20000 });
-    } else {
-      timeoutId = window.setTimeout(load, 18000);
-    }
+    timeoutId = window.setTimeout(load, LATE_MS);
 
     return () => {
       cancelled = true;
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, [isHome]);
