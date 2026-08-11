@@ -150,7 +150,7 @@ export default function OwnerCalendarPage() {
         </div>
       </div>
 
-      <div className="owner-panel mb-6 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="owner-panel mb-6 flex flex-col gap-4 rounded-2xl  p-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-xs flex-1">
           <OwnerListbox
             label={t("col.room")}
@@ -160,7 +160,7 @@ export default function OwnerCalendarPage() {
           />
         </div>
         <div
-          className="flex rounded-xl border border-white/10 bg-white/5 p-1"
+          className="owner-inset flex rounded-xl p-1"
           role="group"
           aria-label="Calendar view mode"
         >
@@ -201,7 +201,7 @@ export default function OwnerCalendarPage() {
           className="overflow-hidden"
         >
       {viewMode === "heat" ? (
-        <section className="owner-panel overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+        <section className="owner-panel overflow-hidden rounded-2xl  p-4 md:p-6">
           <p className="mb-4 text-sm text-white/55">
             Occupancy heat · darker = fuller house that night
           </p>
@@ -252,7 +252,7 @@ export default function OwnerCalendarPage() {
           </div>
         </section>
       ) : (
-        <section className="owner-panel overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+        <section className="owner-panel overflow-hidden rounded-2xl  p-4 md:p-6">
           <div className="overflow-x-auto">
             <div
               className="grid min-w-[640px] gap-1"

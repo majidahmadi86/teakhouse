@@ -407,7 +407,7 @@ export default function OwnerBookingsPage() {
         </div>
       </div>
 
-      <div className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
+      <div className="owner-panel mb-6 rounded-2xl  p-4 md:p-6">
         <div className="grid gap-4 md:grid-cols-[1fr_auto_auto]">
           <input
             type="search"
@@ -430,7 +430,7 @@ export default function OwnerBookingsPage() {
       </div>
 
       {/* Desktop table */}
-      <div className="owner-panel hidden overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] md:block">
+      <div className="owner-panel hidden overflow-hidden rounded-2xl  md:block">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -501,7 +501,7 @@ export default function OwnerBookingsPage() {
               key={b.id}
               type="button"
               onClick={() => openDrawer(b)}
-              className="w-full rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-gold/30"
+              className="w-full owner-panel rounded-2xl p-4 text-left transition hover:border-gold/30"
             >
               <div className="mb-2 flex items-start justify-between gap-3">
                 <span className="font-bold text-white">{b.code}</span>

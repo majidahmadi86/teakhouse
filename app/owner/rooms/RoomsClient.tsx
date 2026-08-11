@@ -271,7 +271,7 @@ export default function OwnerRoomsPage() {
             <article
               key={room.id}
               className={cn(
-                "overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] transition",
+                "overflow-hidden owner-panel rounded-2xl transition",
                 !room.active && "opacity-60"
               )}
             >
@@ -366,7 +366,7 @@ export default function OwnerRoomsPage() {
                         {rules.map((rule) => (
                           <li
                             key={rule.id}
-                            className="flex items-start justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs"
+                            className="flex items-start justify-between gap-2 owner-inset rounded-lg px-3 py-2 text-xs"
                           >
                             <div>
                               <p className="font-bold text-white">

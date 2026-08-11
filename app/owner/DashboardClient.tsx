@@ -249,7 +249,7 @@ export default function OwnerDashboardPage() {
       </OwnerStagger>
 
       {/* Revenue dashboard */}
-      <section className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+      <section className="owner-panel mb-6 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
           Revenue
         </h2>
@@ -320,7 +320,7 @@ export default function OwnerDashboardPage() {
               return (
                 <div
                   key={src}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3"
+                  className="owner-inset rounded-xl px-4 py-3"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span
@@ -352,7 +352,7 @@ export default function OwnerDashboardPage() {
         </div>
       </section>
 
-      <section className="owner-panel mb-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+      <section className="owner-panel mb-6 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-4 font-display text-xl font-semibold text-white">
           {t("ow.mix")}
         </h2>
@@ -377,7 +377,7 @@ export default function OwnerDashboardPage() {
         <p className="mt-4 text-sm font-medium text-white/60">{t("ow.mixnote")}</p>
       </section>
 
-      <section className="owner-panel rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+      <section className="owner-panel rounded-2xl  p-6 md:p-8">
         <h2 className="mb-6 font-display text-xl font-semibold text-white">
           {t("ow.next7")}
         </h2>
@@ -440,7 +440,7 @@ export default function OwnerDashboardPage() {
 
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+    <div className="owner-inset rounded-xl px-4 py-3">
       <b className="mb-1 block text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-own-blue">
         {label}
       </b>

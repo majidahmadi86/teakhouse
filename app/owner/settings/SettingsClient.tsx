@@ -15,11 +15,11 @@ const PLACEHOLDERS = [
 ];
 
 const inputClass =
-  "min-h-[44px] w-full rounded-[10px] border border-white/10 bg-white/5 px-4 py-3 text-base text-white caret-white";
+  "min-h-[44px] w-full rounded-[10px] border-0 bg-black/30 px-4 py-3 text-base text-white caret-white";
 const textareaClass =
-  "relative z-0 w-full resize-y rounded-[10px] border border-white/10 bg-white/5 px-4 py-3 text-base text-white caret-white";
+  "relative z-0 w-full resize-y rounded-[10px] border-0 bg-black/30 px-4 py-3 text-base text-white caret-white";
 const emailBodyClass =
-  "relative z-0 min-h-[280px] w-full resize-y rounded-[10px] border border-white/10 bg-brand-2 px-4 py-3 font-mono text-sm leading-relaxed text-white caret-white shadow-none";
+  "relative z-0 min-h-[280px] w-full resize-y rounded-[10px] border-0 bg-black/35 px-4 py-3 font-mono text-sm leading-relaxed text-white caret-white shadow-none";
 
 export default function OwnerSettingsPage() {
   const [hotel, setHotel] = useState<HotelDto | null>(null);
@@ -119,7 +119,7 @@ export default function OwnerSettingsPage() {
       </header>
 
       {/* Contact + policies */}
-      <section className="owner-panel mb-8 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+      <section className="owner-panel mb-8 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
           Hotel contact & policies
         </h2>
@@ -316,7 +316,7 @@ export default function OwnerSettingsPage() {
       </section>
 
       {/* Email template */}
-      <section className="owner-panel rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8">
+      <section className="owner-panel rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
           Confirmation email
         </h2>
@@ -330,7 +330,7 @@ export default function OwnerSettingsPage() {
           {PLACEHOLDERS.map((p) => (
             <code
               key={p}
-              className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-own-blue"
+              className="owner-inset rounded-lg px-2.5 py-1 text-xs font-semibold text-own-blue"
             >
               {p}
             </code>

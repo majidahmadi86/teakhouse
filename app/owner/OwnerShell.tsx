@@ -68,7 +68,7 @@ function LangToggle({ compact }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "flex rounded-xl border border-white/10 bg-white/5 p-1",
+        "owner-inset flex rounded-xl p-1",
         compact ? "shrink-0" : "w-full"
       )}
     >
@@ -176,7 +176,7 @@ export function OwnerShell({
     >
       {isDesktop ? (
         <aside
-          className="sticky top-[var(--demo-bar-h)] z-30 flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-brand"
+          className="sticky top-[var(--demo-bar-h)] z-30 flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto bg-brand shadow-[8px_0_32px_rgba(0,0,0,.35)]"
           aria-label="Owner sidebar"
         >
           <div className="shrink-0 border-b border-white/10 px-6 py-6">
@@ -219,7 +219,7 @@ export function OwnerShell({
           </div>
         </aside>
       ) : (
-        <header className="sticky top-[var(--demo-bar-h)] z-40 border-b border-white/10 bg-brand-2/95 backdrop-blur-md">
+        <header className="sticky top-[var(--demo-bar-h)] z-40 bg-brand-2/95 shadow-[0_8px_24px_rgba(0,0,0,.28)] backdrop-blur-md">
           <div className="flex items-center gap-3 px-4 py-3">
             <Logo light showTag={false} className="h-6 w-auto shrink-0" />
             <span className="text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
