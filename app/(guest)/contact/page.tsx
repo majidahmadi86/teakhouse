@@ -25,6 +25,8 @@ export default function ContactPage() {
     <>
       <PageHero
         image="/images/contact-hero.jpg"
+        imageAvif="/images/contact-hero.avif"
+        imageWebp="/images/contact-hero.webp"
         alt="Contact the house"
         eyebrow={t("ct.page")}
         title={t("ct.page")}

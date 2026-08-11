@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { DemoModal } from "@/components/DemoModal";
 import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
-import { DeferredHeader } from "@/components/header/DeferredHeader";
+import { Header } from "@/components/Header";
 import { cn } from "@/lib/utils";
 
 const Footer = dynamic(
@@ -18,16 +18,9 @@ function DeferredFooter() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let idleId: number | undefined;
     let timeoutId: number | undefined;
-    const arm = () => setReady(true);
-    if (typeof window.requestIdleCallback === "function") {
-      idleId = window.requestIdleCallback(arm, { timeout: 14000 });
-    } else {
-      timeoutId = window.setTimeout(arm, 12000);
-    }
+    timeoutId = window.setTimeout(() => setReady(true), 2000);
     return () => {
-      if (idleId !== undefined) window.cancelIdleCallback(idleId);
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
@@ -41,20 +34,22 @@ export function GuestShell({
   headerShell,
 }: {
   children: React.ReactNode;
-  headerShell: ReactNode;
+  /** Unused on non-home · kept for call-site compatibility. */
+  headerShell?: ReactNode;
 }) {
+  void headerShell;
   const pathname = usePathname();
   const isBook = pathname === "/book";
   const isRoomDetail =
     pathname.startsWith("/rooms/") && pathname !== "/rooms";
   const isAuth =
     pathname === "/account/signin" || pathname === "/account/signup";
-  const autoDemo = pathname === "/";
+  const autoDemo = false;
   const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
 
   return (
     <DemoModal auto={autoDemo}>
-      <DeferredHeader shell={headerShell} />
+      <Header />
       <main
         className={
           isBook || isRoomDetail || isAuth

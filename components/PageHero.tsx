@@ -5,6 +5,9 @@ import { cn } from "@/lib/utils";
 
 type PageHeroProps = {
   image: string;
+  /** Optional AVIF · preferred when present (contact hero). */
+  imageAvif?: string;
+  imageWebp?: string;
   alt: string;
   eyebrow: string;
   title: string;
@@ -16,6 +19,8 @@ type PageHeroProps = {
 
 export function PageHero({
   image,
+  imageAvif,
+  imageWebp,
   alt,
   eyebrow,
   title,
@@ -23,6 +28,8 @@ export function PageHero({
   className,
   objectPosition = "center",
 }: PageHeroProps) {
+  const usePicture = Boolean(imageAvif || imageWebp);
+
   return (
     <section
       className={cn(
@@ -31,16 +38,38 @@ export function PageHero({
       )}
     >
       <div className="absolute inset-0 -z-10">
-        <SafeImage
-          src={image}
-          alt={alt}
-          fill
-          priority
-          quality={78}
-          sizes="(max-width: 768px) 100vw, 1600px"
-          className="scale-[1.02] object-cover"
-          style={{ objectPosition }}
-        />
+        {usePicture ? (
+          <picture>
+            {imageAvif ? (
+              <source srcSet={imageAvif} type="image/avif" />
+            ) : null}
+            {imageWebp ? (
+              <source srcSet={imageWebp} type="image/webp" />
+            ) : null}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image}
+              alt={alt}
+              width={1600}
+              height={900}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 h-full w-full scale-[1.02] object-cover"
+              style={{ objectPosition }}
+            />
+          </picture>
+        ) : (
+          <SafeImage
+            src={image}
+            alt={alt}
+            fill
+            priority
+            quality={78}
+            sizes="(max-width: 768px) 100vw, 1600px"
+            className="scale-[1.02] object-cover"
+            style={{ objectPosition }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-navy/50 to-navy/85" />
       </div>
       <div className="mx-auto w-full max-w-[1180px] px-6">
