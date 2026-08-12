@@ -4,6 +4,7 @@ import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { prisma } from "@/lib/db";
 import { hotelEventToClient } from "@/lib/events";
+import { getPageMedia } from "@/lib/hotelSettings";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
 import { isoDate } from "@/lib/utils";
 
@@ -13,11 +14,17 @@ const EVENT_TYPES = ["ev.t1", "ev.t2", "ev.t3"] as const;
 
 const STRIP = [
   {
-    base: "/images/facilities/pier-breakfast",
-    alt: "Tables on the river pier at the pavilion",
+    base: "/images/events/pavilion-dinner",
+    alt: "A long table laid for dinner under string lights",
   },
-  { base: "/images/facilities/courtyard-garden", alt: "Flowering courtyard garden beside the pavilion" },
-  { base: "/images/facilities/pool", alt: "Saltwater pool in the courtyard at dusk" },
+  {
+    base: "/images/events/celebration-table",
+    alt: "Glasses and flowers on a table set for a celebration",
+  },
+  {
+    base: "/images/events/string-lights",
+    alt: "String lights over the pavilion deck after sunset",
+  },
 ] as const;
 
 /**
@@ -30,20 +37,24 @@ export default async function EventsPage() {
   const locale = getServerLocale();
   const todayIso = isoDate(new Date());
 
-  const events = (
-    await prisma.hotelEvent.findMany({
-      where: { published: true, date: { gte: todayIso } },
-      orderBy: { date: "asc" },
-    })
-  ).map(hotelEventToClient);
+  const [events, media] = await Promise.all([
+    prisma.hotelEvent
+      .findMany({
+        where: { published: true, date: { gte: todayIso } },
+        orderBy: { date: "asc" },
+      })
+      .then((rows) => rows.map(hotelEventToClient)),
+    getPageMedia(),
+  ]);
 
   return (
     <>
       <PageHero
-        image="/images/facilities/courtyard-garden-1280.webp"
-        imageAvif="/images/facilities/courtyard-garden-1280.avif"
-        imageWebp="/images/facilities/courtyard-garden-1280.webp"
-        alt="Courtyard garden beside the riverside pavilion"
+        image={media.eventsHeroImage || "/images/events/hero-1280.webp"}
+        imageAvif={media.eventsHeroImage ? undefined : "/images/events/hero-1280.avif"}
+        imageWebp={media.eventsHeroImage ? undefined : "/images/events/hero-1280.webp"}
+        unoptimized={Boolean(media.eventsHeroImage)}
+        alt="A table set for dinner in the riverside pavilion under string lights"
         eyebrow={t(locale, "nav.events")}
         title={t(locale, "ev.h1")}
         lead={t(locale, "ev.lead")}

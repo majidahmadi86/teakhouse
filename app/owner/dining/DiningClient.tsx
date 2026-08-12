@@ -9,23 +9,30 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
+import { ImageUploadField } from "@/components/owner/ImageUploadField";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { OwnerSkeleton } from "@/components/owner/OwnerSkeleton";
 import type { DiningCategory, DiningItem } from "@/lib/dining";
 import { useI18n } from "@/lib/i18n";
 import { cn, formatBaht } from "@/lib/utils";
+import { ReservationsPanel } from "./ReservationsPanel";
 
-type CategoryForm = { name: { en: string; th: string }; published: boolean };
+type CategoryForm = {
+  name: { en: string; th: string };
+  image: string;
+  published: boolean;
+};
 type DishForm = {
   categoryId: string;
   name: { en: string; th: string };
   description: { en: string; th: string };
   price: number;
+  image: string;
   published: boolean;
 };
 
 function emptyCategory(): CategoryForm {
-  return { name: { en: "", th: "" }, published: true };
+  return { name: { en: "", th: "" }, image: "", published: true };
 }
 
 function emptyDish(categoryId: string): DishForm {
@@ -34,6 +41,7 @@ function emptyDish(categoryId: string): DishForm {
     name: { en: "", th: "" },
     description: { en: "", th: "" },
     price: 200,
+    image: "",
     published: true,
   };
 }
@@ -85,7 +93,11 @@ export default function OwnerDiningPage() {
 
   function openEditCategory(cat: DiningCategory) {
     setEditingCat(cat);
-    setCatForm({ name: { ...cat.name }, published: cat.published });
+    setCatForm({
+      name: { ...cat.name },
+      image: cat.image,
+      published: cat.published,
+    });
     setCatModalOpen(true);
   }
 
@@ -98,13 +110,22 @@ export default function OwnerDiningPage() {
     if (editingCat) {
       await jsonFetch(`/api/dining/categories/${editingCat.id}`, {
         method: "PATCH",
-        body: JSON.stringify({ name, published: catForm.published }),
+        body: JSON.stringify({
+          name,
+          image: catForm.image,
+          published: catForm.published,
+        }),
       });
     } else {
       const order = categories?.length ?? 0;
       await jsonFetch("/api/dining/categories", {
         method: "POST",
-        body: JSON.stringify({ name, order, published: catForm.published }),
+        body: JSON.stringify({
+          name,
+          image: catForm.image,
+          order,
+          published: catForm.published,
+        }),
       });
     }
     setCatModalOpen(false);
@@ -138,6 +159,7 @@ export default function OwnerDiningPage() {
       name: { ...dish.name },
       description: { ...dish.description },
       price: dish.price,
+      image: dish.image,
       published: dish.published,
     });
     setDishModalOpen(true);
@@ -156,6 +178,7 @@ export default function OwnerDiningPage() {
         th: dishForm.description.th.trim() || dishForm.description.en.trim(),
       },
       price: dishForm.price,
+      image: dishForm.image,
       published: dishForm.published,
     };
     if (editingDish) {
@@ -206,6 +229,12 @@ export default function OwnerDiningPage() {
           Add category
         </button>
       </div>
+
+      <ReservationsPanel />
+
+      <h2 className="mb-4 mt-10 font-display text-2xl font-semibold text-white">
+        The menu
+      </h2>
 
       <div className="space-y-6">
         {categories.map((cat) => (
@@ -341,6 +370,13 @@ export default function OwnerDiningPage() {
               />
             </Field>
           </div>
+          <ImageUploadField
+            label="Category image"
+            value={catForm.image}
+            folder="dining-categories"
+            onChange={(url) => setCatForm((p) => ({ ...p, image: url }))}
+            hint="Wide crop · shown above the category on the dining page. Leave empty to keep the house photography."
+          />
           <Field label="Visibility">
             <OwnerListbox
               value={catForm.published ? "yes" : "no"}
@@ -461,6 +497,13 @@ export default function OwnerDiningPage() {
               />
             </Field>
           </div>
+          <ImageUploadField
+            label="Dish photo"
+            value={dishForm.image}
+            folder="dining-dishes"
+            onChange={(url) => setDishForm((p) => ({ ...p, image: url }))}
+            hint="Optional · a close crop of the dish, shown beside its name."
+          />
         </div>
         <ModalActions
           onCancel={() => setDishModalOpen(false)}

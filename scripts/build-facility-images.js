@@ -1,5 +1,6 @@
 /**
- * Fetch the v11 facility / house imagery once and encode it to local AVIF.
+ * Fetch the site's photography once and encode it to local AVIF.
+ * (v11 facilities + house, extended in v13 with the dining and events sets.)
  *
  * Every new v11 image ships from our own origin as AVIF at two widths, so the
  * facilities page and the home strip cost one small request per card with no
@@ -41,6 +42,29 @@ const SOURCES = [
   { slug: "house/concierge-desk", id: "photo-1758708536313-e7055ddba277", ratio: 1 },
   { slug: "house/housekeeping-team", id: "photo-1580842402762-6f5868c17412", ratio: 1 },
   { slug: "house/kitchen", id: "photo-1784955703055-858931d28472", ratio: 1 },
+
+  // v13 · DINING · food photography, not people. The v12 hero was a person on
+  // the pier, which told a guest nothing about the kitchen. Every frame here is
+  // the food itself, close cropped, warm light. Heroes are 16:9 (full-bleed
+  // band), category strips 16:7, so the crop is decided here and not by CSS.
+  { slug: "dining/hero", id: "photo-1763647818427-326fa8e6699f", ratio: 16 / 9 },
+  { slug: "dining/reserve", id: "photo-1463183547458-6a2c760d0912", ratio: 16 / 9 },
+  // Centre gravity, not attention: the salient-region crop of this one walks
+  // off the claypot onto the empty table and loses the food entirely.
+  {
+    slug: "dining/breakfast",
+    id: "photo-1766761562530-c8dd12c96d9a",
+    ratio: 16 / 7,
+    position: "center",
+  },
+  { slug: "dining/thai-kitchen", id: "photo-1618449840665-9ed506d73a34", ratio: 16 / 7 },
+  { slug: "dining/drinks", id: "photo-1750124933194-e021f47b5f8b", ratio: 16 / 7 },
+
+  // v13 · EVENTS · the pavilion after dark: laid tables, candles, string lights.
+  { slug: "events/hero", id: "photo-1759866614095-d867221143f7", ratio: 16 / 9 },
+  { slug: "events/pavilion-dinner", id: "photo-1740120424442-ccd013ec9581", ratio: 4 / 3 },
+  { slug: "events/celebration-table", id: "photo-1511795409834-ef04bbd61622", ratio: 4 / 3 },
+  { slug: "events/string-lights", id: "photo-1574482211311-45a2169db57c", ratio: 4 / 3 },
 ];
 
 async function fetchSource(id) {
@@ -72,7 +96,7 @@ async function main() {
       const height = Math.round(width / source.ratio);
       const resized = sharp(input).resize(width, height, {
         fit: "cover",
-        position: "attention",
+        position: source.position ?? "attention",
       });
 
       const avifFile = `${outPath}-${width}.avif`;

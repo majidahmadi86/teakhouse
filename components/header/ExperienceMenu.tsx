@@ -14,13 +14,13 @@ function Link(props: ComponentProps<typeof NextLink>) {
 export const EXPERIENCE_MENU_ITEMS = [
   { href: "/experience", key: "nav.experience" },
   { href: "/facilities", key: "nav.facilities" },
-  { href: "/events", key: "nav.events" },
   { href: "/gallery", key: "nav.gallery" },
 ] as const;
 
 /**
- * Desktop-only "Experience" dropdown · v12 nav grouping (Experience,
- * Facilities, Events & Spaces, Gallery). Same open/close behaviour as
+ * Desktop-only "Experience" dropdown · v13 nav grouping (Experience,
+ * Facilities, Gallery · Events was promoted to a top-level item). Same
+ * open/close behaviour as
  * RoomsMegaMenu: hover with a close delay, focus, ArrowDown, ESC. The trigger
  * itself still links to /experience, so the group works without the menu.
  */

@@ -24,6 +24,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
         descriptionEn: patch.description?.en ?? existing.descriptionEn,
         descriptionTh: patch.description?.th ?? existing.descriptionTh,
         price: patch.price ?? existing.price,
+        image: patch.image ?? existing.image,
         order: patch.order ?? existing.order,
         published: patch.published ?? existing.published,
       },

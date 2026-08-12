@@ -9,6 +9,8 @@ export type DiningItem = {
   name: { en: string; th: string };
   description: { en: string; th: string };
   price: number;
+  /** v13 · uploaded image URL · empty renders the dish as text only */
+  image: string;
   order: number;
   published: boolean;
 };
@@ -16,6 +18,8 @@ export type DiningItem = {
 export type DiningCategory = {
   id: string;
   name: { en: string; th: string };
+  /** v13 · uploaded image URL · empty falls back to the seeded local art */
+  image: string;
   order: number;
   published: boolean;
   items: DiningItem[];
@@ -29,6 +33,7 @@ export type DbDiningItem = {
   descriptionEn: string;
   descriptionTh: string;
   price: number;
+  image: string;
   order: number;
   published: boolean;
 };
@@ -37,6 +42,7 @@ export type DbDiningCategory = {
   id: string;
   nameEn: string;
   nameTh: string;
+  image: string;
   order: number;
   published: boolean;
   items?: DbDiningItem[];
@@ -49,6 +55,7 @@ export function diningItemToClient(i: DbDiningItem): DiningItem {
     name: { en: i.nameEn, th: i.nameTh },
     description: { en: i.descriptionEn, th: i.descriptionTh },
     price: i.price,
+    image: i.image,
     order: i.order,
     published: i.published,
   };
@@ -62,6 +69,7 @@ export function diningItemToDb(i: DiningItem) {
     descriptionEn: i.description.en,
     descriptionTh: i.description.th,
     price: i.price,
+    image: i.image ?? "",
     order: i.order,
     published: i.published,
   };
@@ -71,6 +79,7 @@ export function diningCategoryToClient(c: DbDiningCategory): DiningCategory {
   return {
     id: c.id,
     name: { en: c.nameEn, th: c.nameTh },
+    image: c.image,
     order: c.order,
     published: c.published,
     items: (c.items ?? []).map(diningItemToClient),
@@ -81,6 +90,7 @@ export function diningCategoryToDb(c: Omit<DiningCategory, "items">) {
   return {
     nameEn: c.name.en,
     nameTh: c.name.th,
+    image: c.image ?? "",
     order: c.order,
     published: c.published,
   };

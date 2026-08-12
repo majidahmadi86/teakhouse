@@ -10,6 +10,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { ChevronRight, Plus, X } from "lucide-react";
+import { ImageUploadField } from "@/components/owner/ImageUploadField";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { SafeImage } from "@/components/SafeImage";
 import {
@@ -569,6 +570,25 @@ export default function OwnerRoomsPage() {
                           ) : null}
                         </div>
                       ))}
+                    </div>
+                    {/* v13 · upload straight into the next empty slot (or a new
+                        one), so the owner never has to paste a URL. */}
+                    <div className="mt-3">
+                      <ImageUploadField
+                        label="Upload a room photo"
+                        value=""
+                        folder="rooms"
+                        onChange={(url) => {
+                          setForm((p) => {
+                            const empty = p.photos.findIndex((x) => !x.trim());
+                            const photos = [...p.photos];
+                            if (empty >= 0) photos[empty] = url;
+                            else photos.push(url);
+                            return { ...p, photos };
+                          });
+                        }}
+                        hint="Added to the list above · the first photo is the room's cover."
+                      />
                     </div>
                   </div>
 

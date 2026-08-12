@@ -106,3 +106,97 @@ listed here only for completeness.
 
 - `/dining` · title "Dining" · description "Breakfast on the river pier, a Thai kitchen and drinks at sundown at The Teak House · a riverside boutique demo by Mikaro Studio."
 - `/events` · title "Events & Spaces" · description "A riverside teak pavilion for weddings, private dinners and parties, plus special evenings on the house calendar at The Teak House · a demo by Mikaro Studio."
+
+---
+
+# v13 · new keys awaiting the same Thai pass
+
+Appended per the v13 directive · one combined Thai pass covers both lists.
+Everything below carries its **English** copy in the `th` slot. No Thai was
+authored.
+
+## Dictionary keys (`lib/i18n-dict.ts`)
+
+| Key | English value |
+| --- | --- |
+| **Navigation** | |
+| `nav.eventsShort` | Events |
+| **Reserve a table · calls to action** | |
+| `rsv.cta` | Reserve a table |
+| `rsv.stripLead` | Ready to eat with us? |
+| **Reserve a table · page** | |
+| `rsv.h1` | A table by the river |
+| `rsv.lead` | Tell us when and how many. No deposit, no card details · we hold the table and confirm by message. |
+| `rsv.window` | Service {w} |
+| `rsv.step1` | When |
+| `rsv.step2` | How many |
+| `rsv.step3` | Who to ask for |
+| `rsv.date` | Date |
+| `rsv.time` | Time |
+| `rsv.party` | Party size |
+| `rsv.partyHint` | For more than {n} guests, call the house and we will set the long table. |
+| `rsv.person` | 1 person |
+| `rsv.people` | {n} people |
+| `rsv.name` | Name |
+| `rsv.contactKind` | How should we reach you? |
+| `rsv.kindPhone` | Phone |
+| `rsv.kindLine` | LINE |
+| `rsv.contact` | Phone number or LINE id |
+| `rsv.notes` | Anything we should know |
+| `rsv.notesHint` | Allergies, a birthday, a table near the water |
+| `rsv.submit` | Request the table |
+| `rsv.noDeposit` | No deposit and no card details are taken. |
+| **Reserve a table · validation messages** | |
+| `rsv.err.date` | Please choose today or a later date. |
+| `rsv.err.time` | That time is outside our service hours. Please pick one from the list. |
+| `rsv.err.party` | Please choose a party size from the list. |
+| `rsv.err.name` | Please tell us your name. |
+| `rsv.err.contact` | Please leave a phone number or LINE id so we can confirm. |
+| `rsv.err.closed` | Reservations are closed just now. Please contact the house directly. |
+| `rsv.err.failed` | Something went wrong at our end. Please try again, or contact the house. |
+| **Reserve a table · confirmation** | |
+| `rsv.okEyebrow` | Reserved |
+| `rsv.okH1` | Your table is requested |
+| `rsv.okLead` | The kitchen has it. Keep this reference for when you arrive. |
+| `rsv.refLabel` | Your reference |
+| `rsv.okNext` | We will confirm by phone or LINE shortly. If your plans change, tell us and we will move the table. |
+| `rsv.backToMenu` | Back to the menu |
+| **Reserve a table · switched off** | |
+| `rsv.closedH1` | Reservations are closed just now |
+| `rsv.closedP` | The kitchen is not taking table bookings online at the moment. Call or message the house and we will find you a seat. |
+
+Note · `rsv.window` renders the service hours as `HH:mm to HH:mm`. The word
+"to" is the only translatable part; the numerals are the same in both locales.
+
+## Concierge offline reply (`lib/conciergeIntents.ts`)
+
+| Where | English value |
+| --- | --- |
+| table intent (en+th) | With pleasure. Tell me a date, a time and how many, and the kitchen will hold a table · no deposit. Service runs 11:30 to 22:00. `<a href="/dining/reserve">Reserve a table here</a>` |
+
+## Owner manager labels (hardcoded EN · rooms-manager convention)
+
+Reservations panel: `Table reservations` · `Taking bookings` · `Switched off` ·
+`Service starts` · `Kitchen closes` · `Largest party` · `{n} guests` ·
+`The last sitting is one hour before the kitchen closes.` ·
+`Upcoming tables` · `{n} to confirm` · `No tables booked yet.` · `Past ({n})` ·
+`Hide past` · `guest` / `guests` · statuses `Pending` `Confirmed` `Seated`
+`Cancelled` · `Guests can request a table on the dining page · {n} sittings per
+day.` · `The reserve-a-table button is hidden across the site while this is
+off.`
+
+Upload fields: `Upload image` · `Replace image` · `Uploading` ·
+`Remove image` · `Image uploads activate after storage setup.` ·
+`Use a jpg, png or webp image.` · `That image is over 8MB even after
+resizing.` · `Upload failed. Please try again.` · `Category image` ·
+`Dish photo` · `Event image` · `Or paste an image path` ·
+`Upload a room photo` · `Dining page hero` · `Events page hero`.
+
+## Page metadata (EN only, like every other guest layout)
+
+- `/dining/reserve` · title "Reserve a table" · description "Reserve a table at The Teak House riverside kitchen · pick a date, a time and a party size, no deposit required. A demo by Mikaro Studio."
+
+## Not translatable
+
+The guest-facing reference code (`TBL-XXXX`) is deliberately alphanumeric in
+both locales · it gets read aloud down a phone line.

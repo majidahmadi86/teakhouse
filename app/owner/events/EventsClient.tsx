@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { Plus } from "lucide-react";
+import { ImageUploadField } from "@/components/owner/ImageUploadField";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { OwnerSkeleton } from "@/components/owner/OwnerSkeleton";
 import { SafeImage } from "@/components/SafeImage";
@@ -314,11 +315,18 @@ export default function OwnerEventsPage() {
               />
             </Field>
           </div>
-          <Field label="Image URL">
+          <ImageUploadField
+            label="Event image"
+            value={form.image}
+            folder="events"
+            onChange={(url) => setForm((p) => ({ ...p, image: url }))}
+            hint="Wide crop · shown on the events page card."
+          />
+          <Field label="Or paste an image path">
             <input
               value={form.image}
               onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))}
-              placeholder="/images/facilities/pier-breakfast-1280.webp"
+              placeholder="/images/events/pavilion-dinner-1280.webp"
               className={inputClass}
             />
           </Field>

@@ -54,6 +54,10 @@ export function Footer() {
             <Link href="/experience" className={linkClass}>
               {t("ft.exp")}
             </Link>
+            {/* No reserve-a-table link here on purpose · the footer is a client
+                component with no read on the reservations flag, and the v13 rule
+                is that the CTA disappears everywhere when the owner switches
+                reservations off. The CTA lives on /dining, which knows. */}
             <Link href="/dining" className={linkClass}>
               {t("nav.dining")}
             </Link>

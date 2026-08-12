@@ -190,7 +190,10 @@ async function run() {
     if (js) {
       await page.hover("header nav a[href='/experience']");
       await page.waitForTimeout(400);
-      for (const href of ["/experience", "/facilities", "/events", "/gallery"]) {
+      // v13 · Events was promoted out of this dropdown to a top-level nav item,
+      // so the group is now Experience · Facilities · Gallery. /events is
+      // asserted at the top level by the width sweep in v13-acceptance.
+      for (const href of ["/experience", "/facilities", "/gallery"]) {
         const n = await page.locator(`[role='menu'] a[href='${href}']`).count();
         check(`[1366] experience dropdown has ${href}`, n >= 1, `${n}`);
       }

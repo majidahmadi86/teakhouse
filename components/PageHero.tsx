@@ -13,6 +13,16 @@ type PageHeroProps = {
   className?: string;
   /** CSS object-position for art direction under the title. */
   objectPosition?: string;
+  /**
+   * v13 · render `image` as a plain <img>, no optimizer and no next/image.
+   * Set this for owner-uploaded heroes: the storage host is not in
+   * next.config remotePatterns, and an upload is already sized on the client.
+   * Existing remote heroes deliberately do NOT set it · they keep the
+   * optimizer they were certified with.
+   */
+  unoptimized?: boolean;
+  /** v13 · optional action under the lead (e.g. Reserve a table). */
+  cta?: React.ReactNode;
 };
 
 /**
@@ -32,8 +42,10 @@ export function PageHero({
   lead,
   className,
   objectPosition = "center",
+  unoptimized,
+  cta,
 }: PageHeroProps) {
-  const usePicture = Boolean(imageAvif || imageWebp);
+  const usePicture = Boolean(imageAvif || imageWebp || unoptimized);
 
   return (
     <section
@@ -85,6 +97,7 @@ export function PageHero({
         <p className="mt-5 max-w-[56ch] text-[1.08rem] leading-relaxed text-white/90 hero-text-shadow">
           {lead}
         </p>
+        {cta ? <div className="mt-7">{cta}</div> : null}
       </div>
     </section>
   );

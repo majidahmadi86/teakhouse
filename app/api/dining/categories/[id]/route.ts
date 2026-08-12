@@ -23,6 +23,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
       data: {
         nameEn: patch.name?.en ?? existing.nameEn,
         nameTh: patch.name?.th ?? existing.nameTh,
+        image: patch.image ?? existing.image,
         order: patch.order ?? existing.order,
         published: patch.published ?? existing.published,
       },

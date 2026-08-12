@@ -25,6 +25,12 @@ function toDto(row: {
   cancelPolicy: string;
   petsPolicy: string;
   depositPct: number;
+  reservationsEnabled: boolean;
+  serviceStart: string;
+  serviceEnd: string;
+  maxPartySize: number;
+  diningHeroImage: string;
+  eventsHeroImage: string;
 }): HotelDto {
   return {
     id: row.id,
@@ -45,6 +51,12 @@ function toDto(row: {
     cancelPolicy: row.cancelPolicy,
     petsPolicy: row.petsPolicy,
     depositPct: row.depositPct,
+    reservationsEnabled: row.reservationsEnabled,
+    serviceStart: row.serviceStart,
+    serviceEnd: row.serviceEnd,
+    maxPartySize: row.maxPartySize,
+    diningHeroImage: row.diningHeroImage,
+    eventsHeroImage: row.eventsHeroImage,
   };
 }
 
@@ -87,6 +99,18 @@ export async function PATCH(req: Request) {
           typeof body.depositPct === "number"
             ? body.depositPct
             : existing.depositPct,
+        reservationsEnabled:
+          typeof body.reservationsEnabled === "boolean"
+            ? body.reservationsEnabled
+            : existing.reservationsEnabled,
+        serviceStart: body.serviceStart ?? existing.serviceStart,
+        serviceEnd: body.serviceEnd ?? existing.serviceEnd,
+        maxPartySize:
+          typeof body.maxPartySize === "number" && body.maxPartySize > 0
+            ? body.maxPartySize
+            : existing.maxPartySize,
+        diningHeroImage: body.diningHeroImage ?? existing.diningHeroImage,
+        eventsHeroImage: body.eventsHeroImage ?? existing.eventsHeroImage,
       },
     });
 

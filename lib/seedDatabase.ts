@@ -1014,7 +1014,8 @@ export async function seedDatabase() {
       date: nextOccurrence(today, 11, 24),
       description:
         "Float a krathong from our pier, then sit down to a five-course Thai dinner under the full moon. One seating, 28 guests.",
-      image: "/images/facilities/pier-breakfast-1280.webp",
+      // An evening event gets the evening photograph · the pavilion after dark.
+      image: "/images/events/pavilion-dinner-1280.webp",
     },
     {
       id: "ev-jazz-brunch",
@@ -1022,7 +1023,8 @@ export async function seedDatabase() {
       date: iso(addDays(today, toSunday)),
       description:
         "A trio on the pavilion deck, free-flow Thai brunch plates and the slow boats going by. Every Sunday, 11:30 to 15:00.",
-      image: "/images/facilities/lobby-lounge-1280.webp",
+      // Daytime event, daytime photograph · tables on the pier at breakfast.
+      image: "/images/facilities/pier-breakfast-1280.webp",
     },
     {
       id: "ev-songkran-lunch",

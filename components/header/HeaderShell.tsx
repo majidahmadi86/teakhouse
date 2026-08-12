@@ -4,18 +4,18 @@ import { LogoMark } from "@/components/LogoMark";
 import { getServerPathname, t, type Lang } from "@/lib/serverLocale";
 import { cn } from "@/lib/utils";
 
-/* v12 nav · keep in lockstep with Header (VISUAL PARITY LAW). */
+/* v13 nav · keep in lockstep with Header (VISUAL PARITY LAW). */
+const NAV_LEAD = [
+  { href: "/dining", key: "nav.dining" },
+  { href: "/events", key: "nav.eventsShort" },
+] as const;
+
 const NAV_TAIL = [
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
 ] as const;
 
-const EXPERIENCE_GROUP = [
-  "/experience",
-  "/facilities",
-  "/events",
-  "/gallery",
-] as const;
+const EXPERIENCE_GROUP = ["/experience", "/facilities", "/gallery"] as const;
 
 /**
  * Zero-JS header · a PIXEL-IDENTICAL static twin of the hydrated Header's
@@ -48,8 +48,9 @@ export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
           />
         </Link>
 
-        {/* CENTER nav · >=1200 */}
-        <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
+        {/* CENTER nav · >=1200 · gap matches Header exactly, including the
+            tighter 1200-1279 band (VISUAL PARITY LAW). */}
+        <nav className="mx-auto hidden items-center gap-5 min-[1200px]:flex min-[1280px]:gap-7">
           <Link
             href="/rooms"
             prefetch={false}
@@ -67,16 +68,19 @@ export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
               )}
             />
           </Link>
-          <Link
-            href="/dining"
-            prefetch={false}
-            className={cn(
-              "link-draw shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
-              isActive("/dining") ? "text-blue" : "text-ink hover:text-blue"
-            )}
-          >
-            {t(locale, "nav.dining")}
-          </Link>
+          {NAV_LEAD.map(({ href, key }) => (
+            <Link
+              key={href}
+              href={href}
+              prefetch={false}
+              className={cn(
+                "link-draw shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
+                isActive(href) ? "text-blue" : "text-ink hover:text-blue"
+              )}
+            >
+              {t(locale, key)}
+            </Link>
+          ))}
           <Link
             href="/experience"
             prefetch={false}

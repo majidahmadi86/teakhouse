@@ -75,6 +75,14 @@ export type HotelDto = {
   cancelPolicy: string;
   petsPolicy: string;
   depositPct: number;
+  /** v13 · table reservations */
+  reservationsEnabled: boolean;
+  serviceStart: string;
+  serviceEnd: string;
+  maxPartySize: number;
+  /** v13 · uploaded page heroes · empty means the seeded local image */
+  diningHeroImage: string;
+  eventsHeroImage: string;
 };
 
 /** Wire shape of a per-day rate rule · identical to lib/pricing PriceRule. */

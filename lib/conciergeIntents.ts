@@ -48,6 +48,17 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     },
   },
   {
+    // v13 · reserve a table · MUST stay ahead of the room-booking intent below,
+    // which also matches "book". "Can I book a table?" pointed at the room
+    // booking page until this went first. Hours here are the seeded service
+    // window; the live /api/concierge path quotes the owner's current hours.
+    k: /table|โต๊ะ/i,
+    r: {
+      en: 'With pleasure. Tell me a date, a time and how many, and the kitchen will hold a table · no deposit. Service runs 11:30 to 22:00. <a href="/dining/reserve" class="font-extrabold text-blue">Reserve a table here</a>',
+      th: 'With pleasure. Tell me a date, a time and how many, and the kitchen will hold a table · no deposit. Service runs 11:30 to 22:00. <a href="/dining/reserve" class="font-extrabold text-blue">Reserve a table here</a>',
+    },
+  },
+  {
     k: /book|reserve|จอง/i,
     r: {
       en: 'With pleasure. The booking page shows live availability and takes a small deposit by card or PromptPay, and your room is confirmed instantly. <a href="/book" class="font-extrabold text-blue">Book direct here</a>',

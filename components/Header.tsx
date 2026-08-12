@@ -31,28 +31,28 @@ function Link(props: ComponentProps<typeof NextLink>) {
   return <NextLink prefetch={false} {...props} />;
 }
 
-/* v12 nav · Rooms · Dining · Experience (dropdown) · Location · Contact.
-   Keep in lockstep with HeaderShell (VISUAL PARITY LAW). */
+/* v13 nav · Rooms · Dining · Events · Experience (dropdown) · Location ·
+   Contact. Keep in lockstep with HeaderShell (VISUAL PARITY LAW). */
+const NAV_LEAD = [
+  { href: "/dining", key: "nav.dining" },
+  { href: "/events", key: "nav.eventsShort" },
+] as const;
+
 const NAV_TAIL = [
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
 ] as const;
 
 /** Grouped under the Experience dropdown · used for the trigger active state. */
-const EXPERIENCE_GROUP = [
-  "/experience",
-  "/facilities",
-  "/events",
-  "/gallery",
-] as const;
+const EXPERIENCE_GROUP = ["/experience", "/facilities", "/gallery"] as const;
 
 const DRAWER_NAV = [
   { href: "/rooms", key: "nav.rooms", subtitle: "nav.roomsCount" as const },
   { href: "/offers", key: "nav.offers", offers: true },
   { href: "/dining", key: "nav.dining" },
+  { href: "/events", key: "nav.eventsShort" },
   { href: "/experience", key: "nav.experience" },
   { href: "/facilities", key: "nav.facilities" },
-  { href: "/events", key: "nav.events" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
@@ -287,14 +287,19 @@ export function Header() {
             />
           </Link>
 
-          {/* CENTER nav · >=1200 (CSS-gated · matches HeaderShell) */}
-          <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
+          {/* CENTER nav · >=1200 (CSS-gated · matches HeaderShell). The gap
+              tightens in the 1200-1279 band: six items at gap-7 push the
+              utility cluster 4px past the viewport at exactly 1200. */}
+          <nav className="mx-auto hidden items-center gap-5 min-[1200px]:flex min-[1280px]:gap-7">
             <RoomsMegaMenu active={isActive("/rooms")} />
-            <NavLink
-              href="/dining"
-              label={t("nav.dining")}
-              active={isActive("/dining")}
-            />
+            {NAV_LEAD.map(({ href, key }) => (
+              <NavLink
+                key={href}
+                href={href}
+                label={t(key)}
+                active={isActive(href)}
+              />
+            ))}
             <ExperienceMenu
               active={EXPERIENCE_GROUP.some((href) => isActive(href))}
             />

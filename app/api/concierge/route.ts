@@ -51,7 +51,7 @@ async function liveRoomFacts(): Promise<string> {
  */
 async function diningEventsFacts(): Promise<string> {
   const todayIso = new Date().toISOString().slice(0, 10);
-  const [cats, events] = await Promise.all([
+  const [cats, events, hotel] = await Promise.all([
     prisma.diningCategory.findMany({
       where: { published: true },
       orderBy: { order: "asc" },
@@ -68,6 +68,15 @@ async function diningEventsFacts(): Promise<string> {
       orderBy: { date: "asc" },
       take: 4,
     }),
+    prisma.hotel.findUnique({
+      where: { id: "default" },
+      select: {
+        reservationsEnabled: true,
+        serviceStart: true,
+        serviceEnd: true,
+        maxPartySize: true,
+      },
+    }),
   ]);
 
   const menu = cats
@@ -83,9 +92,16 @@ async function diningEventsFacts(): Promise<string> {
     .map((e) => `${e.titleEn} (${e.date}): ${e.descriptionEn}`)
     .join(" ");
 
+  // v13 · table reservations · the owner can switch these off, in which case
+  // the concierge must not offer the flow at all.
+  const tables = hotel?.reservationsEnabled
+    ? `Table reservations: open, service ${hotel.serviceStart} to ${hotel.serviceEnd}, up to ${hotel.maxPartySize} guests per table, no deposit and no card details. Send guests to /dining/reserve. Larger parties should call the house.`
+    : "Table reservations: not being taken online right now · send guests to /contact for a table.";
+
   return [
     "Dining: breakfast on the pier 07:00 to 11:00, kitchen until 22:00, full menu at /dining.",
     menu ? `Menu highlights (live prices): ${menu}.` : "",
+    tables,
     "Events & spaces: the riverside pavilion hosts weddings, private dinners and parties · 60 seated, 90 standing · details at /events.",
     upcoming ? `Coming up: ${upcoming}` : "",
   ]

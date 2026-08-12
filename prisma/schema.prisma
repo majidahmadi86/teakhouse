@@ -31,6 +31,14 @@ model Hotel {
   cancelPolicy String
   petsPolicy   String  @default("")
   depositPct   Int     @default(30)
+  /// v13 · table reservations · owner-editable service window and party cap
+  reservationsEnabled Boolean @default(true)
+  serviceStart        String  @default("11:30")
+  serviceEnd          String  @default("22:00")
+  maxPartySize        Int     @default(10)
+  /// v13 · owner-uploaded page heroes · empty falls back to the seeded local image
+  diningHeroImage     String  @default("")
+  eventsHeroImage     String  @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   rooms       Room[]
@@ -190,6 +198,8 @@ model DiningCategory {
   hotelId   String       @default("default")
   nameEn    String
   nameTh    String
+  /// v13 · uploaded image URL · empty falls back to the seeded local art
+  image     String       @default("")
   order     Int          @default(0)
   published Boolean      @default(true)
   createdAt DateTime     @default(now())
@@ -207,12 +217,39 @@ model DiningItem {
   descriptionEn String
   descriptionTh String
   price         Int
+  /// v13 · uploaded image URL · empty renders the dish as text only
+  image         String         @default("")
   order         Int            @default(0)
   published     Boolean        @default(true)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   @@index([categoryId, order])
+}
+
+/// v13 · Table reservation · no deposit, no payment · `ref` is the guest-facing
+/// TBL-XXXX code. Status moves pending -> confirmed -> seated, or cancelled.
+model TableReservation {
+  id          String   @id @default(cuid())
+  hotelId     String   @default("default")
+  ref         String   @unique
+  /// ISO yyyy-mm-dd
+  date        String
+  /// HH:mm, 24h, inside the hotel's service window
+  time        String
+  party       Int
+  name        String
+  /// Phone number or LINE id, as typed
+  contact     String
+  /// "phone" | "line"
+  contactKind String   @default("phone")
+  notes       String   @default("")
+  /// "pending" | "confirmed" | "seated" | "cancelled"
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date, time])
 }
 
 /// v12 · Special event · owner-editable, guest page renders published only

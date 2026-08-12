@@ -903,6 +903,9 @@ export const DICT: Record<string, DictEntry> = {
   // v12 · guest nav additions · th mirrors en pending Thai pass
   "nav.dining": { en: "Dining", th: "Dining" },
   "nav.events": { en: "Events & Spaces", th: "Events & Spaces" },
+  /* v13 · the top-level nav item · short so six items never crowd at 1200-1366.
+     The page title and the footer keep the full "Events & Spaces". */
+  "nav.eventsShort": { en: "Events", th: "Events" },
 
   // v12 · owner nav additions · th mirrors en pending Thai pass
   "ow.dining": { en: "Dining", th: "Dining" },
@@ -976,6 +979,91 @@ export const DICT: Record<string, DictEntry> = {
   "beyond.fac.p": {
     en: "Pool, garden, lounge and the quiet machinery of a good stay.",
     th: "Pool, garden, lounge and the quiet machinery of a good stay.",
+  },
+
+  // v13 · reserve a table · th mirrors en pending Thai pass
+  "rsv.cta": { en: "Reserve a table", th: "Reserve a table" },
+  "rsv.stripLead": { en: "Ready to eat with us?", th: "Ready to eat with us?" },
+  "rsv.h1": { en: "A table by the river", th: "A table by the river" },
+  "rsv.lead": {
+    en: "Tell us when and how many. No deposit, no card details · we hold the table and confirm by message.",
+    th: "Tell us when and how many. No deposit, no card details · we hold the table and confirm by message.",
+  },
+  "rsv.window": { en: "Service {w}", th: "Service {w}" },
+  "rsv.step1": { en: "When", th: "When" },
+  "rsv.step2": { en: "How many", th: "How many" },
+  "rsv.step3": { en: "Who to ask for", th: "Who to ask for" },
+  "rsv.date": { en: "Date", th: "Date" },
+  "rsv.time": { en: "Time", th: "Time" },
+  "rsv.party": { en: "Party size", th: "Party size" },
+  "rsv.partyHint": {
+    en: "For more than {n} guests, call the house and we will set the long table.",
+    th: "For more than {n} guests, call the house and we will set the long table.",
+  },
+  "rsv.person": { en: "1 person", th: "1 person" },
+  "rsv.people": { en: "{n} people", th: "{n} people" },
+  "rsv.name": { en: "Name", th: "Name" },
+  "rsv.contactKind": {
+    en: "How should we reach you?",
+    th: "How should we reach you?",
+  },
+  "rsv.kindPhone": { en: "Phone", th: "Phone" },
+  "rsv.kindLine": { en: "LINE", th: "LINE" },
+  "rsv.contact": { en: "Phone number or LINE id", th: "Phone number or LINE id" },
+  "rsv.notes": { en: "Anything we should know", th: "Anything we should know" },
+  "rsv.notesHint": {
+    en: "Allergies, a birthday, a table near the water",
+    th: "Allergies, a birthday, a table near the water",
+  },
+  "rsv.submit": { en: "Request the table", th: "Request the table" },
+  "rsv.noDeposit": {
+    en: "No deposit and no card details are taken.",
+    th: "No deposit and no card details are taken.",
+  },
+  "rsv.err.date": {
+    en: "Please choose today or a later date.",
+    th: "Please choose today or a later date.",
+  },
+  "rsv.err.time": {
+    en: "That time is outside our service hours. Please pick one from the list.",
+    th: "That time is outside our service hours. Please pick one from the list.",
+  },
+  "rsv.err.party": {
+    en: "Please choose a party size from the list.",
+    th: "Please choose a party size from the list.",
+  },
+  "rsv.err.name": { en: "Please tell us your name.", th: "Please tell us your name." },
+  "rsv.err.contact": {
+    en: "Please leave a phone number or LINE id so we can confirm.",
+    th: "Please leave a phone number or LINE id so we can confirm.",
+  },
+  "rsv.err.closed": {
+    en: "Reservations are closed just now. Please contact the house directly.",
+    th: "Reservations are closed just now. Please contact the house directly.",
+  },
+  "rsv.err.failed": {
+    en: "Something went wrong at our end. Please try again, or contact the house.",
+    th: "Something went wrong at our end. Please try again, or contact the house.",
+  },
+  "rsv.okEyebrow": { en: "Reserved", th: "Reserved" },
+  "rsv.okH1": { en: "Your table is requested", th: "Your table is requested" },
+  "rsv.okLead": {
+    en: "The kitchen has it. Keep this reference for when you arrive.",
+    th: "The kitchen has it. Keep this reference for when you arrive.",
+  },
+  "rsv.refLabel": { en: "Your reference", th: "Your reference" },
+  "rsv.okNext": {
+    en: "We will confirm by phone or LINE shortly. If your plans change, tell us and we will move the table.",
+    th: "We will confirm by phone or LINE shortly. If your plans change, tell us and we will move the table.",
+  },
+  "rsv.backToMenu": { en: "Back to the menu", th: "Back to the menu" },
+  "rsv.closedH1": {
+    en: "Reservations are closed just now",
+    th: "Reservations are closed just now",
+  },
+  "rsv.closedP": {
+    en: "The kitchen is not taking table bookings online at the moment. Call or message the house and we will find you a seat.",
+    th: "The kitchen is not taking table bookings online at the moment. Call or message the house and we will find you a seat.",
   },
 };
 
