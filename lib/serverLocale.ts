@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { translate, translateEntry, type Lang } from "./translate";
 import type { DictEntry } from "./i18n-dict";
 
@@ -11,6 +11,15 @@ export const LOCALE_COOKIE = "tkh-lang";
 export function getServerLocale(): Lang {
   const value = cookies().get(LOCALE_COOKIE)?.value;
   return value === "th" ? "th" : "en";
+}
+
+/**
+ * Server-resolved request pathname (set by middleware as `x-pathname`).
+ * Lets server components (e.g. HeaderShell) know the active route so the
+ * zero-JS shell can highlight the active nav item like the hydrated Header.
+ */
+export function getServerPathname(): string {
+  return headers().get("x-pathname") ?? "/";
 }
 
 /** Server-side translate · mirrors the client t(). */

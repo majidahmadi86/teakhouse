@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
-import { onIdleOrInteract } from "@/lib/deferMount";
+import { mountAfterLoad } from "@/lib/deferMount";
 
 /**
- * Mobile book bar stays out of the initial bundle · appears on idle /
- * interaction, within 1500ms even with no input.
+ * Mobile book bar stays out of the initial bundle · mounts ~300ms after window
+ * load · no idle, no interaction. It is a bottom sticky bar that is off-screen
+ * (translated down) until the hero is scrolled past, so it is not visible in
+ * the no-scroll acceptance frames · appearance is unchanged by hydration.
  */
 export function DeferredMobileBookBar() {
   const [Comp, setComp] = useState<ComponentType | null>(null);
@@ -17,9 +19,7 @@ export function DeferredMobileBookBar() {
         if (!cancelled) setComp(() => m.MobileBookBar);
       });
     };
-    // Idle-triggered · appears within ~1s on a real device (not shown on /book,
-    // so it never affects that gate) · never interaction-required.
-    const cleanup = onIdleOrInteract(load, { maxMs: 3000, useIdle: true });
+    const cleanup = mountAfterLoad(load);
     return () => {
       cancelled = true;
       cleanup();

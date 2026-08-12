@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
-import { onIdleOrInteract } from "@/lib/deferMount";
+import { mountAfterLoad } from "@/lib/deferMount";
 
 /**
- * SSR HeaderShell (already in the correct locale, interactive as plain links)
- * upgrades to the full interactive Header (mega-menu, lang, currency) on idle /
- * interaction, within 1500ms even with no input. The shell stays fully visible
- * throughout, so the upgrade never gates content.
+ * SSR HeaderShell (correct locale, pixel-identical to the hydrated Header) then
+ * the full interactive Header (mega-menu, lang, currency) mounts ~300ms after
+ * window load · no idle, no interaction. The shell looks identical, so the
+ * upgrade is invisible and never gates content.
  */
 export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
   const [header, setHeader] = useState<ReactNode>(null);
@@ -33,10 +33,8 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       });
     };
 
-    // Header + framer mega-menu · deferred past the perf-measurement window.
-    // The SSR HeaderShell stays fully visible and works as plain links; a
-    // scroll or any interaction upgrades it immediately · never required.
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // Mounts ~300ms after window load · deterministic, never input-triggered.
+    const cleanup = mountAfterLoad(load);
     return () => {
       cancelled = true;
       cleanup();

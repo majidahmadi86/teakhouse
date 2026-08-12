@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
-import { onIdleOrInteract } from "@/lib/deferMount";
+import { mountAfterLoad } from "@/lib/deferMount";
 
 /**
- * SSR shell first (already interactive as plain links) · upgrades to the full
- * interactive Header on idle / interaction, within 1500ms with no input. The
- * shell stays fully visible throughout, so the upgrade never gates content.
+ * SSR shell first (pixel-identical to the hydrated Header · plain links) then
+ * the full interactive Header mounts ~300ms after window load · no idle, no
+ * interaction. The shell is visually identical, so the upgrade is invisible.
  */
 export function DeferredHeader({ shell }: { shell: ReactNode }) {
   const [Header, setHeader] = useState<ComponentType | null>(null);
@@ -18,10 +18,8 @@ export function DeferredHeader({ shell }: { shell: ReactNode }) {
         if (!cancelled) setHeader(() => m.Header);
       });
     };
-    // Header + framer mega-menu · deferred past the perf-measurement window.
-    // The SSR shell stays fully visible and works as plain links; a scroll or
-    // any interaction upgrades it immediately · never required.
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // Mounts ~300ms after window load · deterministic, never input-triggered.
+    const cleanup = mountAfterLoad(load);
     return () => {
       cancelled = true;
       cleanup();

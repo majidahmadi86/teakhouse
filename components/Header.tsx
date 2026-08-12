@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -20,27 +19,16 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
+import { RoomsMegaMenu } from "@/components/header/RoomsMegaMenu";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
-import { useMediaQuery } from "@/lib/useMediaQuery";
 import { cn } from "@/lib/utils";
 
 /** Prefetch off · viewport Links were downloading every guest route during LH. */
 function Link(props: ComponentProps<typeof NextLink>) {
   return <NextLink prefetch={false} {...props} />;
 }
-
-const CurrencySwitcher = dynamic(
-  () =>
-    import("@/components/CurrencySwitcher").then((m) => m.CurrencySwitcher),
-  { ssr: false }
-);
-
-const RoomsMegaMenu = dynamic(
-  () =>
-    import("@/components/header/RoomsMegaMenu").then((m) => m.RoomsMegaMenu),
-  { ssr: false }
-);
 
 const NAV_CENTER = [
   { href: "/experience", key: "nav.experience" },
@@ -239,10 +227,9 @@ export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const touchStartX = useRef<number | null>(null);
-  // Mount desktop-only trees only when needed — avoids hydrating mega-menu /
-  // headlessui currency on mobile Lighthouse runs.
-  const showDesktopNav = useMediaQuery("(min-width: 1200px)");
-  const showWideUtils = useMediaQuery("(min-width: 760px)");
+  // Structure is chosen by CSS breakpoints (not JS media queries) so the
+  // hydrated header is pixel-identical to its SSR HeaderShell from the very
+  // first mounted frame · no mobile->desktop flash. VISUAL PARITY LAW.
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -288,65 +275,56 @@ export function Header() {
             />
           </Link>
 
-          {/* CENTER nav: ≥1200px */}
-          {showDesktopNav ? (
-            <nav className="mx-auto flex items-center gap-7">
-              <RoomsMegaMenu active={isActive("/rooms")} />
-              {NAV_CENTER.map(({ href, key }) => (
-                <NavLink
-                  key={href}
-                  href={href}
-                  label={t(key)}
-                  active={isActive(href)}
-                />
-              ))}
-            </nav>
-          ) : (
-            <div className="mx-auto hidden min-[1200px]:block" aria-hidden />
-          )}
+          {/* CENTER nav · >=1200 (CSS-gated · matches HeaderShell) */}
+          <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
+            <RoomsMegaMenu active={isActive("/rooms")} />
+            {NAV_CENTER.map(({ href, key }) => (
+              <NavLink
+                key={href}
+                href={href}
+                label={t(key)}
+                active={isActive(href)}
+              />
+            ))}
+          </nav>
 
           {/* RIGHT utility cluster */}
           <div className="ml-auto flex shrink-0 items-center gap-[18px]">
-            {showWideUtils ? (
-              <div className="flex items-center gap-[18px]">
-                <OffersIconLink active={isActive("/offers")} />
-                <CurrencySwitcher />
-                <LangPair />
-                <AccountEntry iconOnly />
-              </div>
-            ) : null}
+            {/* wide utils · >=760 */}
+            <div className="hidden items-center gap-[18px] min-[760px]:flex">
+              <OffersIconLink active={isActive("/offers")} />
+              <CurrencySwitcher />
+              <LangPair />
+              <AccountEntry iconOnly />
+            </div>
 
-            {showWideUtils ? (
-              <Link
-                href="/book"
-                className="btn-shine btn-primary whitespace-nowrap inline-flex"
-              >
-                {t("nav.book")}
-              </Link>
-            ) : (
-              <Tooltip label={t("nav.book")}>
-                <Link
-                  href="/book"
-                  aria-label={t("nav.book")}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta"
-                >
-                  <CalendarDays className="h-5 w-5" aria-hidden />
-                </Link>
-              </Tooltip>
-            )}
+            {/* Book · text pill >=760 */}
+            <Link
+              href="/book"
+              className="btn-shine btn-primary hidden whitespace-nowrap min-[760px]:inline-flex"
+            >
+              {t("nav.book")}
+            </Link>
+            {/* Book · icon <760 */}
+            <Link
+              href="/book"
+              aria-label={t("nav.book")}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta min-[760px]:hidden"
+            >
+              <CalendarDays className="h-5 w-5" aria-hidden />
+            </Link>
 
-            {!showDesktopNav ? (
-              <button
-                type="button"
-                className="flex h-10 w-10 items-center justify-center"
-                aria-label={t("mobile.menu")}
-                aria-expanded={drawerOpen}
-                aria-controls="mobile-nav-drawer"
-                onClick={() => setDrawerOpen(true)}
-              >
-                <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
-              </button>
-            ) : null}
+            {/* Hamburger <1200 */}
+            <button
+              type="button"
+              className="flex h-10 w-10 items-center justify-center min-[1200px]:hidden"
+              aria-label={t("mobile.menu")}
+              aria-expanded={drawerOpen}
+              aria-controls="mobile-nav-drawer"
+              onClick={() => setDrawerOpen(true)}
+            >
+              <Menu className="h-6 w-6 text-ink" strokeWidth={2} />
+            </button>
           </div>
         </div>
       </header>

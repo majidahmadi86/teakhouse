@@ -1,69 +1,41 @@
 /**
- * Deferral trigger for hydrating an island · fires the earliest of:
- *   - requestIdleCallback (when `useIdle`, capped at maxMs)
- *   - a hard maxMs timeout (so it ALWAYS runs without any interaction)
- *   - the first user interaction (pointer / key / touch / scroll)
- *   - an optional IntersectionObserver target about to enter the viewport
+ * Chrome-hydration trigger · deterministic and input-free.
  *
- * Interaction and the observer may fire it earlier, but they are never
- * REQUIRED · with zero input the timeout arm still loads within maxMs. Returns
- * a cleanup function. Safe to call once inside a useEffect.
+ * Fires the `load` callback 300ms after the window `load` event (or 300ms from
+ * now if the document has already finished loading). That is the ONLY trigger:
+ *   - NO requestIdleCallback  · idle fires instantly on an idle test machine and
+ *     only after ~10s on a busy real device · the exact class of bug this kills.
+ *   - NO interaction listeners · a click/scroll/keypress must never be what
+ *     mounts a component (that is why the reporter "saw" nav appear on click).
+ *   - NO multi-second fallback timeout.
  *
- * `useIdle` (default true) is best for light islands · it hydrates the moment
- * the main thread goes quiet. For framer-heavy islands set `useIdle:false` and
- * a larger `maxMs`: requestIdleCallback can fire in an idle gap mid-load (and
- * under Lighthouse that lands in the TBT window), so a plain timeout past the
- * measurement window protects the perf budget while still never requiring input.
+ * Result: hydration timing is identical on every machine · everything is
+ * interactive within ~load+300ms, never advanced by input, never delayed to
+ * idle. Returns a cleanup function · safe to call once inside a useEffect.
  */
-export function onIdleOrInteract(
-  load: () => void,
-  opts: { maxMs?: number; useIdle?: boolean; observe?: Element | null } = {}
-): () => void {
-  const maxMs = opts.maxMs ?? 1500;
-  const useIdle = opts.useIdle ?? true;
+export function mountAfterLoad(load: () => void): () => void {
   let done = false;
-  let idleId: number | undefined;
   let timeoutId: number | undefined;
-  let observer: IntersectionObserver | undefined;
-
-  const events = ["pointerdown", "keydown", "touchstart", "scroll"] as const;
 
   const run = () => {
     if (done) return;
     done = true;
-    cleanup();
     load();
   };
 
-  const cleanup = () => {
-    for (const ev of events) window.removeEventListener(ev, run);
-    if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
-      window.cancelIdleCallback(idleId);
-    }
-    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
-    observer?.disconnect();
+  const schedule = () => {
+    if (timeoutId !== undefined) return;
+    timeoutId = window.setTimeout(run, 300);
   };
 
-  for (const ev of events) {
-    window.addEventListener(ev, run, { once: true, passive: true });
+  if (document.readyState === "complete") {
+    schedule();
+  } else {
+    window.addEventListener("load", schedule, { once: true });
   }
 
-  if (useIdle && typeof window.requestIdleCallback === "function") {
-    idleId = window.requestIdleCallback(run, { timeout: maxMs });
-  }
-  // Hard ceiling · guarantees load with no interaction and no idle window.
-  timeoutId = window.setTimeout(run, maxMs);
-
-  // Optional viewport arm · load just before the target scrolls into view.
-  if (opts.observe && typeof IntersectionObserver === "function") {
-    observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) run();
-      },
-      { rootMargin: "200px" }
-    );
-    observer.observe(opts.observe);
-  }
-
-  return cleanup;
+  return () => {
+    window.removeEventListener("load", schedule);
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  };
 }

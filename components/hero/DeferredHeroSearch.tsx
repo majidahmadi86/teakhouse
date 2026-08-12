@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { HeroSearchPillShell } from "@/components/hero/HeroSearchPillShell";
-import { onIdleOrInteract } from "@/lib/deferMount";
+import { mountAfterLoad } from "@/lib/deferMount";
 
 type Bundle = {
   Providers: ComponentType<{ children: ReactNode }>;
@@ -40,13 +40,10 @@ export function DeferredHeroSearch({
       });
     };
 
-    // The SSR shell (correct geometry + locale) is fully visible on its own;
-    // the interactive pill hydrates on idle / interaction, within 1500ms even
-    // with no input, so interactivity is available without being required.
-    // The SSR shell is fully visible; the interactive pill (providers + day
-    // picker) hydrates on interaction/scroll, or via the timer · deferred past
-    // the perf-measurement window so it never steals TBT there.
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // The SSR shell is a pixel-identical twin of the interactive pill; the pill
+    // (providers + day picker) mounts ~300ms after window load · no idle, no
+    // interaction. The swap is invisible, so hydration timing cannot be seen.
+    const cleanup = mountAfterLoad(load);
     return () => {
       cancelled = true;
       cleanup();

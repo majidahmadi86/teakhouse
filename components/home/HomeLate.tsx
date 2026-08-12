@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ComponentType } from "react";
-import { onIdleOrInteract } from "@/lib/deferMount";
+import { mountAfterLoad } from "@/lib/deferMount";
 
 /**
  * Background crossfade slideshow only · pure visual enhancement over the static
@@ -20,11 +20,10 @@ export function HomeLate() {
         setIslands(() => m.HomeDeferredIslands);
       });
     };
-    // Framer crossfade · heaviest island, over a fully-visible static hero
-    // (fail-open). If it painted its 1920px images inside the measurement
-    // window it would steal LCP, so it is deferred well past it. Interaction or
-    // scroll loads it immediately · never interaction-required.
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // Background crossfade over the always-visible static hero LCP · a pure
+    // enhancement. Mounts ~300ms after window load · no idle, no interaction.
+    // (Its crossfade region is the ONE area allowed to differ across frames.)
+    const cleanup = mountAfterLoad(load);
     return () => {
       cancelled = true;
       cleanup();
