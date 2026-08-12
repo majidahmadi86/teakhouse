@@ -1,5 +1,3 @@
-﻿"use client";
-
 import { SafeImage } from "@/components/SafeImage";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +15,13 @@ type PageHeroProps = {
   objectPosition?: string;
 };
 
+/**
+ * Page hero · pure server component (zero client JS). Eyebrow, title and lead
+ * are static server HTML and fully visible without any hydration. The image is
+ * a plain <picture>/<img> when an AVIF source is given; only the fallback path
+ * (no AVIF) uses the client SafeImage. No opacity/visibility resting state:
+ * every text node is painted at first server render.
+ */
 export function PageHero({
   image,
   imageAvif,

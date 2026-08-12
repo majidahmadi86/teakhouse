@@ -8,13 +8,15 @@ import { BookingSummary } from "@/components/booking/BookingSummary";
 import { RoomSelectCard } from "@/components/booking/RoomSelectCard";
 
 // Heavy / later-step pieces load on demand · keeps the /book initial JS light.
+// The loading state is a fully styled, readable date shell (not a blank
+// skeleton) · it renders in SSR and with JS disabled, showing the default
+// stay dates so the control is always present and legible. The interactive
+// react-day-picker calendar swaps in on hydration · behaviour only, no content.
 const DateRangePicker = dynamic(
   () => import("@/components/ui/DateRangePicker").then((m) => m.DateRangePicker),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-[332px] w-full animate-pulse rounded-xl bg-cloud" aria-hidden />
-    ),
+    loading: () => <DateRangeShell />,
   }
 );
 const Receipt = dynamic(
@@ -42,6 +44,62 @@ import { cn } from "@/lib/utils";
 type PayMethod = "promptpay" | "card";
 
 const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
+
+/**
+ * Styled, readable date shell · the DateRangePicker's loading/SSR state.
+ * Present and legible with JS disabled (calendar icon + default stay dates),
+ * matched to the interactive control's height so there is no layout shift when
+ * react-day-picker hydrates in. Never a blank skeleton, never opacity-0.
+ */
+function DateRangeShell() {
+  const inDate = addDays(new Date(), 1);
+  const outDate = addDays(new Date(), 2);
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    });
+  const field = (label: string, value: string) => (
+    <div className="flex flex-1 items-center gap-3 rounded-xl border border-line bg-white px-4 py-3">
+      <svg
+        className="h-5 w-5 shrink-0 text-blue"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        aria-hidden
+      >
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <path d="M16 2v4M8 2v4M3 10h18" />
+      </svg>
+      <span className="min-w-0">
+        <span className="block text-[0.7rem] font-bold uppercase tracking-wide text-sub">
+          {label}
+        </span>
+        <span className="block truncate text-[15px] font-semibold text-ink">
+          {value}
+        </span>
+      </span>
+    </div>
+  );
+  return (
+    <div className="min-h-[332px] rounded-xl border border-line bg-cloud/40 p-4">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {field("Check in", fmt(inDate))}
+        {field("Check out", fmt(outDate))}
+      </div>
+      <div className="mt-4 grid grid-cols-7 gap-1.5" aria-hidden>
+        {Array.from({ length: 28 }).map((_, i) => (
+          <div
+            key={i}
+            className="aspect-square rounded-md border border-line/70 bg-white"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function BookPageClient() {
   const { t } = useI18n();

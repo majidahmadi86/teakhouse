@@ -121,9 +121,10 @@
   }
 }
 
-#tkh-hero[data-lang="th"] .tkh-hero-en {
-  visibility: hidden;
-}
+/* NOTE: a former rule hid #tkh-hero .tkh-hero-en when data-lang="th". It has
+   been removed · the hero renders one locale-resolved block server-side and its
+   visibility must NEVER depend on a data-attribute or any JS/state. There is no
+   attribute- or class-gated hidden resting state on the hero. */
 
 @media (prefers-reduced-motion: reduce) {
   .tkh-hero-word,

@@ -35,7 +35,7 @@ export function HomeHero({
       </div>
 
       {/* Mobile */}
-      <div className="tkh-hero-en absolute inset-0 flex flex-col md:hidden">
+      <div className="tkh-hero-copy absolute inset-0 flex flex-col md:hidden">
         <div className="hero-chrome-pad relative z-10 px-5">
           <p className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow">
             {brandName}
@@ -68,7 +68,7 @@ export function HomeHero({
       </div>
 
       {/* Desktop */}
-      <div className="tkh-hero-en hero-chrome-pad absolute inset-0 hidden flex-col justify-end px-6 pb-10 md:flex">
+      <div className="tkh-hero-copy hero-chrome-pad absolute inset-0 hidden flex-col justify-end px-6 pb-10 md:flex">
         <div className="mx-auto w-full max-w-[1180px]">
           <p className="eyebrow mb-3 text-gold hero-text-shadow">
             {t(locale, "hero.eyebrow")}
