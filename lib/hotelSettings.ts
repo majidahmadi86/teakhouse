@@ -1,8 +1,12 @@
 /**
- * v13 · Server-side reads of the owner-editable house settings that guest
- * pages need: the reservation window and the uploaded page heroes. Kept apart
- * from lib/dataService so a guest page pulls one small row, not the whole
- * owner payload.
+ * v13 · Server-side reads of the owner-editable house settings.
+ *
+ * v14 · Guest PAGES now read these through lib/cachedData instead, which is
+ * tag-invalidated and keeps the database off the request path. What is left
+ * here is the UNCACHED read, and it is deliberately uncached: the reservation
+ * write path validates against it, and validating a booking against a cached
+ * copy could accept a table minutes after the owner switched reservations off.
+ * Reads that decide something must see the live row.
  */
 import { prisma } from "@/lib/db";
 import {

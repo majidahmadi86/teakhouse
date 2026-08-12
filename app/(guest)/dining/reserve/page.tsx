@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { PageHero } from "@/components/PageHero";
-import { getReservationSettings } from "@/lib/hotelSettings";
+import { getHotelSettings } from "@/lib/cachedData";
 import {
   formatServiceWindow,
   serviceSlots,
@@ -48,7 +48,9 @@ export default async function ReservePage({
   searchParams: SearchParams;
 }) {
   const locale = getServerLocale();
-  const settings = await getReservationSettings();
+  // Cached + tag-invalidated · this page was still paying a database round
+  // trip per request while /dining next door had stopped.
+  const settings = await getHotelSettings();
   const slots = serviceSlots(settings.serviceStart, settings.serviceEnd);
   const today = isoDate(new Date());
   const window = formatServiceWindow(settings.serviceStart, settings.serviceEnd);
