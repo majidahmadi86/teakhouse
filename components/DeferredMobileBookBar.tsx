@@ -17,7 +17,9 @@ export function DeferredMobileBookBar() {
         if (!cancelled) setComp(() => m.MobileBookBar);
       });
     };
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // Idle-triggered · appears within ~1s on a real device (not shown on /book,
+    // so it never affects that gate) · never interaction-required.
+    const cleanup = onIdleOrInteract(load, { maxMs: 3000, useIdle: true });
     return () => {
       cancelled = true;
       cleanup();

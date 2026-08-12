@@ -7,6 +7,7 @@ import {
   AuthShell,
   authInputClass,
 } from "@/components/AuthShell";
+import { SocialLoginButtons } from "@/components/SocialLoginButtons";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 
@@ -61,6 +62,7 @@ function SignInForm() {
         />
       }
     >
+      <SocialLoginButtons />
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
           <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">

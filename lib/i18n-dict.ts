@@ -525,6 +525,13 @@ export const DICT: Record<string, DictEntry> = {
 
   "acc.signin": { en: "Sign in", th: "เข้าสู่ระบบ" },
   "acc.signup": { en: "Sign up", th: "สมัครสมาชิก" },
+  "acc.google": { en: "Continue with Google", th: "ดำเนินการต่อด้วย Google" },
+  "acc.line": { en: "Continue with LINE", th: "ดำเนินการต่อด้วย LINE" },
+  "acc.orEmail": { en: "or with email", th: "หรือใช้อีเมล" },
+  "acc.socialToast": {
+    en: "Enabled per property on deployment",
+    th: "เปิดใช้งานได้เมื่อทำระบบจริง",
+  },
   "acc.name": { en: "Full name", th: "ชื่อ-นามสกุล" },
   "acc.email": { en: "Email", th: "อีเมล" },
   "acc.password": { en: "Password", th: "รหัสผ่าน" },

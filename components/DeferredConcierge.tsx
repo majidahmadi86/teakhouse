@@ -22,7 +22,10 @@ export function DeferredConcierge({
         if (!cancelled) setComp(() => m.Concierge);
       });
     };
-    const cleanup = onIdleOrInteract(load, { maxMs: 12000, useIdle: false });
+    // Idle-triggered · the FAB is a cheap CSS button (the heavy chat panel is
+    // deferred separately inside Concierge), so it mounts on first idle within
+    // ~1s on a real device · never interaction-required, never a 12s wait.
+    const cleanup = onIdleOrInteract(load, { maxMs: 3000, useIdle: true });
     return () => {
       cancelled = true;
       cleanup();
