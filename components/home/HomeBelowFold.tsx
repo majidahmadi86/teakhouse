@@ -135,6 +135,74 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
         </div>
       </section>
 
+      {/* v12 · Beyond the rooms · three doors into the rest of the house:
+          dining, events & spaces, facilities. Static server HTML like every
+          other below-fold section. */}
+      <section className="tkh-below-section section-pad bg-cloud">
+        <div className="mx-auto max-w-[1180px]">
+          <Reveal className="max-w-[640px]">
+            <p className="eyebrow mb-3.5">{t(locale, "beyond.eyebrow")}</p>
+            <h2>{t(locale, "beyond.h2")}</h2>
+            <p className="mt-4 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
+              {t(locale, "beyond.p")}
+            </p>
+          </Reveal>
+          <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
+            {(
+              [
+                {
+                  href: "/dining",
+                  base: "/images/facilities/pier-breakfast",
+                  alt: "Breakfast tables on the river pier",
+                  h: "nav.dining",
+                  p: "beyond.dining.p",
+                },
+                {
+                  href: "/events",
+                  base: "/images/facilities/courtyard-garden",
+                  alt: "Courtyard garden beside the riverside pavilion",
+                  h: "nav.events",
+                  p: "beyond.events.p",
+                },
+                {
+                  href: "/facilities",
+                  base: "/images/facilities/pool",
+                  alt: "Saltwater pool in the courtyard",
+                  h: "nav.facilities",
+                  p: "beyond.fac.p",
+                },
+              ] as const
+            ).map((card) => (
+              <RevealItem key={card.href}>
+                <Link
+                  href={card.href}
+                  className="group block overflow-hidden rounded-[14px] bg-white shadow-card transition hover:shadow-card-hover"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <LocalPicture
+                      base={card.base}
+                      alt={card.alt}
+                      width={640}
+                      height={480}
+                      sizes="(max-width: 768px) 100vw, 380px"
+                      className="transition duration-500 group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-display text-xl text-ink">
+                      {t(locale, card.h)}
+                    </h3>
+                    <p className="mt-2 text-[0.92rem] leading-relaxed text-ink/75">
+                      {t(locale, card.p)}
+                    </p>
+                  </div>
+                </Link>
+              </RevealItem>
+            ))}
+          </RevealStagger>
+        </div>
+      </section>
+
       <section className="tkh-below-section section-pad bg-coral-bg">
         <div className="mx-auto max-w-[1180px]">
           <Reveal className="flex flex-wrap items-end justify-between gap-4">

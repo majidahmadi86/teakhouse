@@ -55,10 +55,22 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     },
   },
   {
-    k: /breakfast|food|dinner|restaurant|eat|อาหาร|ข้าวเช้า|อาหารเช้า|ร้านอาหาร|กิน/i,
+    // v12 · events & spaces · before the food intent so "private dinner",
+    // "wedding dinner" land here. EN keywords only · Thai questions reach the
+    // live /api/concierge path, which answers from the events table.
+    k: /wedding|event|party|parties|celebrat|function|pavilion|private dinner|jazz|brunch|loy krathong|songkran/i,
     r: {
-      en: "Breakfast is served on the pier from 07:00 to 11:00: Thai rice soup, fresh fruit, eggs any way, and coffee roasted in Chiang Rai. In the evening we grill river prawns on Fridays. Great neighborhood restaurants are 5 minutes on foot.",
-      th: "อาหารเช้าเสิร์ฟริมท่าเรือ 07:00 ถึง 11:00 น. มีข้าวต้ม ผลไม้สด ไข่ตามสั่ง และกาแฟคั่วจากเชียงรายค่ะ เย็นวันศุกร์มีกุ้งแม่น้ำเผา และร้านอร่อยในย่านเดินแค่ 5 นาทีค่ะ",
+      en: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. Our special evenings are on the events page. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
+      th: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. Our special evenings are on the events page. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
+    },
+  },
+  {
+    // v12 · widened with menu/dining hour keywords · reply now hands off to
+    // the dining page, whose menu is the same database the owner edits.
+    k: /breakfast|food|dinner|restaurant|eat|menu|lunch|dining|cocktail|อาหาร|ข้าวเช้า|อาหารเช้า|ร้านอาหาร|กิน|เมนู/i,
+    r: {
+      en: 'Breakfast is served on the pier from 07:00 to 11:00: Thai rice soup, fresh fruit, eggs any way, and coffee roasted in Chiang Rai. The kitchen cooks until 22:00. <a href="/dining" class="font-extrabold text-blue">See the full menu</a>',
+      th: 'อาหารเช้าเสิร์ฟริมท่าเรือ 07:00 ถึง 11:00 น. มีข้าวต้ม ผลไม้สด ไข่ตามสั่ง และกาแฟคั่วจากเชียงรายค่ะ <a href="/dining" class="font-extrabold text-blue">See the full menu</a>',
     },
   },
   {

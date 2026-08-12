@@ -857,6 +857,126 @@ export const DICT: Record<string, DictEntry> = {
     en: "Free cancellation",
     th: "ยกเลิกฟรี",
   },
+
+  // v12 · owner dashboard metric info tips (Thai supplied by directive)
+  "ow.tip.s1": {
+    en: "Rooms occupied tonight out of all rooms.",
+    th: "จำนวนห้องที่มีแขกเข้าพักคืนนี้ เทียบกับจำนวนห้องทั้งหมด",
+  },
+  "ow.tip.s2": {
+    en: "Bookings checking in today.",
+    th: "จำนวนการจองที่เช็คอินวันนี้",
+  },
+  "ow.tip.s3": {
+    en: "Share of this month's bookings made directly with the hotel, not through an OTA.",
+    th: "สัดส่วนการจองตรงกับโรงแรมในเดือนนี้ (ไม่ผ่าน OTA)",
+  },
+  "ow.tip.s4": {
+    en: "Commission you did not pay to OTAs because these guests booked direct (estimated at 18%).",
+    th: "ค่าคอมมิชชั่นที่ไม่ต้องจ่ายให้ OTA เพราะแขกจองตรง (ประมาณ 18%)",
+  },
+  "ow.tip.month": {
+    en: "Room revenue this month, weighted by nights stayed.",
+    th: "รายได้ค่าห้องเดือนนี้ คิดตามจำนวนคืนที่เข้าพัก",
+  },
+  "ow.tip.occ": {
+    en: "Percentage of available room-nights booked this month.",
+    th: "เปอร์เซ็นต์ของห้องพักที่ถูกจองในเดือนนี้ เทียบกับห้องว่างทั้งหมด",
+  },
+  "ow.tip.adr": {
+    en: "Average Daily Rate · room revenue divided by room-nights sold.",
+    th: "ราคาเฉลี่ยต่อห้องต่อคืนที่ขายได้ (รายได้ค่าห้อง ÷ จำนวนคืนที่ขาย)",
+  },
+  "ow.tip.bookings": {
+    en: "Total bookings this month.",
+    th: "จำนวนการจองทั้งหมดในเดือนนี้",
+  },
+
+  // v12 · availability range control · th mirrors en pending Thai pass, except
+  // hNext which parameterizes the certified ow.next7 Thai ("7 วันข้างหน้า").
+  "ow.avail.hNext": { en: "Next {n} days", th: "{n} วันข้างหน้า" },
+  "ow.avail.prev": { en: "Previous month", th: "Previous month" },
+  "ow.avail.next": { en: "Next month", th: "Next month" },
+  "ow.avail.days": { en: "{n} days", th: "{n} days" },
+  "ow.avail.today": { en: "Today", th: "Today" },
+
+  // v12 · guest nav additions · th mirrors en pending Thai pass
+  "nav.dining": { en: "Dining", th: "Dining" },
+  "nav.events": { en: "Events & Spaces", th: "Events & Spaces" },
+
+  // v12 · owner nav additions · th mirrors en pending Thai pass
+  "ow.dining": { en: "Dining", th: "Dining" },
+  "ow.events": { en: "Events", th: "Events" },
+
+  // v12 · dining page · th mirrors en pending Thai pass
+  "dn.h1": { en: "The kitchen by the river", th: "The kitchen by the river" },
+  "dn.lead": {
+    en: "One long menu from morning rice soup to the last sundowner, cooked the way this stretch of the river eats.",
+    th: "One long menu from morning rice soup to the last sundowner, cooked the way this stretch of the river eats.",
+  },
+  "dn.story": {
+    en: "The kitchen buys from the morning boat and the market behind the temple, so the specials are decided at the pier, not on paper.",
+    th: "The kitchen buys from the morning boat and the market behind the temple, so the specials are decided at the pier, not on paper.",
+  },
+  "dn.hours": {
+    en: "Open daily · breakfast on the pier 07:00 to 11:00 · kitchen until 22:00",
+    th: "Open daily · breakfast on the pier 07:00 to 11:00 · kitchen until 22:00",
+  },
+  "dn.menuEyebrow": { en: "The menu", th: "The menu" },
+  "dn.menuH2": {
+    en: "What the kitchen sends out",
+    th: "What the kitchen sends out",
+  },
+
+  // v12 · events & spaces page · th mirrors en pending Thai pass
+  "ev.h1": { en: "The riverside pavilion", th: "The riverside pavilion" },
+  "ev.lead": {
+    en: "An open-sided teak pavilion on the water for weddings, long dinners and parties · plus the house calendar of evenings worth planning around.",
+    th: "An open-sided teak pavilion on the water for weddings, long dinners and parties · plus the house calendar of evenings worth planning around.",
+  },
+  "ev.salonEyebrow": { en: "The function salon", th: "The function salon" },
+  "ev.salonH2": {
+    en: "One room, open to the river",
+    th: "One room, open to the river",
+  },
+  "ev.salonP": {
+    en: "The pavilion seats 60 for dinner and holds 90 standing, with the pier for arrivals by boat and the garden for drinks before.",
+    th: "The pavilion seats 60 for dinner and holds 90 standing, with the pier for arrivals by boat and the garden for drinks before.",
+  },
+  "ev.cap": { en: "60 seated · 90 standing", th: "60 seated · 90 standing" },
+  "ev.t1": { en: "Weddings", th: "Weddings" },
+  "ev.t2": { en: "Private dinners", th: "Private dinners" },
+  "ev.t3": { en: "Parties", th: "Parties" },
+  "ev.cta": { en: "Plan your event", th: "Plan your event" },
+  "ev.listEyebrow": { en: "Special events", th: "Special events" },
+  "ev.listH2": { en: "On the house calendar", th: "On the house calendar" },
+  "ev.empty": {
+    en: "Nothing on the calendar right now · ask the desk what is coming.",
+    th: "Nothing on the calendar right now · ask the desk what is coming.",
+  },
+
+  // v12 · homepage beyond-the-rooms strip · th mirrors en pending Thai pass
+  "beyond.eyebrow": { en: "Beyond the rooms", th: "Beyond the rooms" },
+  "beyond.h2": {
+    en: "Dinner, evenings and the rest of the house",
+    th: "Dinner, evenings and the rest of the house",
+  },
+  "beyond.p": {
+    en: "The pier kitchen, a riverside pavilion for occasions, and the seven things the house keeps ready.",
+    th: "The pier kitchen, a riverside pavilion for occasions, and the seven things the house keeps ready.",
+  },
+  "beyond.dining.p": {
+    en: "Breakfast on the pier, a Thai kitchen and cocktails at sundown.",
+    th: "Breakfast on the pier, a Thai kitchen and cocktails at sundown.",
+  },
+  "beyond.events.p": {
+    en: "A teak pavilion on the water for weddings, dinners and parties.",
+    th: "A teak pavilion on the water for weddings, dinners and parties.",
+  },
+  "beyond.fac.p": {
+    en: "Pool, garden, lounge and the quiet machinery of a good stay.",
+    th: "Pool, garden, lounge and the quiet machinery of a good stay.",
+  },
 };
 
 

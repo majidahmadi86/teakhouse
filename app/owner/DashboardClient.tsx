@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import {
   type Booking,
@@ -9,7 +10,11 @@ import {
   useOwner,
 } from "@/lib/ownerStore";
 import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
+import { InfoTip } from "@/components/owner/InfoTip";
 import { OwnerRise, OwnerStagger } from "@/components/owner/OwnerMotion";
+
+const AVAIL_RANGES = [7, 14, 30] as const;
+type AvailRange = (typeof AVAIL_RANGES)[number];
 
 function bookingTouchesMonth(booking: Booking, ref: Date): boolean {
   if (booking.status === "cancelled") return false;
@@ -144,11 +149,38 @@ export default function OwnerDashboardPage() {
     return { direct: directPctVal, ota: 100 - directPctVal };
   }, [data.bookings]);
 
-  const days = useMemo(() => {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
-  }, []);
+  // Availability window · defaults to the certified next-7-days view; the
+  // segmented control widens it and the month arrows jump the anchor. Read-only
+  // over the same getCell source as always.
+  const [rangeDays, setRangeDays] = useState<AvailRange>(7);
+  const [windowStart, setWindowStart] = useState<Date>(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  const days = useMemo(
+    () => Array.from({ length: rangeDays }, (_, i) => addDays(windowStart, i)),
+    [rangeDays, windowStart]
+  );
+
+  const todayIso = isoDate(new Date());
+  const anchoredToday = isoDate(windowStart) === todayIso;
+
+  const goToday = () => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setWindowStart(d);
+  };
+  const prevMonth = () =>
+    setWindowStart((s) => {
+      const firstOfThis = new Date(s.getFullYear(), s.getMonth(), 1);
+      return s.getTime() > firstOfThis.getTime()
+        ? firstOfThis
+        : new Date(s.getFullYear(), s.getMonth() - 1, 1);
+    });
+  const nextMonth = () =>
+    setWindowStart((s) => new Date(s.getFullYear(), s.getMonth() + 1, 1));
 
   const revenue = useMemo(() => {
     const now = new Date();
@@ -215,7 +247,7 @@ export default function OwnerDashboardPage() {
 
       <OwnerStagger className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
         <OwnerRise>
-          <StatCard label={t("ow.s1")}>
+          <StatCard label={t("ow.s1")} tip={t("ow.tip.s1")}>
             <span className="font-display text-4xl font-semibold text-white">
               {animatedOcc}
               <small className="text-xl text-white/60">/{occ.total}</small>
@@ -224,7 +256,7 @@ export default function OwnerDashboardPage() {
         </OwnerRise>
 
         <OwnerRise>
-          <StatCard label={t("ow.s2")}>
+          <StatCard label={t("ow.s2")} tip={t("ow.tip.s2")}>
             <span className="font-display text-4xl font-semibold text-white">
               {animatedArrivals}
             </span>
@@ -232,7 +264,7 @@ export default function OwnerDashboardPage() {
         </OwnerRise>
 
         <OwnerRise>
-          <StatCard label={t("ow.s3")}>
+          <StatCard label={t("ow.s3")} tip={t("ow.tip.s3")}>
             <span className="font-display text-4xl font-semibold text-deal">
               {animatedDirect}%
             </span>
@@ -240,7 +272,7 @@ export default function OwnerDashboardPage() {
         </OwnerRise>
 
         <OwnerRise>
-          <StatCard label={t("ow.s4")} gold sub={t("ow.s4sub")}>
+          <StatCard label={t("ow.s4")} gold sub={t("ow.s4sub")} tip={t("ow.tip.s4")}>
             <span className="font-display text-4xl font-semibold text-white">
               {formatBaht(animatedOta)}
             </span>
@@ -261,12 +293,18 @@ export default function OwnerDashboardPage() {
           <MiniStat
             label="This month"
             value={formatBaht(revenue.thisMonthRevenue)}
+            tip={t("ow.tip.month")}
           />
-          <MiniStat label="Occupancy" value={`${revenue.occupancyPct}%`} />
-          <MiniStat label="ADR" value={formatBaht(revenue.adr)} />
+          <MiniStat
+            label="Occupancy"
+            value={`${revenue.occupancyPct}%`}
+            tip={t("ow.tip.occ")}
+          />
+          <MiniStat label="ADR" value={formatBaht(revenue.adr)} tip={t("ow.tip.adr")} />
           <MiniStat
             label="Bookings"
             value={String(revenue.bookingCount)}
+            tip={t("ow.tip.bookings")}
           />
         </div>
 
@@ -378,34 +416,93 @@ export default function OwnerDashboardPage() {
       </section>
 
       <section className="owner-panel rounded-2xl  p-6 md:p-8">
-        <h2 className="mb-6 font-display text-xl font-semibold text-white">
-          {t("ow.next7")}
-        </h2>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-xl font-semibold text-white">
+            {anchoredToday
+              ? t("ow.avail.hNext", { n: rangeDays })
+              : format(windowStart, "MMMM yyyy")}
+          </h2>
+          <div className="flex flex-wrap items-center gap-2">
+            {!anchoredToday ? (
+              <button
+                type="button"
+                onClick={goToday}
+                className="owner-control min-h-[44px] rounded-xl px-3 text-sm font-bold text-white/70 transition hover:text-white"
+              >
+                {t("ow.avail.today")}
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={prevMonth}
+              aria-label={t("ow.avail.prev")}
+              className="owner-control flex h-11 w-11 items-center justify-center rounded-xl text-white/70 transition hover:text-white"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </button>
+            <span className="min-w-[11ch] text-center text-sm font-bold text-white/70">
+              {format(days[0], "d MMM")} · {format(days[days.length - 1], "d MMM")}
+            </span>
+            <button
+              type="button"
+              onClick={nextMonth}
+              aria-label={t("ow.avail.next")}
+              className="owner-control flex h-11 w-11 items-center justify-center rounded-xl text-white/70 transition hover:text-white"
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </button>
+            <div className="owner-inset flex rounded-xl p-1">
+              {AVAIL_RANGES.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setRangeDays(n)}
+                  aria-pressed={rangeDays === n}
+                  aria-label={t("ow.avail.days", { n })}
+                  className={cn(
+                    "min-h-[36px] min-w-[44px] rounded-lg px-2.5 text-sm font-extrabold transition",
+                    rangeDays === n
+                      ? "bg-own-blue text-white"
+                      : "text-white/60 hover:text-white"
+                  )}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className="overflow-x-auto">
           <div
             className="grid gap-1 text-xs font-bold"
             style={{
-              gridTemplateColumns: `minmax(100px, 140px) repeat(7, minmax(36px, 1fr))`,
+              gridTemplateColumns: `minmax(100px, 140px) repeat(${rangeDays}, minmax(36px, 1fr))`,
             }}
           >
-            <div />
-            {days.map((d) => (
-              <div
-                key={isoDate(d)}
-                className="py-2 text-center text-white/60"
-              >
-                {format(d, "d")}
-                <br />
-                <span className="text-[0.65rem] font-semibold uppercase">
-                  {format(d, "EEE")}
-                </span>
-              </div>
-            ))}
+            <div className="owner-sticky-col sticky left-0 z-10 -mr-1 pr-1" />
+            {days.map((d) => {
+              const isToday = isoDate(d) === todayIso;
+              return (
+                <div
+                  key={isoDate(d)}
+                  className={cn(
+                    "py-2 text-center",
+                    isToday ? "rounded-md bg-white/5 text-gold" : "text-white/60"
+                  )}
+                >
+                  {format(d, "d")}
+                  <br />
+                  <span className="text-[0.65rem] font-semibold uppercase">
+                    {format(d, "EEE")}
+                  </span>
+                </div>
+              );
+            })}
 
             {activeRooms.map((room) => (
               <Fragment key={room.slug}>
-                <div className="flex items-center py-2 pr-2 text-sm font-bold text-white/80">
+                <div className="owner-sticky-col sticky left-0 z-10 -mr-1 flex items-center py-2 pr-3 text-sm font-bold text-white/80">
                   {tr(room.name)}
                 </div>
                 {days.map((d) => {
@@ -417,7 +514,8 @@ export default function OwnerDashboardPage() {
                       title={`${tr(room.name)} · ${format(d, "d MMM")} · ${state}`}
                       className={cn(
                         "aspect-square min-h-[36px] min-w-[36px] rounded-md",
-                        cellColor(state)
+                        cellColor(state),
+                        dateIso === todayIso && "ring-1 ring-gold/50"
                       )}
                       aria-label={`${tr(room.name)} ${format(d, "d MMM")} ${state}`}
                     />
@@ -438,12 +536,23 @@ export default function OwnerDashboardPage() {
   );
 }
 
-function MiniStat({ label, value }: { label: string; value: string }) {
+function MiniStat({
+  label,
+  value,
+  tip,
+}: {
+  label: string;
+  value: string;
+  tip?: string;
+}) {
   return (
     <div className="owner-inset rounded-xl px-4 py-3">
-      <b className="mb-1 block text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-own-blue">
-        {label}
-      </b>
+      <span className="mb-1 flex items-start justify-between gap-2">
+        <b className="block text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-own-blue">
+          {label}
+        </b>
+        {tip ? <InfoTip label={label} text={tip} /> : null}
+      </span>
       <span className="font-display text-2xl font-semibold text-white">
         {value}
       </span>
@@ -456,11 +565,13 @@ function StatCard({
   children,
   gold,
   sub,
+  tip,
 }: {
   label: string;
   children: React.ReactNode;
   gold?: boolean;
   sub?: string;
+  tip?: string;
 }) {
   return (
     <div
@@ -471,14 +582,17 @@ function StatCard({
           : "owner-panel"
       )}
     >
-      <b
-        className={cn(
-          "mb-3 block text-[0.68rem] font-extrabold uppercase tracking-[0.16em]",
-          gold ? "text-gold" : "text-own-blue"
-        )}
-      >
-        {label}
-      </b>
+      <span className="mb-3 flex items-start justify-between gap-2">
+        <b
+          className={cn(
+            "block text-[0.68rem] font-extrabold uppercase tracking-[0.16em]",
+            gold ? "text-gold" : "text-own-blue"
+          )}
+        >
+          {label}
+        </b>
+        {tip ? <InfoTip label={label} text={tip} /> : null}
+      </span>
       {children}
       {sub ? (
         <p

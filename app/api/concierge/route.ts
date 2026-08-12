@@ -44,6 +44,55 @@ async function liveRoomFacts(): Promise<string> {
     .join(". ");
 }
 
+/**
+ * v12 · dining + events facts from the same tables the owner edits, so the
+ * concierge quotes the live menu and calendar, never a hardcoded copy. Menu
+ * prices come straight from DiningItem rows · never invent prices.
+ */
+async function diningEventsFacts(): Promise<string> {
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const [cats, events] = await Promise.all([
+    prisma.diningCategory.findMany({
+      where: { published: true },
+      orderBy: { order: "asc" },
+      include: {
+        items: {
+          where: { published: true },
+          orderBy: { order: "asc" },
+          take: 5,
+        },
+      },
+    }),
+    prisma.hotelEvent.findMany({
+      where: { published: true, date: { gte: todayIso } },
+      orderBy: { date: "asc" },
+      take: 4,
+    }),
+  ]);
+
+  const menu = cats
+    .filter((c) => c.items.length > 0)
+    .map(
+      (c) =>
+        `${c.nameEn}: ${c.items
+          .map((i) => `${i.nameEn} ฿${i.price.toLocaleString("en-US")}`)
+          .join(", ")}`
+    )
+    .join(". ");
+  const upcoming = events
+    .map((e) => `${e.titleEn} (${e.date}): ${e.descriptionEn}`)
+    .join(" ");
+
+  return [
+    "Dining: breakfast on the pier 07:00 to 11:00, kitchen until 22:00, full menu at /dining.",
+    menu ? `Menu highlights (live prices): ${menu}.` : "",
+    "Events & spaces: the riverside pavilion hosts weddings, private dinners and parties · 60 seated, 90 standing · details at /events.",
+    upcoming ? `Coming up: ${upcoming}` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 function configFacts(lang: "en" | "th"): string {
   const facts = hotelConfig.concierge.facts.map((f) => f[lang]).join(" ");
   const contact = hotelConfig.contact;
@@ -64,7 +113,8 @@ function buildSystemPrompt(
   lang: "en" | "th",
   roomFacts: string,
   availability: AvailabilityResult | null,
-  availabilityFailed: boolean
+  availabilityFailed: boolean,
+  houseFacts = ""
 ): string {
   const replyLang = lang === "th" ? "Thai" : "English";
   const name = hotelConfig.concierge.name[lang];
@@ -99,6 +149,7 @@ function buildSystemPrompt(
     "FACTS:",
     configFacts(lang),
     `Rooms (source of truth): ${roomFacts}`,
+    houseFacts,
     availability ? `\nAVAILABILITY:\n${availabilityFacts(availability)}` : "",
   ]
     .filter(Boolean)
@@ -168,8 +219,21 @@ export async function POST(req: Request) {
     });
   }
 
+  // Dining + events are additive color · a lookup failure must never take
+  // down the concierge, so it degrades to an empty block.
+  const houseFacts = await diningEventsFacts().catch((e) => {
+    console.error("[api/concierge] dining/events facts", e);
+    return "";
+  });
+
   const result = await completeChat({
-    system: buildSystemPrompt(lang, roomFacts, availability, availabilityFailed),
+    system: buildSystemPrompt(
+      lang,
+      roomFacts,
+      availability,
+      availabilityFailed,
+      houseFacts
+    ),
     messages: [{ role: "user", content: message }],
     timeoutMs: TIMEOUT_MS,
     maxTokens: 400,

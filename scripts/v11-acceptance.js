@@ -206,8 +206,15 @@ async function run() {
     const ctx = await contextFor(browser, { js: false });
     const page = await ctx.newPage();
     await page.goto(BASE + "/rooms", { waitUntil: "load" });
-    const navLink = await page.locator("header a[href='/facilities']").count();
-    check("header nav has Facilities (no JS)", navLink >= 1, `${navLink}`);
+    // v12 · Facilities moved into the Experience dropdown group; the no-JS
+    // header carries the group trigger (/experience) and the new /dining link.
+    const navExp = await page.locator("header a[href='/experience']").count();
+    const navDining = await page.locator("header a[href='/dining']").count();
+    check(
+      "header nav has Experience group + Dining (no JS)",
+      navExp >= 1 && navDining >= 1,
+      `exp=${navExp} dining=${navDining}`
+    );
     const footLink = await page.locator("footer a[href='/facilities']").count();
     const footHouse = await page.locator("footer a[href='/experience#house']").count();
     check("footer has Facilities + House & team", footLink >= 1 && footHouse >= 1);

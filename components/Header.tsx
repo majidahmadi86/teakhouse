@@ -20,6 +20,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { CurrencySwitcher } from "@/components/CurrencySwitcher";
+import { ExperienceMenu } from "@/components/header/ExperienceMenu";
 import { RoomsMegaMenu } from "@/components/header/RoomsMegaMenu";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
@@ -30,19 +31,28 @@ function Link(props: ComponentProps<typeof NextLink>) {
   return <NextLink prefetch={false} {...props} />;
 }
 
-const NAV_CENTER = [
-  { href: "/experience", key: "nav.experience" },
-  { href: "/facilities", key: "nav.facilities" },
-  { href: "/gallery", key: "nav.gallery" },
+/* v12 nav · Rooms · Dining · Experience (dropdown) · Location · Contact.
+   Keep in lockstep with HeaderShell (VISUAL PARITY LAW). */
+const NAV_TAIL = [
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
+] as const;
+
+/** Grouped under the Experience dropdown · used for the trigger active state. */
+const EXPERIENCE_GROUP = [
+  "/experience",
+  "/facilities",
+  "/events",
+  "/gallery",
 ] as const;
 
 const DRAWER_NAV = [
   { href: "/rooms", key: "nav.rooms", subtitle: "nav.roomsCount" as const },
   { href: "/offers", key: "nav.offers", offers: true },
+  { href: "/dining", key: "nav.dining" },
   { href: "/experience", key: "nav.experience" },
   { href: "/facilities", key: "nav.facilities" },
+  { href: "/events", key: "nav.events" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
@@ -280,7 +290,15 @@ export function Header() {
           {/* CENTER nav · >=1200 (CSS-gated · matches HeaderShell) */}
           <nav className="mx-auto hidden items-center gap-7 min-[1200px]:flex">
             <RoomsMegaMenu active={isActive("/rooms")} />
-            {NAV_CENTER.map(({ href, key }) => (
+            <NavLink
+              href="/dining"
+              label={t("nav.dining")}
+              active={isActive("/dining")}
+            />
+            <ExperienceMenu
+              active={EXPERIENCE_GROUP.some((href) => isActive(href))}
+            />
+            {NAV_TAIL.map(({ href, key }) => (
               <NavLink
                 key={href}
                 href={href}

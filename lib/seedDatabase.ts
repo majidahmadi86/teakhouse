@@ -630,6 +630,148 @@ function seedRateRules(roomId: string, anchor: Date): SeedRateRule[] {
   return rules;
 }
 
+/**
+ * v12 · Dining menu seed · EN carried in the *Th columns pending the Thai pass
+ * (never author Thai). Categories + dishes are owner-editable after seed.
+ */
+type SeedDish = { name: string; description: string; price: number };
+type SeedDiningCategory = { id: string; name: string; dishes: SeedDish[] };
+
+const DINING: SeedDiningCategory[] = [
+  {
+    id: "dc-pier-breakfast",
+    name: "Breakfast on the pier",
+    dishes: [
+      {
+        name: "Rice soup with river prawns",
+        description:
+          "Gentle rice soup simmered in prawn stock, river prawns, young ginger and crispy garlic.",
+        price: 220,
+      },
+      {
+        name: "Thai omelette with crab",
+        description:
+          "Folded street-style omelette heavy with crab meat, served over jasmine rice with Sriracha.",
+        price: 260,
+      },
+      {
+        name: "Pier fruit tray",
+        description:
+          "Whatever the morning boat brought: mango, pomelo, rose apple and lime-chilli salt.",
+        price: 180,
+      },
+      {
+        name: "Coconut pancakes",
+        description:
+          "Crisp-edged khanom krok off the brass pan, coconut cream still warm from the griddle.",
+        price: 140,
+      },
+      {
+        name: "Eggs any way, teak-house style",
+        description:
+          "Two eggs from Nakhon Pathom, grilled tomato, pork sausage and toast from the corner bakery.",
+        price: 190,
+      },
+      {
+        name: "Chiang Rai pour-over",
+        description:
+          "Single-origin arabica roasted in Chiang Rai, brewed slow at the pier counter.",
+        price: 120,
+      },
+    ],
+  },
+  {
+    id: "dc-thai-kitchen",
+    name: "Thai kitchen",
+    dishes: [
+      {
+        name: "River prawn pad thai",
+        description:
+          "Charred rice noodles folded with tamarind and wrapped in an egg net, one grilled river prawn on top.",
+        price: 320,
+      },
+      {
+        name: "Massaman beef short rib",
+        description:
+          "Five-hour short rib in massaman curry, roasted peanuts and pickled cucumber.",
+        price: 420,
+      },
+      {
+        name: "Grilled river fish in salt crust",
+        description:
+          "Whole tilapia packed in salt and lemongrass, grilled over charcoal, three dips.",
+        price: 380,
+      },
+      {
+        name: "Green curry with grilled chicken",
+        description:
+          "Charcoal chicken thigh in green curry, Thai eggplant and sweet basil, roti on the side.",
+        price: 290,
+      },
+      {
+        name: "Pomelo salad",
+        description:
+          "Yam som-o: pomelo, toasted coconut, dried shrimp and a lime dressing that bites back.",
+        price: 240,
+      },
+      {
+        name: "Stir-fried morning glory",
+        description:
+          "Wok-blistered morning glory with yellow bean, garlic and a whisper of chilli.",
+        price: 160,
+      },
+      {
+        name: "Tom yum goong, house style",
+        description:
+          "Hot-sour broth with river prawns, straw mushrooms and young galangal.",
+        price: 300,
+      },
+      {
+        name: "Mango sticky rice",
+        description:
+          "Nam dok mai mango, coconut sticky rice and salted coconut cream.",
+        price: 180,
+      },
+    ],
+  },
+  {
+    id: "dc-drinks",
+    name: "Drinks & cocktails",
+    dishes: [
+      {
+        name: "Riverside sundowner",
+        description:
+          "The house cocktail: Thai rum, tamarind, palm sugar and lime, stirred over one big cube.",
+        price: 280,
+      },
+      {
+        name: "Lemongrass pandan cooler",
+        description:
+          "Cold-steeped lemongrass and pandan over crushed ice, barely sweet.",
+        price: 120,
+      },
+      {
+        name: "Chrysanthemum iced tea",
+        description:
+          "Old-market chrysanthemum tea, brewed every morning, honey optional.",
+        price: 100,
+      },
+      {
+        name: "Singha on the pier",
+        description: "Ice-cold bottle with a lime wedge, best at sunset.",
+        price: 130,
+      },
+    ],
+  },
+];
+
+/** First yyyy-mm-dd of month/day on or after the anchor date. */
+function nextOccurrence(anchor: Date, month1: number, day: number): string {
+  const y = anchor.getFullYear();
+  const candidate = ymd(y, month1, day);
+  return candidate >= iso(anchor) ? candidate : ymd(y + 1, month1, day);
+}
+
 export async function seedDatabase() {
   console.log("Seeding TEAK HOUSE v8…");
 
@@ -643,6 +785,9 @@ export async function seedDatabase() {
   await prisma.room.deleteMany();
   await prisma.hotel.deleteMany();
   await prisma.demoMeta.deleteMany();
+  await prisma.diningItem.deleteMany();
+  await prisma.diningCategory.deleteMany();
+  await prisma.hotelEvent.deleteMany();
 
   await prisma.hotel.create({
     data: {
@@ -830,7 +975,81 @@ export async function seedDatabase() {
     },
   });
 
+  // v12 · dining menu · *Th columns mirror EN pending the Thai pass
+  let dishCount = 0;
+  for (let c = 0; c < DINING.length; c++) {
+    const cat = DINING[c];
+    await prisma.diningCategory.create({
+      data: {
+        id: cat.id,
+        hotelId: "default",
+        nameEn: cat.name,
+        nameTh: cat.name,
+        order: c,
+        published: true,
+        items: {
+          create: cat.dishes.map((d, i) => ({
+            id: `${cat.id}-i${i + 1}`,
+            nameEn: d.name,
+            nameTh: d.name,
+            descriptionEn: d.description,
+            descriptionTh: d.description,
+            price: d.price,
+            order: i,
+            published: true,
+          })),
+        },
+      },
+    });
+    dishCount += cat.dishes.length;
+  }
+
+  // v12 · special events · dates roll to the next occurrence so the demo
+  // sandbox never shows a past festival, however long after launch it reseeds.
+  const toSunday = (7 - today.getDay()) % 7 || 7;
+  const EVENTS = [
+    {
+      id: "ev-loy-krathong",
+      title: "Loy Krathong riverside dinner",
+      date: nextOccurrence(today, 11, 24),
+      description:
+        "Float a krathong from our pier, then sit down to a five-course Thai dinner under the full moon. One seating, 28 guests.",
+      image: "/images/facilities/pier-breakfast-1280.webp",
+    },
+    {
+      id: "ev-jazz-brunch",
+      title: "Sunday jazz brunch",
+      date: iso(addDays(today, toSunday)),
+      description:
+        "A trio on the pavilion deck, free-flow Thai brunch plates and the slow boats going by. Every Sunday, 11:30 to 15:00.",
+      image: "/images/facilities/lobby-lounge-1280.webp",
+    },
+    {
+      id: "ev-songkran-lunch",
+      title: "Songkran garden lunch",
+      date: nextOccurrence(today, 4, 13),
+      description:
+        "Songkran the old way: water for blessing, not soaking. A khan tok lunch under the mango tree with the whole house.",
+      image: "/images/facilities/courtyard-garden-1280.webp",
+    },
+  ];
+  for (const ev of EVENTS) {
+    await prisma.hotelEvent.create({
+      data: {
+        id: ev.id,
+        hotelId: "default",
+        titleEn: ev.title,
+        titleTh: ev.title,
+        date: ev.date,
+        descriptionEn: ev.description,
+        descriptionTh: ev.description,
+        image: ev.image,
+        published: true,
+      },
+    });
+  }
+
   console.log(
-    `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · guests + demo user`
+    `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · ${DINING.length} dining categories · ${dishCount} dishes · ${EVENTS.length} events · guests + demo user`
   );
 }

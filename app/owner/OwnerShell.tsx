@@ -11,8 +11,10 @@ import {
   Loader2,
   LogOut,
   NotebookPen,
+  PartyPopper,
   Settings,
   Tags,
+  UtensilsCrossed,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useI18n } from "@/lib/i18n";
@@ -35,6 +37,8 @@ const NAV: {
   { href: "/owner", labelKey: "ow.dash", icon: LayoutDashboard, exact: true },
   { href: "/owner/bookings", labelKey: "ow.bk", icon: NotebookPen },
   { href: "/owner/rooms", labelKey: "ow.rooms", icon: DoorOpen },
+  { href: "/owner/dining", labelKey: "ow.dining", icon: UtensilsCrossed },
+  { href: "/owner/events", labelKey: "ow.events", icon: PartyPopper },
   { href: "/owner/rates", labelKey: "ow.rateCalendar", icon: Tags },
   { href: "/owner/calendar", labelKey: "ow.cal", icon: CalendarDays },
   { href: "/owner/settings", label: "Settings", icon: Settings },

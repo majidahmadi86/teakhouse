@@ -183,3 +183,52 @@ model DemoMeta {
   id        String   @id @default("demo")
   lastReset DateTime @default(now())
 }
+
+/// v12 · Dining menu category · owner-editable, guest page renders published only
+model DiningCategory {
+  id        String       @id @default(cuid())
+  hotelId   String       @default("default")
+  nameEn    String
+  nameTh    String
+  order     Int          @default(0)
+  published Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  items     DiningItem[]
+}
+
+/// v12 · Dish on the dining menu · price in whole baht
+model DiningItem {
+  id            String         @id @default(cuid())
+  categoryId    String
+  category      DiningCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  nameEn        String
+  nameTh        String
+  descriptionEn String
+  descriptionTh String
+  price         Int
+  order         Int            @default(0)
+  published     Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([categoryId, order])
+}
+
+/// v12 · Special event · owner-editable, guest page renders published only
+model HotelEvent {
+  id            String   @id @default(cuid())
+  hotelId       String   @default("default")
+  titleEn       String
+  titleTh       String
+  /// ISO yyyy-mm-dd
+  date          String
+  descriptionEn String
+  descriptionTh String
+  image         String   @default("")
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([date])
+}

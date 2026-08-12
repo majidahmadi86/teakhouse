@@ -4,12 +4,17 @@ import { LogoMark } from "@/components/LogoMark";
 import { getServerPathname, t, type Lang } from "@/lib/serverLocale";
 import { cn } from "@/lib/utils";
 
-const NAV_CENTER = [
-  { href: "/experience", key: "nav.experience" },
-  { href: "/facilities", key: "nav.facilities" },
-  { href: "/gallery", key: "nav.gallery" },
+/* v12 nav · keep in lockstep with Header (VISUAL PARITY LAW). */
+const NAV_TAIL = [
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
+] as const;
+
+const EXPERIENCE_GROUP = [
+  "/experience",
+  "/facilities",
+  "/events",
+  "/gallery",
 ] as const;
 
 /**
@@ -62,7 +67,38 @@ export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
               )}
             />
           </Link>
-          {NAV_CENTER.map(({ href, key }) => (
+          <Link
+            href="/dining"
+            prefetch={false}
+            className={cn(
+              "link-draw shrink-0 whitespace-nowrap text-[15px] font-semibold transition",
+              isActive("/dining") ? "text-blue" : "text-ink hover:text-blue"
+            )}
+          >
+            {t(locale, "nav.dining")}
+          </Link>
+          <Link
+            href="/experience"
+            prefetch={false}
+            className={cn(
+              "group relative inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[15px] font-semibold transition",
+              EXPERIENCE_GROUP.some((href) => isActive(href))
+                ? "text-blue"
+                : "text-ink hover:text-blue"
+            )}
+          >
+            {t(locale, "nav.experience")}
+            <ChevronDown className="h-3.5 w-3.5" aria-hidden />
+            <span
+              className={cn(
+                "absolute -bottom-1 left-0 h-0.5 bg-blue transition-all duration-300",
+                EXPERIENCE_GROUP.some((href) => isActive(href))
+                  ? "w-full"
+                  : "w-0 group-hover:w-full"
+              )}
+            />
+          </Link>
+          {NAV_TAIL.map(({ href, key }) => (
             <Link
               key={href}
               href={href}
