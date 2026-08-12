@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { RateBreakdown } from "@/components/booking/RateBreakdown";
 import { qrMockSvg } from "@/lib/bookingUtils";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
+import type { RateLine } from "@/lib/pricing";
 import type { Room } from "@/lib/rooms";
 import { formatBaht, isoDate } from "@/lib/utils";
 
@@ -24,6 +26,8 @@ export type ReceiptProps = {
   subtotal: number;
   deposit: number;
   balance: number;
+  /** One line per price band of the stay · the per-night breakdown. */
+  rateLines?: RateLine[];
   issuedAt?: Date;
 };
 
@@ -42,6 +46,7 @@ export function Receipt({
   subtotal,
   deposit,
   balance,
+  rateLines = [],
   issuedAt = new Date(),
 }: ReceiptProps) {
   const { t, tr } = useI18n();
@@ -114,12 +119,26 @@ export function Receipt({
           </div>
 
           <div className="space-y-2 border-t border-line pt-4">
-            <div className="flex justify-between">
-              <span className="text-sub">
-                {format(rate)} × {nights} {nights > 1 ? t("bk.nights") : t("bk.night")}
-              </span>
-              <span className="font-semibold text-ink">{format(subtotal)}</span>
-            </div>
+            {rateLines.length > 0 ? (
+              <>
+                <RateBreakdown
+                  lines={rateLines}
+                  showLabels={rateLines.length > 1}
+                />
+                <div className="flex justify-between border-t border-line pt-2 font-semibold text-ink">
+                  <span>{t("bk.stayTotal")}</span>
+                  <span>{format(subtotal)}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between">
+                <span className="text-sub">
+                  {format(rate)} × {nights}{" "}
+                  {nights > 1 ? t("bk.nights") : t("bk.night")}
+                </span>
+                <span className="font-semibold text-ink">{format(subtotal)}</span>
+              </div>
+            )}
             <div className="flex justify-between font-bold text-ink">
               <span>{t("bk.dep")}</span>
               <span>{format(deposit)}</span>

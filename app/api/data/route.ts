@@ -6,7 +6,13 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await maybeReseedDemo();
+    // A failed reseed must not cost the caller its data · serving slightly
+    // stale demo rows beats dropping the client back to base-rate seed data.
+    try {
+      await maybeReseedDemo();
+    } catch (e) {
+      console.error("[api/data] reseed skipped", e);
+    }
     const data = await loadOwnerData();
     return NextResponse.json(data);
   } catch (e) {

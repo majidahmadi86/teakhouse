@@ -1,9 +1,11 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { RateBreakdown } from "@/components/booking/RateBreakdown";
 import { SafeImage } from "@/components/SafeImage";
 import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
+import type { RateLine } from "@/lib/pricing";
 import type { Room } from "@/lib/rooms";
 import { isoDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -19,6 +21,8 @@ export type BookingSummaryProps = {
   savings: number;
   deposit: number;
   balance: number;
+  /** One line per price band of the stay · empty for an unpriced stay. */
+  rateLines?: RateLine[];
   /** Mobile collapsible bar */
   mobile?: boolean;
   expanded?: boolean;
@@ -37,6 +41,7 @@ export function BookingSummary({
   savings,
   deposit,
   balance,
+  rateLines = [],
   mobile = false,
   expanded = false,
   onToggle,
@@ -102,12 +107,27 @@ export function BookingSummary({
 
       {room && nights > 0 ? (
         <div className="space-y-2 border-t border-line pt-4">
-          <div className="flex justify-between">
-            <span className="text-sub">
-              {format(rate)} × {nights}
-            </span>
-            <span className="font-semibold text-ink">{format(subtotal)}</span>
-          </div>
+          {rateLines.length > 0 ? (
+            <>
+              <RateBreakdown
+                lines={rateLines}
+                showLabels={rateLines.length > 1}
+              />
+              {rateLines.length > 1 ? (
+                <div className="flex justify-between border-t border-line pt-2 font-semibold text-ink">
+                  <span>{t("bk.stayTotal")}</span>
+                  <span>{format(subtotal)}</span>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <div className="flex justify-between">
+              <span className="text-sub">
+                {format(rate)} × {nights}
+              </span>
+              <span className="font-semibold text-ink">{format(subtotal)}</span>
+            </div>
+          )}
           {savings > 0 ? (
             <div className="flex justify-between text-deal">
               <span>{t("bk.save")}</span>

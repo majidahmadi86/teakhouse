@@ -32,6 +32,7 @@ function Link(props: ComponentProps<typeof NextLink>) {
 
 const NAV_CENTER = [
   { href: "/experience", key: "nav.experience" },
+  { href: "/facilities", key: "nav.facilities" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
@@ -41,6 +42,7 @@ const DRAWER_NAV = [
   { href: "/rooms", key: "nav.rooms", subtitle: "nav.roomsCount" as const },
   { href: "/offers", key: "nav.offers", offers: true },
   { href: "/experience", key: "nav.experience" },
+  { href: "/facilities", key: "nav.facilities" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },

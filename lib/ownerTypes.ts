@@ -1,3 +1,4 @@
+import type { PriceRule } from "./pricing";
 import type { Room } from "./rooms";
 
 export type BookingStatus = "in" | "ok" | "out" | "cancelled";
@@ -50,6 +51,8 @@ export type OwnerData = {
   bookings: Booking[];
   /** key: `${roomSlug}:${yyyy-mm-dd}` -> blocked only (booked derived) */
   blocks: Record<string, true>;
+  /** Per-day rate rules, all rooms · the booking engine prices nights from these. */
+  priceRules: PriceRule[];
   seedVersion?: number;
 };
 
@@ -74,14 +77,8 @@ export type HotelDto = {
   depositPct: number;
 };
 
-export type SeasonalPriceRuleDto = {
-  id: string;
-  roomId: string;
-  label: string;
-  startDate: string;
-  endDate: string;
-  multiplier: number;
-};
+/** Wire shape of a per-day rate rule · identical to lib/pricing PriceRule. */
+export type SeasonalPriceRuleDto = PriceRule;
 
 export type EmailTemplateDto = {
   id: string;

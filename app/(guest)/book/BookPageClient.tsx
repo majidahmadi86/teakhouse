@@ -2,8 +2,18 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+// Same formatter the hydrated picker uses · the shell must not word its dates
+// differently from the control that replaces it.
+import { format as dfFormat } from "date-fns";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { BookingSummary } from "@/components/booking/BookingSummary";
 import { RoomSelectCard } from "@/components/booking/RoomSelectCard";
 
@@ -28,11 +38,23 @@ const RoomDetailsModal = dynamic(
   { ssr: false }
 );
 import { ListboxField } from "@/components/ui/ListboxField";
+import { RateBreakdown } from "@/components/booking/RateBreakdown";
 import { generateBookingCode, qrMockSvg } from "@/lib/bookingUtils";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
-import { useGuestRooms, useOwner } from "@/lib/ownerStore";
+import {
+  useGuestPriceRulesByRoom,
+  useGuestRooms,
+  useOwner,
+} from "@/lib/ownerStore";
+import {
+  groupNights,
+  lowestNightlyRate,
+  nightlyRate,
+  otaEquivalent,
+  quoteStay,
+} from "@/lib/pricing";
 import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
@@ -46,22 +68,28 @@ type PayMethod = "promptpay" | "card";
 const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
 
 /**
- * Styled, readable date shell · the DateRangePicker's loading/SSR state.
- * Present and legible with JS disabled (calendar icon + default stay dates),
- * matched to the interactive control's height so there is no layout shift when
- * react-day-picker hydrates in. Never a blank skeleton, never opacity-0.
+ * The DateRangePicker's loading / SSR state.
+ *
+ * It is the picker's own trigger, rendered as static markup: same box, same
+ * icon, same label, same default stay dates, formatted exactly the way the
+ * hydrated control formats them. So the shell and the hydrated picker read
+ * identically and occupy identical space · nothing moves and nothing changes
+ * wording when react-day-picker arrives.
+ *
+ * It used to render two labelled fields over a mock month grid. That was 560px
+ * of placeholder collapsing to an 80px control on hydration, and its labels
+ * were hard-coded English, which a Thai guest with JS off would have seen.
  */
 function DateRangeShell() {
   const inDate = addDays(new Date(), 1);
   const outDate = addDays(new Date(), 2);
-  const fmt = (d: Date) =>
-    d.toLocaleDateString("en-GB", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
-  const field = (label: string, value: string) => (
-    <div className="flex flex-1 items-center gap-3 rounded-xl border border-line bg-white px-4 py-3">
+  const label = `${dfFormat(inDate, "d MMM")} - ${dfFormat(outDate, "d MMM yyyy")}`;
+
+  return (
+    <div
+      data-date-shell
+      className="flex w-full items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left text-base text-ink"
+    >
       <svg
         className="h-5 w-5 shrink-0 text-blue"
         viewBox="0 0 24 24"
@@ -73,30 +101,7 @@ function DateRangeShell() {
         <rect x="3" y="4" width="18" height="18" rx="2" />
         <path d="M16 2v4M8 2v4M3 10h18" />
       </svg>
-      <span className="min-w-0">
-        <span className="block text-[0.7rem] font-bold uppercase tracking-wide text-sub">
-          {label}
-        </span>
-        <span className="block truncate text-[15px] font-semibold text-ink">
-          {value}
-        </span>
-      </span>
-    </div>
-  );
-  return (
-    <div className="min-h-[332px] rounded-xl border border-line bg-cloud/40 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        {field("Check in", fmt(inDate))}
-        {field("Check out", fmt(outDate))}
-      </div>
-      <div className="mt-4 grid grid-cols-7 gap-1.5" aria-hidden>
-        {Array.from({ length: 28 }).map((_, i) => (
-          <div
-            key={i}
-            className="aspect-square rounded-md border border-line/70 bg-white"
-          />
-        ))}
-      </div>
+      <span>{label}</span>
     </div>
   );
 }
@@ -107,7 +112,8 @@ export default function BookPageClient() {
   const { user, attachBooking } = useGuestAuth();
   const searchParams = useSearchParams();
   const rooms = useGuestRooms();
-  const { addBooking } = useOwner();
+  const rulesByRoom = useGuestPriceRulesByRoom();
+  const { addBooking, hydrated: rulesLoaded } = useOwner();
   const stepperRef = useRef<HTMLElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -119,7 +125,10 @@ export default function BookPageClient() {
     addDays(new Date(), 2)
   );
   const [guests, setGuests] = useState("2");
-  const [roomKey, setRoomKey] = useState<RoomShortKey | null>(null);
+  // Keyed by slug, not shortKey · several seeded rooms share a shortKey, so a
+  // shortKey lookup can resolve to a different room than the guest picked and
+  // price the stay off the wrong rate and rate rules.
+  const [roomSlug, setRoomSlug] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -156,7 +165,7 @@ export default function BookPageClient() {
     if (roomParam) {
       const room = findRoomByParam(roomParam);
       if (room) {
-        setRoomKey(room.shortKey);
+        setRoomSlug(room.slug);
         setStep(2);
       }
     }
@@ -174,17 +183,70 @@ export default function BookPageClient() {
     checkOut && checkOut > checkIn
       ? nightsBetween(isoDate(checkIn), isoDate(checkOut))
       : 0;
-  const selectedRoom = roomKey
-    ? rooms.find((r) => r.shortKey === roomKey) ?? null
+  const selectedRoom = roomSlug
+    ? rooms.find((r) => r.slug === roomSlug) ?? null
     : null;
+
+  // A stay is the SUM OF NIGHTLY RATES · never rate × nights. Seasons and
+  // date overrides can make any two nights of the same stay cost differently.
+  const quote = useMemo(() => {
+    if (!selectedRoom || !checkOut || nights <= 0) return null;
+    return quoteStay(
+      selectedRoom.rate,
+      isoDate(checkIn),
+      isoDate(checkOut),
+      rulesByRoom[selectedRoom.id] ?? []
+    );
+  }, [selectedRoom, checkIn, checkOut, nights, rulesByRoom]);
+
+  const rateLines = useMemo(
+    () => (quote ? groupNights(quote.nights) : []),
+    [quote]
+  );
+
   const rate = selectedRoom?.rate ?? 0;
-  const subtotal = selectedRoom && nights > 0 ? selectedRoom.rate * nights : 0;
+  const subtotal = quote?.total ?? 0;
   const savings =
-    selectedRoom && nights > 0
-      ? (selectedRoom.ota - selectedRoom.rate) * nights
+    selectedRoom && quote
+      ? otaEquivalent(quote.total, selectedRoom.rate, selectedRoom.ota) -
+        quote.total
       : 0;
   const deposit = Math.round(subtotal * 0.3);
   const balance = subtotal - deposit;
+
+  /**
+   * Day prices on the calendar · the selected room once one is chosen, the
+   * cheapest room otherwise. Null until the rate rules load, so the calendar
+   * never shows a price it has to correct.
+   */
+  /** Stay total for any room on the chosen dates · powers the step 2 cards. */
+  const stayTotalFor = useCallback(
+    (room: Room): number | null => {
+      if (!rulesLoaded || !checkOut || nights <= 0) return null;
+      return quoteStay(
+        room.rate,
+        isoDate(checkIn),
+        isoDate(checkOut),
+        rulesByRoom[room.id] ?? []
+      ).total;
+    },
+    [rulesLoaded, checkIn, checkOut, nights, rulesByRoom]
+  );
+
+  const priceForDate = useCallback(
+    (dateIso: string): number | null => {
+      if (!rulesLoaded) return null;
+      if (selectedRoom) {
+        return nightlyRate(
+          selectedRoom.rate,
+          dateIso,
+          rulesByRoom[selectedRoom.id] ?? []
+        ).price;
+      }
+      return lowestNightlyRate(rooms, dateIso, rulesByRoom);
+    },
+    [rulesLoaded, selectedRoom, rooms, rulesByRoom]
+  );
 
   const guestOptions = useMemo(
     () =>
@@ -199,7 +261,7 @@ export default function BookPageClient() {
 
   const datesValid = Boolean(checkOut && checkOut > checkIn);
   const step1Valid = datesValid;
-  const step2Valid = step1Valid && Boolean(roomKey);
+  const step2Valid = step1Valid && Boolean(roomSlug);
   const step3Valid =
     step2Valid && name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
 
@@ -279,13 +341,14 @@ export default function BookPageClient() {
     savings,
     deposit,
     balance,
+    rateLines,
   };
 
   function handleSelectRoom(room: Room) {
-    setRoomKey(room.shortKey);
+    setRoomSlug(room.slug);
     requestAnimationFrame(() => {
       document
-        .getElementById(`room-${room.shortKey}`)
+        .getElementById(`room-${room.slug}`)
         ?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   }
@@ -355,13 +418,15 @@ export default function BookPageClient() {
                   />
                   <h2 className="mb-6 text-2xl text-ink">{t("bk.when")}</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
+                    <div className="sm:col-span-2" data-date-field>
                       <DateRangePicker
                         from={checkIn}
                         to={checkOut}
                         onChange={handleDates}
                         placeholder={t("avail.selectDates")}
                         numberOfMonths={1}
+                        priceFor={priceForDate}
+                        formatPrice={format}
                       />
                       <p className="mt-2 text-[0.78rem] font-semibold text-sub">
                         {t("bk.helperDates")}
@@ -412,12 +477,14 @@ export default function BookPageClient() {
                   ) : null}
                   <div className="space-y-4">
                     {rooms.map((room) => (
-                      <div key={room.id} id={`room-${room.shortKey}`} className="scroll-mt-24">
+                      <div key={room.id} id={`room-${room.slug}`} className="scroll-mt-24">
                         <RoomSelectCard
                           room={room}
-                          selected={roomKey === room.shortKey}
+                          selected={roomSlug === room.slug}
                           onSelect={() => handleSelectRoom(room)}
                           onViewDetails={() => setDetailsRoom(room)}
+                          stayTotal={stayTotalFor(room)}
+                          stayNights={nights}
                         />
                       </div>
                     ))}
@@ -479,6 +546,24 @@ export default function BookPageClient() {
                       />
                     </Field>
                   </div>
+
+                  {rateLines.length > 0 ? (
+                    <div className="mt-6 rounded-xl border border-line bg-cloud/50 px-5 py-4">
+                      <h3 className="mb-3 text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+                        {t("bk.perNight")}
+                      </h3>
+                      <RateBreakdown lines={rateLines} className="text-sm" />
+                      <div className="mt-3 flex justify-between border-t border-line pt-3 text-base font-bold text-ink">
+                        <span>{t("bk.stayTotal")}</span>
+                        <span>{format(subtotal)}</span>
+                      </div>
+                      {quote?.mixed ? (
+                        <p className="mt-2 text-[0.78rem] font-semibold text-sub">
+                          {t("bk.mixedNote")}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
 
                   {savings > 0 ? (
                     <div className="my-5 rounded-xl bg-deal-bg px-5 py-4 text-sm font-bold text-deal">
@@ -576,6 +661,7 @@ export default function BookPageClient() {
                   subtotal={subtotal}
                   deposit={deposit}
                   balance={balance}
+                  rateLines={rateLines}
                 />
               ) : null}
             </div>

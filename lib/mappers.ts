@@ -187,5 +187,5 @@ export function blocksToRecord(
 }
 
 export function emptyOwnerData(): OwnerData {
-  return { rooms: [], bookings: [], blocks: {} };
+  return { rooms: [], bookings: [], blocks: {}, priceRules: [] };
 }

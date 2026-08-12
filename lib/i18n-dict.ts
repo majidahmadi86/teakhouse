@@ -349,6 +349,198 @@ export const DICT: Record<string, DictEntry> = {
   "trust.4": { en: "No booking fees", th: "ไม่มีค่าธรรมเนียมการจอง" },
   "urg.loft": { en: "Only 2 left at this price", th: "เหลือ 2 ห้องราคานี้" },
   "urg.garden": { en: "Popular choice", th: "ห้องยอดนิยม" },
+  // v11 · facilities + house & team. EN in both slots until the Thai pass ·
+  // see docs/v11-th-keys.md.
+  "nav.facilities": { en: "Facilities", th: "Facilities" },
+  "fac.h1": { en: "What the house keeps for you", th: "What the house keeps for you" },
+  "fac.lead": {
+    en: "Seven things we look after, so that none of them is your problem while you are here.",
+    th: "Seven things we look after, so that none of them is your problem while you are here.",
+  },
+  "fac.pool.h": { en: "The courtyard pool", th: "The courtyard pool" },
+  "fac.pool.p": {
+    en: "Saltwater, shaded by the old mango tree, open 07:00 to 21:00.",
+    th: "Saltwater, shaded by the old mango tree, open 07:00 to 21:00.",
+  },
+  "fac.pool.p2": {
+    en: "Towels are in the pool house and no one has ever needed to reserve a chair.",
+    th: "Towels are in the pool house and no one has ever needed to reserve a chair.",
+  },
+  "fac.pier.h": { en: "Breakfast on the river pier", th: "Breakfast on the river pier" },
+  "fac.pier.p": {
+    en: "Laid on the pier from 07:00 to 11:00, while the first ferries cross.",
+    th: "Laid on the pier from 07:00 to 11:00, while the first ferries cross.",
+  },
+  "fac.pier.p2": {
+    en: "Rice soup, fruit cut that morning, eggs to order, coffee roasted in Chiang Rai.",
+    th: "Rice soup, fruit cut that morning, eggs to order, coffee roasted in Chiang Rai.",
+  },
+  "fac.garden.h": { en: "The courtyard garden", th: "The courtyard garden" },
+  "fac.garden.p": {
+    en: "A walled garden of frangipani and ferns, cool enough to sit in at midday.",
+    th: "A walled garden of frangipani and ferns, cool enough to sit in at midday.",
+  },
+  "fac.garden.p2": {
+    en: "It is where guests sit down with a book and lose the afternoon.",
+    th: "It is where guests sit down with a book and lose the afternoon.",
+  },
+  "fac.lounge.h": { en: "The lobby lounge", th: "The lobby lounge" },
+  "fac.lounge.p": {
+    en: "The old front room, kept as it was: teak floors, deep chairs, quiet fans.",
+    th: "The old front room, kept as it was: teak floors, deep chairs, quiet fans.",
+  },
+  "fac.lounge.p2": {
+    en: "Tea all day, a small bar from six, and someone at the desk around the clock.",
+    th: "Tea all day, a small bar from six, and someone at the desk around the clock.",
+  },
+  "fac.transfer.h": { en: "Airport transfer", th: "Airport transfer" },
+  "fac.transfer.p": {
+    en: "A private car to either airport at any hour, arranged when you book.",
+    th: "A private car to either airport at any hour, arranged when you book.",
+  },
+  "fac.transfer.p2": {
+    en: "The driver waits inside the terminal with your name on a teak board.",
+    th: "The driver waits inside the terminal with your name on a teak board.",
+  },
+  "fac.housekeeping.h": { en: "Daily housekeeping", th: "Daily housekeeping" },
+  "fac.housekeeping.p": {
+    en: "Rooms made up each morning and turned down again in the evening.",
+    th: "Rooms made up each morning and turned down again in the evening.",
+  },
+  "fac.housekeeping.p2": {
+    en: "Linen is changed when you ask for it rather than on a fixed schedule.",
+    th: "Linen is changed when you ask for it rather than on a fixed schedule.",
+  },
+  "fac.luggage.h": { en: "Luggage storage", th: "Luggage storage" },
+  "fac.luggage.p": {
+    en: "Arrive before check-in or leave long after check-out, either is fine.",
+    th: "Arrive before check-in or leave long after check-out, either is fine.",
+  },
+  "fac.luggage.p2": {
+    en: "Bags stay locked behind the desk, tagged, for as long as you need them to.",
+    th: "Bags stay locked behind the desk, tagged, for as long as you need them to.",
+  },
+  "fac.strip.eyebrow": { en: "Facilities", th: "Facilities" },
+  "fac.strip.h2": { en: "The house looks after the rest", th: "The house looks after the rest" },
+  "fac.strip.p": {
+    en: "A pool in the courtyard, breakfast on the pier, a car to the airport, and your bags kept safe either side of your stay.",
+    th: "A pool in the courtyard, breakfast on the pier, a car to the airport, and your bags kept safe either side of your stay.",
+  },
+  "fac.strip.cta": { en: "See all facilities", th: "See all facilities" },
+
+  "house.eyebrow": { en: "House & team", th: "House & team" },
+  "house.h1": { en: "The house and the people in it", th: "The house and the people in it" },
+  "house.h2": { en: "Built in 1926. Still standing, still full.", th: "Built in 1926. Still standing, still full." },
+  "house.p1": {
+    en: "A teak trading house on Charoenkrung 44, put up in 1926 when the river was the road and this quarter shipped hardwood downstream. Twelve rooms, one staircase, and floorboards that announce every guest who comes home late.",
+    th: "A teak trading house on Charoenkrung 44, put up in 1926 when the river was the road and this quarter shipped hardwood downstream. Twelve rooms, one staircase, and floorboards that announce every guest who comes home late.",
+  },
+  "house.p2": {
+    en: "It sat empty for most of the nineties. The restoration kept what was worth keeping: the shutters, the teak, the pier, the mango tree in the courtyard. Everything else was rebuilt around them.",
+    th: "It sat empty for most of the nineties. The restoration kept what was worth keeping: the shutters, the teak, the pier, the mango tree in the courtyard. Everything else was rebuilt around them.",
+  },
+  "house.p3": {
+    en: "We run it with a small team and no front-of-house theatre. Book direct and the money stays in the building, which is how the roof gets fixed.",
+    th: "We run it with a small team and no front-of-house theatre. Book direct and the money stays in the building, which is how the roof gets fixed.",
+  },
+  "house.teamH": { en: "Who you will meet", th: "Who you will meet" },
+  "house.teamP": {
+    en: "Four people keep the house running. You will know all of them by the second morning.",
+    th: "Four people keep the house running. You will know all of them by the second morning.",
+  },
+  "house.r1n": { en: "Khun Nok", th: "Khun Nok" },
+  "house.r1r": { en: "General manager", th: "General manager" },
+  "house.r1p": {
+    en: "Runs the house and knows every creak in the floor. If something is wrong, say so before you leave.",
+    th: "Runs the house and knows every creak in the floor. If something is wrong, say so before you leave.",
+  },
+  "house.r2n": { en: "Khun Nam", th: "Khun Nam" },
+  "house.r2r": { en: "Concierge", th: "Concierge" },
+  "house.r2p": {
+    en: "Books the boats, the tables, and the car to the airport. Also answers the chat on this site, day and night.",
+    th: "Books the boats, the tables, and the car to the airport. Also answers the chat on this site, day and night.",
+  },
+  "house.r3n": { en: "Khun Toy", th: "Khun Toy" },
+  "house.r3r": { en: "Housekeeping lead", th: "Housekeeping lead" },
+  "house.r3p": {
+    en: "Twelve rooms, turned twice a day. Flags a tired mattress long before a guest would notice it.",
+    th: "Twelve rooms, turned twice a day. Flags a tired mattress long before a guest would notice it.",
+  },
+  "house.r4n": { en: "Khun Chai", th: "Khun Chai" },
+  "house.r4r": { en: "Breakfast cook", th: "Breakfast cook" },
+  "house.r4p": {
+    en: "On the pier from six, cutting fruit. The rice soup is why people come down early.",
+    th: "On the pier from six, cutting fruit. The rice soup is why people come down early.",
+  },
+  "house.demoNote": {
+    en: "Demo property · team members are illustrative roles, not real individuals.",
+    th: "Demo property · team members are illustrative roles, not real individuals.",
+  },
+
+  // v11 · concierge availability answers. EN in both slots until the Thai
+  // pass · see docs/v11-th-keys.md.
+  "cg.av.head": { en: "{in} to {out} · {n} {unit}.", th: "{in} to {out} · {n} {unit}." },
+  "cg.av.free": { en: "Free for those dates:", th: "Free for those dates:" },
+  "cg.av.room": {
+    en: "{room} at {nightly} a night, {total} total",
+    th: "{room} at {nightly} a night, {total} total",
+  },
+  "cg.av.nightlyRange": { en: "{lo} to {hi}", th: "{lo} to {hi}" },
+  "cg.av.mixed": {
+    en: "Rates differ by date across your stay.",
+    th: "Rates differ by date across your stay.",
+  },
+  "cg.av.none": {
+    en: "Nothing is free for those dates.",
+    th: "Nothing is free for those dates.",
+  },
+  "cg.av.alt": {
+    en: "The nearest free nights are {in} to {out}, from {total}.",
+    th: "The nearest free nights are {in} to {out}, from {total}.",
+  },
+  "cg.av.noAlt": {
+    en: "Nothing close is free either · tell me other dates and I will look again.",
+    th: "Nothing close is free either · tell me other dates and I will look again.",
+  },
+  "cg.av.book": { en: "Book these dates", th: "Book these dates" },
+  "cg.av.checking": {
+    en: "Let me check the book and come back to you.",
+    th: "Let me check the book and come back to you.",
+  },
+
+  // v11 · concierge date vocabulary. These are PARSER INPUT, not UI copy:
+  // pipe-separated spellings the concierge accepts when reading dates out of a
+  // guest message. The `th` side currently mirrors `en`, which already covers
+  // the common Thai-locale case ("20-22 Aug"); filling in Thai spellings turns
+  // Thai date parsing on with no code change. See docs/v11-th-keys.md.
+  "date.mon.jan": { en: "jan|january", th: "jan|january" },
+  "date.mon.feb": { en: "feb|february", th: "feb|february" },
+  "date.mon.mar": { en: "mar|march", th: "mar|march" },
+  "date.mon.apr": { en: "apr|april", th: "apr|april" },
+  "date.mon.may": { en: "may", th: "may" },
+  "date.mon.jun": { en: "jun|june", th: "jun|june" },
+  "date.mon.jul": { en: "jul|july", th: "jul|july" },
+  "date.mon.aug": { en: "aug|august", th: "aug|august" },
+  "date.mon.sep": { en: "sep|sept|september", th: "sep|sept|september" },
+  "date.mon.oct": { en: "oct|october", th: "oct|october" },
+  "date.mon.nov": { en: "nov|november", th: "nov|november" },
+  "date.mon.dec": { en: "dec|december", th: "dec|december" },
+  "date.weekend": { en: "this weekend|the weekend|weekend", th: "this weekend|the weekend|weekend" },
+  "date.nextWeekend": { en: "next weekend", th: "next weekend" },
+  // "คืนนี้" already ships in the concierge intent matcher · reused, not new.
+  "date.tonight": { en: "tonight|today", th: "tonight|today|คืนนี้" },
+  "date.tomorrow": { en: "tomorrow", th: "tomorrow" },
+  "date.nextWeek": { en: "next week", th: "next week" },
+  "date.nights": { en: "night|nights", th: "night|nights|คืน" },
+
+  // v11 · per-day pricing. EN in both slots until the Thai pass · see
+  // docs/v11-th-keys.md.
+  "bk.stayTotal": { en: "Stay total", th: "Stay total" },
+  "bk.perNight": { en: "Price per night", th: "Price per night" },
+  "bk.mixedNote": {
+    en: "Nightly rates differ across your stay · the total is the sum of each night.",
+    th: "Nightly rates differ across your stay · the total is the sum of each night.",
+  },
   "bk.cardNum": { en: "Card number", th: "หมายเลขบัตร" },
   "bk.expiry": { en: "Expiry", th: "หมดอายุ" },
 
@@ -440,6 +632,66 @@ export const DICT: Record<string, DictEntry> = {
   "ow.notRecorded": { en: "Not recorded", th: "ไม่ได้บันทึก" },
   "ow.stayGroup": { en: "Stay", th: "การเข้าพัก" },
   "ow.payGroup": { en: "Payment", th: "การชำระเงิน" },
+
+  // v11 · rate calendar. New keys carry the EN copy in both slots until the
+  // Thai pass lands · see docs/v11-th-keys.md.
+  "ow.rateCalendar": { en: "Rate calendar", th: "Rate calendar" },
+  "ow.rateLead": {
+    en: "What each night costs · a date override beats a season, a season beats the base rate.",
+    th: "What each night costs · a date override beats a season, a season beats the base rate.",
+  },
+  "ow.ruleCount": { en: "{n} rate rules", th: "{n} rate rules" },
+  "ow.baseOnly": { en: "Base rate only", th: "Base rate only" },
+  "ow.rateBase": { en: "Base rate", th: "Base rate" },
+  "ow.rateBaseInvalid": {
+    en: "Enter a base rate above zero",
+    th: "Enter a base rate above zero",
+  },
+  "ow.rateBaseSaved": { en: "Base rate saved", th: "Base rate saved" },
+  "ow.rateFlat": { en: "Every night this month is {p}", th: "Every night this month is {p}" },
+  "ow.rateSpread": { en: "{lo} to {hi} this month", th: "{lo} to {hi} this month" },
+  "ow.rateLegendBase": { en: "Base rate", th: "Base rate" },
+  "ow.rateLegendSeason": { en: "Season", th: "Season" },
+  "ow.rateLegendOverride": { en: "Date override", th: "Date override" },
+  "ow.rateGridHint": {
+    en: "Tap any date to start a one-day override for it.",
+    th: "Tap any date to start a one-day override for it.",
+  },
+  "ow.rateRules": { en: "Rules for this room", th: "Rules for this room" },
+  "ow.rateNoRules": {
+    en: "No rules yet · every night is the base rate.",
+    th: "No rules yet · every night is the base rate.",
+  },
+  "ow.rateAdd": { en: "Add a rule", th: "Add a rule" },
+  "ow.rateKind": { en: "Rule type", th: "Rule type" },
+  "ow.rateSeason": { en: "Season", th: "Season" },
+  "ow.rateOverride": { en: "Date override", th: "Date override" },
+  "ow.rateUnnamed": { en: "Unnamed", th: "Unnamed" },
+  "ow.rateLabel": { en: "Label", th: "Label" },
+  "ow.rateMode": { en: "Price mode", th: "Price mode" },
+  "ow.rateFixed": { en: "Fixed price", th: "Fixed price" },
+  "ow.rateMultiplier": { en: "Multiplier", th: "Multiplier" },
+  "ow.rateFixedLabel": { en: "Price per night (THB)", th: "Price per night (THB)" },
+  "ow.rateMultiplierLabel": {
+    en: "Multiply the base rate by",
+    th: "Multiply the base rate by",
+  },
+  "ow.rateAddBtn": { en: "Add rule", th: "Add rule" },
+  "ow.rateSaved": { en: "Rule added", th: "Rule added" },
+  "ow.rateSaveFailed": { en: "Could not save the rule", th: "Could not save the rule" },
+  "ow.rateDeleted": { en: "Rule deleted", th: "Rule deleted" },
+  "ow.rateDatesRequired": {
+    en: "Start and end dates are required",
+    th: "Start and end dates are required",
+  },
+  "ow.rateEndBeforeStart": {
+    en: "End date must not be before the start date",
+    th: "End date must not be before the start date",
+  },
+  "ow.rateAmountRequired": {
+    en: "Enter a price or multiplier above zero",
+    th: "Enter a price or multiplier above zero",
+  },
 
   "cond.title": { en: "Good to know", th: "ข้อมูลควรทราบ" },
   "sec.room": { en: "Room", th: "ห้องพัก" },

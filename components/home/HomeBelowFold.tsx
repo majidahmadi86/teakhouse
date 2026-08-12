@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Calendar, MessageCircle, User } from "lucide-react";
+import { LocalPicture } from "@/components/LocalPicture";
 import { OfferCard } from "@/components/OfferCard";
 import { HomeRoomCard } from "@/components/home/HomeRoomCard";
 import {
@@ -9,6 +10,7 @@ import {
   RevealItem,
   RevealStagger,
 } from "@/components/home/HomeReveal";
+import { FACILITIES } from "@/lib/facilities";
 import { getSeedGuestRooms } from "@/lib/guestRooms";
 import { translate as t, type Lang } from "@/lib/translate";
 
@@ -78,6 +80,58 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
               {t(locale, "rooms.all")}
             </Link>
           </p>
+        </div>
+      </section>
+
+      {/* Facilities strip · seven static cards, images lazy and size-reserved,
+          each one a link into the facilities page. */}
+      <section className="tkh-below-section section-pad bg-white">
+        <div className="mx-auto max-w-[1180px]">
+          <Reveal className="flex flex-wrap items-end justify-between gap-4">
+            <div className="max-w-[640px]">
+              <p className="eyebrow mb-3.5">{t(locale, "fac.strip.eyebrow")}</p>
+              <h2>{t(locale, "fac.strip.h2")}</h2>
+              <p className="mt-4 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
+                {t(locale, "fac.strip.p")}
+              </p>
+            </div>
+            <Link
+              href="/facilities"
+              className="link-draw inline-flex items-center gap-1 text-sm font-bold text-blue"
+            >
+              {t(locale, "fac.strip.cta")}
+              <span aria-hidden>→</span>
+            </Link>
+          </Reveal>
+          <RevealStagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {FACILITIES.map((facility) => (
+              <RevealItem key={facility.key}>
+                <Link
+                  href="/facilities"
+                  className="group block overflow-hidden rounded-[14px] bg-cloud shadow-card transition hover:shadow-card-hover"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <LocalPicture
+                      base={facility.base}
+                      alt={facility.alt}
+                      width={640}
+                      height={480}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
+                      className="transition duration-500 group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-lg text-ink">
+                      {t(locale, `${facility.key}.h`)}
+                    </h3>
+                    <p className="mt-2 text-[0.9rem] leading-relaxed text-ink/75">
+                      {t(locale, `${facility.key}.p`)}
+                    </p>
+                  </div>
+                </Link>
+              </RevealItem>
+            ))}
+          </RevealStagger>
         </div>
       </section>
 

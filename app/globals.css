@@ -804,6 +804,25 @@ input.auth-input:-webkit-autofill {
   color: #0a2e5c;
 }
 
+/* Nightly prices need a taller cell · and every day stays a comfortable tap
+   target on touch, which the 40px default was not.
+   Doubled-up selector on purpose: react-day-picker's own stylesheet is imported
+   from the component and can land after this file, so `.rdp` alone would tie on
+   specificity and win on order. `.rdp.tkh-day-picker` beats it either way. */
+.rdp.tkh-day-picker {
+  --rdp-cell-size: 48px;
+}
+
+.rdp.tkh-day-picker--prices {
+  --rdp-cell-size: 54px;
+}
+
+@media (min-width: 768px) {
+  .rdp.tkh-day-picker {
+    --rdp-cell-size: 40px;
+  }
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: #0a6cde #e3e8ef;

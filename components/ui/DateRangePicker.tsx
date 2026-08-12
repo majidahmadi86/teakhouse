@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Popover,
@@ -16,7 +16,7 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, X } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { useI18n } from "@/lib/i18n";
 import { useIsMobile } from "@/lib/useMediaQuery";
@@ -42,10 +42,27 @@ type DateRangePickerProps = {
   placeholder?: string;
   className?: string;
   numberOfMonths?: 1 | 2;
+  /**
+   * Effective nightly rate for a date · rendered under the day number the way
+   * the OTAs do it. Return null when the price is not known yet, so the
+   * calendar shows nothing rather than a price it would have to take back.
+   */
+  priceFor?: (dateIso: string) => number | null;
+  /** Currency-aware formatter for the day prices. */
+  formatPrice?: (amountThb: number) => string;
 };
+
+/** Panel height assumed before the panel has ever been measured. */
+const ASSUMED_PANEL_H = 400;
+const MIN_PANEL_H = 260;
+const GAP = 8;
 
 function startOfToday(): Date {
   return startOfDay(new Date());
+}
+
+function isoOf(d: Date): string {
+  return format(d, "yyyy-MM-dd");
 }
 
 function formatRange(from?: Date, to?: Date): string | null {
@@ -61,6 +78,103 @@ function nightsCount(from?: Date, to?: Date): number {
   return n > 0 ? n : 0;
 }
 
+/**
+ * What is fixed to the top and bottom of the viewport right now.
+ * Measured from the live DOM rather than assumed from CSS vars, so the popover
+ * clears the sticky header, the demo bar, and the booking action bar even when
+ * one of them is absent on the current route.
+ */
+function measureObstructions(): { top: number; bottom: number } {
+  let top = 0;
+  let bottom = 0;
+
+  for (const el of Array.from(
+    document.querySelectorAll<HTMLElement>(
+      "header, [data-demo-bar], [data-booking-action-bar]"
+    )
+  )) {
+    const position = getComputedStyle(el).position;
+    if (position !== "fixed" && position !== "sticky") continue;
+    const rect = el.getBoundingClientRect();
+    if (rect.height === 0) continue;
+    // Anchored to the top half of the viewport -> it eats space from the top.
+    if (rect.top <= window.innerHeight / 2) {
+      top = Math.max(top, rect.bottom);
+    } else {
+      bottom = Math.max(bottom, window.innerHeight - rect.top);
+    }
+  }
+
+  return { top: Math.max(0, top), bottom: Math.max(0, bottom) };
+}
+
+type Placement = { side: "top" | "bottom"; maxHeight: number };
+
+/**
+ * Collision-aware placement for the desktop popover: below the field by
+ * default, flipped above when the space under it is too short to hold the
+ * calendar, and always capped so the panel scrolls instead of being clipped.
+ * Recomputed on scroll and resize while the popover is open.
+ */
+function usePlacement(
+  anchorRef: React.RefObject<HTMLElement>,
+  open: boolean,
+  measuredHeight: React.MutableRefObject<number>
+): Placement {
+  const [placement, setPlacement] = useState<Placement>({
+    side: "bottom",
+    maxHeight: ASSUMED_PANEL_H,
+  });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const compute = () => {
+      const el = anchorRef.current;
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const guards = measureObstructions();
+      const wanted = measuredHeight.current || ASSUMED_PANEL_H;
+
+      const below = window.innerHeight - guards.bottom - rect.bottom - GAP;
+      const above = rect.top - guards.top - GAP;
+
+      const flip = below < wanted && above > below;
+      const room = Math.max(MIN_PANEL_H, Math.floor(flip ? above : below));
+
+      setPlacement((prev) =>
+        prev.side === (flip ? "top" : "bottom") && prev.maxHeight === room
+          ? prev
+          : { side: flip ? "top" : "bottom", maxHeight: room }
+      );
+    };
+
+    compute();
+    window.addEventListener("resize", compute);
+    // capture: catches scrolling inside any ancestor, not just the window
+    window.addEventListener("scroll", compute, true);
+    return () => {
+      window.removeEventListener("resize", compute);
+      window.removeEventListener("scroll", compute, true);
+    };
+  }, [open, anchorRef, measuredHeight]);
+
+  return placement;
+}
+
+/** Freeze background scroll while the mobile sheet owns the screen. */
+function useScrollLock(active: boolean) {
+  useEffect(() => {
+    if (!active) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [active]);
+}
+
 export function DateRangePicker({
   from,
   to,
@@ -68,6 +182,8 @@ export function DateRangePicker({
   placeholder = "Select dates",
   className,
   numberOfMonths = 1,
+  priceFor,
+  formatPrice,
 }: DateRangePickerProps) {
   const { t, lang } = useI18n();
   const isMobile = useIsMobile();
@@ -75,6 +191,10 @@ export function DateRangePicker({
 
   const [draftFrom, setDraftFrom] = useState<Date | undefined>(from);
   const [draftTo, setDraftTo] = useState<Date | undefined>(to);
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const measuredHeight = useRef(0);
 
   useEffect(() => {
     setDraftFrom(from);
@@ -104,53 +224,73 @@ export function DateRangePicker({
   }, [draftFrom, draftTo]);
 
   const label = formatRange(draftFrom, draftTo) ?? placeholder;
-  const doneLabel = lang === "th" ? "เสร็จสิ้น" : "Done";
+  // Reuses the existing drp.done string · already translated, same meaning.
+  const doneLabel = t("drp.done") !== "drp.done" ? t("drp.done") : "Done";
+  const showPrices = Boolean(priceFor && formatPrice);
 
-  function handleSelect(range: DateRange | undefined, close?: () => void) {
-    if (!range?.from) {
-      setDraftFrom(undefined);
-      setDraftTo(undefined);
-      onChange(undefined, undefined);
-      return;
-    }
+  const handleSelect = useCallback(
+    (range: DateRange | undefined, close?: () => void) => {
+      if (!range?.from) {
+        setDraftFrom(undefined);
+        setDraftTo(undefined);
+        onChange(undefined, undefined);
+        return;
+      }
 
-    const fromDay = startOfDay(range.from);
-    const toDay = range.to ? startOfDay(range.to) : undefined;
-    const picked = toDay && !isSameDay(fromDay, toDay) ? toDay : fromDay;
+      const fromDay = startOfDay(range.from);
+      const toDay = range.to ? startOfDay(range.to) : undefined;
+      const picked = toDay && !isSameDay(fromDay, toDay) ? toDay : fromDay;
 
-    if (draftFrom && draftTo) {
-      setDraftFrom(picked);
-      setDraftTo(undefined);
-      onChange(picked, undefined);
-      return;
-    }
+      if (draftFrom && draftTo) {
+        setDraftFrom(picked);
+        setDraftTo(undefined);
+        onChange(picked, undefined);
+        return;
+      }
 
-    if (!draftFrom) {
-      setDraftFrom(fromDay);
-      setDraftTo(undefined);
-      onChange(fromDay, undefined);
-      return;
-    }
+      if (!draftFrom) {
+        setDraftFrom(fromDay);
+        setDraftTo(undefined);
+        onChange(fromDay, undefined);
+        return;
+      }
 
-    if (isBefore(picked, draftFrom)) {
-      setDraftFrom(picked);
-      setDraftTo(undefined);
-      onChange(picked, undefined);
-      return;
-    }
+      if (isBefore(picked, draftFrom)) {
+        setDraftFrom(picked);
+        setDraftTo(undefined);
+        onChange(picked, undefined);
+        return;
+      }
 
-    let end = picked;
-    if (isSameDay(picked, draftFrom)) {
-      end = addDays(draftFrom, 1);
-    }
+      const end = isSameDay(picked, draftFrom) ? addDays(draftFrom, 1) : picked;
 
-    setDraftTo(end);
-    onChange(draftFrom, end);
+      setDraftTo(end);
+      onChange(draftFrom, end);
 
-    if (!isMobile && draftFrom < end && close) {
-      close();
-    }
-  }
+      // Desktop closes as soon as the range is complete · mobile waits for Apply.
+      if (!isMobile && draftFrom < end && close) close();
+    },
+    [draftFrom, draftTo, isMobile, onChange]
+  );
+
+  const dayComponents = useMemo(() => {
+    if (!showPrices) return undefined;
+    return {
+      DayContent: ({ date }: { date: Date }) => {
+        const price = priceFor!(isoOf(date));
+        return (
+          <span className="flex flex-col items-center justify-center leading-none">
+            <span>{date.getDate()}</span>
+            {price != null ? (
+              <span className="mt-0.5 text-[0.58rem] font-bold text-deal">
+                {formatPrice!(price)}
+              </span>
+            ) : null}
+          </span>
+        );
+      },
+    };
+  }, [showPrices, priceFor, formatPrice]);
 
   const picker = (close?: () => void) => (
     <>
@@ -161,7 +301,8 @@ export function DateRangePicker({
         numberOfMonths={isMobile ? 1 : numberOfMonths}
         disabled={{ before: today }}
         showOutsideDays
-        className="tkh-day-picker"
+        components={dayComponents}
+        className={cn("tkh-day-picker", showPrices && "tkh-day-picker--prices")}
         classNames={{
           months: "flex flex-col gap-4 sm:flex-row",
           month: "space-y-3",
@@ -169,14 +310,14 @@ export function DateRangePicker({
           caption_label: "font-display text-lg text-navy",
           nav: "flex items-center gap-1",
           nav_button:
-            "inline-flex h-9 w-9 items-center justify-center rounded-full text-blue hover:bg-sky focus:outline-none focus-visible:ring-2 focus-visible:ring-sky",
+            "inline-flex h-11 w-11 items-center justify-center rounded-full text-blue hover:bg-sky focus:outline-none focus-visible:ring-2 focus-visible:ring-sky",
           table: "w-full border-collapse",
           head_row: "flex",
           head_cell:
-            "w-10 text-center text-xs font-semibold uppercase tracking-wide text-strike",
+            "w-[var(--rdp-cell-size)] text-center text-xs font-semibold uppercase tracking-wide text-strike",
           row: "mt-1 flex w-full",
           cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
-          day: "inline-flex h-10 w-10 items-center justify-center rounded-full text-ink hover:bg-sky focus:outline-none focus-visible:ring-2 focus-visible:ring-sky",
+          day: "inline-flex h-[var(--rdp-cell-size)] w-[var(--rdp-cell-size)] items-center justify-center rounded-full text-ink hover:bg-sky focus:outline-none focus-visible:ring-2 focus-visible:ring-sky",
           day_selected:
             "bg-blue text-white hover:bg-blue hover:text-white focus:bg-blue focus:text-white",
           day_range_start: "bg-blue text-white hover:bg-blue hover:text-white",
@@ -189,74 +330,179 @@ export function DateRangePicker({
         }}
       />
       <p className="mt-2 text-center text-xs font-semibold text-sub">{hint}</p>
-      {nightsLabel ? (
-        <div className="mt-3 border-t border-line pt-3 text-center text-sm font-bold text-navy">
-          {nightsLabel}
-        </div>
-      ) : null}
     </>
   );
 
   return (
     <Popover className={cn("relative", className)}>
       {({ close, open }) => (
-        <>
-          <PopoverButton
-            type="button"
-            aria-label={placeholder}
-            className="flex w-full items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left text-base text-ink transition hover:border-blue/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky focus-visible:ring-offset-2"
-          >
-            <CalendarDays className="h-5 w-5 shrink-0 text-blue" aria-hidden />
-            <span className={cn(!draftFrom && "text-strike")}>{label}</span>
-          </PopoverButton>
-
-          {isMobile ? (
-            <Transition show={open} as={Fragment}>
-              <PopoverPanel
-                static
-                portal
-                className="fixed inset-0 z-popover flex flex-col justify-end"
-              >
-                <button
-                  type="button"
-                  className="absolute inset-0 bg-navy/40"
-                  aria-label="Close"
-                  onClick={() => close()}
-                />
-                <div className="relative rounded-t-3xl bg-white px-4 pb-safe pt-3 shadow-2xl">
-                  <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-line" />
-                  {open ? picker() : null}
-                  <button
-                    type="button"
-                    onClick={() => close()}
-                    className="btn-primary mt-4 mb-3 w-full"
-                  >
-                    {doneLabel}
-                  </button>
-                </div>
-              </PopoverPanel>
-            </Transition>
-          ) : (
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <PopoverPanel
-                portal
-                anchor={{ to: "bottom start", gap: "8px", padding: "12px" }}
-                className="z-popover w-auto rounded-2xl bg-white p-4 shadow-xl [--anchor-gap:8px]"
-              >
-                {open ? picker(close) : null}
-              </PopoverPanel>
-            </Transition>
-          )}
-        </>
+        <PickerBody
+          open={open}
+          close={close}
+          isMobile={isMobile}
+          buttonRef={buttonRef}
+          panelRef={panelRef}
+          measuredHeight={measuredHeight}
+          label={label}
+          placeholder={placeholder}
+          hasFrom={Boolean(draftFrom)}
+          nightsLabel={nightsLabel}
+          doneLabel={doneLabel}
+          picker={picker}
+        />
       )}
     </Popover>
+  );
+}
+
+type PickerBodyProps = {
+  open: boolean;
+  close: () => void;
+  isMobile: boolean;
+  buttonRef: React.RefObject<HTMLButtonElement>;
+  panelRef: React.RefObject<HTMLDivElement>;
+  measuredHeight: React.MutableRefObject<number>;
+  label: string;
+  placeholder: string;
+  hasFrom: boolean;
+  nightsLabel: string | null;
+  doneLabel: string;
+  picker: (close?: () => void) => React.ReactNode;
+};
+
+function PickerBody({
+  open,
+  close,
+  isMobile,
+  buttonRef,
+  panelRef,
+  measuredHeight,
+  label,
+  placeholder,
+  hasFrom,
+  nightsLabel,
+  doneLabel,
+  picker,
+}: PickerBodyProps) {
+  const placement = usePlacement(buttonRef, open && !isMobile, measuredHeight);
+  useScrollLock(open && isMobile);
+
+  // Remember the real panel height so the next open flips on facts, not a guess.
+  useEffect(() => {
+    if (!open || isMobile) return;
+    const el = panelRef.current;
+    if (!el) return;
+    const id = window.requestAnimationFrame(() => {
+      if (el.scrollHeight > 0) measuredHeight.current = el.scrollHeight;
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [open, isMobile, panelRef, measuredHeight]);
+
+  const trigger = (
+    <PopoverButton
+      ref={buttonRef}
+      type="button"
+      // Locale-stable handle · aria-label is translated, so tests and the
+      // no-JS shell comparison need something that does not move with language.
+      data-date-trigger
+      aria-label={placeholder}
+      className="flex w-full items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left text-base text-ink transition hover:border-blue/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky focus-visible:ring-offset-2"
+    >
+      <CalendarDays className="h-5 w-5 shrink-0 text-blue" aria-hidden />
+      <span className={cn(!hasFrom && "text-strike")}>{label}</span>
+    </PopoverButton>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {trigger}
+        <Transition
+          show={open}
+          as={Fragment}
+          enter="transition duration-200 ease-out"
+          enterFrom="translate-y-full"
+          enterTo="translate-y-0"
+          leave="transition duration-150 ease-in"
+          leaveFrom="translate-y-0"
+          leaveTo="translate-y-full"
+        >
+          {/* Full-screen sheet · solid, never a dropdown clipped by the fold. */}
+          <PopoverPanel
+            static
+            portal
+            className="fixed inset-0 z-popover flex flex-col bg-white"
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === "Escape") close();
+            }}
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
+              <h2 className="font-display text-lg text-ink">{placeholder}</h2>
+              <button
+                type="button"
+                onClick={() => close()}
+                className="grid h-11 w-11 place-items-center rounded-full text-sub transition hover:bg-cloud"
+                aria-label={doneLabel}
+              >
+                <X className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+              {open ? picker() : null}
+            </div>
+
+            <div className="sticky bottom-0 shrink-0 border-t border-line bg-white px-4 pb-safe pt-3">
+              {nightsLabel ? (
+                <p className="mb-2 text-center text-sm font-bold text-navy">
+                  {nightsLabel}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => close()}
+                className="btn-primary min-h-[48px] w-full"
+              >
+                {doneLabel}
+              </button>
+            </div>
+          </PopoverPanel>
+        </Transition>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {trigger}
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-200"
+        enterFrom="opacity-0 translate-y-1"
+        enterTo="opacity-100 translate-y-0"
+        leave="transition ease-in duration-150"
+        leaveFrom="opacity-100 translate-y-0"
+        leaveTo="opacity-0 translate-y-1"
+      >
+        <PopoverPanel
+          ref={panelRef}
+          portal
+          anchor={{
+            to: placement.side === "top" ? "top start" : "bottom start",
+            gap: GAP,
+            padding: 12,
+          }}
+          style={{ maxHeight: placement.maxHeight }}
+          className="z-popover w-auto overflow-y-auto overscroll-contain rounded-2xl bg-white p-4 shadow-xl"
+        >
+          {open ? picker(close) : null}
+          {nightsLabel ? (
+            <div className="mt-3 border-t border-line pt-3 text-center text-sm font-bold text-navy">
+              {nightsLabel}
+            </div>
+          ) : null}
+        </PopoverPanel>
+      </Transition>
+    </>
   );
 }

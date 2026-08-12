@@ -4,6 +4,7 @@
  */
 import { addDays, format } from "date-fns";
 import { prisma } from "@/lib/db";
+import { groupRulesByRoom, quoteStay, toPriceRule } from "@/lib/pricing";
 
 const unsplash = (id: string) => `https://images.unsplash.com/${id}`;
 
@@ -547,6 +548,88 @@ function nightsBetween(a: string, b: string): number {
   return Math.max(1, Math.round(ms / 86400000));
 }
 
+type SeedRateRule = {
+  roomId: string;
+  kind: string;
+  label: string;
+  startDate: string;
+  endDate: string;
+  multiplier: number | null;
+  price: number | null;
+};
+
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function ymd(year: number, month1: number, day: number): string {
+  return `${year}-${pad2(month1)}-${pad2(day)}`;
+}
+
+function lastFebruaryDay(year: number): number {
+  const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  return leap ? 29 : 28;
+}
+
+/**
+ * Demo rate rules · seeded relative to seed time so the sandbox always has
+ * visibly different prices on different days, however long after launch it is
+ * reseeded. Three layers, exactly the ones the owner panel exposes:
+ *   high season Dec-Feb (+10%), Songkran 13-15 Apr (date override), and the
+ *   coming Friday + Saturday as a weekend premium.
+ * The weekend rule is what makes a near-term stay cross a season boundary.
+ */
+function seedRateRules(roomId: string, anchor: Date): SeedRateRule[] {
+  const anchorIso = iso(anchor);
+  const year = anchor.getFullYear();
+  const rules: SeedRateRule[] = [];
+
+  // High season · Dec 1 through the end of February, two winters ahead.
+  for (const y of [year, year + 1]) {
+    const endDate = ymd(y + 1, 2, lastFebruaryDay(y + 1));
+    if (endDate < anchorIso) continue;
+    rules.push({
+      roomId,
+      kind: "season",
+      label: "High season",
+      startDate: ymd(y, 12, 1),
+      endDate,
+      multiplier: 1.1,
+      price: null,
+    });
+  }
+
+  // Songkran · a specific-date override, not a season.
+  for (const y of [year, year + 1, year + 2]) {
+    const endDate = ymd(y, 4, 15);
+    if (endDate < anchorIso) continue;
+    rules.push({
+      roomId,
+      kind: "override",
+      label: "Songkran",
+      startDate: ymd(y, 4, 13),
+      endDate,
+      multiplier: 1.35,
+      price: null,
+    });
+  }
+
+  // Weekend premium · the coming Friday and Saturday.
+  const toFriday = (5 - anchor.getDay() + 7) % 7;
+  const friday = addDays(anchor, toFriday === 0 ? 7 : toFriday);
+  rules.push({
+    roomId,
+    kind: "season",
+    label: "Weekend premium",
+    startDate: iso(friday),
+    endDate: iso(addDays(friday, 1)),
+    multiplier: 1.15,
+    price: null,
+  });
+
+  return rules;
+}
+
 export async function seedDatabase() {
   console.log("Seeding TEAK HOUSE v8…");
 
@@ -619,18 +702,16 @@ export async function seedDatabase() {
     });
   }
 
-  // Sample seasonal rule on River Loft
   const today = new Date();
   today.setHours(12, 0, 0, 0);
-  await prisma.seasonalPriceRule.create({
-    data: {
-      roomId: "river-loft",
-      label: "High season",
-      startDate: iso(addDays(today, 30)),
-      endDate: iso(addDays(today, 90)),
-      multiplier: 1.25,
-    },
-  });
+
+  const seededRules = ROOMS.flatMap((r) => seedRateRules(r.id, today));
+  await prisma.seasonalPriceRule.createMany({ data: seededRules });
+
+  // Same rules the booking engine will see, keyed the way it wants them.
+  const rateRulesByRoom = groupRulesByRoom(
+    seededRules.map((r, i) => toPriceRule({ ...r, id: `seed-${i}` }))
+  );
 
   const sources = ["Direct", "Agoda", "Booking"] as const;
   const statusesPast = ["out", "out", "out", "cancelled"] as const;
@@ -673,7 +754,14 @@ export async function seedDatabase() {
     const source = sources[i % sources.length];
     const status = spec.statusPool[i % spec.statusPool.length];
     const nights = nightsBetween(checkIn, checkOut);
-    const amount = room.rate * nights;
+    // Priced the same way the booking engine prices a live stay · so the
+    // owner dashboard's revenue matches what the rate calendar says.
+    const amount = quoteStay(
+      room.rate,
+      checkIn,
+      checkOut,
+      rateRulesByRoom[room.id] ?? []
+    ).total;
     const id = `bk-${4300 + i}`;
     const prefix = source === "Direct" ? "TKH" : source === "Agoda" ? "AGD" : "BKG";
     const code = `${prefix}-${codeN++}`;

@@ -19,6 +19,9 @@ export type RoomSelectCardProps = {
   selected: boolean;
   onSelect: () => void;
   onViewDetails: () => void;
+  /** Sum of the nightly rates for the chosen dates · null before dates exist. */
+  stayTotal?: number | null;
+  stayNights?: number;
 };
 
 export function RoomSelectCard({
@@ -26,6 +29,8 @@ export function RoomSelectCard({
   selected,
   onSelect,
   onViewDetails,
+  stayTotal = null,
+  stayNights = 0,
 }: RoomSelectCardProps) {
   const { t, tr } = useI18n();
   const { format } = useCurrency();
@@ -105,6 +110,13 @@ export function RoomSelectCard({
               <span className="mt-1.5 inline-block rounded-full bg-deal-bg px-2 py-0.5 text-[0.65rem] font-bold text-deal">
                 {t("chip.save", { z: format(savePerNight) })}
               </span>
+            ) : null}
+            {/* The real price for these dates · nightly rates can differ. */}
+            {stayTotal != null && stayNights > 0 ? (
+              <div className="mt-2 border-t border-line pt-2 text-[0.78rem] font-bold text-ink">
+                {t("bk.nightsCount", { n: stayNights })} ·{" "}
+                <span className="text-blue">{format(stayTotal)}</span>
+              </div>
             ) : null}
           </div>
 

@@ -14,13 +14,24 @@ export const CONCIERGE_HELLO: ConciergeReply = hotelConfig.concierge.hello;
 
 export const CONCIERGE_FALLBACK: ConciergeReply = hotelConfig.concierge.fallback;
 
+/**
+ * The offline answer to anything about price or availability.
+ *
+ * This matcher only runs when /api/concierge is unreachable, so it has no live
+ * calendar and no live rates behind it. Nightly prices now move by date, which
+ * means any number quoted here would be a guess · it quotes none and hands off
+ * to the booking page, which does know. Thai reused verbatim from the existing
+ * booking reply below.
+ */
+const LIVE_CHECK: ConciergeReply = {
+  en: 'Rates and availability move by date, so let me check yours rather than guess. The booking page shows live availability and the exact price for every night. <a href="/book" class="font-extrabold text-blue">Book direct here</a>',
+  th: 'ยินดีค่ะ หน้าจองแสดงห้องว่างแบบเรียลไทม์ มัดจำผ่านบัตรหรือพร้อมเพย์ แล้วยืนยันห้องทันทีค่ะ <a href="/book" class="font-extrabold text-blue">จองตรงที่นี่</a>',
+};
+
 const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
   {
-    k: /rate|price|cost|how much|tonight|ราคา|เท่าไหร่|เท่าไร|กี่บาท|คืนนี้/i,
-    r: {
-      en: "Tonight, direct with us: Courtyard Twin ฿2,100 · Garden Room ฿2,400 · Teak Suite ฿3,200 · River Loft ฿3,900. The same rooms are ฿450 to ฿800 more on Agoda. Shall I check your dates? Tap Book a room.",
-      th: "ราคาจองตรงคืนนี้ค่ะ: Courtyard Twin 2,100.- · Garden Room 2,400.- · Teak Suite 3,200.- · River Loft 3,900.- ห้องเดียวกันบน Agoda แพงกว่า 450 ถึง 800 บาทค่ะ ให้น้ำเช็ควันที่ให้ไหมคะ กดจองห้องพักได้เลยค่ะ",
-    },
+    k: /rate|price|cost|how much|tonight|available|vacan|ราคา|เท่าไหร่|เท่าไร|กี่บาท|คืนนี้|ห้องว่าง|ว่างไหม/i,
+    r: LIVE_CHECK,
   },
   {
     k: /airport|pickup|transfer|taxi|suvarnabhumi|don ?m|สนามบิน|รถรับ|แท็กซี่|สุวรรณภูมิ|ดอนเมือง/i,
@@ -37,7 +48,7 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     },
   },
   {
-    k: /book|reserve|available|vacan|จอง|ห้องว่าง|ว่างไหม/i,
+    k: /book|reserve|จอง/i,
     r: {
       en: 'With pleasure. The booking page shows live availability and takes a small deposit by card or PromptPay, and your room is confirmed instantly. <a href="/book" class="font-extrabold text-blue">Book direct here</a>',
       th: 'ยินดีค่ะ หน้าจองแสดงห้องว่างแบบเรียลไทม์ มัดจำผ่านบัตรหรือพร้อมเพย์ แล้วยืนยันห้องทันทีค่ะ <a href="/book" class="font-extrabold text-blue">จองตรงที่นี่</a>',

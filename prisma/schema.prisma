@@ -77,16 +77,23 @@ model Room {
   priceRules  SeasonalPriceRule[]
 }
 
+/// Per-day rate rule · precedence override > season > room.rate (base).
+/// `price` (fixed nightly baht) wins over `multiplier` when both are set.
 model SeasonalPriceRule {
   id          String   @id @default(cuid())
   roomId      String
   room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  /// "season" (date range) | "override" (specific dates: holidays, events)
+  kind        String   @default("season")
   label       String   @default("")
   startDate   String
   endDate     String
-  multiplier  Float
+  multiplier  Float?
+  price       Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([roomId, startDate, endDate])
 }
 
 model Booking {

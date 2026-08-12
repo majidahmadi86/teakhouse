@@ -10,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { getSeedGuestRooms } from "./guestRooms";
+import { groupRulesByRoom, type PriceRule } from "./pricing";
 import { SEED_ROOMS } from "./rooms";
 import type {
   Booking,
@@ -41,6 +42,10 @@ function emptyData(): OwnerData {
     rooms: structuredClone(SEED_ROOMS),
     bookings: [],
     blocks: {},
+    // Rate rules are seeded relative to seed time, so there is no honest
+    // client-side mirror · pre-hydration the base rate is the only truth and
+    // every rule-priced surface waits for `hydrated`.
+    priceRules: [],
   };
 }
 
@@ -134,6 +139,9 @@ type OwnerCtx = {
   updateRoom: (id: string, patch: Partial<RoomData>) => void;
   deleteRoom: (id: string) => void;
   toggleBlock: (roomSlug: string, dateIso: string) => void;
+  addPriceRule: (rule: Omit<PriceRule, "id">) => Promise<void>;
+  updatePriceRule: (id: string, patch: Partial<PriceRule>) => Promise<void>;
+  deletePriceRule: (id: string) => Promise<void>;
   getCell: (roomSlug: string, dateIso: string) => CellState;
   occupancyTonight: () => { occupied: number; total: number };
   arrivalsToday: () => number;
@@ -157,7 +165,10 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
           if (!cancelled) {
             startTransition(() => setData(loaded));
           }
-        } catch {
+        } catch (e) {
+          // Falling back to seed data means base rates and no rate rules · that
+          // is a visible downgrade, so say so rather than failing silently.
+          console.warn("[tkh] live data unavailable, using seed fallback", e);
           if (!cancelled) {
             startTransition(() => setData(emptyData()));
           }
@@ -352,6 +363,65 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     [refresh]
   );
 
+  /**
+   * Rate rules go to the server first · the row id is the server's to mint, and
+   * a stale optimistic id would break the calendar's per-date rule lookup.
+   * The list is small (a handful per room) so the round trip is invisible.
+   */
+  const addPriceRule = useCallback(
+    async (rule: Omit<PriceRule, "id">) => {
+      const res = await fetch(`/api/rooms/${rule.roomId}/pricing`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rule),
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? "Could not save the rate rule");
+      }
+      const created = (await res.json()) as PriceRule;
+      setData((prev) => ({ ...prev, priceRules: [...prev.priceRules, created] }));
+    },
+    []
+  );
+
+  const updatePriceRule = useCallback(
+    async (id: string, patch: Partial<PriceRule>) => {
+      const rule = data.priceRules.find((r) => r.id === id);
+      if (!rule) return;
+      setData((prev) => ({
+        ...prev,
+        priceRules: prev.priceRules.map((r) =>
+          r.id === id ? { ...r, ...patch } : r
+        ),
+      }));
+      const res = await fetch(`/api/rooms/${rule.roomId}/pricing`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...patch, id }),
+      });
+      if (!res.ok) await refresh();
+    },
+    [data.priceRules, refresh]
+  );
+
+  const deletePriceRule = useCallback(
+    async (id: string) => {
+      const rule = data.priceRules.find((r) => r.id === id);
+      if (!rule) return;
+      setData((prev) => ({
+        ...prev,
+        priceRules: prev.priceRules.filter((r) => r.id !== id),
+      }));
+      const res = await fetch(
+        `/api/rooms/${rule.roomId}/pricing?id=${encodeURIComponent(id)}`,
+        { method: "DELETE" }
+      );
+      if (!res.ok) await refresh();
+    },
+    [data.priceRules, refresh]
+  );
+
   const getCell = useCallback(
     (roomSlug: string, dateIso: string): CellState => {
       if (data.blocks[blockKey(roomSlug, dateIso)]) return "blocked";
@@ -389,6 +459,9 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       updateRoom,
       deleteRoom,
       toggleBlock,
+      addPriceRule,
+      updatePriceRule,
+      deletePriceRule,
       getCell,
       occupancyTonight,
       arrivalsToday,
@@ -409,6 +482,9 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       updateRoom,
       deleteRoom,
       toggleBlock,
+      addPriceRule,
+      updatePriceRule,
+      deletePriceRule,
       getCell,
       occupancyTonight,
       arrivalsToday,
@@ -426,10 +502,40 @@ export function useOwner() {
   return ctx;
 }
 
+/**
+ * Active rooms for the guest side.
+ *
+ * Memoized on purpose. /book lists these and keys an effect off the array, so
+ * handing back a new array every render re-ran that effect, which set state,
+ * which re-rendered, forever. A render loop at default priority also starves
+ * the store's own startTransition updates · the symptom was a page that fetched
+ * live rooms and rate rules successfully and then never showed them, quietly
+ * pricing every stay at the base rate.
+ */
 export function useGuestRooms(): RoomData[] {
   const ctx = useContext(Ctx);
-  if (ctx?.hydrated) {
-    return ctx.data.rooms.filter((r) => r.active);
-  }
-  return getSeedGuestRooms();
+  const rooms = ctx?.hydrated ? ctx.data.rooms : null;
+  return useMemo(
+    () => (rooms ? rooms.filter((r) => r.active) : getSeedGuestRooms()),
+    [rooms]
+  );
+}
+
+const NO_RULES: PriceRule[] = [];
+
+/**
+ * Live rate rules for the guest side. Empty until the store hydrates, which is
+ * deliberate: the pre-hydration shell prices nights at the base rate and every
+ * rule-priced surface (calendar day prices, stay breakdown) stays quiet until
+ * the real rules land, so the shell never shows a price it has to take back.
+ */
+export function useGuestPriceRules(): PriceRule[] {
+  const ctx = useContext(Ctx);
+  return ctx?.hydrated ? ctx.data.priceRules : NO_RULES;
+}
+
+/** Rate rules indexed by roomId · the shape the pricing engine consumes. */
+export function useGuestPriceRulesByRoom(): Record<string, PriceRule[]> {
+  const rules = useGuestPriceRules();
+  return useMemo(() => groupRulesByRoom(rules), [rules]);
 }

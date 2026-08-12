@@ -6,6 +6,7 @@ import {
 } from "@/lib/email";
 import { bookingToClient, bookingToDb } from "@/lib/mappers";
 import type { Booking } from "@/lib/ownerTypes";
+import { quoteStay, toPriceRule } from "@/lib/pricing";
 import { formatBaht } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -15,11 +16,37 @@ export async function GET() {
   return NextResponse.json(rows.map(bookingToClient));
 }
 
+/**
+ * The stay price is the server's to decide · a client posting an amount that
+ * predates a rate change (or was simply edited) must not set what the house
+ * charges. Re-priced from the room's base rate and its rate rules; the posted
+ * amount is only a fallback for a room we cannot resolve.
+ */
+async function authoritativeAmount(body: Booking): Promise<number> {
+  const room = await prisma.room.findUnique({
+    where: { slug: body.roomSlug },
+    select: { id: true, rate: true },
+  });
+  if (!room || !body.checkIn || !body.checkOut) return body.amount;
+
+  const rules = await prisma.seasonalPriceRule.findMany({
+    where: { roomId: room.id },
+  });
+  const quote = quoteStay(
+    room.rate,
+    body.checkIn,
+    body.checkOut,
+    rules.map(toPriceRule)
+  );
+  return quote.total > 0 ? quote.total : body.amount;
+}
+
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as Booking;
     const data = bookingToDb({
       ...body,
+      amount: await authoritativeAmount(body),
       phone: body.phone ?? "",
       email: body.email ?? "",
       notes: body.notes ?? "",

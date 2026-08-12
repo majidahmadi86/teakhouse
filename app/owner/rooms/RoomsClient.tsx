@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Dialog,
   DialogPanel,
@@ -8,7 +9,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { ChevronRight, Plus, X } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { SafeImage } from "@/components/SafeImage";
 import {
@@ -18,7 +19,6 @@ import {
   type AmenityGroup,
 } from "@/lib/amenities";
 import { useI18n } from "@/lib/i18n";
-import type { SeasonalPriceRuleDto } from "@/lib/ownerTypes";
 import { type Room, type RoomShortKey } from "@/lib/rooms";
 import { useOwner } from "@/lib/ownerStore";
 import { cn, formatBaht } from "@/lib/utils";
@@ -69,22 +69,6 @@ function buildMeta(form: RoomForm): Room["meta"] {
   };
 }
 
-type PricingDraft = {
-  label: string;
-  startDate: string;
-  endDate: string;
-  multiplier: string;
-};
-
-function emptyPricing(): PricingDraft {
-  return {
-    label: "",
-    startDate: "",
-    endDate: "",
-    multiplier: "1.2",
-  };
-}
-
 export default function OwnerRoomsPage() {
   const { t, tr } = useI18n();
   const { data, addRoom, updateRoom, deleteRoom } = useOwner();
@@ -92,30 +76,20 @@ export default function OwnerRoomsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Room | null>(null);
   const [form, setForm] = useState<RoomForm>(emptyRoom);
-  const [pricingOpen, setPricingOpen] = useState<string | null>(null);
-  const [pricingByRoom, setPricingByRoom] = useState<
-    Record<string, SeasonalPriceRuleDto[]>
-  >({});
-  const [pricingDraft, setPricingDraft] = useState<PricingDraft>(emptyPricing);
-  const [pricingBusy, setPricingBusy] = useState(false);
-  const [pricingMsg, setPricingMsg] = useState("");
 
   const sortedRooms = useMemo(
     () => [...data.rooms].sort((a, b) => a.name.en.localeCompare(b.name.en)),
     [data.rooms]
   );
 
-  const loadPricing = useCallback(async (roomId: string) => {
-    const res = await fetch(`/api/rooms/${roomId}/pricing`);
-    if (!res.ok) return;
-    const rows = (await res.json()) as SeasonalPriceRuleDto[];
-    setPricingByRoom((prev) => ({ ...prev, [roomId]: rows }));
-  }, []);
-
-  useEffect(() => {
-    if (!pricingOpen) return;
-    void loadPricing(pricingOpen);
-  }, [pricingOpen, loadPricing]);
+  /** How many rate rules each room carries · shown on the rate calendar link. */
+  const ruleCount = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const rule of data.priceRules) {
+      counts[rule.roomId] = (counts[rule.roomId] ?? 0) + 1;
+    }
+    return counts;
+  }, [data.priceRules]);
 
   function openAdd() {
     setEditing(null);
@@ -188,65 +162,6 @@ export default function OwnerRoomsPage() {
     deleteRoom(room.id);
   }
 
-  function togglePricing(roomId: string) {
-    setPricingMsg("");
-    setPricingDraft(emptyPricing());
-    setPricingOpen((prev) => (prev === roomId ? null : roomId));
-  }
-
-  async function addPriceRule(roomId: string) {
-    const mult = parseFloat(pricingDraft.multiplier);
-    if (
-      !pricingDraft.startDate ||
-      !pricingDraft.endDate ||
-      !Number.isFinite(mult)
-    ) {
-      setPricingMsg("Start, end, and multiplier are required");
-      return;
-    }
-    setPricingBusy(true);
-    setPricingMsg("");
-    try {
-      const res = await fetch(`/api/rooms/${roomId}/pricing`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          label: pricingDraft.label.trim(),
-          startDate: pricingDraft.startDate,
-          endDate: pricingDraft.endDate,
-          multiplier: mult,
-        }),
-      });
-      if (!res.ok) {
-        setPricingMsg("Could not add rule");
-        return;
-      }
-      setPricingDraft(emptyPricing());
-      await loadPricing(roomId);
-      setPricingMsg("Rule added");
-    } finally {
-      setPricingBusy(false);
-    }
-  }
-
-  async function deletePriceRule(roomId: string, ruleId: string) {
-    if (!window.confirm("Delete this pricing rule?")) return;
-    setPricingBusy(true);
-    try {
-      const res = await fetch(`/api/rooms/${roomId}/pricing?id=${ruleId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        setPricingMsg("Could not delete rule");
-        return;
-      }
-      await loadPricing(roomId);
-      setPricingMsg("Rule deleted");
-    } finally {
-      setPricingBusy(false);
-    }
-  }
-
   return (
     <div>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -265,8 +180,6 @@ export default function OwnerRoomsPage() {
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {sortedRooms.map((room) => {
-          const open = pricingOpen === room.id;
-          const rules = pricingByRoom[room.id] ?? [];
           return (
             <article
               key={room.id}
@@ -344,127 +257,20 @@ export default function OwnerRoomsPage() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => togglePricing(room.id)}
+                {/* Rates live in one place · the rate calendar owns seasons,
+                    date overrides, and the effective price per night. */}
+                <Link
+                  href={`/owner/rates?room=${encodeURIComponent(room.id)}`}
                   className="owner-control mt-4 flex min-h-[44px] w-full items-center justify-between rounded-xl px-4 py-2 text-sm font-bold text-white/80 transition"
-                  aria-expanded={open}
                 >
-                  Seasonal pricing
-                  <ChevronDown
-                    className={cn("h-4 w-4 transition", open && "rotate-180")}
-                    aria-hidden
-                  />
-                </button>
-
-                {open ? (
-                  <div className="owner-split-t mt-3 space-y-3 pt-3">
-                    {rules.length === 0 ? (
-                      <p className="text-xs text-white/55">No rules yet</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {rules.map((rule) => (
-                          <li
-                            key={rule.id}
-                            className="flex items-start justify-between gap-2 owner-inset rounded-lg px-3 py-2 text-xs"
-                          >
-                            <div>
-                              <p className="font-bold text-white">
-                                {rule.label || "Season"} · ×{rule.multiplier}
-                              </p>
-                              <p className="text-white/60">
-                                {rule.startDate} to {rule.endDate}
-                              </p>
-                              <p className="mt-0.5 text-gold">
-                                ≈{" "}
-                                {formatBaht(
-                                  Math.round(room.rate * rule.multiplier)
-                                )}
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              disabled={pricingBusy}
-                              onClick={() =>
-                                void deletePriceRule(room.id, rule.id)
-                              }
-                              className="shrink-0 text-red-300 hover:underline"
-                            >
-                              Delete
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div className="space-y-2">
-                      <input
-                        placeholder="Label (e.g. Songkran)"
-                        value={pricingDraft.label}
-                        onChange={(e) =>
-                          setPricingDraft((p) => ({
-                            ...p,
-                            label: e.target.value,
-                          }))
-                        }
-                        className="min-h-[40px] w-full px-3 py-2 text-sm"
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <input
-                          type="date"
-                          value={pricingDraft.startDate}
-                          onChange={(e) =>
-                            setPricingDraft((p) => ({
-                              ...p,
-                              startDate: e.target.value,
-                            }))
-                          }
-                          className="min-h-[40px] w-full px-3 py-2 text-sm"
-                          aria-label="Start date"
-                        />
-                        <input
-                          type="date"
-                          value={pricingDraft.endDate}
-                          onChange={(e) =>
-                            setPricingDraft((p) => ({
-                              ...p,
-                              endDate: e.target.value,
-                            }))
-                          }
-                          className="min-h-[40px] w-full px-3 py-2 text-sm"
-                          aria-label="End date"
-                        />
-                      </div>
-                      <input
-                        type="number"
-                        step="0.05"
-                        min="0.1"
-                        placeholder="Multiplier"
-                        value={pricingDraft.multiplier}
-                        onChange={(e) =>
-                          setPricingDraft((p) => ({
-                            ...p,
-                            multiplier: e.target.value,
-                          }))
-                        }
-                        className="min-h-[40px] w-full px-3 py-2 text-sm"
-                      />
-                      <button
-                        type="button"
-                        disabled={pricingBusy}
-                        onClick={() => void addPriceRule(room.id)}
-                        className="min-h-[40px] w-full rounded-xl bg-own-blue/90 px-3 py-2 text-sm font-extrabold text-white disabled:opacity-60"
-                      >
-                        Add rule
-                      </button>
-                      {pricingMsg && pricingOpen === room.id ? (
-                        <p className="text-xs font-semibold text-deal">
-                          {pricingMsg}
-                        </p>
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
+                  {t("ow.rateCalendar")}
+                  <span className="flex items-center gap-2 text-xs font-semibold text-white/55">
+                    {ruleCount[room.id]
+                      ? t("ow.ruleCount", { n: ruleCount[room.id] })
+                      : t("ow.baseOnly")}
+                    <ChevronRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </Link>
               </div>
             </article>
           );

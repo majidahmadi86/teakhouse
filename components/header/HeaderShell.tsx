@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_CENTER = [
   { href: "/experience", key: "nav.experience" },
+  { href: "/facilities", key: "nav.facilities" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/location", key: "nav.location" },
   { href: "/contact", key: "nav.contact" },
