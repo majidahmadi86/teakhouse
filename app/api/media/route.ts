@@ -66,7 +66,13 @@ export async function POST(req: Request) {
 
   if (!result.ok) {
     const status = result.error === "storage-not-configured" ? 503 : 502;
-    return NextResponse.json({ error: result.error }, { status });
+    // `detail` carries the object store's own status and message so a
+    // misconfigured bucket is diagnosable from the response. It never contains
+    // the service key · that only ever goes into an Authorization header.
+    return NextResponse.json(
+      { error: result.error, detail: result.detail },
+      { status }
+    );
   }
   return NextResponse.json({ url: result.url }, { status: 201 });
 }

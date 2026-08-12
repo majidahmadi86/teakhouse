@@ -49,56 +49,55 @@ export function mediaKey(folder: string, mime: AllowedMime): string {
 }
 
 /**
- * Create the bucket on first use · public read, and the same size/mime limits
- * the route enforces so a leaked token cannot push a 2GB file either. A second
- * call returns "already exists", which is success as far as we are concerned.
+ * Create the bucket · public read, and the same size/mime limits the route
+ * enforces so a leaked token cannot push a 2GB file either. "Already exists"
+ * counts as success. Returns a short reason rather than throwing, so the
+ * caller can report WHY without ever touching the key.
  */
-async function ensureBucket(url: string, key: string): Promise<void> {
-  const res = await fetch(`${url}/storage/v1/bucket`, {
-    method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: MEDIA_BUCKET,
-      name: MEDIA_BUCKET,
-      public: true,
-      file_size_limit: MAX_UPLOAD_BYTES,
-      allowed_mime_types: ALLOWED_MIME,
-    }),
-  });
+async function createBucket(
+  url: string,
+  key: string
+): Promise<{ ok: true } | { ok: false; reason: string }> {
+  let res: Response;
+  try {
+    res = await fetch(`${url}/storage/v1/bucket`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: MEDIA_BUCKET,
+        name: MEDIA_BUCKET,
+        public: true,
+        file_size_limit: MAX_UPLOAD_BYTES,
+        allowed_mime_types: ALLOWED_MIME,
+      }),
+    });
+  } catch (e) {
+    // Wrong host in SUPABASE_URL lands here · say so, do not leak the value.
+    return { ok: false, reason: `unreachable:${(e as Error).message.slice(0, 60)}` };
+  }
 
-  if (res.ok) return;
-  const body = await res.text();
-  // Supabase answers 400/409 with "already exists" · anything else is real.
-  if (/already exists|Duplicate/i.test(body)) return;
-  throw new Error(`bucket create failed · ${res.status} ${body.slice(0, 200)}`);
+  if (res.ok) return { ok: true };
+  const body = await res.text().catch(() => "");
+  if (/already exists|Duplicate/i.test(body)) return { ok: true };
+  return { ok: false, reason: `${res.status}:${body.slice(0, 120)}` };
 }
 
-export type UploadResult =
-  | { ok: true; url: string }
-  | { ok: false; error: string };
+function objectUrl(url: string, key: string): string {
+  return `${url}/storage/v1/object/${MEDIA_BUCKET}/${key}`;
+}
 
-export async function uploadMedia(
+async function putObject(
+  cfg: { url: string; key: string },
   key: string,
   body: ArrayBuffer,
   mime: AllowedMime
-): Promise<UploadResult> {
-  const cfg = env();
-  if (!cfg) return { ok: false, error: "storage-not-configured" };
-
+): Promise<Response | null> {
   try {
-    await ensureBucket(cfg.url, cfg.key);
-  } catch (e) {
-    console.error("[storage] ensureBucket", e);
-    return { ok: false, error: "bucket-unavailable" };
-  }
-
-  const res = await fetch(
-    `${cfg.url}/storage/v1/object/${MEDIA_BUCKET}/${key}`,
-    {
+    return await fetch(objectUrl(cfg.url, key), {
       method: "POST",
       headers: {
         apikey: cfg.key,
@@ -107,13 +106,61 @@ export async function uploadMedia(
         "Cache-Control": "public, max-age=31536000, immutable",
       },
       body,
+    });
+  } catch (e) {
+    console.error("[storage] put unreachable", e);
+    return null;
+  }
+}
+
+export type UploadResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string; detail?: string };
+
+/**
+ * Upload first, create the bucket only if the object store says it is missing.
+ *
+ * Doing it the other way round meant every upload needed bucket-create rights
+ * and a create round trip. This way an existing bucket costs one call, and a
+ * key that cannot create buckets still works as long as the bucket is there.
+ */
+export async function uploadMedia(
+  key: string,
+  body: ArrayBuffer,
+  mime: AllowedMime
+): Promise<UploadResult> {
+  const cfg = env();
+  if (!cfg) return { ok: false, error: "storage-not-configured" };
+
+  let res = await putObject(cfg, key, body, mime);
+  if (!res) {
+    return { ok: false, error: "storage-unreachable" };
+  }
+
+  if (res.status === 404 || res.status === 400) {
+    const first = await res.text().catch(() => "");
+    if (/bucket/i.test(first)) {
+      const made = await createBucket(cfg.url, cfg.key);
+      if (!made.ok) {
+        console.error("[storage] createBucket", made.reason);
+        return { ok: false, error: "bucket-unavailable", detail: made.reason };
+      }
+      res = await putObject(cfg, key, body, mime);
+      if (!res) return { ok: false, error: "storage-unreachable" };
+    } else {
+      console.error("[storage] upload", res.status, first.slice(0, 200));
+      return { ok: false, error: "upload-failed", detail: `${res.status}:${first.slice(0, 120)}` };
     }
-  );
+  }
 
   if (!res.ok) {
-    const detail = await res.text();
+    const detail = await res.text().catch(() => "");
     console.error("[storage] upload", res.status, detail.slice(0, 200));
-    return { ok: false, error: "upload-failed" };
+    return {
+      ok: false,
+      error: "upload-failed",
+      detail: `${res.status}:${detail.slice(0, 120)}`,
+    };
   }
 
   return {
