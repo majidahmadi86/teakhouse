@@ -11,6 +11,7 @@ import {
 import {
   BadgePercent,
   CalendarDays,
+  ChevronDown,
   Menu,
   MessageCircle,
   Phone,
@@ -26,9 +27,28 @@ import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-/** Prefetch off · viewport Links were downloading every guest route during LH. */
-function Link(props: ComponentProps<typeof NextLink>) {
-  return <NextLink prefetch={false} {...props} />;
+/**
+ * Nav link · viewport prefetch stays OFF (it downloaded every guest route
+ * during Lighthouse and cost us the score), but the route is warmed on INTENT:
+ * the pointer arriving, a finger landing, or keyboard focus. That is the
+ * moment a guest has decided, and it buys the whole route transition ahead of
+ * the click without touching the idle page's network budget.
+ */
+function Link({ href, ...props }: ComponentProps<typeof NextLink>) {
+  const router = useRouter();
+  const warm = () => {
+    if (typeof href === "string" && href.startsWith("/")) router.prefetch(href);
+  };
+  return (
+    <NextLink
+      href={href}
+      prefetch={false}
+      onPointerEnter={warm}
+      onTouchStart={warm}
+      onFocus={warm}
+      {...props}
+    />
+  );
 }
 
 /* v13 nav · Rooms · Dining · Events · Experience (dropdown) · Location ·
@@ -46,16 +66,22 @@ const NAV_TAIL = [
 /** Grouped under the Experience dropdown · used for the trigger active state. */
 const EXPERIENCE_GROUP = ["/experience", "/facilities", "/gallery"] as const;
 
+/* v14 · the drawer is a short list · Experience, Facilities and Gallery live
+   inside one expandable group so the whole thing fits at 390x844 without
+   scrolling. Offers keeps its own row because it is a commercial entry point. */
 const DRAWER_NAV = [
   { href: "/rooms", key: "nav.rooms", subtitle: "nav.roomsCount" as const },
-  { href: "/offers", key: "nav.offers", offers: true },
   { href: "/dining", key: "nav.dining" },
   { href: "/events", key: "nav.eventsShort" },
+  { href: "/location", key: "nav.location" },
+  { href: "/contact", key: "nav.contact" },
+  { href: "/offers", key: "nav.offers", offers: true },
+] as const;
+
+const DRAWER_GROUP = [
   { href: "/experience", key: "nav.experience" },
   { href: "/facilities", key: "nav.facilities" },
   { href: "/gallery", key: "nav.gallery" },
-  { href: "/location", key: "nav.location" },
-  { href: "/contact", key: "nav.contact" },
 ] as const;
 
 function LangPair({ className }: { className?: string }) {
@@ -421,6 +447,36 @@ export function Header() {
               </div>
             );
           })}
+
+          {/* Experience group · one row that opens in place. <details> keeps
+              this working with no JavaScript and with no extra state. */}
+          <details
+            className="group border-b border-line"
+            open={DRAWER_GROUP.some((item) => isActive(item.href))}
+          >
+            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3.5 text-[17px] font-semibold text-ink [&::-webkit-details-marker]:hidden">
+              {t("nav.exploreGroup")}
+              <ChevronDown
+                className="h-4 w-4 shrink-0 text-sub transition group-open:rotate-180"
+                aria-hidden
+              />
+            </summary>
+            <div className="pb-1">
+              {DRAWER_GROUP.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setDrawerOpen(false)}
+                  className={cn(
+                    "block py-2.5 pl-8 pr-4 text-[15px] font-semibold transition",
+                    isActive(item.href) ? "text-blue" : "text-sub"
+                  )}
+                >
+                  {t(item.key)}
+                </Link>
+              ))}
+            </div>
+          </details>
 
           <div className="border-b border-line px-4 py-3.5">
             <div className="flex items-center gap-5">

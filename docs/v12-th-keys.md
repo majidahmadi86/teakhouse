@@ -200,3 +200,83 @@ resizing.` · `Upload failed. Please try again.` · `Category image` ·
 
 The guest-facing reference code (`TBL-XXXX`) is deliberately alphanumeric in
 both locales · it gets read aloud down a phone line.
+
+---
+
+# v14 · new keys awaiting the same Thai pass
+
+Appended per the v14 directive. Everything below carries its **English** copy
+in the `th` slot. No Thai was authored.
+
+## Dictionary keys (`lib/i18n-dict.ts`)
+
+| Key | English value |
+| --- | --- |
+| **Desktop reservation card** | |
+| `rsv.cardEyebrow` | The kitchen |
+| `rsv.cardH` | Keep a table for you |
+| `rsv.cardP` | Pick a time and we will have it laid when you arrive. |
+| **Event seat requests** | |
+| `evr.cta` | Reserve seats |
+| `evr.h1` | Seats at the table |
+| `evr.lead` | Tell us which evening and how many of you. No payment · the house confirms by phone or LINE. |
+| `evr.step1` | Which evening |
+| `evr.event` | Event |
+| `evr.guests` | Guests |
+| `evr.notesHint` | Allergies, a celebration, anything we should plan for |
+| `evr.submit` | Request seats |
+| `evr.noPayment` | No payment is taken. Seats are held once we confirm. |
+| `evr.okEyebrow` | Requested |
+| `evr.okH1` | Your seats are requested |
+| `evr.okLead` | The house has it. Keep this reference for when you arrive. |
+| `evr.okNext` | We will confirm by phone or LINE shortly. Evenings with limited seating fill quickly, so we will tell you either way. |
+| `evr.backToEvents` | Back to the events |
+| `evr.err.event` | That evening is no longer open. Please choose another from the list. |
+| `evr.err.name` | Please tell us your name. |
+| `evr.err.contact` | Please leave a phone number or LINE id so we can confirm. |
+| `evr.err.guests` | Please choose how many seats you need. |
+| `evr.err.failed` | Something went wrong at our end. Please try again, or contact the house. |
+| **Adaptive contact form** | |
+| `ct.about` | What is this about? |
+| `ct.aboutStay` | A stay |
+| `ct.aboutDining` | Dining |
+| `ct.aboutEvent` | An event |
+| `ct.aboutOther` | Something else |
+| `ct.contactField` | Email, phone or LINE id |
+| `ct.dates` | Dates |
+| `ct.checkIn` | Check in |
+| `ct.checkOut` | Check out |
+| `ct.when` | When and how many |
+| `ct.party` | Guests |
+| `ct.sentH` | Thank you · it is with us |
+| `ct.sentP` | The house reads messages through the day and answers on the same channel you left. |
+| `ct.sendAnother` | Send another |
+| `ct.err.name` | Please tell us your name. |
+| `ct.err.contact` | Please leave an email, phone number or LINE id so we can reply. |
+| `ct.err.message` | Please write a short message. |
+| `ct.err.failed` | Something went wrong at our end. Please try again, or call the house. |
+| **Mobile drawer group** | |
+| `nav.exploreGroup` | Experience |
+| **Owner** | |
+| `ow.messages` | Messages |
+
+Note · `ct.name`, `ct.message` and `ct.send` already carry real Thai from v7
+and were reused unchanged.
+
+## Concierge offline reply (`lib/conciergeIntents.ts`)
+
+The events reply gained one sentence (en+th both English for now):
+"You can also reserve seats at one of our special evenings · no payment, we
+confirm by phone or LINE."
+
+## Owner labels (hardcoded EN · rooms-manager convention)
+
+Seat requests panel: `Seat requests` · `{n} to answer` · `{n} seats confirmed` ·
+`No seat requests yet.` · `seat` / `seats` · statuses `Pending` `Confirmed`
+`Declined`.
+Messages: `All` · `A stay` · `Dining` · `An event` · `Something else` ·
+`{n} new` · `Nothing here yet.` · statuses `New` `Read` `Done`.
+
+## Page metadata (EN only, like every other guest layout)
+
+- `/events/reserve` · title "Reserve seats" · description "Request seats at a special evening on the house calendar at The Teak House · no payment, the house confirms. A demo by Mikaro Studio."

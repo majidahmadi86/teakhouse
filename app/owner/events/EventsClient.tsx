@@ -11,6 +11,8 @@ import type { HotelEvent } from "@/lib/events";
 import { useI18n } from "@/lib/i18n";
 import { cn, isoDate } from "@/lib/utils";
 import { ModalActions, OwnerModal } from "../dining/DiningClient";
+import { RequestsPanel } from "./RequestsPanel";
+import { invalidateCached, readCached } from "@/lib/ownerCache";
 
 type EventForm = {
   title: { en: string; th: string };
@@ -50,11 +52,10 @@ export default function OwnerEventsPage() {
   const [editing, setEditing] = useState<HotelEvent | null>(null);
   const [form, setForm] = useState<EventForm>(emptyEvent);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (fresh = false) => {
+    if (fresh) invalidateCached("/api/events");
     try {
-      const res = await fetch("/api/events", { cache: "no-store" });
-      if (res.ok) setEvents((await res.json()) as HotelEvent[]);
-      else setEvents([]);
+      await readCached<HotelEvent[]>("/api/events", setEvents);
     } catch {
       setEvents([]);
     }
@@ -109,7 +110,7 @@ export default function OwnerEventsPage() {
       });
     }
     setModalOpen(false);
-    await refresh();
+    await refresh(true);
   }
 
   async function togglePublished(ev: HotelEvent) {
@@ -117,13 +118,13 @@ export default function OwnerEventsPage() {
       method: "PATCH",
       body: JSON.stringify({ published: !ev.published }),
     });
-    await refresh();
+    await refresh(true);
   }
 
   async function deleteEvent(ev: HotelEvent) {
     if (!window.confirm(t("ow.sure"))) return;
     await jsonFetch(`/api/events/${ev.id}`, { method: "DELETE" });
-    await refresh();
+    await refresh(true);
   }
 
   if (events === null) return <OwnerSkeleton />;
@@ -145,6 +146,8 @@ export default function OwnerEventsPage() {
           Add event
         </button>
       </div>
+
+      <RequestsPanel />
 
       {events.length === 0 ? (
         <p className="text-sm text-white/55">No events yet.</p>

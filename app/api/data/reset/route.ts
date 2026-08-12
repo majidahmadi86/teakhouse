@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { loadOwnerData } from "@/lib/dataService";
 import { prisma } from "@/lib/db";
+import { revalidateAll } from "@/lib/revalidate";
 import { seedDatabase } from "@/lib/seedDatabase";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,9 @@ export async function POST() {
       create: { id: "demo", lastReset: new Date() },
       update: { lastReset: new Date() },
     });
+    // The reseed rewrites every table the guest pages read · drop all tags so
+    // the demo does not keep serving the previous seed's menu and events.
+    revalidateAll();
     const data = await loadOwnerData();
     return NextResponse.json(data);
   } catch (e) {

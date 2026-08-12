@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { maybeReseedDemo } from "@/lib/demoReset";
 import { prisma } from "@/lib/db";
+import { revalidateAll } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ skipped: true, reason: "DEMO_MODE off" });
   }
   const did = await maybeReseedDemo();
+  if (did) revalidateAll();
   // Force reseed on cron even if under 60m (cron is the schedule of record)
   if (!did) {
     const { seedDatabase } = await import("@/lib/seedDatabase");
@@ -27,6 +29,7 @@ export async function GET(req: Request) {
       create: { id: "demo", lastReset: new Date() },
       update: { lastReset: new Date() },
     });
+    revalidateAll();
   }
   return NextResponse.json({ ok: true, reseeding: true });
 }

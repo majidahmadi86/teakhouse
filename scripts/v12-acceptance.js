@@ -124,7 +124,9 @@ async function run() {
     const ctx = await contextFor(browser, { js: false });
     const page = await ctx.newPage();
     await page.goto(BASE + "/dining", { waitUntil: "load" });
-    const cats = await page.locator("main h3").count();
+    // v14 · count the menu headings by their marker · the page also carries
+    // the sticky reserve card, whose heading is an h3 too.
+    const cats = await page.locator("main [data-menu-category]").count();
     const dishes = await page.locator("main ul li").count();
     check("dining lists 3 categories with JS off", cats === 3, `${cats} categories`);
     check("dining lists 18 dishes with JS off", dishes === 18, `${dishes} dishes`);
@@ -144,7 +146,8 @@ async function run() {
     check("events lists 3 special events with JS off", cards === 3, `${cards} cards`);
     const text = await mainText(page);
     check("pavilion capacity present", /60/.test(text) && /90/.test(text));
-    const planCta = await page.locator("main a[href='/contact']").count();
+    // v14 · the CTA now preselects the contact form's purpose (?about=event).
+    const planCta = await page.locator('main a[href^="/contact"]').count();
     const lineCta = await page.locator("main a[href*='line.me']").count();
     check("plan-your-event CTA goes to contact + LINE", planCta >= 1 && lineCta >= 1);
     const strip = await page.locator("main picture source[type='image/avif']").count();

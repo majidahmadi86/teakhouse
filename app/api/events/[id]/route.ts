@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { hotelEventToClient, type HotelEvent } from "@/lib/events";
+import { revalidateEvents } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
         published: patch.published ?? existing.published,
       },
     });
+    revalidateEvents();
     return NextResponse.json(hotelEventToClient(updated));
   } catch (e) {
     console.error("[api/events PATCH]", e);
@@ -37,6 +39,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
 export async function DELETE(_req: Request, { params }: Ctx) {
   try {
     await prisma.hotelEvent.delete({ where: { id: params.id } });
+    revalidateEvents();
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/events DELETE]", e);

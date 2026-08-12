@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { roomToClient, roomToDb } from "@/lib/mappers";
 import type { Room } from "@/lib/rooms";
+import { revalidateRooms } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
       where: { id: params.id },
       data: roomToDb(merged),
     });
+    revalidateRooms();
     return NextResponse.json(roomToClient(updated));
   } catch (e) {
     console.error("[api/rooms PATCH]", e);
@@ -69,6 +71,7 @@ export async function DELETE(_req: Request, { params }: Ctx) {
     await prisma.roomBlock.deleteMany({ where: { roomId: params.id } });
     await prisma.seasonalPriceRule.deleteMany({ where: { roomId: params.id } });
     await prisma.room.delete({ where: { id: params.id } });
+    revalidateRooms();
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/rooms DELETE]", e);

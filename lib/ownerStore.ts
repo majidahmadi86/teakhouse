@@ -158,6 +158,9 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    // v14 · start immediately. This used to wait 250ms before even asking for
+    // the data, and the shell shows a spinner until it lands, so the delay was
+    // pure dead time on every entry into the owner panel.
     const timeoutId = window.setTimeout(() => {
       void (async () => {
         try {
@@ -183,7 +186,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
           }
         }
       })();
-    }, 250);
+    }, 0);
     return () => {
       cancelled = true;
       window.clearTimeout(timeoutId);

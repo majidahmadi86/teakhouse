@@ -58,6 +58,7 @@ import {
 import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
+  hotelToday,
   isoDate,
   nightsBetween,
 } from "@/lib/utils";
@@ -81,8 +82,11 @@ const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
  * were hard-coded English, which a Thai guest with JS off would have seen.
  */
 function DateRangeShell() {
-  const inDate = addDays(new Date(), 1);
-  const outDate = addDays(new Date(), 2);
+  // Hotel time on both sides · see hotelToday(). Rendering the server's day
+  // here and the browser's day after hydration made this label jump a day for
+  // a Bangkok guest between midnight and 07:00.
+  const inDate = addDays(hotelToday(), 1);
+  const outDate = addDays(hotelToday(), 2);
   const label = `${dfFormat(inDate, "d MMM")} - ${dfFormat(outDate, "d MMM yyyy")}`;
 
   return (
@@ -120,9 +124,9 @@ export default function BookPageClient() {
   const phoneRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState(1);
-  const [checkIn, setCheckIn] = useState<Date>(() => addDays(new Date(), 1));
+  const [checkIn, setCheckIn] = useState<Date>(() => addDays(hotelToday(), 1));
   const [checkOut, setCheckOut] = useState<Date | undefined>(() =>
-    addDays(new Date(), 2)
+    addDays(hotelToday(), 2)
   );
   const [guests, setGuests] = useState("2");
   // Keyed by slug, not shortKey · several seeded rooms share a shortKey, so a
@@ -276,7 +280,7 @@ export default function BookPageClient() {
   }
 
   function handleDates(from?: Date, to?: Date) {
-    setCheckIn(from ?? addDays(new Date(), 1));
+    setCheckIn(from ?? addDays(hotelToday(), 1));
     setCheckOut(to);
   }
 

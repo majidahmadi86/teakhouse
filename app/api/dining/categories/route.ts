@@ -5,6 +5,7 @@ import {
   diningCategoryToDb,
   type DiningCategory,
 } from "@/lib/dining";
+import { revalidateDining } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
       data: { hotelId: "default", ...diningCategoryToDb(body) },
       include: { items: true },
     });
+    revalidateDining();
     return NextResponse.json(diningCategoryToClient(created), { status: 201 });
   } catch (e) {
     console.error("[api/dining/categories POST]", e);

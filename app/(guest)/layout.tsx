@@ -8,6 +8,7 @@ import { Providers } from "@/components/providers";
 import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale, t } from "@/lib/serverLocale";
 import { GuestShell } from "./GuestShell";
+import { RouteProgress } from "@/components/RouteProgress";
 
 export const metadata: Metadata = {};
 
@@ -29,6 +30,7 @@ export default function GuestLayout({
       {/* Concierge · static server FAB (present in raw HTML) + client launcher */}
       <ConciergeFabStatic label={t(locale, "cg.fab")} />
       <ConciergeLauncher />
+      <RouteProgress />
     </Providers>
   );
 }

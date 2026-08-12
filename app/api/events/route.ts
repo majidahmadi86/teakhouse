@@ -5,6 +5,7 @@ import {
   hotelEventToDb,
   type HotelEvent,
 } from "@/lib/events";
+import { revalidateEvents } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
     const created = await prisma.hotelEvent.create({
       data: { hotelId: "default", ...hotelEventToDb(body) },
     });
+    revalidateEvents();
     return NextResponse.json(hotelEventToClient(created), { status: 201 });
   } catch (e) {
     console.error("[api/events POST]", e);

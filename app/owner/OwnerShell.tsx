@@ -3,10 +3,11 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   CalendarDays,
   DoorOpen,
+  Inbox,
   LayoutDashboard,
   Loader2,
   LogOut,
@@ -39,6 +40,7 @@ const NAV: {
   { href: "/owner/rooms", labelKey: "ow.rooms", icon: DoorOpen },
   { href: "/owner/dining", labelKey: "ow.dining", icon: UtensilsCrossed },
   { href: "/owner/events", labelKey: "ow.events", icon: PartyPopper },
+  { href: "/owner/messages", labelKey: "ow.messages", icon: Inbox },
   { href: "/owner/rates", labelKey: "ow.rateCalendar", icon: Tags },
   { href: "/owner/calendar", labelKey: "ow.cal", icon: CalendarDays },
   { href: "/owner/settings", label: "Settings", icon: Settings },
@@ -114,11 +116,18 @@ function NavLink({
   mobile?: boolean;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const active = exact ? pathname === href : pathname.startsWith(href);
+  // Warm the section on intent · every owner page is a dynamic import, and
+  // fetching that chunk on hover removes it from the click-to-content path.
+  const warm = () => router.prefetch(href);
 
   return (
     <Link
       href={href}
+      onPointerEnter={warm}
+      onTouchStart={warm}
+      onFocus={warm}
       className={cn(
         "flex min-h-[44px] items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition",
         mobile ? "shrink-0 whitespace-nowrap" : "w-full",

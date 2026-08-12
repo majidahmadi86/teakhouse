@@ -71,8 +71,8 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     // live /api/concierge path, which answers from the events table.
     k: /wedding|event|party|parties|celebrat|function|pavilion|private dinner|jazz|brunch|loy krathong|songkran/i,
     r: {
-      en: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. Our special evenings are on the events page. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
-      th: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. Our special evenings are on the events page. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
+      en: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. You can also reserve seats at one of our special evenings · no payment, we confirm by phone or LINE. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
+      th: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. You can also reserve seats at one of our special evenings · no payment, we confirm by phone or LINE. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
     },
   },
   {

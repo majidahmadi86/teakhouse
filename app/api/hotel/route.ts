@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { HotelDto } from "@/lib/ownerTypes";
+import { revalidateHotel } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +114,8 @@ export async function PATCH(req: Request) {
         eventsHeroImage: body.eventsHeroImage ?? existing.eventsHeroImage,
       },
     });
+
+    revalidateHotel();
 
     return NextResponse.json(toDto(updated));
   } catch (e) {

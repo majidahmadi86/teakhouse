@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { diningItemToClient, type DiningItem } from "@/lib/dining";
+import { revalidateDining } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
         published: patch.published ?? existing.published,
       },
     });
+    revalidateDining();
     return NextResponse.json(diningItemToClient(updated));
   } catch (e) {
     console.error("[api/dining/items PATCH]", e);
@@ -39,6 +41,7 @@ export async function PATCH(req: Request, { params }: Ctx) {
 export async function DELETE(_req: Request, { params }: Ctx) {
   try {
     await prisma.diningItem.delete({ where: { id: params.id } });
+    revalidateDining();
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/dining/items DELETE]", e);

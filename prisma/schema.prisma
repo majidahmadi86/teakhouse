@@ -252,6 +252,48 @@ model TableReservation {
   @@index([date, time])
 }
 
+/// v14 · Seat request against a special event · no payment, the house confirms.
+model EventRequest {
+  id        String     @id @default(cuid())
+  ref       String     @unique
+  eventId   String
+  event     HotelEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name      String
+  /// Phone number or LINE id, as typed
+  contact     String
+  /// "phone" | "line"
+  contactKind String   @default("phone")
+  guests      Int
+  notes       String   @default("")
+  /// "pending" | "confirmed" | "declined"
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId, status])
+}
+
+/// v14 · Contact form submission, tagged by what the guest is asking about.
+model ContactMessage {
+  id        String   @id @default(cuid())
+  /// "stay" | "dining" | "event" | "other"
+  purpose   String   @default("other")
+  name      String
+  contact   String
+  message   String
+  /// Purpose-specific extras · ISO dates, party size. Empty when not asked for.
+  checkIn   String   @default("")
+  checkOut  String   @default("")
+  date      String   @default("")
+  party     Int?
+  /// "new" | "read" | "done"
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
 /// v12 · Special event · owner-editable, guest page renders published only
 model HotelEvent {
   id            String   @id @default(cuid())
@@ -266,6 +308,7 @@ model HotelEvent {
   published     Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  requests      EventRequest[]
 
   @@index([date])
 }

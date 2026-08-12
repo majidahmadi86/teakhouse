@@ -65,7 +65,35 @@ const SOURCES = [
   { slug: "events/pavilion-dinner", id: "photo-1740120424442-ccd013ec9581", ratio: 4 / 3 },
   { slug: "events/celebration-table", id: "photo-1511795409834-ef04bbd61622", ratio: 4 / 3 },
   { slug: "events/string-lights", id: "photo-1574482211311-45a2169db57c", ratio: 4 / 3 },
+
+  // v14 · MENU THUMBNAILS · one square crop per seeded dish, shown at 64px
+  // beside the name. Square because the frame is square · letting CSS crop a
+  // landscape photo to a circle-ish tile put the food half out of frame.
+  // Every id below was checked by eye, not by its caption: Unsplash alt text
+  // mislabels food often (the som tam here is filed as "vegetable salad").
+  { slug: "dishes/rice-soup", id: "photo-1766761562530-c8dd12c96d9a", ratio: 1 },
+  { slug: "dishes/crab-omelette", id: "photo-1677137261161-0095c10418ef", ratio: 1 },
+  { slug: "dishes/fruit-tray", id: "photo-1641642400143-6be68f1a0918", ratio: 1 },
+  { slug: "dishes/coconut-pancakes", id: "photo-1700113120070-b79d456b462c", ratio: 1 },
+  { slug: "dishes/eggs", id: "photo-1582169505937-b9992bd01ed9", ratio: 1 },
+  { slug: "dishes/coffee", id: "photo-1621267860478-dbdd589372db", ratio: 1 },
+  { slug: "dishes/pad-thai", id: "photo-1754586254034-4d2566ea5854", ratio: 1 },
+  { slug: "dishes/massaman", id: "photo-1672933036331-e27ffae157bd", ratio: 1 },
+  { slug: "dishes/grilled-fish", id: "photo-1551014700-0ca41391f312", ratio: 1 },
+  // Genuinely green · the curry used for the category strip reads orange.
+  { slug: "dishes/green-curry", id: "photo-1554054204-b2f70b09d031", ratio: 1 },
+  { slug: "dishes/pomelo-salad", id: "photo-1652690528406-a547a6eb143f", ratio: 1 },
+  { slug: "dishes/morning-glory", id: "photo-1766323106504-6b44debfa313", ratio: 1 },
+  { slug: "dishes/tom-yum", id: "photo-1455619452474-d2be8b1e70cd", ratio: 1 },
+  { slug: "dishes/mango-sticky-rice", id: "photo-1705056508219-0aa0ceb16820", ratio: 1 },
+  { slug: "dishes/sundowner", id: "photo-1750124933194-e021f47b5f8b", ratio: 1 },
+  { slug: "dishes/lemongrass-cooler", id: "photo-1621330716555-5cad596c4562", ratio: 1 },
+  { slug: "dishes/iced-tea", id: "photo-1556679343-c7306c1976bc", ratio: 1 },
+  { slug: "dishes/beer", id: "photo-1608270586620-248524c67de9", ratio: 1 },
 ];
+
+/** Thumbnails only need small widths · a 64px tile never reads a 1280px file. */
+const THUMB_WIDTHS = [128, 256];
 
 async function fetchSource(id) {
   const base = id.startsWith("premium_photo-")
@@ -92,7 +120,8 @@ async function main() {
       continue;
     }
 
-    for (const width of WIDTHS) {
+    const widths = source.slug.startsWith("dishes/") ? THUMB_WIDTHS : WIDTHS;
+    for (const width of widths) {
       const height = Math.round(width / source.ratio);
       const resized = sharp(input).resize(width, height, {
         fit: "cover",

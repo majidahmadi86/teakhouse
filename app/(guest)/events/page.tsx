@@ -2,9 +2,7 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
-import { prisma } from "@/lib/db";
-import { hotelEventToClient } from "@/lib/events";
-import { getPageMedia } from "@/lib/hotelSettings";
+import { getHotelSettings, getUpcomingEvents } from "@/lib/cachedData";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
 import { isoDate } from "@/lib/utils";
 
@@ -37,23 +35,19 @@ export default async function EventsPage() {
   const locale = getServerLocale();
   const todayIso = isoDate(new Date());
 
-  const [events, media] = await Promise.all([
-    prisma.hotelEvent
-      .findMany({
-        where: { published: true, date: { gte: todayIso } },
-        orderBy: { date: "asc" },
-      })
-      .then((rows) => rows.map(hotelEventToClient)),
-    getPageMedia(),
+  // One cached read each, in parallel · both are tag-invalidated by owner saves.
+  const [events, settings] = await Promise.all([
+    getUpcomingEvents(todayIso),
+    getHotelSettings(),
   ]);
 
   return (
     <>
       <PageHero
-        image={media.eventsHeroImage || "/images/events/hero-1280.webp"}
-        imageAvif={media.eventsHeroImage ? undefined : "/images/events/hero-1280.avif"}
-        imageWebp={media.eventsHeroImage ? undefined : "/images/events/hero-1280.webp"}
-        unoptimized={Boolean(media.eventsHeroImage)}
+        image={settings.eventsHeroImage || "/images/events/hero-1280.webp"}
+        imageAvif={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.avif"}
+        imageWebp={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.webp"}
+        unoptimized={Boolean(settings.eventsHeroImage)}
         alt="A table set for dinner in the riverside pavilion under string lights"
         eyebrow={t(locale, "nav.events")}
         title={t(locale, "ev.h1")}
@@ -83,7 +77,7 @@ export default async function EventsPage() {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/contact" className="btn-primary inline-flex">
+              <Link href="/contact?about=event" className="btn-primary inline-flex">
                 {t(locale, "ev.cta")}
               </Link>
               <a
@@ -158,6 +152,14 @@ export default async function EventsPage() {
                     </h3>
                     <p className="mt-3 text-[0.95rem] leading-relaxed text-ink/80">
                       {tr(locale, ev.description)}
+                    </p>
+                    <p className="mt-5">
+                      <Link
+                        href={`/events/reserve?event=${encodeURIComponent(ev.id)}`}
+                        className="btn-secondary inline-flex"
+                      >
+                        {t(locale, "evr.cta")}
+                      </Link>
                     </p>
                   </div>
                 </article>

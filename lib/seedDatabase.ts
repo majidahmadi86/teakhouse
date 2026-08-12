@@ -787,7 +787,13 @@ export async function seedDatabase() {
   await prisma.demoMeta.deleteMany();
   await prisma.diningItem.deleteMany();
   await prisma.diningCategory.deleteMany();
+  // v14 · seat requests point at events, so they go first. Table reservations
+  // and contact messages are guest-generated demo traffic · the reseed clears
+  // them too, so the sandbox starts each hour from the same known state.
+  await prisma.eventRequest.deleteMany();
   await prisma.hotelEvent.deleteMany();
+  await prisma.tableReservation.deleteMany();
+  await prisma.contactMessage.deleteMany();
 
   await prisma.hotel.create({
     data: {

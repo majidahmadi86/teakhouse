@@ -1065,6 +1065,103 @@ export const DICT: Record<string, DictEntry> = {
     en: "The kitchen is not taking table bookings online at the moment. Call or message the house and we will find you a seat.",
     th: "The kitchen is not taking table bookings online at the moment. Call or message the house and we will find you a seat.",
   },
+
+  // v14 · desktop reservation card · th mirrors en pending Thai pass
+  "rsv.cardEyebrow": { en: "The kitchen", th: "The kitchen" },
+  "rsv.cardH": { en: "Keep a table for you", th: "Keep a table for you" },
+  "rsv.cardP": {
+    en: "Pick a time and we will have it laid when you arrive.",
+    th: "Pick a time and we will have it laid when you arrive.",
+  },
+
+  // v14 · event seat requests · th mirrors en pending Thai pass
+  "evr.cta": { en: "Reserve seats", th: "Reserve seats" },
+  "evr.h1": { en: "Seats at the table", th: "Seats at the table" },
+  "evr.lead": {
+    en: "Tell us which evening and how many of you. No payment · the house confirms by phone or LINE.",
+    th: "Tell us which evening and how many of you. No payment · the house confirms by phone or LINE.",
+  },
+  "evr.step1": { en: "Which evening", th: "Which evening" },
+  "evr.event": { en: "Event", th: "Event" },
+  "evr.guests": { en: "Guests", th: "Guests" },
+  "evr.notesHint": {
+    en: "Allergies, a celebration, anything we should plan for",
+    th: "Allergies, a celebration, anything we should plan for",
+  },
+  "evr.submit": { en: "Request seats", th: "Request seats" },
+  "evr.noPayment": {
+    en: "No payment is taken. Seats are held once we confirm.",
+    th: "No payment is taken. Seats are held once we confirm.",
+  },
+  "evr.okEyebrow": { en: "Requested", th: "Requested" },
+  "evr.okH1": { en: "Your seats are requested", th: "Your seats are requested" },
+  "evr.okLead": {
+    en: "The house has it. Keep this reference for when you arrive.",
+    th: "The house has it. Keep this reference for when you arrive.",
+  },
+  "evr.okNext": {
+    en: "We will confirm by phone or LINE shortly. Evenings with limited seating fill quickly, so we will tell you either way.",
+    th: "We will confirm by phone or LINE shortly. Evenings with limited seating fill quickly, so we will tell you either way.",
+  },
+  "evr.backToEvents": { en: "Back to the events", th: "Back to the events" },
+  "evr.err.event": {
+    en: "That evening is no longer open. Please choose another from the list.",
+    th: "That evening is no longer open. Please choose another from the list.",
+  },
+  "evr.err.name": { en: "Please tell us your name.", th: "Please tell us your name." },
+  "evr.err.contact": {
+    en: "Please leave a phone number or LINE id so we can confirm.",
+    th: "Please leave a phone number or LINE id so we can confirm.",
+  },
+  "evr.err.guests": {
+    en: "Please choose how many seats you need.",
+    th: "Please choose how many seats you need.",
+  },
+  "evr.err.failed": {
+    en: "Something went wrong at our end. Please try again, or contact the house.",
+    th: "Something went wrong at our end. Please try again, or contact the house.",
+  },
+
+  // v14 · adaptive contact form · th mirrors en pending Thai pass
+  "ct.about": { en: "What is this about?", th: "What is this about?" },
+  "ct.aboutStay": { en: "A stay", th: "A stay" },
+  "ct.aboutDining": { en: "Dining", th: "Dining" },
+  "ct.aboutEvent": { en: "An event", th: "An event" },
+  "ct.aboutOther": { en: "Something else", th: "Something else" },
+  "ct.contactField": {
+    en: "Email, phone or LINE id",
+    th: "Email, phone or LINE id",
+  },
+  "ct.dates": { en: "Dates", th: "Dates" },
+  "ct.checkIn": { en: "Check in", th: "Check in" },
+  "ct.checkOut": { en: "Check out", th: "Check out" },
+  "ct.when": { en: "When and how many", th: "When and how many" },
+  "ct.party": { en: "Guests", th: "Guests" },
+  "ct.sentH": { en: "Thank you · it is with us", th: "Thank you · it is with us" },
+  "ct.sentP": {
+    en: "The house reads messages through the day and answers on the same channel you left.",
+    th: "The house reads messages through the day and answers on the same channel you left.",
+  },
+  "ct.sendAnother": { en: "Send another", th: "Send another" },
+  "ct.err.name": { en: "Please tell us your name.", th: "Please tell us your name." },
+  "ct.err.contact": {
+    en: "Please leave an email, phone number or LINE id so we can reply.",
+    th: "Please leave an email, phone number or LINE id so we can reply.",
+  },
+  "ct.err.message": {
+    en: "Please write a short message.",
+    th: "Please write a short message.",
+  },
+  "ct.err.failed": {
+    en: "Something went wrong at our end. Please try again, or call the house.",
+    th: "Something went wrong at our end. Please try again, or call the house.",
+  },
+
+  // v14 · mobile drawer group · th mirrors en pending Thai pass
+  "nav.exploreGroup": { en: "Experience", th: "Experience" },
+
+  // v14 · owner · th mirrors en pending Thai pass
+  "ow.messages": { en: "Messages", th: "Messages" },
 };
 
 

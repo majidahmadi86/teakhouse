@@ -16,6 +16,7 @@ import type { DiningCategory, DiningItem } from "@/lib/dining";
 import { useI18n } from "@/lib/i18n";
 import { cn, formatBaht } from "@/lib/utils";
 import { ReservationsPanel } from "./ReservationsPanel";
+import { invalidateCached, readCached } from "@/lib/ownerCache";
 
 type CategoryForm = {
   name: { en: string; th: string };
@@ -71,11 +72,10 @@ export default function OwnerDiningPage() {
   const [editingDish, setEditingDish] = useState<DiningItem | null>(null);
   const [dishForm, setDishForm] = useState<DishForm>(() => emptyDish(""));
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (fresh = false) => {
+    if (fresh) invalidateCached("/api/dining");
     try {
-      const res = await fetch("/api/dining", { cache: "no-store" });
-      if (res.ok) setCategories((await res.json()) as DiningCategory[]);
-      else setCategories([]);
+      await readCached<DiningCategory[]>("/api/dining", setCategories);
     } catch {
       setCategories([]);
     }
@@ -129,7 +129,7 @@ export default function OwnerDiningPage() {
       });
     }
     setCatModalOpen(false);
-    await refresh();
+    await refresh(true);
   }
 
   async function toggleCategoryPublished(cat: DiningCategory) {
@@ -137,13 +137,13 @@ export default function OwnerDiningPage() {
       method: "PATCH",
       body: JSON.stringify({ published: !cat.published }),
     });
-    await refresh();
+    await refresh(true);
   }
 
   async function deleteCategory(cat: DiningCategory) {
     if (!window.confirm(t("ow.sure"))) return;
     await jsonFetch(`/api/dining/categories/${cat.id}`, { method: "DELETE" });
-    await refresh();
+    await refresh(true);
   }
 
   function openAddDish(cat: DiningCategory) {
@@ -195,7 +195,7 @@ export default function OwnerDiningPage() {
       });
     }
     setDishModalOpen(false);
-    await refresh();
+    await refresh(true);
   }
 
   async function toggleDishPublished(dish: DiningItem) {
@@ -203,13 +203,13 @@ export default function OwnerDiningPage() {
       method: "PATCH",
       body: JSON.stringify({ published: !dish.published }),
     });
-    await refresh();
+    await refresh(true);
   }
 
   async function deleteDish(dish: DiningItem) {
     if (!window.confirm(t("ow.sure"))) return;
     await jsonFetch(`/api/dining/items/${dish.id}`, { method: "DELETE" });
-    await refresh();
+    await refresh(true);
   }
 
   if (categories === null) return <OwnerSkeleton />;
