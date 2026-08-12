@@ -340,13 +340,14 @@ input.auth-input:-webkit-autofill {
   padding-top: calc(var(--demo-bar-h) + var(--header-h) + 0.75rem);
 }
 
-/* Below-fold sections are server-rendered (real height + scrollbar at load) but
-   skip paint/layout and image loading until scrolled near · keeps the hero LCP
-   uncontended. contain-intrinsic-size reserves height so the scrollbar is
-   correct from first paint. */
+/* Below-fold sections are server-rendered and PAINT UNCONDITIONALLY · no
+   content-visibility gate. A prior content-visibility:auto skipped their paint
+   until scrolled near, which left them blank in a JS-disabled full-page render;
+   below-fold content must be visible with zero dependence on scroll, JS or
+   paint-deferral. Off-screen cost is instead controlled by native lazy image
+   loading (loading="lazy") · the hero LCP still wins the first paint. */
 .tkh-below-section {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 640px;
+  content-visibility: visible;
 }
 
 /* JS-free entrance for the server-rendered below-fold · fail-open by design.
