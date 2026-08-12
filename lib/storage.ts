@@ -22,8 +22,31 @@ const EXT: Record<AllowedMime, string> = {
   "image/webp": "webp",
 };
 
+/**
+ * Normalise whatever SUPABASE_URL was pasted into the project settings.
+ *
+ * The value that is easiest to reach for is the one from the database
+ * connection string, `db.<ref>.supabase.co`, which does not serve the Storage
+ * API · requests to it simply never connect. The API lives at
+ * `https://<ref>.supabase.co`. Rather than fail on a plausible mistake, map it,
+ * add the protocol if it is missing, and drop any trailing slash or path.
+ */
+export function normalizeSupabaseUrl(raw: string): string {
+  let value = raw.trim();
+  if (!value) return "";
+  if (!/^https?:\/\//i.test(value)) value = `https://${value}`;
+  let host: string;
+  try {
+    host = new URL(value).host;
+  } catch {
+    return "";
+  }
+  host = host.replace(/^db\./i, "");
+  return `https://${host}`;
+}
+
 function env(): { url: string; key: string } | null {
-  const url = (process.env.SUPABASE_URL ?? "").replace(/\/+$/, "");
+  const url = normalizeSupabaseUrl(process.env.SUPABASE_URL ?? "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
   if (!url || !key) return null;
   return { url, key };
@@ -31,6 +54,21 @@ function env(): { url: string; key: string } | null {
 
 export function storageConfigured(): boolean {
   return env() !== null;
+}
+
+/**
+ * The storage host, for diagnostics. A hostname is not a secret · it appears
+ * in every public media URL the site serves. The service key never leaves
+ * this module except as an Authorization header.
+ */
+export function storageHost(): string {
+  const cfg = env();
+  if (!cfg) return "";
+  try {
+    return new URL(cfg.url).host;
+  } catch {
+    return "";
+  }
 }
 
 export function isAllowedMime(type: string): type is AllowedMime {

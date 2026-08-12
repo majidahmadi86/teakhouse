@@ -4,6 +4,7 @@ import {
   isAllowedMime,
   mediaKey,
   storageConfigured,
+  storageHost,
   uploadMedia,
 } from "@/lib/storage";
 
@@ -19,7 +20,11 @@ export const dynamic = "force-dynamic";
  * "activate after storage setup" note instead of a control that cannot work.
  */
 export async function GET() {
-  return NextResponse.json({ configured: storageConfigured() });
+  return NextResponse.json({
+    configured: storageConfigured(),
+    // Hostname only · it is public in every media URL. Never the key.
+    host: storageHost(),
+  });
 }
 
 export async function POST(req: Request) {
