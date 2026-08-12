@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { ConciergeFabStatic } from "@/components/ConciergeFabStatic";
+import { ConciergeMount } from "@/components/ConciergeLauncher";
 import { DemoModal } from "@/components/DemoModal";
 import { DemoModeBar } from "@/components/DemoModeBar";
 import { HeaderShell } from "@/components/header/HeaderShell";
 import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
 import { HomeLate } from "@/components/home/HomeLate";
 import { getDemoStrings } from "@/lib/demoStrings";
-import { getServerLocale } from "@/lib/serverLocale";
+import { getServerLocale, t } from "@/lib/serverLocale";
 
 export const metadata: Metadata = {
   alternates: {
@@ -33,6 +35,9 @@ export default function MarketingLayout({
       <HomeLate />
       {/* Order modal host · CTA opens it via the shared window event. */}
       <DemoModal strings={getDemoStrings(locale)} />
+      {/* Concierge · static server FAB (present in raw HTML) + scoped launcher */}
+      <ConciergeFabStatic label={t(locale, "cg.fab")} />
+      <ConciergeMount lang={locale} />
     </>
   );
 }

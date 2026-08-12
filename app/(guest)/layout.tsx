@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { ConciergeFabStatic } from "@/components/ConciergeFabStatic";
+import { ConciergeLauncher } from "@/components/ConciergeLauncher";
 import { DemoModal } from "@/components/DemoModal";
 import { DemoModeBar } from "@/components/DemoModeBar";
 import { HeaderShell } from "@/components/header/HeaderShell";
 import { Providers } from "@/components/providers";
 import { getDemoStrings } from "@/lib/demoStrings";
-import { getServerLocale } from "@/lib/serverLocale";
+import { getServerLocale, t } from "@/lib/serverLocale";
 import { GuestShell } from "./GuestShell";
 
 export const metadata: Metadata = {};
@@ -24,6 +26,9 @@ export default function GuestLayout({
           {children}
         </GuestShell>
       </DemoModal>
+      {/* Concierge · static server FAB (present in raw HTML) + client launcher */}
+      <ConciergeFabStatic label={t(locale, "cg.fab")} />
+      <ConciergeLauncher />
     </Providers>
   );
 }

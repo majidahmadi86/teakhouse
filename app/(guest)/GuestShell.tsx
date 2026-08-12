@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
-import { DeferredConcierge } from "@/components/DeferredConcierge";
 import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
 import { DeferredHeader } from "@/components/header/DeferredHeader";
 import { Footer } from "@/components/Footer";
@@ -38,12 +37,6 @@ export function GuestShell({
       </main>
       {isAuth ? null : <Footer />}
       {showMobileBookBar ? <DeferredMobileBookBar /> : null}
-      {isAuth ? null : (
-        <DeferredConcierge
-          offsetForBookBar={showMobileBookBar}
-          onBook={isBook || isRoomDetail}
-        />
-      )}
     </>
   );
 }
