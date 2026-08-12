@@ -56,19 +56,27 @@ export function storageConfigured(): boolean {
   return env() !== null;
 }
 
+/** A real hostname · letters, digits, dots and dashes, with a TLD. */
+const HOSTNAME = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
+
 /**
- * The storage host, for diagnostics. A hostname is not a secret · it appears
- * in every public media URL the site serves. The service key never leaves
- * this module except as an Authorization header.
+ * The storage host, for diagnostics.
+ *
+ * Echoed ONLY when the configured value actually parses as a hostname. If
+ * someone pastes a key into SUPABASE_URL by mistake, this endpoint must not
+ * hand that key back to an unauthenticated caller · it answers "invalid-url"
+ * instead, which is all the operator needs to know to go and fix it.
  */
 export function storageHost(): string {
   const cfg = env();
   if (!cfg) return "";
+  let host: string;
   try {
-    return new URL(cfg.url).host;
+    host = new URL(cfg.url).host;
   } catch {
-    return "";
+    return "invalid-url";
   }
+  return HOSTNAME.test(host) ? host : "invalid-url";
 }
 
 export function isAllowedMime(type: string): type is AllowedMime {
