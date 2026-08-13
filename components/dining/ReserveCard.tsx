@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { serviceSlots } from "@/lib/reservations";
+import { formatServiceWindow, serviceSlots } from "@/lib/reservations";
 import { t, type Lang } from "@/lib/serverLocale";
 
 /**
@@ -128,7 +128,9 @@ export function ReserveCard({
       </div>
 
       <p className="mt-4 px-1 text-[0.82rem] leading-relaxed text-sub">
-        {t(locale, "rsv.window", { w: `${serviceStart} to ${serviceEnd}` })}
+        {t(locale, "rsv.window", {
+          w: formatServiceWindow(serviceStart, serviceEnd, locale),
+        })}
       </p>
     </aside>
   );

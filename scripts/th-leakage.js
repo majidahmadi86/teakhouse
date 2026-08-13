@@ -69,8 +69,13 @@ const ALLOWED = [
 const BRAND_TOKENS =
   /\b(BTS|MRT|Google Maps|Google|LINE|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Teak House|The Teak House|Mikaro Studio|Chao Phraya|Charoenkrung|Agoda|Booking\.com|Booking|Sriracha|Songkran|Loy Krathong|khan tok|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide)\b/gi;
 
-/** A line counts as English if it has a run of >=3 Latin letters. */
-const LATIN_WORD = /[A-Za-z]{3,}/;
+/**
+ * A line counts as English if it has a run of >=3 Latin letters, OR one of the
+ * short connective words that hide between Thai and numerals. The >=3 rule
+ * alone let "ให้บริการ 11:30 to 22:00" through, which is exactly the kind of
+ * leak this audit exists to catch.
+ */
+const LATIN_WORD = /[A-Za-z]{3,}|(?:^|[\s·])(?:to|and|or|at|by|of|in|on)(?=[\s·]|$)/;
 
 function isAllowed(line) {
   const t = line.trim();

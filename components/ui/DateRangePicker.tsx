@@ -18,7 +18,9 @@ import {
 } from "date-fns";
 import { CalendarDays, X } from "lucide-react";
 import type { DateRange } from "react-day-picker";
+import { dfLocale } from "@/lib/dateLocale";
 import { useI18n } from "@/lib/i18n";
+import type { Locale } from "date-fns";
 import { useIsMobile } from "@/lib/useMediaQuery";
 import { cn } from "@/lib/utils";
 import "react-day-picker/dist/style.css";
@@ -65,11 +67,15 @@ function isoOf(d: Date): string {
   return format(d, "yyyy-MM-dd");
 }
 
-function formatRange(from?: Date, to?: Date): string | null {
+function formatRange(
+  from?: Date,
+  to?: Date,
+  dfl?: { locale: Locale }
+): string | null {
   if (!from) return null;
-  if (!to) return format(from, "d MMM yyyy");
-  if (isSameDay(from, to)) return format(from, "d MMM yyyy");
-  return `${format(from, "d MMM")} - ${format(to, "d MMM yyyy")}`;
+  if (!to) return format(from, "d MMM yyyy", dfl);
+  if (isSameDay(from, to)) return format(from, "d MMM yyyy", dfl);
+  return `${format(from, "d MMM", dfl)} - ${format(to, "d MMM yyyy", dfl)}`;
 }
 
 function nightsCount(from?: Date, to?: Date): number {
@@ -223,7 +229,7 @@ export function DateRangePicker({
     return { from: draftFrom, to: draftTo ?? draftFrom };
   }, [draftFrom, draftTo]);
 
-  const label = formatRange(draftFrom, draftTo) ?? placeholder;
+  const label = formatRange(draftFrom, draftTo, dfLocale(lang)) ?? placeholder;
   // Reuses the existing drp.done string · already translated, same meaning.
   const doneLabel = t("drp.done") !== "drp.done" ? t("drp.done") : "Done";
   const showPrices = Boolean(priceFor && formatPrice);
@@ -296,6 +302,9 @@ export function DateRangePicker({
     <>
       <DayPicker
         mode="range"
+        /* Month and weekday names follow the UI language · an otherwise Thai
+           calendar reading "August / Mo Tu We" is still an English control. */
+        locale={dfLocale(lang)?.locale}
         selected={selected}
         onSelect={(range) => handleSelect(range, close)}
         numberOfMonths={isMobile ? 1 : numberOfMonths}

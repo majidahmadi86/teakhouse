@@ -31,9 +31,11 @@ import {
 } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { useCurrency } from "@/lib/currency";
+import { dfLocale } from "@/lib/dateLocale";
 import { useI18n } from "@/lib/i18n";
+import type { Locale } from "date-fns";
 import { useIsMobile } from "@/lib/useMediaQuery";
-import { cn, isoDate } from "@/lib/utils";
+import { cn, isoDate, hotelToday } from "@/lib/utils";
 import "react-day-picker/dist/style.css";
 
 const DayPicker = dynamic(
@@ -43,25 +45,30 @@ const DayPicker = dynamic(
 
 const spring = { type: "spring" as const, stiffness: 120, damping: 16 };
 
-function formatRange(from?: Date, to?: Date, compact?: boolean): string {
+function formatRange(
+  from?: Date,
+  to?: Date,
+  compact?: boolean,
+  dfl?: { locale: Locale }
+): string {
   if (!from) return "";
-  if (!to) return format(from, compact ? "d MMM" : "d MMM yyyy");
+  if (!to) return format(from, compact ? "d MMM" : "d MMM yyyy", dfl);
   if (compact) {
-    return `${format(from, "d")}-${format(to, "d MMM")}`;
+    return `${format(from, "d", dfl)}-${format(to, "d MMM", dfl)}`;
   }
-  if (isSameDay(from, to)) return format(from, "d MMM yyyy");
-  return `${format(from, "d MMM")} – ${format(to, "d MMM yyyy")}`;
+  if (isSameDay(from, to)) return format(from, "d MMM yyyy", dfl);
+  return `${format(from, "d MMM", dfl)} – ${format(to, "d MMM yyyy", dfl)}`;
 }
 
 export function HeroSearchPill({ className }: { className?: string }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { format: formatPrice } = useCurrency();
   const router = useRouter();
   const isMobile = useIsMobile();
   const reduce = useReducedMotion();
 
-  const [checkIn, setCheckIn] = useState<Date>(() => addDays(new Date(), 1));
-  const [checkOut, setCheckOut] = useState<Date>(() => addDays(new Date(), 2));
+  const [checkIn, setCheckIn] = useState<Date>(() => addDays(hotelToday(), 1));
+  const [checkOut, setCheckOut] = useState<Date>(() => addDays(hotelToday(), 2));
   const [guests, setGuests] = useState("2");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [chipReady, setChipReady] = useState(false);
@@ -89,8 +96,8 @@ export function HeroSearchPill({ className }: { className?: string }) {
     router.push(`/book?${params.toString()}`);
   }
 
-  const dateLabel = formatRange(checkIn, checkOut);
-  const compactLabel = `${formatRange(checkIn, checkOut, true)} · ${t(`g${guests}` as "g1")}`;
+  const dateLabel = formatRange(checkIn, checkOut, false, dfLocale(lang));
+  const compactLabel = `${formatRange(checkIn, checkOut, true, dfLocale(lang))} · ${t(`g${guests}` as "g1")}`;
   const guestLabel = t(`g${guests}` as "g1");
 
   const chip = (
