@@ -946,40 +946,43 @@ export async function seedDatabase() {
     },
   });
 
-  for (const r of ROOMS) {
-    await prisma.room.create({
-      data: {
-        id: r.id,
-        hotelId: "default",
-        slug: r.slug,
-        shortKey: r.shortKey,
-        nameEn: r.nameEn,
-        nameTh: r.nameTh,
-        rate: r.rate,
-        ota: r.ota,
-        metaEn: r.metaEn,
-        metaTh: r.metaTh,
-        descriptionEn: r.descriptionEn,
-        descriptionTh: r.descriptionTh,
-        photos: JSON.stringify(r.photos),
-        amenities: JSON.stringify(r.amenities),
-        capacity: r.capacity,
-        bedTypeEn: r.bedTypeEn,
-        bedTypeTh: r.bedTypeTh,
-        sizeM2: r.sizeM2,
-        viewEn: r.viewEn,
-        viewTh: r.viewTh,
-        floorEn: r.floorEn,
-        floorTh: r.floorTh,
-        bathtub: r.bathtub,
-        balcony: r.balcony,
-        pets: r.pets,
-        active: r.active,
-        urgencyEn: r.urgencyEn ?? null,
-        urgencyTh: r.urgencyTh ?? null,
-      },
-    });
-  }
+  // One round trip per table, not one per row. The demo reset runs inside a
+  // serverless function with a hard time budget, and ~96 sequential creates
+  // against a remote database blew through it · the gateway returned 504 having
+  // already deleted everything, which left the live demo with no menu and no
+  // events. Bulk writes take the same work down to a handful of round trips.
+  await prisma.room.createMany({
+    data: ROOMS.map((r) => ({
+      id: r.id,
+      hotelId: "default",
+      slug: r.slug,
+      shortKey: r.shortKey,
+      nameEn: r.nameEn,
+      nameTh: r.nameTh,
+      rate: r.rate,
+      ota: r.ota,
+      metaEn: r.metaEn,
+      metaTh: r.metaTh,
+      descriptionEn: r.descriptionEn,
+      descriptionTh: r.descriptionTh,
+      photos: JSON.stringify(r.photos),
+      amenities: JSON.stringify(r.amenities),
+      capacity: r.capacity,
+      bedTypeEn: r.bedTypeEn,
+      bedTypeTh: r.bedTypeTh,
+      sizeM2: r.sizeM2,
+      viewEn: r.viewEn,
+      viewTh: r.viewTh,
+      floorEn: r.floorEn,
+      floorTh: r.floorTh,
+      bathtub: r.bathtub,
+      balcony: r.balcony,
+      pets: r.pets,
+      active: r.active,
+      urgencyEn: r.urgencyEn ?? null,
+      urgencyTh: r.urgencyTh ?? null,
+    })),
+  });
 
   const today = new Date();
   today.setHours(12, 0, 0, 0);
@@ -1024,15 +1027,15 @@ export async function seedDatabase() {
   }
 
   let codeN = 4200;
-  for (let i = 0; i < bookingSpecs.length; i++) {
-    const spec = bookingSpecs[i];
+  // Build the rows first, write once. Guests are deduplicated here rather than
+  // upserted row by row · the same fifteen people recur across forty bookings.
+  const bookingRows = bookingSpecs.map((spec, i) => {
     const room = ROOMS[i % ROOMS.length];
     const g = GUESTS[i % GUESTS.length];
     const checkIn = iso(addDays(today, spec.offsetIn));
     const checkOut = iso(addDays(today, spec.offsetIn + spec.nights));
     const source = sources[i % sources.length];
     const status = spec.statusPool[i % spec.statusPool.length];
-    const nights = nightsBetween(checkIn, checkOut);
     // Priced the same way the booking engine prices a live stay · so the
     // owner dashboard's revenue matches what the rate calendar says.
     const amount = quoteStay(
@@ -1041,47 +1044,49 @@ export async function seedDatabase() {
       checkOut,
       rateRulesByRoom[room.id] ?? []
     ).total;
-    const id = `bk-${4300 + i}`;
-    const prefix = source === "Direct" ? "TKH" : source === "Agoda" ? "AGD" : "BKG";
-    const code = `${prefix}-${codeN++}`;
+    const prefix =
+      source === "Direct" ? "TKH" : source === "Agoda" ? "AGD" : "BKG";
 
-    await prisma.booking.create({
-      data: {
-        id,
-        hotelId: "default",
-        code,
-        guest: g.guest,
-        phone: g.phone,
-        email: g.email,
-        roomSlug: room.slug,
-        checkIn,
-        checkOut,
-        source,
-        amount,
-        status,
-        notes: i % 5 === 0 ? "Late arrival noted." : "",
-        nationality: g.nationality,
-        adults: 1 + (i % 2),
-        children: i % 4 === 0 ? 1 : 0,
-        passportId: i % 3 === 0 ? `P${100000 + i}` : null,
-      },
-    });
+    return {
+      id: `bk-${4300 + i}`,
+      hotelId: "default",
+      code: `${prefix}-${codeN++}`,
+      guest: g.guest,
+      phone: g.phone,
+      email: g.email,
+      roomSlug: room.slug,
+      checkIn,
+      checkOut,
+      source,
+      amount,
+      status,
+      notes: i % 5 === 0 ? "Late arrival noted." : "",
+      nationality: g.nationality,
+      adults: 1 + (i % 2),
+      children: i % 4 === 0 ? 1 : 0,
+      passportId: i % 3 === 0 ? `P${100000 + i}` : null,
+    };
+  });
 
-    await prisma.guest.upsert({
-      where: { id: `guest-${g.email}` },
-      create: {
-        id: `guest-${g.email}`,
-        name: g.guest,
-        email: g.email,
-        phone: g.phone,
-        nationality: g.nationality,
-      },
-      update: {
-        name: g.guest,
-        phone: g.phone,
-      },
+  await prisma.booking.createMany({ data: bookingRows });
+
+  const guestRows = new Map<string, {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    nationality: string;
+  }>();
+  for (const g of GUESTS) {
+    guestRows.set(`guest-${g.email}`, {
+      id: `guest-${g.email}`,
+      name: g.guest,
+      email: g.email,
+      phone: g.phone,
+      nationality: g.nationality,
     });
   }
+  await prisma.guest.createMany({ data: Array.from(guestRows.values()) });
 
   await prisma.emailTemplate.create({
     data: {
@@ -1110,34 +1115,34 @@ export async function seedDatabase() {
   });
 
   // v12 · dining menu · *Th columns mirror EN pending the Thai pass
-  let dishCount = 0;
-  for (let c = 0; c < DINING.length; c++) {
-    const cat = DINING[c];
-    await prisma.diningCategory.create({
-      data: {
-        id: cat.id,
-        hotelId: "default",
-        nameEn: cat.name,
-        nameTh: DINING_TH[cat.id]?.name ?? cat.name,
-        order: c,
-        published: true,
-        items: {
-          create: cat.dishes.map((d, i) => ({
-            id: `${cat.id}-i${i + 1}`,
-            nameEn: d.name,
-            nameTh: DINING_TH[cat.id]?.dishes[i]?.name ?? d.name,
-            descriptionEn: d.description,
-            descriptionTh:
-              DINING_TH[cat.id]?.dishes[i]?.description ?? d.description,
-            price: d.price,
-            order: i,
-            published: true,
-          })),
-        },
-      },
-    });
-    dishCount += cat.dishes.length;
-  }
+  // Two writes for the whole menu · categories, then every dish at once.
+  await prisma.diningCategory.createMany({
+    data: DINING.map((cat, c) => ({
+      id: cat.id,
+      hotelId: "default",
+      nameEn: cat.name,
+      nameTh: DINING_TH[cat.id]?.name ?? cat.name,
+      order: c,
+      published: true,
+    })),
+  });
+
+  const dishRows = DINING.flatMap((cat) =>
+    cat.dishes.map((d, i) => ({
+      id: `${cat.id}-i${i + 1}`,
+      categoryId: cat.id,
+      nameEn: d.name,
+      nameTh: DINING_TH[cat.id]?.dishes[i]?.name ?? d.name,
+      descriptionEn: d.description,
+      descriptionTh:
+        DINING_TH[cat.id]?.dishes[i]?.description ?? d.description,
+      price: d.price,
+      order: i,
+      published: true,
+    }))
+  );
+  await prisma.diningItem.createMany({ data: dishRows });
+  const dishCount = dishRows.length;
 
   // v12 · special events · dates roll to the next occurrence so the demo
   // sandbox never shows a past festival, however long after launch it reseeds.
@@ -1170,21 +1175,19 @@ export async function seedDatabase() {
       image: "/images/facilities/courtyard-garden-1280.webp",
     },
   ];
-  for (const ev of EVENTS) {
-    await prisma.hotelEvent.create({
-      data: {
-        id: ev.id,
-        hotelId: "default",
-        titleEn: ev.title,
-        titleTh: EVENTS_TH[ev.id]?.title ?? ev.title,
-        date: ev.date,
-        descriptionEn: ev.description,
-        descriptionTh: EVENTS_TH[ev.id]?.description ?? ev.description,
-        image: ev.image,
-        published: true,
-      },
-    });
-  }
+  await prisma.hotelEvent.createMany({
+    data: EVENTS.map((ev) => ({
+      id: ev.id,
+      hotelId: "default",
+      titleEn: ev.title,
+      titleTh: EVENTS_TH[ev.id]?.title ?? ev.title,
+      date: ev.date,
+      descriptionEn: ev.description,
+      descriptionTh: EVENTS_TH[ev.id]?.description ?? ev.description,
+      image: ev.image,
+      published: true,
+    })),
+  });
 
   console.log(
     `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · ${DINING.length} dining categories · ${dishCount} dishes · ${EVENTS.length} events · guests + demo user`
