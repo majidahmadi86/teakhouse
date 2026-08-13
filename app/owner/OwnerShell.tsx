@@ -43,7 +43,7 @@ const NAV: {
   { href: "/owner/messages", labelKey: "ow.messages", icon: Inbox },
   { href: "/owner/rates", labelKey: "ow.rateCalendar", icon: Tags },
   { href: "/owner/calendar", labelKey: "ow.cal", icon: CalendarDays },
-  { href: "/owner/settings", label: "Settings", icon: Settings },
+  { href: "/owner/settings", labelKey: "ow.settings", icon: Settings },
 ];
 
 const LG_QUERY = "(min-width: 1024px)";

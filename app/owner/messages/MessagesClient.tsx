@@ -12,12 +12,14 @@ import {
 } from "@/lib/contactMessages";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
 
+/** Reuses the guest form's own purpose labels · same words, same meaning. */
 const PURPOSE_LABEL: Record<ContactPurpose, string> = {
-  stay: "A stay",
-  dining: "Dining",
-  event: "An event",
-  other: "Something else",
+  stay: "ct.aboutStay",
+  dining: "ct.aboutDining",
+  event: "ct.aboutEvent",
+  other: "ct.aboutOther",
 };
 
 const PURPOSE_STYLE: Record<ContactPurpose, string> = {
@@ -28,9 +30,9 @@ const PURPOSE_STYLE: Record<ContactPurpose, string> = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  new: "New",
-  read: "Read",
-  done: "Done",
+  new: "ow.stNew",
+  read: "ow.stRead",
+  done: "ow.stDone",
 };
 
 /**
@@ -43,7 +45,8 @@ const STATUS_LABEL: Record<string, string> = {
  * when the guest was asked for them.
  */
 export default function OwnerMessagesPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const [rows, setRows] = useState<ContactMessage[] | null>(null);
   const [filter, setFilter] = useState<"all" | ContactPurpose>("all");
 
@@ -91,7 +94,7 @@ export default function OwnerMessagesPage() {
           {t("ow.messages")}
           {unread > 0 ? (
             <span className="ml-3 rounded-full bg-gold/20 px-3 py-1 align-middle text-sm font-extrabold text-gold">
-              {unread} new
+              {t("ow.newCount", { n: unread })}
             </span>
           ) : null}
         </h1>
@@ -109,14 +112,14 @@ export default function OwnerMessagesPage() {
                   : "text-white/60 hover:text-white"
               )}
             >
-              {key === "all" ? "All" : PURPOSE_LABEL[key]}
+              {key === "all" ? t("ow.filterAll") : t(PURPOSE_LABEL[key])}
             </button>
           ))}
         </div>
       </div>
 
       {shown.length === 0 ? (
-        <p className="text-sm text-white/55">Nothing here yet.</p>
+        <p className="text-sm text-white/55">{t("ow.nothingHere")}</p>
       ) : (
         <ul className="space-y-4">
           {shown.map((m) => (
@@ -134,12 +137,12 @@ export default function OwnerMessagesPage() {
                     PURPOSE_STYLE[m.purpose]
                   )}
                 >
-                  {PURPOSE_LABEL[m.purpose]}
+                  {t(PURPOSE_LABEL[m.purpose])}
                 </span>
                 <span className="text-sm font-bold text-white">{m.name}</span>
                 <span className="text-xs text-white/55">{m.contact}</span>
                 <span className="ml-auto text-xs text-white/40">
-                  {format(parseISO(m.createdAt), "d MMM yyyy · HH:mm")}
+                  {format(parseISO(m.createdAt), "d MMM yyyy · HH:mm", dfl)}
                 </span>
                 <div className="w-[130px] shrink-0">
                   <OwnerListbox
@@ -147,7 +150,7 @@ export default function OwnerMessagesPage() {
                     onChange={(v) => setStatus(m, v)}
                     options={["new", "read", "done"].map((s) => ({
                       value: s,
-                      label: STATUS_LABEL[s],
+                      label: t(STATUS_LABEL[s]),
                     }))}
                   />
                 </div>
@@ -157,13 +160,13 @@ export default function OwnerMessagesPage() {
                 <p className="mb-2 text-xs font-bold text-own-blue">
                   {m.checkIn ? (
                     <>
-                      {format(parseISO(m.checkIn), "d MMM yyyy")}
+                      {format(parseISO(m.checkIn), "d MMM yyyy", dfl)}
                       {m.checkOut
-                        ? ` to ${format(parseISO(m.checkOut), "d MMM yyyy")}`
+                        ? ` ${t("ow.msgTo")} ${format(parseISO(m.checkOut), "d MMM yyyy", dfl)}`
                         : ""}
                     </>
                   ) : null}
-                  {m.date ? format(parseISO(m.date), "d MMM yyyy") : null}
+                  {m.date ? format(parseISO(m.date), "d MMM yyyy", dfl) : null}
                   {m.party ? ` · ${m.party} guests` : ""}
                 </p>
               ) : null}

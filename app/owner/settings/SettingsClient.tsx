@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 import type { EmailTemplateDto, HotelDto } from "@/lib/ownerTypes";
 
 const PLACEHOLDERS = [
@@ -22,6 +23,7 @@ const emailBodyClass =
   "relative z-0 min-h-[280px] w-full resize-y rounded-[10px] border-0 bg-black/35 px-4 py-3 font-mono text-sm leading-relaxed text-white caret-white shadow-none";
 
 export default function OwnerSettingsPage() {
+  const { t } = useI18n();
   const [hotel, setHotel] = useState<HotelDto | null>(null);
   const [template, setTemplate] = useState<EmailTemplateDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,7 +99,7 @@ export default function OwnerSettingsPage() {
     return (
       <div>
         <h1 className="font-display text-3xl font-semibold text-white">
-          Settings
+          {t("ow.settings")}
         </h1>
         <p className="mt-4 text-white/60">Loading…</p>
       </div>
@@ -108,29 +110,29 @@ export default function OwnerSettingsPage() {
     <div>
       <header className="mb-10">
         <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.18em] text-gold">
-          Owner
+          {t("ow.ownerEyebrow")}
         </p>
         <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
-          Settings
+          {t("ow.settings")}
         </h1>
         <p className="mt-4 max-w-2xl text-base font-medium leading-relaxed text-white/70">
-          Hotel contact, stay policies, and booking confirmation email template.
+          {t("ow.setLead")}
         </p>
       </header>
 
       {/* Contact + policies */}
       <section className="owner-panel mb-8 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
-          Hotel contact & policies
+          {t("ow.setHotelH")}
         </h2>
         <p className="mb-6 text-sm text-white/55">
-          Updates the Hotel record used by the property.
+          {t("ow.setHotelSub")}
         </p>
 
         {hotel ? (
           <div className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Name">
+              <Field label={t("ow.setName")}>
                 <input
                   value={hotel.name}
                   onChange={(e) =>
@@ -139,7 +141,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Tagline">
+              <Field label={t("ow.setTagline")}>
                 <input
                   value={hotel.tagline}
                   onChange={(e) =>
@@ -151,7 +153,7 @@ export default function OwnerSettingsPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Email">
+              <Field label={t("ow.setEmail")}>
                 <input
                   type="email"
                   value={hotel.email}
@@ -161,7 +163,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Phone">
+              <Field label={t("ow.setPhone")}>
                 <input
                   value={hotel.phone}
                   onChange={(e) =>
@@ -182,7 +184,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Deposit %">
+              <Field label={t("ow.setDeposit")}>
                 <input
                   type="number"
                   min={0}
@@ -203,7 +205,7 @@ export default function OwnerSettingsPage() {
               </Field>
             </div>
 
-            <Field label="Address">
+            <Field label={t("ow.setAddress")}>
               <input
                 value={hotel.address}
                 onChange={(e) =>
@@ -214,7 +216,7 @@ export default function OwnerSettingsPage() {
             </Field>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              <Field label="City">
+              <Field label={t("ow.setCity")}>
                 <input
                   value={hotel.city}
                   onChange={(e) =>
@@ -223,7 +225,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Country">
+              <Field label={t("ow.setCountry")}>
                 <input
                   value={hotel.country}
                   onChange={(e) =>
@@ -232,7 +234,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Postal code">
+              <Field label={t("ow.setPostal")}>
                 <input
                   value={hotel.postalCode}
                   onChange={(e) =>
@@ -246,7 +248,7 @@ export default function OwnerSettingsPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Check-in time">
+              <Field label={t("ow.setCheckIn")}>
                 <input
                   value={hotel.checkInTime}
                   onChange={(e) =>
@@ -257,7 +259,7 @@ export default function OwnerSettingsPage() {
                   className={inputClass}
                 />
               </Field>
-              <Field label="Check-out time">
+              <Field label={t("ow.setCheckOut")}>
                 <input
                   value={hotel.checkOutTime}
                   onChange={(e) =>
@@ -270,7 +272,7 @@ export default function OwnerSettingsPage() {
               </Field>
             </div>
 
-            <Field label="Cancellation policy">
+            <Field label={t("ow.setCancel")}>
               <textarea
                 rows={3}
                 value={hotel.cancelPolicy}
@@ -283,7 +285,7 @@ export default function OwnerSettingsPage() {
               />
             </Field>
 
-            <Field label="Pets policy">
+            <Field label={t("ow.setPets")}>
               <textarea
                 rows={2}
                 value={hotel.petsPolicy}
@@ -303,7 +305,7 @@ export default function OwnerSettingsPage() {
                 disabled={hotelSaving}
                 className="min-h-[44px] rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6] disabled:opacity-60"
               >
-                {hotelSaving ? "Saving…" : "Save hotel"}
+                {hotelSaving ? t("ow.setSaving") : t("ow.setSaveHotel")}
               </button>
               {hotelMsg ? (
                 <span className="text-sm font-semibold text-deal">{hotelMsg}</span>
@@ -318,12 +320,10 @@ export default function OwnerSettingsPage() {
       {/* Email template */}
       <section className="owner-panel rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
-          Confirmation email
+          {t("ow.setEmailH")}
         </h2>
         <p className="mb-4 text-sm text-white/55">
-          Subject and body for booking confirmation. Placeholders are replaced
-          when a booking is created. Delivery is stubbed until EMAIL_PROVIDER is
-          configured.
+          {t("ow.setEmailSub")}
         </p>
 
         <div className="mb-5 flex flex-wrap gap-2">
@@ -339,7 +339,7 @@ export default function OwnerSettingsPage() {
 
         {template ? (
           <div className="space-y-5">
-            <Field label="Subject">
+            <Field label={t("ow.setSubject")}>
               <input
                 value={template.subject}
                 onChange={(e) =>
@@ -350,7 +350,7 @@ export default function OwnerSettingsPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Body">
+            <Field label={t("ow.setBody")}>
               <textarea
                 rows={12}
                 value={template.body}
@@ -371,7 +371,7 @@ export default function OwnerSettingsPage() {
                 disabled={emailSaving}
                 className="min-h-[44px] rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6] disabled:opacity-60"
               >
-                {emailSaving ? "Saving…" : "Save template"}
+                {emailSaving ? t("ow.setSaving") : t("ow.setSaveTemplate")}
               </button>
               {emailMsg ? (
                 <span className="text-sm font-semibold text-deal">{emailMsg}</span>

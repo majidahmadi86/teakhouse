@@ -54,3 +54,7 @@ next-env.d.ts
 # lighthouse / PSI local artifacts
 .psi-*.json
 .lh-chrome/
+# Raw Lighthouse reports · one file per run, three runs per route per release.
+# They are evidence for a single release, not source, and there were seventy of
+# them sitting untracked in the working tree.
+.lh-*.json

@@ -13,6 +13,7 @@ import { cn, isoDate } from "@/lib/utils";
 import { ModalActions, OwnerModal } from "../dining/DiningClient";
 import { RequestsPanel } from "./RequestsPanel";
 import { invalidateCached, readCached } from "@/lib/ownerCache";
+import { dfLocale } from "@/lib/dateLocale";
 
 type EventForm = {
   title: { en: string; th: string };
@@ -45,7 +46,8 @@ async function jsonFetch(url: string, init?: RequestInit): Promise<boolean> {
  * mutations with a full refetch · the list is a handful of rows.
  */
 export default function OwnerEventsPage() {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const [events, setEvents] = useState<HotelEvent[] | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -143,7 +145,7 @@ export default function OwnerEventsPage() {
           className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
         >
           <Plus className="h-5 w-5" aria-hidden />
-          Add event
+          {t("ow.addEvent")}
         </button>
       </div>
 
@@ -184,7 +186,7 @@ export default function OwnerEventsPage() {
                     ev.date >= todayIso ? "text-own-blue" : "text-white/45"
                   )}
                 >
-                  {format(parseISO(ev.date), "EEE d MMM yyyy")}
+                  {format(parseISO(ev.date), "EEE d MMM yyyy", dfl)}
                   {ev.date < todayIso ? " · past" : ""}
                 </p>
                 <h2 className="mt-2 font-display text-xl font-semibold text-white">

@@ -1,8 +1,9 @@
 const { chromium } = require("playwright");
 
-const BASE =
-  process.env.LH_BASE ||
-  "https://teakhouse-preview-6ifjihenz-miomika-s-projects.vercel.app";
+// The stable alias, not a per-deploy Vercel hostname · this used to default to
+// an immutable preview URL, which pinned the whole suite to one old build and
+// reported its long-fixed faults as current failures.
+const BASE = process.env.LH_BASE || "https://teakhouse.mikaro.studio";
 
 const results = [];
 function ok(name, pass, detail = "") {

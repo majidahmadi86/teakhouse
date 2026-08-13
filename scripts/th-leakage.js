@@ -14,7 +14,7 @@ const { chromium } = require("playwright");
 
 const BASE = process.env.BASE || "http://localhost:3000";
 
-const ROUTES = [
+const GUEST_ROUTES = [
   "/",
   "/dining",
   "/dining/reserve",
@@ -29,6 +29,26 @@ const ROUTES = [
   "/offers",
   "/book",
 ];
+
+/**
+ * The owner panel is client-rendered behind a store fetch, so it needs longer
+ * to settle than a guest page and is measured from <body> · its chrome (the
+ * sidebar, the demo bar) is part of the surface an owner reads.
+ */
+const OWNER_ROUTES = [
+  "/owner",
+  "/owner/bookings",
+  "/owner/rooms",
+  "/owner/dining",
+  "/owner/events",
+  "/owner/messages",
+  "/owner/rates",
+  "/owner/calendar",
+  "/owner/settings",
+];
+
+const ROUTES = process.env.OWNER === "1" ? OWNER_ROUTES : GUEST_ROUTES;
+const IS_OWNER = process.env.OWNER === "1";
 
 /** Latin that is CORRECT inside Thai copy. */
 const ALLOWED = [
@@ -46,6 +66,21 @@ const ALLOWED = [
   /^gbp$/i,
   /^google$/i,
   /^promptpay$/i,
+  // An address is an address, and the reviewers are named people · both are
+  // correct in Latin on a Thai page.
+  /^stay@teakhouse\.demo$/i,
+  /^(claire|daniel|marco|emma|james|sofia|anna|hannah|oliver|lucas|yuki|chen|li|raj|tom|sarah)\b/i,
+  // Owner tables render DATA · a booking row is a code, a guest's name, a room
+  // name, a source brand and a Thai status. The rate-rule labels are whatever
+  // the owner typed. None of it is interface copy, none of it is ours to
+  // translate, and the rule label is a single non-localized column by design.
+  /^(TKH|AGD|BKG)-\d+ /,
+  /^(Direct|Agoda|Booking)$/,
+  /^(High season|Weekend premium)$/,
+  // Email-template placeholders are code · they must stay verbatim or the
+  // substitution stops working.
+  /^\{\{[a-zA-Z]+\}\}$/,
+  /^EMAIL_PROVIDER$/,
   /^visa$/i,
   /^mastercard$/i,
   /^wifi$/i,
@@ -67,7 +102,9 @@ const ALLOWED = [
  * judging the line, so "ห่าง BTS เพียง 6 นาที" reads as Thai (it is).
  */
 const BRAND_TOKENS =
-  /\b(BTS|MRT|Google Maps|Google|LINE|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Teak House|The Teak House|Mikaro Studio|Chao Phraya|Charoenkrung|Agoda|Booking\.com|Booking|Sriracha|Songkran|Loy Krathong|khan tok|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide)\b/gi;
+  // Acronyms and paths first, WITHOUT a leading word boundary · the owner tables
+  // render "฿1,900OTA ฿2,300" with no space, so \bOTA would never match there.
+  /(?:OTA|ADR|CSV|PDF|CVC|webhook|EMAIL_PROVIDER)|\/[a-z-]+\b|\b(BTS|MRT|Google Maps|Google|LINE|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Teak House|The Teak House|Mikaro Studio|Chao Phraya|Charoenkrung|Agoda|Booking\.com|Booking|Sriracha|Songkran|Loy Krathong|khan tok|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide)\b/gi;
 
 /**
  * A line counts as English if it has a run of >=3 Latin letters, OR one of the
@@ -101,15 +138,17 @@ async function run() {
 
   for (const route of ROUTES) {
     await page.goto(BASE + route, { waitUntil: "load" });
-    await page.waitForTimeout(1200);
-    // <main> only · the demo chrome bar above it is intentionally bilingual.
-    const lines = await page.evaluate(() => {
-      const el = document.querySelector("main") || document.body;
+    // The owner panel mounts a dynamic import after its store fetch resolves.
+    await page.waitForTimeout(IS_OWNER ? 8000 : 1200);
+    const lines = await page.evaluate((isOwner) => {
+      const el = isOwner
+        ? document.querySelector(".own-theme") || document.body
+        : document.querySelector("main") || document.body;
       return (el.innerText || "")
         .split("\n")
         .map((l) => l.replace(/\s+/g, " ").trim())
         .filter(Boolean);
-    });
+    }, IS_OWNER);
     const leaks = [...new Set(lines.filter((l) => !isAllowed(l)))];
     total += leaks.length;
     report.push({ route, lines: lines.length, leaks });
@@ -118,7 +157,7 @@ async function run() {
         leaks.length ? " · " + leaks.length + " english" : ""
       }`
     );
-    for (const l of leaks.slice(0, 8)) console.log("        ·", l.slice(0, 96));
+    for (const l of leaks.slice(0, 60)) console.log("        ·", l.slice(0, 96));
   }
 
   console.log(`\n${total} English lines across ${ROUTES.length} TH routes`);

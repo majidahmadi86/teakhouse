@@ -1,5 +1,7 @@
 "use client";
 
+import { format, type Locale } from "date-fns";
+
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
@@ -14,9 +16,16 @@ import {
   type PriceRule,
   type PriceRuleKind,
 } from "@/lib/pricing";
-import { cn, formatBaht } from "@/lib/utils";
+import { addDays, cn, formatBaht } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+/** Weekday headers come from date-fns so they follow the UI language. */
+function weekdayLabels(dfl?: { locale: Locale }): string[] {
+  const sunday = new Date(2024, 8, 1); // a known Sunday
+  return Array.from({ length: 7 }, (_, i) =>
+    format(addDays(sunday, i), "EEE", dfl)
+  );
+}
 
 /** Colour by which layer set the night's price · the whole point of the grid. */
 function sourceClass(source: NightRate["source"]): string {
@@ -47,7 +56,8 @@ function emptyDraft(kind: PriceRuleKind, startDate = ""): RuleDraft {
 }
 
 export default function OwnerRatesPage() {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const { data, addPriceRule, deletePriceRule, updateRoom } = useOwner();
   const searchParams = useSearchParams();
 
@@ -96,13 +106,10 @@ export default function OwnerRatesPage() {
     [room, month, rules]
   );
 
+  // Month name follows the UI language · this was pinned to en-GB.
   const monthLabel = useMemo(
-    () =>
-      new Date(Date.UTC(month.year, month.month0, 1)).toLocaleDateString(
-        "en-GB",
-        { month: "long", year: "numeric", timeZone: "UTC" }
-      ),
-    [month]
+    () => format(new Date(month.year, month.month0, 1), "MMMM yyyy", dfl),
+    [month, dfl]
   );
 
   const leadingBlanks = new Date(
@@ -274,7 +281,7 @@ export default function OwnerRatesPage() {
 
       <section className="owner-panel mb-6 rounded-2xl p-4 md:p-6">
         <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-          {WEEKDAYS.map((d) => (
+          {weekdayLabels(dfl).map((d) => (
             <div
               key={d}
               className="text-center text-[0.65rem] font-extrabold uppercase tracking-[0.12em] text-white/55"

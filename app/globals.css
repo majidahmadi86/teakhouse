@@ -187,6 +187,23 @@
     font-weight: 600;
   }
 
+  /**
+   * Thai stacks tone marks above the letter and vowels below it, so a Kanit
+   * line needs about 1.5x its font size to draw completely. The 1.2 above is
+   * right for headings, which overflow visibly and simply sit tight · but a
+   * truncated line hides its overflow, so at 1.2 the marks are cut off mid
+   * glyph. Give those lines the room back.
+   *
+   * This is a CSS fix rather than a `leading-` class on each element because
+   * the selector above is (0,2,0) and beats any single utility class · a
+   * `leading-[1.5]` in the markup is silently ignored here.
+   */
+  html[lang="th"] .font-display.truncate,
+  html[lang="th"] .font-display.line-clamp-1,
+  html[lang="th"] .font-display.line-clamp-2 {
+    line-height: 1.5;
+  }
+
   h1,
   h2,
   h3,

@@ -83,13 +83,13 @@ export function Footer() {
               {t("nav.contact")}
             </Link>
             <a href="tel:+6620000000" className={linkClass}>
-              +66 2 000 0000
+              {t("ct.phone")}
             </a>
             <a href="mailto:stay@teakhouse.demo" className={linkClass}>
-              stay@teakhouse.demo
+              {t("ct.mail")}
             </a>
             <span className="block py-1.5 text-[0.9rem] text-[#FFFFFFA6]">
-              LINE @teakhouse
+              {t("ct.line")}
             </span>
           </div>
         </div>

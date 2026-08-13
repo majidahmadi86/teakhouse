@@ -72,7 +72,7 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     k: /wedding|event|party|parties|celebrat|function|pavilion|private dinner|jazz|brunch|loy krathong|songkran/i,
     r: {
       en: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. You can also reserve seats at one of our special evenings · no payment, we confirm by phone or LINE. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
-      th: 'ศาลาริมน้ำของเรารองรับงานแต่งงาน มื้อค่ำส่วนตัว และงานเลี้ยงค่ะ · นั่ง 60 ยืน 90 มาถึงทางเรือได้ ค่ำคืนพิเศษดูได้ที่หน้าอีเวนต์ <a href="/events" class="font-extrabold text-blue">อีเวนต์และพื้นที่จัดงาน</a>',
+      th: 'ศาลาริมน้ำของเรารองรับงานแต่งงาน มื้อค่ำส่วนตัว และงานเลี้ยงค่ะ · นั่ง 60 ยืน 90 มาถึงทางเรือได้ ค่ำคืนพิเศษดูได้ที่หน้าอีเวนต์ และจองที่นั่งร่วมค่ำคืนพิเศษได้ด้วย · ไม่มีการชำระเงิน เราจะยืนยันทางโทรหรือ LINE <a href="/events" class="font-extrabold text-blue">อีเวนต์และพื้นที่จัดงาน</a>',
     },
   },
   {

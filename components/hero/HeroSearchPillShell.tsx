@@ -1,3 +1,8 @@
+import { format } from "date-fns";
+import { dfLocale } from "@/lib/dateLocale";
+import type { Lang } from "@/lib/translate";
+import { addDays, hotelToday } from "@/lib/utils";
+
 /**
  * Server-rendered visual twin of HeroSearchPill · zero client JS.
  * Interactive logic hydrates via DeferredHeroSearch.
@@ -115,13 +120,18 @@ export function HeroSearchPillShell({
   );
 }
 
-/** Default date labels for SSR · tomorrow → day after. */
-export function defaultSearchDateLabel(now = new Date()): string {
-  const inDate = new Date(now);
-  inDate.setDate(inDate.getDate() + 1);
-  const outDate = new Date(now);
-  outDate.setDate(outDate.getDate() + 2);
-  const fmt = (d: Date) =>
-    d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+/**
+ * Default date labels for SSR · tomorrow to the day after.
+ *
+ * Dates come from the hotel's clock and the month name from the guest's
+ * language. This was pinned to en-GB, so a Thai page opened on "15 Aug".
+ */
+export function defaultSearchDateLabel(
+  locale: Lang = "en",
+  now = hotelToday()
+): string {
+  const inDate = addDays(now, 1);
+  const outDate = addDays(now, 2);
+  const fmt = (d: Date) => format(d, "d MMM", dfLocale(locale));
   return `${fmt(inDate)} – ${fmt(outDate)}`;
 }

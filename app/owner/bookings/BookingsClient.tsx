@@ -8,7 +8,7 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, type Locale } from "date-fns";
 import { Download, Plus, X } from "lucide-react";
 import { OwnerDateRange, OwnerListbox } from "@/components/owner/OwnerField";
 import { useI18n } from "@/lib/i18n";
@@ -19,6 +19,7 @@ import {
   useOwner,
 } from "@/lib/ownerStore";
 import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
 
 function csvEscape(value: string | number | undefined | null): string {
   const s = value == null ? "" : String(value);
@@ -93,10 +94,16 @@ function sourceClass(source: BookingSource): string {
   return source === "Direct" ? "text-deal" : "text-gold";
 }
 
-function formatStay(checkIn: string, checkOut: string): string {
-  const a = format(parseISO(checkIn), "d MMM");
-  const b = format(parseISO(checkOut), "d MMM yyyy");
-  return `${a} to ${b}`;
+/** "3 Sep to 5 Sep 2026" · month names and the joining word follow the UI language. */
+function formatStay(
+  checkIn: string,
+  checkOut: string,
+  dfl?: { locale: Locale },
+  to = "to"
+): string {
+  const a = format(parseISO(checkIn), "d MMM", dfl);
+  const b = format(parseISO(checkOut), "d MMM yyyy", dfl);
+  return `${a} ${to} ${b}`;
 }
 
 function nextCode(bookings: Booking[]): string {
@@ -201,7 +208,8 @@ function formToPayload(form: BookingForm) {
 }
 
 export default function OwnerBookingsPage() {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const { data, addBooking, updateBooking } = useOwner();
 
   const [search, setSearch] = useState("");
@@ -395,7 +403,7 @@ export default function OwnerBookingsPage() {
             className="owner-control inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold text-white transition"
           >
             <Download className="h-5 w-5" aria-hidden />
-            Export CSV
+            {t("ow.exportCsv")}
           </button>
           <button
             type="button"
@@ -470,7 +478,7 @@ export default function OwnerBookingsPage() {
                       {roomName(b.roomSlug)}
                     </td>
                     <td className="px-4 py-4 text-white/70">
-                      {formatStay(b.checkIn, b.checkOut)}
+                      {formatStay(b.checkIn, b.checkOut, dfl, t("ow.msgTo"))}
                     </td>
                     <td className={cn("px-4 py-4 font-bold", sourceClass(b.source))}>
                       {b.source}
@@ -509,7 +517,7 @@ export default function OwnerBookingsPage() {
               </div>
               <p className="font-semibold text-white/90">{b.guest}</p>
               <p className="mt-1 text-sm text-white/60">
-                {roomName(b.roomSlug)} · {formatStay(b.checkIn, b.checkOut)}
+                {roomName(b.roomSlug)} · {formatStay(b.checkIn, b.checkOut, dfl, t("ow.msgTo"))}
               </p>
               <div className="mt-3 flex items-center justify-between">
                 <span className={cn("text-sm font-bold", sourceClass(b.source))}>
@@ -836,7 +844,7 @@ export default function OwnerBookingsPage() {
                           />
                           <DetailRow
                             label={t("col.dates")}
-                            value={formatStay(selected.checkIn, selected.checkOut)}
+                            value={formatStay(selected.checkIn, selected.checkOut, dfl, t("ow.msgTo"))}
                           />
                           <DetailRow label={t("col.src")} value={selected.source} />
                           <div className="flex items-center gap-3">

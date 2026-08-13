@@ -11,6 +11,7 @@ import {
 } from "@/lib/eventRequests";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
 
 const STATUS_STYLE: Record<EventRequestStatus, string> = {
   pending: "bg-gold/20 text-gold",
@@ -19,9 +20,9 @@ const STATUS_STYLE: Record<EventRequestStatus, string> = {
 };
 
 const STATUS_LABEL: Record<EventRequestStatus, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  declined: "Declined",
+  pending: "ow.stPending",
+  confirmed: "ow.stConfirmed",
+  declined: "ow.stDeclined",
 };
 
 /**
@@ -30,7 +31,8 @@ const STATUS_LABEL: Record<EventRequestStatus, string> = {
  * nesting, so a request is never hidden inside a collapsed group.
  */
 export function RequestsPanel() {
-  const { tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const [rows, setRows] = useState<EventRequest[] | null>(null);
 
   const refresh = useCallback(async () => {
@@ -68,16 +70,16 @@ export function RequestsPanel() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2.5 font-display text-xl font-semibold text-white">
           <Ticket className="h-5 w-5 text-own-blue" aria-hidden />
-          Seat requests
+          {t("ow.seatRequests")}
           {pending > 0 ? (
             <span className="rounded-full bg-gold/20 px-2.5 py-1 text-xs font-extrabold text-gold">
-              {pending} to answer
+              {t("ow.toAnswer", { n: pending })}
             </span>
           ) : null}
         </h2>
         {seats > 0 ? (
           <span className="text-sm font-bold text-white/60">
-            {seats} seats confirmed
+            {t("ow.seatsConfirmed", { n: seats })}
           </span>
         ) : null}
       </div>
@@ -85,7 +87,7 @@ export function RequestsPanel() {
       {rows === null ? (
         <Loader2 className="h-5 w-5 animate-spin text-white/40" aria-hidden />
       ) : rows.length === 0 ? (
-        <p className="text-sm text-white/55">No seat requests yet.</p>
+        <p className="text-sm text-white/55">{t("ow.noSeatRequests")}</p>
       ) : (
         <ul className="space-y-3">
           {rows.map((row) => (
@@ -102,7 +104,7 @@ export function RequestsPanel() {
                 </p>
                 {row.eventDate ? (
                   <p className="text-xs font-bold text-own-blue">
-                    {format(parseISO(row.eventDate), "EEE d MMM yyyy")}
+                    {format(parseISO(row.eventDate), "EEE d MMM yyyy", dfl)}
                   </p>
                 ) : null}
               </div>
@@ -112,7 +114,7 @@ export function RequestsPanel() {
                   {row.guests}
                 </p>
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.12em] text-white/45">
-                  {row.guests === 1 ? "seat" : "seats"}
+                  {t(row.guests === 1 ? "ow.unitSeat" : "ow.unitSeats")}
                 </p>
               </div>
 
@@ -144,7 +146,7 @@ export function RequestsPanel() {
                   onChange={(v) => setStatus(row, v as EventRequestStatus)}
                   options={EVENT_REQUEST_STATUSES.map((s) => ({
                     value: s,
-                    label: STATUS_LABEL[s],
+                    label: t(STATUS_LABEL[s]),
                   }))}
                 />
               </div>

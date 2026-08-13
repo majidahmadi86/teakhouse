@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, type Locale } from "date-fns";
 import { CalendarClock, Loader2 } from "lucide-react";
 import { ImageUploadField } from "@/components/owner/ImageUploadField";
 import { OwnerListbox } from "@/components/owner/OwnerField";
@@ -13,6 +13,8 @@ import {
   type TableReservation,
 } from "@/lib/reservations";
 import { cn, isoDate } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
+import { useI18n } from "@/lib/i18n";
 
 const STATUS_STYLE: Record<ReservationStatus, string> = {
   pending: "bg-gold/20 text-gold",
@@ -22,10 +24,10 @@ const STATUS_STYLE: Record<ReservationStatus, string> = {
 };
 
 const STATUS_LABEL: Record<ReservationStatus, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  seated: "Seated",
-  cancelled: "Cancelled",
+  pending: "ow.stPending",
+  confirmed: "ow.stConfirmed",
+  seated: "ow.stSeated",
+  cancelled: "ow.stCancelled",
 };
 
 const TIME_CHOICES = (() => {
@@ -56,6 +58,8 @@ async function jsonFetch(url: string, init?: RequestInit) {
  * came in March".
  */
 export function ReservationsPanel() {
+  const { t, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const [rows, setRows] = useState<TableReservation[] | null>(null);
   const [hotel, setHotel] = useState<HotelDto | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -137,7 +141,7 @@ export function ReservationsPanel() {
       <div className="owner-panel rounded-2xl p-6 md:p-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-display text-xl font-semibold text-white">
-            Table reservations
+            {t("ow.tableRsv")}
           </h2>
           <div className="flex items-center gap-3">
             {savingSettings ? (
@@ -148,7 +152,7 @@ export function ReservationsPanel() {
               </span>
             ) : null}
             <span className="text-sm font-bold text-white/70">
-              {hotel?.reservationsEnabled ? "Taking bookings" : "Switched off"}
+              {t(hotel?.reservationsEnabled ? "ow.takingBookings" : "ow.switchedOff")}
             </span>
             <button
               type="button"
@@ -176,14 +180,14 @@ export function ReservationsPanel() {
 
         <p className="mb-6 text-sm text-white/55">
           {hotel?.reservationsEnabled
-            ? `Guests can request a table on the dining page · ${slotCount} sittings per day.`
-            : "The reserve-a-table button is hidden across the site while this is off."}
+            ? t("ow.sittings", { n: slotCount })
+            : t("ow.rsvOffNote")}
         </p>
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <div className="mb-2 text-sm font-semibold text-white/80">
-              Service starts
+              {t("ow.serviceStarts")}
             </div>
             <OwnerListbox
               value={hotel?.serviceStart ?? "11:30"}
@@ -193,7 +197,7 @@ export function ReservationsPanel() {
           </div>
           <div>
             <div className="mb-2 text-sm font-semibold text-white/80">
-              Kitchen closes
+              {t("ow.kitchenCloses")}
             </div>
             <OwnerListbox
               value={hotel?.serviceEnd ?? "22:00"}
@@ -203,36 +207,36 @@ export function ReservationsPanel() {
           </div>
           <div>
             <div className="mb-2 text-sm font-semibold text-white/80">
-              Largest party
+              {t("ow.largestParty")}
             </div>
             <OwnerListbox
               value={String(hotel?.maxPartySize ?? 10)}
               onChange={(v) => saveSettings({ maxPartySize: Number(v) })}
               options={Array.from({ length: 20 }, (_, i) => i + 1).map((n) => ({
                 value: String(n),
-                label: n === 1 ? "1 guest" : `${n} guests`,
+                label: n === 1 ? t("ow.guestOne") : t("ow.guestCount", { n }),
               }))}
             />
           </div>
         </div>
         <p className="mt-3 text-xs text-white/45">
-          The last sitting is one hour before the kitchen closes.
+          {t("ow.lastSitting")}
         </p>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2">
           <ImageUploadField
-            label="Dining page hero"
+            label={t("ow.diningHero")}
             value={hotel?.diningHeroImage ?? ""}
             folder="page-heroes"
             onChange={(url) => saveSettings({ diningHeroImage: url })}
-            hint="Wide crop · replaces the food hero at the top of /dining."
+            hint={t("ow.diningHeroHint")}
           />
           <ImageUploadField
-            label="Events page hero"
+            label={t("ow.eventsHero")}
             value={hotel?.eventsHeroImage ?? ""}
             folder="page-heroes"
             onChange={(url) => saveSettings({ eventsHeroImage: url })}
-            hint="Wide crop · replaces the pavilion hero at the top of /events."
+            hint={t("ow.eventsHeroHint")}
           />
         </div>
       </div>
@@ -242,10 +246,10 @@ export function ReservationsPanel() {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <h3 className="flex items-center gap-2.5 font-display text-lg font-semibold text-white">
             <CalendarClock className="h-5 w-5 text-own-blue" aria-hidden />
-            Upcoming tables
+            {t("ow.upcomingTables")}
             {pendingCount > 0 ? (
               <span className="rounded-full bg-gold/20 px-2.5 py-1 text-xs font-extrabold text-gold">
-                {pendingCount} to confirm
+                {t("ow.toConfirm", { n: pendingCount })}
               </span>
             ) : null}
           </h3>
@@ -255,7 +259,7 @@ export function ReservationsPanel() {
               onClick={() => setShowPast((v) => !v)}
               className="owner-control min-h-[44px] rounded-xl px-4 text-sm font-bold text-white/70 transition hover:text-white"
             >
-              {showPast ? "Hide past" : `Past (${past.length})`}
+              {showPast ? t("ow.hidePast") : t("ow.pastCount", { n: past.length })}
             </button>
           ) : null}
         </div>
@@ -263,11 +267,11 @@ export function ReservationsPanel() {
         {rows === null ? (
           <Loader2 className="h-5 w-5 animate-spin text-white/40" aria-hidden />
         ) : upcoming.length === 0 ? (
-          <p className="text-sm text-white/55">No tables booked yet.</p>
+          <p className="text-sm text-white/55">{t("ow.noTables")}</p>
         ) : (
           <ul className="space-y-3">
             {upcoming.map((row) => (
-              <ReservationRow key={row.id} row={row} onStatus={setStatus} />
+              <ReservationRow key={row.id} row={row} onStatus={setStatus} dfl={dfl} />
             ))}
           </ul>
         )}
@@ -275,7 +279,7 @@ export function ReservationsPanel() {
         {showPast && past.length > 0 ? (
           <ul className="mt-6 space-y-3 opacity-60">
             {past.map((row) => (
-              <ReservationRow key={row.id} row={row} onStatus={setStatus} />
+              <ReservationRow key={row.id} row={row} onStatus={setStatus} dfl={dfl} />
             ))}
           </ul>
         ) : null}
@@ -287,15 +291,18 @@ export function ReservationsPanel() {
 function ReservationRow({
   row,
   onStatus,
+  dfl,
 }: {
   row: TableReservation;
   onStatus: (row: TableReservation, status: ReservationStatus) => void;
+  dfl?: { locale: Locale };
 }) {
+  const { t } = useI18n();
   return (
     <li className="owner-inset flex flex-wrap items-center gap-4 rounded-xl px-4 py-3">
       <div className="w-[104px] shrink-0">
         <p className="text-sm font-extrabold text-white">
-          {format(parseISO(row.date), "EEE d MMM")}
+          {format(parseISO(row.date), "EEE d MMM", dfl)}
         </p>
         <p className="text-xs font-bold text-own-blue">{row.time}</p>
       </div>
@@ -305,7 +312,7 @@ function ReservationRow({
           {row.party}
         </p>
         <p className="text-[0.65rem] font-bold uppercase tracking-[0.12em] text-white/45">
-          {row.party === 1 ? "guest" : "guests"}
+          {t(row.party === 1 ? "ow.unitGuest" : "ow.unitGuests")}
         </p>
       </div>
 
@@ -337,7 +344,7 @@ function ReservationRow({
           onChange={(v) => onStatus(row, v as ReservationStatus)}
           options={RESERVATION_STATUSES.map((s) => ({
             value: s,
-            label: STATUS_LABEL[s],
+            label: t(STATUS_LABEL[s]),
           }))}
         />
       </div>

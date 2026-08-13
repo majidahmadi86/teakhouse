@@ -14,6 +14,7 @@ import { premiumEase } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { type CellState, useOwner } from "@/lib/ownerStore";
 import { cn, isoDate } from "@/lib/utils";
+import { dfLocale } from "@/lib/dateLocale";
 
 function cellColor(state: CellState): string {
   if (state === "booked") return "bg-own-blue cursor-default";
@@ -42,7 +43,8 @@ function heatStyle(pct: number): { className: string; style?: React.CSSPropertie
 }
 
 export default function OwnerCalendarPage() {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const { data, getCell, toggleBlock } = useOwner();
   const reduce = useReducedMotion();
 
@@ -137,7 +139,7 @@ export default function OwnerCalendarPage() {
             <ChevronLeft className="h-5 w-5" />
           </button>
           <span className="min-w-[140px] text-center font-display text-lg font-semibold text-white">
-            {format(month, "MMMM yyyy")}
+            {format(month, "MMMM yyyy", dfl)}
           </span>
           <button
             type="button"
@@ -174,7 +176,7 @@ export default function OwnerCalendarPage() {
                 : "text-white/60 hover:text-white"
             )}
           >
-            Rooms
+            {t("ow.calRooms")}
           </button>
           <button
             type="button"
@@ -186,7 +188,7 @@ export default function OwnerCalendarPage() {
                 : "text-white/60 hover:text-white"
             )}
           >
-            Heat
+            {t("ow.calHeat")}
           </button>
         </div>
       </div>
@@ -224,7 +226,7 @@ export default function OwnerCalendarPage() {
               return (
                 <div
                   key={dateIso}
-                  title={`${format(d, "d MMM")} · ${heat.pct}% occupancy · ${heat.booked} booked`}
+                  title={`${format(d, "d MMM", dfl)} · ${heat.pct}% · ${heat.booked}`}
                   className={cn(
                     "flex aspect-square flex-col items-center justify-center rounded-xl transition",
                     style.className
@@ -268,7 +270,7 @@ export default function OwnerCalendarPage() {
                 >
                   {format(d, "d")}
                   <br />
-                  <span className="uppercase">{format(d, "EEE")}</span>
+                  <span className="uppercase">{format(d, "EEE", dfl)}</span>
                 </div>
               ))}
 
@@ -287,13 +289,13 @@ export default function OwnerCalendarPage() {
                         type="button"
                         disabled={isBooked}
                         onClick={() => handleCellClick(room.slug, dateIso)}
-                        title={`${tr(room.name)} · ${format(d, "d MMM")} · ${state}`}
+                        title={`${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${state}`}
                         className={cn(
                           "aspect-square min-h-[28px] min-w-[28px] rounded-sm transition",
                           cellColor(state),
                           isBooked && "opacity-90"
                         )}
-                        aria-label={`${tr(room.name)} ${format(d, "d MMM")} ${state}`}
+                        aria-label={`${tr(room.name)} ${format(d, "d MMM", dfl)} ${state}`}
                       />
                     );
                   })}
@@ -308,7 +310,7 @@ export default function OwnerCalendarPage() {
             <LegendDot color="bg-white/15" label={t("ow.lg3")} />
           </div>
           <p className="mt-3 text-xs font-medium text-white/55">
-            Tap available or blocked cells to toggle. Booked nights cannot be changed.
+            {t("ow.calHint")}
           </p>
         </section>
       )}

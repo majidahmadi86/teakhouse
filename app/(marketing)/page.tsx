@@ -7,7 +7,7 @@ import { getServerLocale, t } from "@/lib/serverLocale";
 /** Server page · locale + hero + below-fold all render server-side in one paint. */
 export default function HomePage() {
   const locale = getServerLocale();
-  const dateLabel = defaultSearchDateLabel();
+  const dateLabel = defaultSearchDateLabel(locale);
 
   return (
     <>

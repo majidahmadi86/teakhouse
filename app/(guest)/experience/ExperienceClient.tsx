@@ -18,7 +18,7 @@ const SECTIONS = [
     title: "xp.1h",
     p1: "xp.1p",
     p2: "xp.1p2",
-    topic: "Breakfast on the pier",
+    topicKey: "xp.1h",
   },
   {
     image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
@@ -26,7 +26,7 @@ const SECTIONS = [
     title: "xp.2h",
     p1: "xp.2p",
     p2: "xp.2p2",
-    topic: "The courtyard pool",
+    topicKey: "xp.2h",
   },
   {
     image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874",
@@ -34,7 +34,7 @@ const SECTIONS = [
     title: "xp.3h",
     p1: "xp.3p",
     p2: "xp.3p2",
-    topic: "Thai massage upstairs",
+    topicKey: "xp.3h",
   },
   {
     image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
@@ -42,7 +42,7 @@ const SECTIONS = [
     title: "xp.4h",
     p1: "xp.4p",
     p2: "xp.4p2",
-    topic: "Evening long-tail ride",
+    topicKey: "xp.4h",
   },
 ] as const;
 
@@ -99,7 +99,11 @@ export default function ExperienceClient() {
         lead={t("xp.lead")}
       />
 
-      <section className="section-pad bg-white">
+      {/* overflow-x-clip · the reveal animations below start each block
+          translated 40-48px sideways, which extended the document and made
+          the page scroll horizontally at 360-1093 until they animated in.
+          Present in English too · this is a layout fix, not a Thai one. */}
+      <section className="section-pad overflow-x-clip bg-white">
         <div className="mx-auto max-w-[1180px] space-y-24">
           {SECTIONS.map((section, index) => {
             const reversed = index % 2 === 1;
@@ -130,7 +134,7 @@ export default function ExperienceClient() {
                     {t(section.p2)}
                   </p>
                   <ConciergeAskButton
-                    topic={section.topic}
+                    topic={t(section.topicKey)}
                     className="group mt-8 inline-flex items-center gap-2 rounded-full border border-blue px-6 py-3 text-sm font-bold text-blue transition hover:bg-sky"
                   >
                     {t("xp.ask")}
@@ -143,7 +147,7 @@ export default function ExperienceClient() {
         </div>
       </section>
 
-      <section className="section-pad bg-cloud">
+      <section className="section-pad overflow-x-clip bg-cloud">
         <div className="mx-auto max-w-[1180px]">
           <Reveal>
             <h2 className="mb-8">{t("xp.nbh")}</h2>

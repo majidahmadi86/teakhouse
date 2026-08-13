@@ -226,14 +226,14 @@ export default function OwnerDiningPage() {
           className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6]"
         >
           <Plus className="h-5 w-5" aria-hidden />
-          Add category
+          {t("ow.addCategory")}
         </button>
       </div>
 
       <ReservationsPanel />
 
       <h2 className="mb-4 mt-10 font-display text-2xl font-semibold text-white">
-        The menu
+        {t("ow.theMenu")}
       </h2>
 
       <div className="space-y-6">
@@ -267,7 +267,7 @@ export default function OwnerDiningPage() {
                   className="owner-control inline-flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold text-white"
                 >
                   <Plus className="h-4 w-4" aria-hidden />
-                  Add dish
+                  {t("ow.addDish")}
                 </button>
                 <button
                   type="button"

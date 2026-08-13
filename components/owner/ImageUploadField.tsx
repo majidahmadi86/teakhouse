@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImageUp, Loader2, Trash2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const MAX_EDGE = 2000;
@@ -74,6 +75,7 @@ export function ImageUploadField({
   onChange: (url: string) => void;
   hint?: string;
 }) {
+  const { t } = useI18n();
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -92,14 +94,14 @@ export function ImageUploadField({
   const pick = useCallback(async (file: File) => {
     setError("");
     if (!ALLOWED.includes(file.type)) {
-      setError("Use a jpg, png or webp image.");
+      setError(t("ow.uploadType"));
       return;
     }
     setBusy(true);
     try {
       const prepared = await prepare(file);
       if (prepared.size > MAX_BYTES) {
-        setError("That image is over 8MB even after resizing.");
+        setError(t("ow.uploadBig"));
         return;
       }
       const body = new FormData();
@@ -110,20 +112,20 @@ export function ImageUploadField({
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         setError(
           j.error === "storage-not-configured"
-            ? "Image uploads activate after storage setup."
-            : "Upload failed. Please try again."
+            ? t("ow.uploadNote")
+            : t("ow.uploadFailed")
         );
         return;
       }
       const { url } = (await res.json()) as { url: string };
       onChange(url);
     } catch {
-      setError("Upload failed. Please try again.");
+      setError(t("ow.uploadFailed"));
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
     }
-  }, [folder, onChange]);
+  }, [folder, onChange, t]);
 
   return (
     <div>
@@ -141,7 +143,7 @@ export function ImageUploadField({
           <button
             type="button"
             onClick={() => onChange("")}
-            aria-label="Remove image"
+            aria-label={t("ow.uploadRemove")}
             className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-red-300 transition hover:bg-white/5"
           >
             <Trash2 className="h-4 w-4" aria-hidden />
@@ -151,7 +153,7 @@ export function ImageUploadField({
 
       {configured === false ? (
         <p className="owner-inset rounded-xl px-4 py-3 text-xs font-semibold text-white/55">
-          Image uploads activate after storage setup.
+          {t("ow.uploadNote")}
         </p>
       ) : (
         <>
@@ -178,7 +180,11 @@ export function ImageUploadField({
             ) : (
               <ImageUp className="h-4 w-4" aria-hidden />
             )}
-            {busy ? "Uploading" : value ? "Replace image" : "Upload image"}
+            {busy
+              ? t("ow.uploading")
+              : value
+                ? t("ow.replaceBtn")
+                : t("ow.uploadBtn")}
           </label>
         </>
       )}

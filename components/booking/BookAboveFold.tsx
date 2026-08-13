@@ -19,7 +19,7 @@ export function BookAboveFold() {
     t(locale, "bk.s3"),
     t(locale, "bk.s4"),
   ];
-  const dateLabel = defaultSearchDateLabel();
+  const dateLabel = defaultSearchDateLabel(locale);
 
   return (
     <section className="px-4 pb-16 pt-28 sm:px-6 max-lg:pb-28">

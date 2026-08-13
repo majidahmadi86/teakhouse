@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, type Locale } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -12,6 +12,7 @@ import {
 import { addDays, cn, formatBaht, isoDate, nightsBetween } from "@/lib/utils";
 import { InfoTip } from "@/components/owner/InfoTip";
 import { OwnerRise, OwnerStagger } from "@/components/owner/OwnerMotion";
+import { dfLocale } from "@/lib/dateLocale";
 
 const AVAIL_RANGES = [7, 14, 30] as const;
 type AvailRange = (typeof AVAIL_RANGES)[number];
@@ -56,9 +57,9 @@ function monthKey(d: Date): string {
   return format(d, "yyyy-MM");
 }
 
-function monthLabel(key: string): string {
+function monthLabel(key: string, dfl?: { locale: Locale }): string {
   const [y, m] = key.split("-").map(Number);
-  return format(new Date(y, m - 1, 1), "MMM");
+  return format(new Date(y, m - 1, 1), "MMM", dfl);
 }
 
 /** Allocate booking amount across stay months by night share. */
@@ -118,7 +119,8 @@ function occupancyPctForMonth(
 }
 
 export default function OwnerDashboardPage() {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
+  const dfl = dfLocale(lang);
   const {
     data,
     getCell,
@@ -283,26 +285,26 @@ export default function OwnerDashboardPage() {
       {/* Revenue dashboard */}
       <section className="owner-panel mb-6 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
-          Revenue
+          {t("ow.revenue")}
         </h2>
         <p className="mb-6 text-sm text-white/55">
-          Last 6 months · night-weighted booking totals
+          {t("ow.revenueSub")}
         </p>
 
         <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
           <MiniStat
-            label="This month"
+            label={t("ow.thisMonth")}
             value={formatBaht(revenue.thisMonthRevenue)}
             tip={t("ow.tip.month")}
           />
           <MiniStat
-            label="Occupancy"
+            label={t("ow.occupancy")}
             value={`${revenue.occupancyPct}%`}
             tip={t("ow.tip.occ")}
           />
           <MiniStat label="ADR" value={formatBaht(revenue.adr)} tip={t("ow.tip.adr")} />
           <MiniStat
-            label="Bookings"
+            label={t("ow.bookingsCount")}
             value={String(revenue.bookingCount)}
             tip={t("ow.tip.bookings")}
           />
@@ -310,7 +312,7 @@ export default function OwnerDashboardPage() {
 
         <div className="mb-8">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
-            Monthly revenue
+            {t("ow.monthlyRevenue")}
           </p>
           <div
             className="flex h-40 items-end gap-2 sm:gap-3"
@@ -332,11 +334,11 @@ export default function OwnerDashboardPage() {
                     <div
                       className="w-full max-w-[48px] rounded-t-md bg-own-blue/80 transition-all duration-500"
                       style={{ height: `${pct}%` }}
-                      title={`${monthLabel(key)} · ${formatBaht(value)}`}
+                      title={`${monthLabel(key, dfl)} · ${formatBaht(value)}`}
                     />
                   </div>
                   <span className="text-xs font-bold text-white/70">
-                    {monthLabel(key)}
+                    {monthLabel(key, dfl)}
                   </span>
                 </div>
               );
@@ -346,10 +348,10 @@ export default function OwnerDashboardPage() {
 
         <div>
           <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-gold">
-            Bookings by source
+            {t("ow.bySource")}
           </p>
           <p className="mb-4 text-xs text-white/55">
-            Placeholder mix for this month · wire OTA webhooks later
+            {t("ow.sourceNote")}
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             {(["Direct", "Agoda", "Booking"] as const).map((src) => {
@@ -367,7 +369,7 @@ export default function OwnerDashboardPage() {
                         src === "Direct" ? "text-deal" : "text-gold"
                       )}
                     >
-                      {src}
+                      {src === "Direct" ? t("ow.direct") : src}
                     </span>
                     <span className="text-sm font-semibold text-white">
                       {count}
@@ -420,7 +422,7 @@ export default function OwnerDashboardPage() {
           <h2 className="font-display text-xl font-semibold text-white">
             {anchoredToday
               ? t("ow.avail.hNext", { n: rangeDays })
-              : format(windowStart, "MMMM yyyy")}
+              : format(windowStart, "MMMM yyyy", dfl)}
           </h2>
           <div className="flex flex-wrap items-center gap-2">
             {!anchoredToday ? (
@@ -441,7 +443,8 @@ export default function OwnerDashboardPage() {
               <ChevronLeft className="h-5 w-5" aria-hidden />
             </button>
             <span className="min-w-[11ch] text-center text-sm font-bold text-white/70">
-              {format(days[0], "d MMM")} · {format(days[days.length - 1], "d MMM")}
+              {format(days[0], "d MMM", dfl)} ·{" "}
+              {format(days[days.length - 1], "d MMM", dfl)}
             </span>
             <button
               type="button"
@@ -494,7 +497,7 @@ export default function OwnerDashboardPage() {
                   {format(d, "d")}
                   <br />
                   <span className="text-[0.65rem] font-semibold uppercase">
-                    {format(d, "EEE")}
+                    {format(d, "EEE", dfl)}
                   </span>
                 </div>
               );
@@ -511,13 +514,13 @@ export default function OwnerDashboardPage() {
                   return (
                     <div
                       key={`${room.slug}-${dateIso}`}
-                      title={`${tr(room.name)} · ${format(d, "d MMM")} · ${state}`}
+                      title={`${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${state}`}
                       className={cn(
                         "aspect-square min-h-[36px] min-w-[36px] rounded-md",
                         cellColor(state),
                         dateIso === todayIso && "ring-1 ring-gold/50"
                       )}
-                      aria-label={`${tr(room.name)} ${format(d, "d MMM")} ${state}`}
+                      aria-label={`${tr(room.name)} ${format(d, "d MMM", dfl)} ${state}`}
                     />
                   );
                 })}

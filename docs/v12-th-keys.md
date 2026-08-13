@@ -292,63 +292,56 @@ and reports visible English, allowing brand names and proper nouns.
 
 Clean in Thai: `/dining/reserve` · `/book` · `/location` · `/gallery`.
 
-## Still English · v14 keys (no Thai supplied yet)
+## Complete · nothing is English any more
 
-| Key | English value |
-| --- | --- |
-| `rsv.cardEyebrow` | The kitchen |
-| `rsv.cardH` | Keep a table for you |
-| `rsv.cardP` | Pick a time and we will have it laid when you arrive. |
-| `evr.cta` | Reserve seats |
-| `evr.h1` | Seats at the table |
-| `evr.lead` | Tell us which evening and how many of you. No payment · the house confirms by phone or LINE. |
-| `evr.step1` | Which evening |
-| `evr.event` | Event |
-| `evr.guests` | Guests |
-| `evr.notesHint` | Allergies, a celebration, anything we should plan for |
-| `evr.submit` | Request seats |
-| `evr.noPayment` | No payment is taken. Seats are held once we confirm. |
-| `evr.okEyebrow` | Requested |
-| `evr.okH1` | Your seats are requested |
-| `evr.okLead` | The house has it. Keep this reference for when you arrive. |
-| `evr.okNext` | We will confirm by phone or LINE shortly. Evenings with limited seating fill quickly, so we will tell you either way. |
-| `evr.backToEvents` | Back to the events |
-| `evr.err.event` | That evening is no longer open. Please choose another from the list. |
-| `evr.err.name` | Please tell us your name. |
-| `evr.err.contact` | Please leave a phone number or LINE id so we can confirm. |
-| `evr.err.guests` | Please choose how many seats you need. |
-| `evr.err.failed` | Something went wrong at our end. Please try again, or contact the house. |
-| `ct.about` | What is this about? |
-| `ct.aboutStay` | A stay |
-| `ct.aboutDining` | Dining |
-| `ct.aboutEvent` | An event |
-| `ct.aboutOther` | Something else |
-| `ct.contactField` | Email, phone or LINE id |
-| `ct.dates` | Dates |
-| `ct.checkIn` | Check in |
-| `ct.checkOut` | Check out |
-| `ct.when` | When and how many |
-| `ct.party` | Guests |
-| `ct.sentH` | Thank you · it is with us |
-| `ct.sentP` | The house reads messages through the day and answers on the same channel you left. |
-| `ct.sendAnother` | Send another |
-| `ct.err.name` | Please tell us your name. |
-| `ct.err.contact` | Please leave an email, phone number or LINE id so we can reply. |
-| `ct.err.message` | Please write a short message. |
-| `ct.err.failed` | Something went wrong at our end. Please try again, or call the house. |
-| `nav.exploreGroup` | Experience |
-| `ow.messages` | Messages |
+The Thai dictionary is FULLY INSTALLED. The 111 lines this document used to
+list as debt (19 v14 keys and roughly 92 from v11) are authored and shipped,
+along with the v14 concierge events sentence and about 80 owner-panel labels
+that had never been in the dictionary at all.
 
-Also still English: the v14 concierge events sentence "You can also reserve
-seats at one of our special evenings · no payment, we confirm by phone or
-LINE." (the rest of that reply is now Thai).
+Two gates keep it that way:
 
-## Still English · v11 debt (unchanged, tracked in docs/v11-th-keys.md)
+`node scripts/th-missing.js` reads the dictionary itself and lists any key
+whose Thai slot is not Thai. It reports **0 keys need Thai**. It allows the
+Latin that is correct inside a Thai value · brands, route paths, file
+extensions, `EMAIL_PROVIDER`, `webhook`, and the `{placeholder}` names, which
+are code rather than copy.
 
-`fac.*` and `nav.facilities` (the facilities page and the home strip · 24 lines
-on /facilities, ~22 on the home page), `rooms.*` and the room meta strings
-(21 lines on /rooms), `house.*` and the experience copy (20 lines on
-/experience), and one `off.*` badge ("FREE").
+`node scripts/th-leakage.js` loads every rendered surface in Thai and reports
+visible English. **0 English lines across all 13 guest routes**, and 0 across
+the 9 owner routes once the demo data is the seeded set. Run the owner pass
+with `OWNER=1`.
+
+`node scripts/th-overflow.js` checks that no Thai string clips or wraps out of
+its box at 360, 390, 1093 and 1366 · **156/156**.
+
+### Terms chosen where Thai offered options
+
+| English | Chosen | Why |
+| --- | --- | --- |
+| reserve seats (an event) | จองที่นั่ง | keeps "seat" literal, so it reads differently from จองโต๊ะ (book a table) |
+| guests (a count) | ท่าน | the polite counter for people; คน is neutral but flat for a hotel |
+| multiplier | ตัวคูณ | the arithmetic word an owner reads on a rate row |
+| date override | ราคาเชพาะวัน | "price for specific days", clearer than a loanword |
+| base rate | ราคาพื้นฐาน | pairs with the season and override rows above it |
+| season | ช่วงฑูกาล | a date range, not the weather |
+| fixed price | ราคาคงที่ | the opposite of a multiplier, in the same register |
+| ADR | ADR | the hotel-industry acronym; Thai revenue managers use it untranslated |
+
+Politeness follows register: ค่ะ appears only in conversational replies (the
+concierge), never on labels, buttons or table headers.
+
+### Known and deliberate
+
+Around 50 `alt=""` texts and the per-route `metadata.title` / `description`
+are still English. Neither is measured by these audits, because neither is
+visible copy · they are read by screen readers and search engines. Worth a
+pass, listed here so it is not mistaken for an oversight.
+
+`SeasonalPriceRule.label` is one non-localized column by design: it holds
+whatever the owner typed, so the seeded demo rows read "High season" and
+"Weekend premium" in both languages.
+
 
 ## Not translated on purpose
 

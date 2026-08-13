@@ -5,17 +5,18 @@ import { cn } from "@/lib/utils";
 const OFFER_STYLES = {
   "1": {
     gradient: "linear-gradient(145deg, #FF6B4A 0%, #E14F2E 100%)",
-    numeral: "15%",
+    numeralKey: "off.1.numeral",
     goldLine: false,
   },
   "2": {
     gradient: "linear-gradient(145deg, #0A6CDE 0%, #0857BE 100%)",
-    numeral: "20%",
+    numeralKey: "off.2.numeral",
     goldLine: false,
   },
   "3": {
     gradient: "linear-gradient(145deg, #0A2E5C 0%, #0A1B2E 100%)",
-    numeral: "FREE",
+    // "FREE" is a word, not a numeral · it needs the dictionary.
+    numeralKey: "off.3.numeral",
     goldLine: true,
   },
 } as const;
@@ -53,7 +54,7 @@ export function OfferCard({ n, locale, large, className }: OfferCardProps) {
             : "text-[clamp(3rem,4vw,4rem)]"
         )}
       >
-        {style.numeral}
+        {translate(locale, style.numeralKey)}
       </div>
 
       {style.goldLine ? (
