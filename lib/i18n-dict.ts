@@ -1215,6 +1215,98 @@ export const DICT: Record<string, DictEntry> = {
   "ow.unitGuests": { en: "guests", th: "ท่าน" },
   "ow.unitSeat": { en: "seat", th: "ที่นั่ง" },
   "ow.unitSeats": { en: "seats", th: "ที่นั่ง" },
+
+  /**
+   * Owner form fields and aria-labels.
+   *
+   * These lived as English literal props inside the edit modals, which is
+   * exactly where an innerText audit cannot see them · th-leakage reported the
+   * whole owner panel CLEAN while every "Add a dish" dialog was still English.
+   *
+   * The "(EN)" / "(TH)" suffixes name the LANGUAGE COLUMN being edited, not the
+   * interface language, so they stay Latin in both · an owner filling in the
+   * Thai menu needs to know which box is which.
+   */
+  "ow.f.nameEn": { en: "Name EN", th: "ชื่อ (EN)" },
+  "ow.f.nameTh": { en: "Name TH", th: "ชื่อ (TH)" },
+  "ow.f.descEn": { en: "Description EN", th: "คำอธิบาย (EN)" },
+  "ow.f.descTh": { en: "Description TH", th: "คำอธิบาย (TH)" },
+  "ow.f.titleEn": { en: "Title EN", th: "ชื่องาน (EN)" },
+  "ow.f.titleTh": { en: "Title TH", th: "ชื่องาน (TH)" },
+  "ow.f.bedEn": { en: "Bed EN", th: "ประเภทเตียง (EN)" },
+  "ow.f.bedTh": { en: "Bed TH", th: "ประเภทเตียง (TH)" },
+  "ow.f.viewEn": { en: "View EN", th: "วิว (EN)" },
+  "ow.f.viewTh": { en: "View TH", th: "วิว (TH)" },
+  "ow.f.floorEn": { en: "Floor EN", th: "ชั้น (EN)" },
+  "ow.f.floorTh": { en: "Floor TH", th: "ชั้น (TH)" },
+  "ow.f.category": { en: "Category", th: "หมวด" },
+  "ow.f.price": { en: "Price (฿)", th: "ราคา (฿)" },
+  "ow.f.visibility": { en: "Visibility", th: "การแสดงผล" },
+  "ow.f.slug": { en: "Slug", th: "ชื่อลิงก์" },
+  // Select OPTIONS · another shape an innerText audit never sees, because the
+  // list is closed until someone opens it.
+  "ow.published": { en: "Published", th: "เผยแพร่" },
+  "ow.hidden": { en: "Hidden", th: "ซ่อนไว้" },
+  "ow.inactive": { en: "Inactive", th: "ปิดการขาย" },
+  "ow.f.directRate": { en: "Direct rate", th: "ราคาจองตรง" },
+  "ow.f.otaRate": { en: "OTA rate", th: "ราคาบน OTA" },
+  "ow.f.size": { en: "Size (m²)", th: "ขนาด (ตร.ม.)" },
+  "ow.f.pets": { en: "Pet friendly", th: "รับสัตว์เลี้ยง" },
+  "ow.f.lineId": { en: "LINE ID", th: "LINE ID" },
+  "ow.f.categoryImage": { en: "Category image", th: "ภาพประจำหมวด" },
+  "ow.f.dishPhoto": { en: "Dish photo", th: "ภาพเมนู" },
+  "ow.f.eventImage": { en: "Event image", th: "ภาพงาน" },
+  "ow.f.roomPhoto": { en: "Upload a room photo", th: "อัปโหลดภาพห้อง" },
+  "ow.f.pastePath": { en: "Or paste an image path", th: "หรือวางพาธของภาพ" },
+  "ow.f.acceptRsv": {
+    en: "Accept table reservations",
+    th: "เปิดรับจองโต๊ะ",
+  },
+  "ow.hint.dish": {
+    en: "Optional · a close crop of the dish, shown beside its name.",
+    th: "ไม่บังคับ · ภาพระยะใกล้ของเมนู แสดงข้างชื่อเมนู",
+  },
+  "ow.hint.category": {
+    en: "Wide crop · shown above the category on the dining page. Leave empty to keep the house photography.",
+    th: "ครอปแนวนอน · แสดงเหนือหมวดในหน้าห้องอาหาร เว้นว่างไว้เพื่อใช้ภาพของโรงแรม",
+  },
+  "ow.hint.event": {
+    en: "Wide crop · shown on the events page card.",
+    th: "ครอปแนวนอน · แสดงบนการ์ดในหน้างานอีเวนต์",
+  },
+  "ow.hint.roomPhoto": {
+    en: "Added to the list above · the first photo is the room's cover.",
+    th: "เพิ่มเข้าไปในรายการด้านบน · ภาพแรกคือภาพหน้าปกของห้อง",
+  },
+  /**
+   * Guest-side aria-labels · the copy a screen reader speaks and a sighted
+   * visitor never sees. Same blind spot as the owner modals above: an audit
+   * that reads innerText cannot find any of it.
+   */
+  "a11y.bookingSteps": { en: "Booking steps", th: "ขั้นตอนการจอง" },
+  "a11y.map": { en: "Map", th: "แผนที่" },
+  "a11y.closeGallery": { en: "Close gallery", th: "ปิดแกลเลอรี" },
+  "a11y.prevPhoto": { en: "Previous photo", th: "ภาพก่อนหน้า" },
+  "a11y.nextPhoto": { en: "Next photo", th: "ภาพถัดไป" },
+  "a11y.onGoogleMaps": {
+    en: "The Teak House on Google Maps",
+    th: "The Teak House บน Google Maps",
+  },
+  "a11y.prev": { en: "Previous", th: "ก่อนหน้า" },
+  "a11y.next": { en: "Next", th: "ถัดไป" },
+  "a11y.conciergeChat": { en: "Concierge chat", th: "แชทกับผู้ช่วย" },
+  "a11y.send": { en: "Send", th: "ส่ง" },
+  "a11y.demoSwitcher": { en: "Demo mode switcher", th: "สลับโหมดเดโม" },
+  "a11y.loadingPage": { en: "Loading page", th: "กำลังโหลดหน้า" },
+
+  // Screen-reader only · never painted, so nothing above would have caught it.
+  "ow.a11y.nav": { en: "Owner navigation", th: "เมนูนำทางสำหรับเจ้าของ" },
+  "ow.a11y.sidebar": { en: "Owner sidebar", th: "แถบด้านข้างสำหรับเจ้าของ" },
+  "ow.a11y.viewMode": { en: "Calendar view mode", th: "โหมดมุมมองปฏิทิน" },
+  "ow.a11y.revenueChart": {
+    en: "Monthly revenue bar chart",
+    th: "กราฟแท่งแสดงรายได้รายเดือน",
+  },
   "ow.lastSitting": {
     en: "The last sitting is one hour before the kitchen closes.",
     th: "รอบสุดท้ายคือหนึ่งชั่วโมงก่อนครัวปิด",

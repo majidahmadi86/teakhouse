@@ -19,7 +19,13 @@ import { useEffect, useRef, useState } from "react";
  * catches internal links, a slim branded bar animates immediately, and the bar
  * clears when the pathname changes.
  */
-export function RouteProgress() {
+export function RouteProgress({
+  label,
+}: {
+  /** Resolved by the layout · this component renders outside the i18n
+      provider on the home route, so it cannot look the string up itself. */
+  label: string;
+}) {
   const pathname = usePathname();
   const [active, setActive] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,7 +66,7 @@ export function RouteProgress() {
   return (
     <div
       role="progressbar"
-      aria-label="Loading page"
+      aria-label={label}
       className="fixed inset-x-0 top-0 z-modal h-[3px] overflow-hidden bg-transparent"
     >
       <div className="tkh-route-bar h-full w-full bg-gradient-to-r from-blue via-gold to-blue" />

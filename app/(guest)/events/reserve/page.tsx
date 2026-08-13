@@ -5,7 +5,7 @@ import { getUpcomingEvents } from "@/lib/cachedData";
 import { dfLocale } from "@/lib/dateLocale";
 import { MAX_EVENT_GUESTS } from "@/lib/eventRequests";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
-import { isoDate } from "@/lib/utils";
+import { hotelTodayIso } from "@/lib/utils";
 import { requestSeats } from "./actions";
 
 export const revalidate = 0;
@@ -38,14 +38,17 @@ export default async function EventReservePage({
   searchParams: SearchParams;
 }) {
   const locale = getServerLocale();
-  const events = await getUpcomingEvents(isoDate(new Date()));
+  const events = await getUpcomingEvents(hotelTodayIso());
 
   const hero = (
     <PageHero
       image="/images/events/pavilion-dinner-1280.webp"
       imageAvif="/images/events/pavilion-dinner-1280.avif"
       imageWebp="/images/events/pavilion-dinner-1280.webp"
-      alt="A long table laid for dinner under string lights"
+      alt={tr(locale, {
+          en: "A long table laid for dinner under string lights",
+          th: "โต๊ะยาวจัดสำหรับมื้อค่ำใต้สายไฟระย้อย",
+        })}
       eyebrow={t(locale, "nav.events")}
       title={t(locale, "evr.h1")}
       lead={t(locale, "evr.lead")}

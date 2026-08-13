@@ -91,7 +91,7 @@ export function RoomDetailsModal({ room, open, onClose }: RoomDetailsModalProps)
                 type="button"
                 className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-ink shadow-sm"
                 onClick={() => goPhoto(-1)}
-                aria-label="Previous"
+                aria-label={t("a11y.prev")}
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
@@ -99,7 +99,7 @@ export function RoomDetailsModal({ room, open, onClose }: RoomDetailsModalProps)
                 type="button"
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-2 text-ink shadow-sm"
                 onClick={() => goPhoto(1)}
-                aria-label="Next"
+                aria-label={t("a11y.next")}
               >
                 <ChevronRight className="h-5 w-5" />
               </button>

@@ -14,6 +14,7 @@
  */
 
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 
 const BASE = process.env.BASE || "http://localhost:3000";
 
@@ -123,7 +124,7 @@ async function main() {
 
   const stamp = Date.now().toString(36).toUpperCase();
   await page.locator('input[placeholder*="passport"], input[placeholder*="ID"]').first()
-    .fill(`V11 Season Test ${stamp}`);
+    .fill(qa(`Season Test ${stamp}`));
   await page.locator('input[type="email"]').first().fill(`v11-${stamp}@example.test`);
   await page.locator('input[type="tel"]').first().fill("+66 80 000 0000");
   await page.locator("button", { hasText: "Pay deposit" }).first().click();
@@ -230,7 +231,5 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(main);

@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Write the house, call the desk, or message LINE — The Teak House riverside boutique hotel demo in Bangkok.",
-  alternates: { canonical: "/contact" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/contact");
+}
 
 export default function ContactLayout({
   children,

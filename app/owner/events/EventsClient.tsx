@@ -241,11 +241,11 @@ export default function OwnerEventsPage() {
       <OwnerModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editing ? t("ow.edit") : "Add event"}
+        title={editing ? t("ow.edit") : t("ow.addEvent")}
       >
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Title EN">
+            <Field label={t("ow.f.titleEn")}>
               <input
                 value={form.title.en}
                 onChange={(e) =>
@@ -257,7 +257,7 @@ export default function OwnerEventsPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Title TH">
+            <Field label={t("ow.f.titleTh")}>
               <input
                 value={form.title.th}
                 onChange={(e) =>
@@ -271,7 +271,7 @@ export default function OwnerEventsPage() {
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Date">
+            <Field label={t("rsv.date")}>
               <input
                 type="date"
                 value={form.date}
@@ -279,21 +279,21 @@ export default function OwnerEventsPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Visibility">
+            <Field label={t("ow.f.visibility")}>
               <OwnerListbox
                 value={form.published ? "yes" : "no"}
                 onChange={(v) =>
                   setForm((p) => ({ ...p, published: v === "yes" }))
                 }
                 options={[
-                  { value: "yes", label: "Published" },
-                  { value: "no", label: "Hidden" },
+                  { value: "yes", label: t("ow.published") },
+                  { value: "no", label: t("ow.hidden") },
                 ]}
               />
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Description EN">
+            <Field label={t("ow.f.descEn")}>
               <textarea
                 rows={3}
                 value={form.description.en}
@@ -306,7 +306,7 @@ export default function OwnerEventsPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Description TH">
+            <Field label={t("ow.f.descTh")}>
               <textarea
                 rows={3}
                 value={form.description.th}
@@ -321,13 +321,13 @@ export default function OwnerEventsPage() {
             </Field>
           </div>
           <ImageUploadField
-            label="Event image"
+            label={t("ow.f.eventImage")}
             value={form.image}
             folder="events"
             onChange={(url) => setForm((p) => ({ ...p, image: url }))}
-            hint="Wide crop · shown on the events page card."
+            hint={t("ow.hint.event")}
           />
-          <Field label="Or paste an image path">
+          <Field label={t("ow.f.pastePath")}>
             <input
               value={form.image}
               onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))}

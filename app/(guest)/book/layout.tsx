@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 
-export const metadata: Metadata = {
-  title: "Book Direct",
-  description:
-    "Check live availability, pay a deposit, and confirm your teak room · direct booking demo by Mikaro Studio.",
-  alternates: { canonical: "/book" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/book");
+}
 
 export default function BookLayout({
   children,

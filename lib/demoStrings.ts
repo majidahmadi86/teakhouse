@@ -13,6 +13,7 @@ export type DemoStrings = {
   l1: string;
   l2: string;
   l3: string;
+  close: string;
 };
 
 /**
@@ -29,5 +30,6 @@ export function getDemoStrings(locale: Lang): DemoStrings {
     l1: translate(locale, "dm.l1"),
     l2: translate(locale, "dm.l2"),
     l3: translate(locale, "dm.l3"),
+    close: translate(locale, "mobile.close"),
   };
 }

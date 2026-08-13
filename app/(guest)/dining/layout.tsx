@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 
-export const metadata: Metadata = {
-  title: "Dining",
-  description:
-    "Breakfast on the river pier, a Thai kitchen and drinks at sundown at The Teak House · a riverside boutique demo by Mikaro Studio.",
-  alternates: { canonical: "/dining" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/dining");
+}
 
 export default function DiningLayout({
   children,

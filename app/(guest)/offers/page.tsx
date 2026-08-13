@@ -9,13 +9,16 @@ import { useI18n } from "@/lib/i18n";
 const OFFERS = ["1", "2", "3"] as const;
 
 export default function OffersPage() {
-  const { t, lang } = useI18n();
+  const { t, tr, lang } = useI18n();
 
   return (
     <>
       <PageHero
         image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
-        alt="River view offers"
+        alt={tr({
+          en: "River view offers",
+          th: "ข้อเสนอห้องวิวแม่น้ำ",
+        })}
         eyebrow={t("off.eyebrow")}
         title={t("off.page")}
         lead={t("off.lead")}

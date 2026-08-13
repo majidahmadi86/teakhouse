@@ -1,7 +1,7 @@
 import { PageHero } from "@/components/PageHero";
 import { CONTACT_PURPOSES, type ContactPurpose } from "@/lib/contactMessages";
-import { getServerLocale, t } from "@/lib/serverLocale";
-import { isoDate } from "@/lib/utils";
+import { getServerLocale, t, tr } from "@/lib/serverLocale";
+import { hotelTodayIso } from "@/lib/utils";
 import { sendMessage } from "./actions";
 
 export const revalidate = 0;
@@ -38,7 +38,7 @@ export default function ContactPage({
   searchParams: SearchParams;
 }) {
   const locale = getServerLocale();
-  const today = isoDate(new Date());
+  const today = hotelTodayIso();
   const about = (CONTACT_PURPOSES as readonly string[]).includes(
     String(searchParams.about)
   )
@@ -52,7 +52,10 @@ export default function ContactPage({
         image="/images/contact-hero.jpg"
         imageAvif="/images/contact-hero.avif"
         imageWebp="/images/contact-hero.webp"
-        alt="Contact the house"
+        alt={tr(locale, {
+          en: "Contact the house",
+          th: "ติดต่อที่พัก",
+        })}
         eyebrow={t(locale, "ct.page")}
         title={t(locale, "ct.page")}
         lead={t(locale, "ct.lead")}
@@ -243,7 +246,7 @@ export default function ContactPage({
             </div>
             <div className="overflow-hidden rounded-card border border-line shadow-card">
               <iframe
-                title="Map"
+                title={t(locale, "a11y.map")}
                 src="https://maps.google.com/maps?q=Charoen%20Krung%2044%20Bangkok&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 className="h-72 w-full border-0"
                 loading="lazy"

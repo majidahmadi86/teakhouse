@@ -230,8 +230,7 @@ export function DateRangePicker({
   }, [draftFrom, draftTo]);
 
   const label = formatRange(draftFrom, draftTo, dfLocale(lang)) ?? placeholder;
-  // Reuses the existing drp.done string · already translated, same meaning.
-  const doneLabel = t("drp.done") !== "drp.done" ? t("drp.done") : "Done";
+  const doneLabel = t("drp.done");
   const showPrices = Boolean(priceFor && formatPrice);
 
   const handleSelect = useCallback(

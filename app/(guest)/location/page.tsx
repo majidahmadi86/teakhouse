@@ -16,13 +16,16 @@ const MAP_ROUTE =
   "https://maps.google.com/?q=Charoenkrung+44+Bang+Rak+Bangkok";
 
 export default function LocationPage() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
 
   return (
     <>
       <PageHero
         image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
-        alt="Old Bangkok riverside"
+        alt={tr({
+          en: "Old Bangkok riverside",
+          th: "ย่านเมืองเก่าริมแม่น้ำกรุงเทพ",
+        })}
         eyebrow={t("nav.location")}
         title={t("lc.h1")}
         lead={t("lc.lead")}
@@ -32,7 +35,7 @@ export default function LocationPage() {
         <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[1fr_1.1fr]">
           <div className="overflow-hidden rounded-2xl border-2 border-blue shadow-panel">
             <iframe
-              title="The Teak House on Google Maps"
+              title={t("a11y.onGoogleMaps")}
               src={MAP_EMBED}
               className="h-[460px] w-full border-0"
               loading="lazy"

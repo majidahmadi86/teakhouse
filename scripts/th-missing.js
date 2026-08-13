@@ -32,6 +32,7 @@ const NOT_COPY =
 /** Values that are correct without any Thai at all. */
 const OK_WITHOUT_THAI = [
   /^LINE$/,
+  /^LINE ID$/,
   /^[\d\s.,:/+()·%–-]+$/,
   /^\{[a-z]+\}[\s\d.,:·]*$/i,
   // Address, email and a pure brand line have nothing to translate.

@@ -51,7 +51,7 @@ export function DemoModalPanel({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={strings.close}
           className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full text-white/80 transition hover:bg-white/15 hover:text-white sm:text-ink/60 sm:hover:bg-ink/10 sm:hover:text-ink"
         >
           <X className="h-5 w-5" />

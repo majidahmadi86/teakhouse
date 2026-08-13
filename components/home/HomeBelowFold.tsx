@@ -12,7 +12,11 @@ import {
 } from "@/components/home/HomeReveal";
 import { FACILITIES } from "@/lib/facilities";
 import { getSeedGuestRooms } from "@/lib/guestRooms";
-import { translate as t, type Lang } from "@/lib/translate";
+import {
+  translate as t,
+  translateEntry as tr,
+  type Lang,
+} from "@/lib/translate";
 
 const OFFERS = ["1", "2", "3"] as const;
 
@@ -45,7 +49,10 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1120&q=70&auto=format&fit=crop"
-                alt="Teak house interior"
+                alt={tr(locale, {
+                  en: "Teak house interior",
+                  th: "บรรยากาศภายในบ้านไม้สัก",
+                })}
                 width={1120}
                 height={1400}
                 loading="lazy"
@@ -113,7 +120,7 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <LocalPicture
                       base={facility.base}
-                      alt={facility.alt}
+                      alt={tr(locale, facility.alt)}
                       width={640}
                       height={480}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
@@ -153,21 +160,21 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
                 {
                   href: "/dining",
                   base: "/images/facilities/pier-breakfast",
-                  alt: "Breakfast tables on the river pier",
+                  alt: { en: "Breakfast tables on the river pier", th: "โต๊ะอาหารเช้าริมท่าเรือ" },
                   h: "nav.dining",
                   p: "beyond.dining.p",
                 },
                 {
                   href: "/events",
                   base: "/images/facilities/courtyard-garden",
-                  alt: "Courtyard garden beside the riverside pavilion",
+                  alt: { en: "Courtyard garden beside the riverside pavilion", th: "สวนในคอร์ตยาร์ดข้างศาลาริมแม่น้ำ" },
                   h: "nav.events",
                   p: "beyond.events.p",
                 },
                 {
                   href: "/facilities",
                   base: "/images/facilities/pool",
-                  alt: "Saltwater pool in the courtyard",
+                  alt: { en: "Saltwater pool in the courtyard", th: "สระน้ำเกลือในคอร์ตยาร์ด" },
                   h: "nav.facilities",
                   p: "beyond.fac.p",
                 },
@@ -181,7 +188,7 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <LocalPicture
                       base={card.base}
-                      alt={card.alt}
+                      alt={tr(locale, card.alt)}
                       width={640}
                       height={480}
                       sizes="(max-width: 768px) 100vw, 380px"

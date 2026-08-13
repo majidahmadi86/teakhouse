@@ -4,14 +4,16 @@ import { DemoModeBar } from "@/components/DemoModeBar";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 import { Providers } from "@/components/providers";
 import { getDemoStrings } from "@/lib/demoStrings";
-import { getServerLocale } from "@/lib/serverLocale";
+import { getServerLocale, t } from "@/lib/serverLocale";
 import { OwnerShell } from "./OwnerShell";
 
-export const metadata: Metadata = {
-  title: "Owner",
-  robots: { index: false, follow: false },
-  alternates: { canonical: "/owner" },
-};
+export function generateMetadata(): Metadata {
+  return {
+    title: t(getServerLocale(), "db.owner"),
+    robots: { index: false, follow: false },
+    alternates: { canonical: "/owner" },
+  };
+}
 
 export default function OwnerLayout({
   children,

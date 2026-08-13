@@ -1,4 +1,5 @@
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 
 // The stable alias, not a per-deploy Vercel hostname · this used to default to
 // an immutable preview URL, which pinned the whole suite to one old build and
@@ -39,7 +40,7 @@ async function main() {
   const bookingBody = {
     id: `b-${Date.now()}`,
     code,
-    guest: "Regression Guest",
+    guest: qa("Regression Guest"),
     email: "regression@teakhouse.test",
     phone: "+66800000000",
     roomSlug: roomsBefore[0]?.slug || "river-loft",
@@ -180,12 +181,14 @@ async function main() {
   console.log(`passed ${results.length - failed.length}/${results.length}`);
   if (failed.length) {
     failed.forEach((f) => console.log("FAIL", f.name, f.detail));
-    process.exit(1);
+    // exitCode, not exit() · process.exit here would kill the process before
+    // the QA cleanup in withQaCleanup ever ran, leaving rows behind on exactly
+    // the runs most likely to have created them.
+    process.exitCode = 1;
+    return;
   }
   console.log("STEP 2 PASS");
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(main);

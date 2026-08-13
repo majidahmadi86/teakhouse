@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 
-export const metadata: Metadata = {
-  title: "Account",
-  robots: { index: false, follow: false },
-  alternates: { canonical: "/account" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/account", { robots: { index: false, follow: false } });
+}
 
 export default function AccountLayout({
   children,

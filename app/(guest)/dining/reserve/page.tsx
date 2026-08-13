@@ -8,8 +8,8 @@ import {
   serviceSlots,
   type ValidationError,
 } from "@/lib/reservations";
-import { getServerLocale, t } from "@/lib/serverLocale";
-import { isoDate } from "@/lib/utils";
+import { getServerLocale, t, tr } from "@/lib/serverLocale";
+import { hotelTodayIso } from "@/lib/utils";
 import { reserveTable } from "./actions";
 
 export const revalidate = 0;
@@ -53,7 +53,9 @@ export default async function ReservePage({
   // trip per request while /dining next door had stopped.
   const settings = await getHotelSettings();
   const slots = serviceSlots(settings.serviceStart, settings.serviceEnd);
-  const today = isoDate(new Date());
+  // hotelTodayIso, not the server's day · this is the date input's `min`,
+  // and a UTC server would let a Bangkok guest at 00:30 pick yesterday.
+  const today = hotelTodayIso();
   const window = formatServiceWindow(
     settings.serviceStart,
     settings.serviceEnd,
@@ -65,7 +67,10 @@ export default async function ReservePage({
       image="/images/dining/reserve-1280.webp"
       imageAvif="/images/dining/reserve-1280.avif"
       imageWebp="/images/dining/reserve-1280.webp"
-      alt="A table laid for dinner beside the river"
+      alt={tr(locale, {
+          en: "A table laid for dinner beside the river",
+          th: "โต๊ะที่จัดไว้สำหรับมื้อค่ำริมแม่น้ำ",
+        })}
       eyebrow={t(locale, "nav.dining")}
       title={t(locale, "rsv.h1")}
       lead={t(locale, "rsv.lead")}

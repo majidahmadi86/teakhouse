@@ -18,7 +18,7 @@ function ConciergeLoading() {
     <div
       className={cn(SHEET, "flex flex-col items-center justify-center gap-4")}
       role="dialog"
-      aria-label="Concierge chat"
+      aria-label={t("a11y.conciergeChat")}
       aria-busy="true"
     >
       <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue border-t-transparent" />

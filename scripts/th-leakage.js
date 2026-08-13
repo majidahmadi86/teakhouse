@@ -134,12 +134,31 @@ async function run() {
   const page = await ctx.newPage();
 
   let total = 0;
+  let empty = 0;
   const report = [];
+
+  /**
+   * A route that renders nothing has no English on it, so a fixed wait that
+   * expired early reported CLEAN · this audit's own worst failure mode, and it
+   * happened for real on /owner/rates when the machine was busy. Wait for
+   * CONTENT, then refuse to grade a surface that never arrived.
+   */
+  const MIN_LINES = 5;
 
   for (const route of ROUTES) {
     await page.goto(BASE + route, { waitUntil: "load" });
     // The owner panel mounts a dynamic import after its store fetch resolves.
-    await page.waitForTimeout(IS_OWNER ? 8000 : 1200);
+    await page
+      .waitForFunction(
+        (sel) => {
+          const el = document.querySelector(sel) || document.body;
+          return (el.innerText || "").trim().length > 200;
+        },
+        IS_OWNER ? ".own-theme" : "main",
+        { timeout: 25000 }
+      )
+      .catch(() => {});
+    await page.waitForTimeout(IS_OWNER ? 2500 : 800);
     const lines = await page.evaluate((isOwner) => {
       const el = isOwner
         ? document.querySelector(".own-theme") || document.body
@@ -150,20 +169,28 @@ async function run() {
         .filter(Boolean);
     }, IS_OWNER);
     const leaks = [...new Set(lines.filter((l) => !isAllowed(l)))];
+    const tooThin = lines.length < MIN_LINES;
+    if (tooThin) empty += 1;
     total += leaks.length;
-    report.push({ route, lines: lines.length, leaks });
+    report.push({ route, lines: lines.length, leaks, tooThin });
+    const verdict = tooThin ? "EMPTY" : leaks.length === 0 ? "CLEAN" : "LEAK ";
     console.log(
-      `${leaks.length === 0 ? "CLEAN" : "LEAK "} ${route.padEnd(18)} ${lines.length} lines${
+      `${verdict} ${route.padEnd(18)} ${lines.length} lines${
         leaks.length ? " · " + leaks.length + " english" : ""
-      }`
+      }${tooThin ? " · NOT GRADED, surface did not render" : ""}`
     );
     for (const l of leaks.slice(0, 60)) console.log("        ·", l.slice(0, 96));
   }
 
   console.log(`\n${total} English lines across ${ROUTES.length} TH routes`);
+  if (empty) {
+    console.log(
+      `${empty} route${empty === 1 ? "" : "s"} rendered nothing · that is a failed audit, not a clean one`
+    );
+  }
   await ctx.close();
   await browser.close();
-  if (total > 0) process.exitCode = 1;
+  if (total > 0 || empty > 0) process.exitCode = 1;
 }
 
 run().catch((e) => {

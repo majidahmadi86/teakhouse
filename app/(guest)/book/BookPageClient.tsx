@@ -388,7 +388,7 @@ export default function BookPageClient() {
             <nav
               ref={stepperRef}
               className="my-8 flex scroll-mt-24 flex-wrap gap-2"
-              aria-label="Booking steps"
+              aria-label={t("a11y.bookingSteps")}
             >
               {steps.map((label, index) => {
                 const n = index + 1;

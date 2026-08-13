@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { SafeImage } from "@/components/SafeImage";
 import { cn } from "@/lib/utils";
+import type { DictEntry } from "@/lib/i18n-dict";
+import { translateEntry as tr, type Lang } from "@/lib/translate";
 
 const FADE_S = 1.25;
 const HERO_SIZES = "(max-width: 768px) 100vw, 100vw";
@@ -11,7 +13,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 type Slide = {
   src: string;
-  alt: string;
+  alt: DictEntry;
   zoom: "in" | "out";
   position: string;
 };
@@ -22,11 +24,14 @@ export function HeroCrossfade({
   index,
   holdMs,
   kenBurns,
+  locale,
 }: {
   slides: Slide[];
   index: number;
   holdMs: number;
   kenBurns: boolean;
+  /** Resolved upstream · home renders outside the i18n provider. */
+  locale: Lang;
 }) {
   const [loaded, setLoaded] = useState(false);
 
@@ -63,7 +68,7 @@ export function HeroCrossfade({
         >
           <SafeImage
             src={active.src}
-            alt={active.alt}
+            alt={tr(locale, active.alt)}
             fill
             quality={78}
             sizes={HERO_SIZES}

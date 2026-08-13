@@ -13,7 +13,7 @@ import {
   type TableReservation,
   type ValidationError,
 } from "@/lib/reservations";
-import { isoDate } from "@/lib/utils";
+import { hotelTodayIso } from "@/lib/utils";
 
 export type CreateResult =
   | { ok: true; reservation: TableReservation }
@@ -23,7 +23,9 @@ export async function createReservation(
   input: ReservationInput
 ): Promise<CreateResult> {
   const settings = await getReservationSettings();
-  const invalid = validateReservation(input, settings, isoDate(new Date()));
+  // The hotel's day decides whether a date is in the past · not the
+  // server's. These two differ for seven hours of every Bangkok day.
+  const invalid = validateReservation(input, settings, hotelTodayIso());
   if (invalid) return { ok: false, error: invalid };
 
   // The ref is short and human-readable, so a collision is possible rather

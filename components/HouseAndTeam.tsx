@@ -1,5 +1,9 @@
 import { LocalPicture } from "@/components/LocalPicture";
-import { translate as t, type Lang } from "@/lib/translate";
+import {
+  translate as t,
+  translateEntry as tr,
+  type Lang,
+} from "@/lib/translate";
 
 /**
  * House & team · server-rendered, no client JS.
@@ -10,10 +14,10 @@ import { translate as t, type Lang } from "@/lib/translate";
  * identifiable stranger; a real property swaps these for its own staff photos.
  */
 const ROLES = [
-  { base: "/images/house/front-desk", key: "house.r1", alt: "The front desk of the house" },
-  { base: "/images/house/concierge-desk", key: "house.r2", alt: "Brass service bell on the concierge desk" },
-  { base: "/images/house/housekeeping-team", key: "house.r3", alt: "Housekeeping trolley in the upstairs corridor" },
-  { base: "/images/house/kitchen", key: "house.r4", alt: "Fruit being prepared for breakfast" },
+  { base: "/images/house/front-desk", key: "house.r1", alt: { en: "The front desk of the house", th: "เคาน์เตอร์ต้อนรับของที่พัก" } },
+  { base: "/images/house/concierge-desk", key: "house.r2", alt: { en: "Brass service bell on the concierge desk", th: "กระดิ่งทองเหลืองบนเคาน์เตอร์ผู้ช่วย" } },
+  { base: "/images/house/housekeeping-team", key: "house.r3", alt: { en: "Housekeeping trolley in the upstairs corridor", th: "รถเข็นทำความสะอาดในทางเดินชั้นบน" } },
+  { base: "/images/house/kitchen", key: "house.r4", alt: { en: "Fruit being prepared for breakfast", th: "การเตรียมผลไม้สำหรับอาหารเช้า" } },
 ] as const;
 
 export function HouseAndTeam({ locale }: { locale: Lang }) {
@@ -25,7 +29,10 @@ export function HouseAndTeam({ locale }: { locale: Lang }) {
             <div className="relative aspect-[4/5]">
               <LocalPicture
                 base="/images/house/story"
-                alt="The teak house seen from the river"
+                alt={tr(locale, {
+                  en: "The teak house seen from the river",
+                  th: "บ้านไม้สักมองจากริมแม่น้ำ",
+                })}
                 width={640}
                 height={800}
                 sizes="(max-width: 1024px) 100vw, 460px"
@@ -65,7 +72,7 @@ export function HouseAndTeam({ locale }: { locale: Lang }) {
                 <div className="relative aspect-square overflow-hidden">
                   <LocalPicture
                     base={role.base}
-                    alt={role.alt}
+                    alt={tr(locale, role.alt)}
                     width={640}
                     height={640}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 270px"

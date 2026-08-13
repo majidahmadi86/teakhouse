@@ -14,6 +14,7 @@
  */
 
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 const fs = require("fs");
 const path = require("path");
 
@@ -324,7 +325,5 @@ async function run() {
   }
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(run);

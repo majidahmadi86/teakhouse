@@ -1,10 +1,18 @@
+import { translateEntry as tr, type Lang } from "@/lib/translate";
 import { cn } from "@/lib/utils";
 
 /**
  * Server LCP hero · zero client JS.
  * Ken Burns is CSS-only and disabled on mobile (LH style/layout debt).
  */
-export function HeroLCP({ className }: { className?: string }) {
+export function HeroLCP({
+  className,
+  locale,
+}: {
+  className?: string;
+  /** The alt text is the only copy here, and a screen reader reads it. */
+  locale: Lang;
+}) {
   return (
     <div
       className={cn(
@@ -30,7 +38,10 @@ export function HeroLCP({ className }: { className?: string }) {
         />
         <img
           src="/hero-lcp-640.avif"
-          alt="Resort pool at dusk overlooking the Chao Phraya"
+          alt={tr(locale, {
+            en: "Resort pool at dusk overlooking the Chao Phraya",
+            th: "สระว่ายน้ำยามเย็นมองเห็นแม่น้ำเจ้าพระยา",
+          })}
           width={640}
           height={853}
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1920px"

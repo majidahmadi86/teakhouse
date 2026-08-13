@@ -438,7 +438,7 @@ function MobileSearchSheet({
       <button
         type="button"
         className="absolute inset-0 bg-navy/40"
-        aria-label="Close"
+        aria-label={t("mobile.close")}
         onClick={onClose}
       />
       <motion.div

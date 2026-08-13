@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 
-export const metadata: Metadata = {
-  title: "Offers",
-  description:
-    "Direct-only stays: longer nights, breakfast bundles, and seasonal river packages. Book at The Teak House demo hotel.",
-  alternates: { canonical: "/offers" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/offers");
+}
 
 export default function OffersLayout({
   children,

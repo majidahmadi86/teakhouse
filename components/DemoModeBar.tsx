@@ -32,7 +32,7 @@ export function DemoModeBar({
     <div
       className="fixed inset-x-0 top-0 z-demo-bar h-10 border-b border-line/80 bg-navy text-white"
       role="navigation"
-      aria-label="Demo mode switcher"
+      aria-label={translate(locale, "a11y.demoSwitcher")}
     >
       <div className="mx-auto flex h-full max-w-[1180px] items-center justify-between gap-2 px-3 text-[12px] sm:gap-3 sm:px-6">
         {/* Left · segmented Guest|Owner switcher */}

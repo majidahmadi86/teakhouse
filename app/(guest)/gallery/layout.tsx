@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description:
-    "Teak interiors, courtyard pool, Chao Phraya views, and house dining — browse the Teak House photo gallery.",
-  alternates: { canonical: "/gallery" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/gallery");
+}
 
 export default function GalleryLayout({
   children,

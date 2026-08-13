@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ComponentType } from "react";
 import { mountAfterLoad } from "@/lib/deferMount";
+import type { Lang } from "@/lib/translate";
 
 /**
  * Background crossfade slideshow only · pure visual enhancement over the static
@@ -9,8 +10,9 @@ import { mountAfterLoad } from "@/lib/deferMount";
  * interaction, within 1500ms even with no input, so it is never interaction-
  * required while still staying off the very first paint.
  */
-export function HomeLate() {
-  const [Islands, setIslands] = useState<ComponentType | null>(null);
+export function HomeLate({ locale }: { locale: Lang }) {
+  const [Islands, setIslands] =
+    useState<ComponentType<{ locale: Lang }> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,5 +32,5 @@ export function HomeLate() {
     };
   }, []);
 
-  return Islands ? <Islands /> : null;
+  return Islands ? <Islands locale={locale} /> : null;
 }

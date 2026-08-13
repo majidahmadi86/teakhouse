@@ -30,7 +30,7 @@ export default function GuestLayout({
       {/* Concierge · static server FAB (present in raw HTML) + client launcher */}
       <ConciergeFabStatic label={t(locale, "cg.fab")} />
       <ConciergeLauncher />
-      <RouteProgress />
+      <RouteProgress label={t(locale, "a11y.loadingPage")} />
     </Providers>
   );
 }

@@ -5,23 +5,24 @@ import { getHotelSettings, getPublishedMenu } from "@/lib/cachedData";
 import { dishArt } from "@/lib/dishArt";
 import { formatServiceWindow } from "@/lib/reservations";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
-import { formatBaht, isoDate } from "@/lib/utils";
+import { formatBaht, hotelTodayIso } from "@/lib/utils";
+import type { DictEntry } from "@/lib/i18n-dict";
 
 export const revalidate = 0;
 
 /** Seeded category art · used when a category carries no uploaded image. */
-const CATEGORY_ART: Record<string, { base: string; alt: string }> = {
+const CATEGORY_ART: Record<string, { base: string; alt: DictEntry }> = {
   "dc-pier-breakfast": {
     base: "/images/dining/breakfast",
-    alt: "Thai rice soup and breakfast dishes on a wooden table",
+    alt: { en: "Thai rice soup and breakfast dishes on a wooden table", th: "ข้าวต้มและอาหารเช้าบนโต๊ะไม้" },
   },
   "dc-thai-kitchen": {
     base: "/images/dining/thai-kitchen",
-    alt: "Thai curry and rice served in earthenware bowls",
+    alt: { en: "Thai curry and rice served in earthenware bowls", th: "แกงไทยและข้าวเสิร์ฟในชามดินเผา" },
   },
   "dc-drinks": {
     base: "/images/dining/drinks",
-    alt: "Cocktails with lime and mint on a bar counter",
+    alt: { en: "Cocktails with lime and mint on a bar counter", th: "ค็อกเทลมะนาวและสะระแหน่บนเคาน์เตอร์บาร์" },
   },
 };
 
@@ -55,7 +56,10 @@ export default async function DiningPage() {
         imageAvif={settings.diningHeroImage ? undefined : "/images/dining/hero-1280.avif"}
         imageWebp={settings.diningHeroImage ? undefined : "/images/dining/hero-1280.webp"}
         unoptimized={Boolean(settings.diningHeroImage)}
-        alt="Thai dishes served on a dark table, close crop"
+        alt={tr(locale, {
+          en: "Thai dishes served on a dark table, close crop",
+          th: "อาหารไทยบนโต๊ะไม้สีเข้ม ถ่ายระยะใกล้",
+        })}
         eyebrow={t(locale, "nav.dining")}
         title={t(locale, "dn.h1")}
         lead={t(locale, "dn.lead")}
@@ -115,7 +119,7 @@ export default async function DiningPage() {
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={`${art.base}-1280.webp`}
-                              alt={art.alt}
+                              alt={tr(locale, art.alt)}
                               width={1280}
                               height={560}
                               loading="lazy"
@@ -202,7 +206,7 @@ export default async function DiningPage() {
                 serviceStart={settings.serviceStart}
                 serviceEnd={settings.serviceEnd}
                 maxPartySize={settings.maxPartySize}
-                todayIso={isoDate(new Date())}
+                todayIso={hotelTodayIso()}
               />
             ) : null}
           </div>

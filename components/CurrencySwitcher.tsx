@@ -24,9 +24,9 @@ export function CurrencySwitcher({
   sheet = false,
 }: CurrencySwitcherProps) {
   const { currency, setCurrency } = useCurrency();
-  const { lang } = useI18n();
+  const { t } = useI18n();
   const selected = CURRENCIES.find((c) => c.code === currency) ?? CURRENCIES[0];
-  const doneLabel = lang === "th" ? "เสร็จสิ้น" : "Done";
+  const doneLabel = t("drp.done");
 
   return (
     <Listbox value={currency} onChange={(v: Currency) => setCurrency(v)}>

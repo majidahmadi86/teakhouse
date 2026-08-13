@@ -341,11 +341,11 @@ export default function OwnerDiningPage() {
       <OwnerModal
         open={catModalOpen}
         onClose={() => setCatModalOpen(false)}
-        title={editingCat ? t("ow.edit") : "Add category"}
+        title={editingCat ? t("ow.edit") : t("ow.addCategory")}
       >
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Name EN">
+            <Field label={t("ow.f.nameEn")}>
               <input
                 value={catForm.name.en}
                 onChange={(e) =>
@@ -357,7 +357,7 @@ export default function OwnerDiningPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Name TH">
+            <Field label={t("ow.f.nameTh")}>
               <input
                 value={catForm.name.th}
                 onChange={(e) =>
@@ -371,21 +371,21 @@ export default function OwnerDiningPage() {
             </Field>
           </div>
           <ImageUploadField
-            label="Category image"
+            label={t("ow.f.categoryImage")}
             value={catForm.image}
             folder="dining-categories"
             onChange={(url) => setCatForm((p) => ({ ...p, image: url }))}
-            hint="Wide crop · shown above the category on the dining page. Leave empty to keep the house photography."
+            hint={t("ow.hint.category")}
           />
-          <Field label="Visibility">
+          <Field label={t("ow.f.visibility")}>
             <OwnerListbox
               value={catForm.published ? "yes" : "no"}
               onChange={(v) =>
                 setCatForm((p) => ({ ...p, published: v === "yes" }))
               }
               options={[
-                { value: "yes", label: "Published" },
-                { value: "no", label: "Hidden" },
+                { value: "yes", label: t("ow.published") },
+                { value: "no", label: t("ow.hidden") },
               ]}
             />
           </Field>
@@ -402,21 +402,21 @@ export default function OwnerDiningPage() {
       <OwnerModal
         open={dishModalOpen}
         onClose={() => setDishModalOpen(false)}
-        title={editingDish ? t("ow.edit") : "Add dish"}
+        title={editingDish ? t("ow.edit") : t("ow.addDish")}
       >
         <div className="space-y-5">
-          <Field label="Category">
+          <Field label={t("ow.f.category")}>
             <OwnerListbox
               value={dishForm.categoryId}
               onChange={(v) => setDishForm((p) => ({ ...p, categoryId: v }))}
               options={(categories ?? []).map((c) => ({
                 value: c.id,
-                label: c.name.en,
+                label: tr(c.name),
               }))}
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Name EN">
+            <Field label={t("ow.f.nameEn")}>
               <input
                 value={dishForm.name.en}
                 onChange={(e) =>
@@ -428,7 +428,7 @@ export default function OwnerDiningPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Name TH">
+            <Field label={t("ow.f.nameTh")}>
               <input
                 value={dishForm.name.th}
                 onChange={(e) =>
@@ -442,7 +442,7 @@ export default function OwnerDiningPage() {
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Description EN">
+            <Field label={t("ow.f.descEn")}>
               <textarea
                 rows={3}
                 value={dishForm.description.en}
@@ -455,7 +455,7 @@ export default function OwnerDiningPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Description TH">
+            <Field label={t("ow.f.descTh")}>
               <textarea
                 rows={3}
                 value={dishForm.description.th}
@@ -470,7 +470,7 @@ export default function OwnerDiningPage() {
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Price (฿)">
+            <Field label={t("ow.f.price")}>
               <input
                 type="number"
                 min={0}
@@ -484,25 +484,25 @@ export default function OwnerDiningPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Visibility">
+            <Field label={t("ow.f.visibility")}>
               <OwnerListbox
                 value={dishForm.published ? "yes" : "no"}
                 onChange={(v) =>
                   setDishForm((p) => ({ ...p, published: v === "yes" }))
                 }
                 options={[
-                  { value: "yes", label: "Published" },
-                  { value: "no", label: "Hidden" },
+                  { value: "yes", label: t("ow.published") },
+                  { value: "no", label: t("ow.hidden") },
                 ]}
               />
             </Field>
           </div>
           <ImageUploadField
-            label="Dish photo"
+            label={t("ow.f.dishPhoto")}
             value={dishForm.image}
             folder="dining-dishes"
             onChange={(url) => setDishForm((p) => ({ ...p, image: url }))}
-            hint="Optional · a close crop of the dish, shown beside its name."
+            hint={t("ow.hint.dish")}
           />
         </div>
         <ModalActions

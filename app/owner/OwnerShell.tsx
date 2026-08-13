@@ -192,7 +192,7 @@ export function OwnerShell({
       {isDesktop ? (
         <aside
           className="sticky top-[var(--demo-bar-h)] z-sticky flex h-[calc(100dvh-var(--demo-bar-h))] w-72 shrink-0 flex-col overflow-y-auto bg-brand shadow-[8px_0_32px_rgba(0,0,0,.35)]"
-          aria-label="Owner sidebar"
+          aria-label={t("ow.a11y.sidebar")}
         >
           <div className="owner-split-b shrink-0 px-6 py-6">
             <Logo light showTag={false} className="mb-4 h-7 w-auto" />
@@ -208,7 +208,7 @@ export function OwnerShell({
 
           <nav
             className="flex flex-1 flex-col space-y-1 px-4 py-6"
-            aria-label="Owner navigation"
+            aria-label={t("ow.a11y.nav")}
           >
             <OwnerNavList t={t} />
           </nav>
@@ -269,7 +269,7 @@ export function OwnerShell({
           </div>
           <nav
             className="flex gap-2 overflow-x-auto px-4 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label="Owner navigation"
+            aria-label={t("ow.a11y.nav")}
           >
             <OwnerNavList t={t} mobile />
             <button

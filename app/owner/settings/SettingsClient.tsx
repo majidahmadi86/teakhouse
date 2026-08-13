@@ -175,7 +175,7 @@ export default function OwnerSettingsPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="LINE ID">
+              <Field label={t("ow.f.lineId")}>
                 <input
                   value={hotel.lineId}
                   onChange={(e) =>

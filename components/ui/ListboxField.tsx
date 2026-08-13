@@ -35,10 +35,10 @@ export function ListboxField({
   labelClassName,
   className,
 }: ListboxFieldProps) {
-  const { lang } = useI18n();
+  const { t } = useI18n();
   const isMobile = useIsMobile();
   const selected = options.find((o) => o.value === value);
-  const doneLabel = lang === "th" ? "เสร็จสิ้น" : "Done";
+  const doneLabel = t("drp.done");
 
   return (
     <div className={cn("w-full", className)}>

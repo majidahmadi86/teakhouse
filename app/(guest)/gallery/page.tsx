@@ -8,25 +8,26 @@ import { Reveal, RevealItem, RevealStagger, ScaleIn } from "@/components/motion/
 import { unsplashSrc } from "@/lib/unsplashLoader";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import type { DictEntry } from "@/lib/i18n-dict";
 
 type Cat = "all" | "rooms" | "pool" | "river" | "food";
 
-const IMAGES: { src: string; cat: Exclude<Cat, "all">; alt: string }[] = [
-  { src: unsplashSrc("photo-1631049307264-da0ec9d70304"), cat: "rooms", alt: "River Loft guest room with teak walls" },
-  { src: unsplashSrc("photo-1618773928121-c32242e63f39"), cat: "rooms", alt: "Hotel bed dressed in white linen" },
-  { src: unsplashSrc("photo-1590490360182-c33d57733427"), cat: "rooms", alt: "Suite seating detail" },
-  { src: unsplashSrc("photo-1611892440504-42a792e24d32"), cat: "rooms", alt: "Teak Suite bedroom" },
-  { src: unsplashSrc("photo-1578683010236-d716f9a3f461"), cat: "rooms", alt: "Garden Room looking onto greenery" },
-  { src: unsplashSrc("photo-1560448204-e02f11c3d0e2"), cat: "rooms", alt: "Courtyard Twin room" },
-  { src: unsplashSrc("photo-1584132967334-10e028bd69f7"), cat: "pool", alt: "Courtyard pool at The Teak House" },
-  { src: unsplashSrc("photo-1571008887538-b36bb74556e6"), cat: "pool", alt: "Pool deck loungers" },
-  { src: unsplashSrc("photo-1544161515-4ab6ce6db874"), cat: "pool", alt: "Spa terrace morning light" },
-  { src: unsplashSrc("photo-1552465011-b4e21bf6e79a"), cat: "river", alt: "Long-tail boats on the Chao Phraya" },
-  { src: unsplashSrc("photo-1508009603885-50cf7c579365"), cat: "river", alt: "River dusk skyline" },
-  { src: unsplashSrc("photo-1582719478250-c89cae4dc85b"), cat: "river", alt: "Riverside balcony view" },
-  { src: unsplashSrc("photo-1414235077428-338989a2e8c0"), cat: "food", alt: "Breakfast spread at the house" },
-  { src: unsplashSrc("photo-1591087917153-872378c177a2"), cat: "food", alt: "Dining table by the window" },
-  { src: unsplashSrc("photo-1600585154340-be6161a56a0c"), cat: "rooms", alt: "Teak house exterior" },
+const IMAGES: { src: string; cat: Exclude<Cat, "all">; alt: DictEntry }[] = [
+  { src: unsplashSrc("photo-1631049307264-da0ec9d70304"), cat: "rooms", alt: { en: "River Loft guest room with teak walls", th: "ห้อง River Loft ผนังไม้สัก" } },
+  { src: unsplashSrc("photo-1618773928121-c32242e63f39"), cat: "rooms", alt: { en: "Hotel bed dressed in white linen", th: "เตียงปูผ้าสีขาว" } },
+  { src: unsplashSrc("photo-1590490360182-c33d57733427"), cat: "rooms", alt: { en: "Suite seating detail", th: "มุมนั่งเล่นในห้องสวีท" } },
+  { src: unsplashSrc("photo-1611892440504-42a792e24d32"), cat: "rooms", alt: { en: "Teak Suite bedroom", th: "ห้องนอนของ Teak Suite" } },
+  { src: unsplashSrc("photo-1578683010236-d716f9a3f461"), cat: "rooms", alt: { en: "Garden Room looking onto greenery", th: "ห้อง Garden Room มองเห็นสวนเขียว" } },
+  { src: unsplashSrc("photo-1560448204-e02f11c3d0e2"), cat: "rooms", alt: { en: "Courtyard Twin room", th: "ห้อง Courtyard Twin" } },
+  { src: unsplashSrc("photo-1584132967334-10e028bd69f7"), cat: "pool", alt: { en: "Courtyard pool at The Teak House", th: "สระว่ายน้ำในคอร์ตยาร์ดของ The Teak House" } },
+  { src: unsplashSrc("photo-1571008887538-b36bb74556e6"), cat: "pool", alt: { en: "Pool deck loungers", th: "เตียงอาบแดดริมสระ" } },
+  { src: unsplashSrc("photo-1544161515-4ab6ce6db874"), cat: "pool", alt: { en: "Spa terrace morning light", th: "แสงเช้าที่ระเบียงสปา" } },
+  { src: unsplashSrc("photo-1552465011-b4e21bf6e79a"), cat: "river", alt: { en: "Long-tail boats on the Chao Phraya", th: "เรือหางยาวในแม่น้ำเจ้าพระยา" } },
+  { src: unsplashSrc("photo-1508009603885-50cf7c579365"), cat: "river", alt: { en: "River dusk skyline", th: "เส้นขอบฟ้าริมแม่น้ำตอนพลบค่ำ" } },
+  { src: unsplashSrc("photo-1582719478250-c89cae4dc85b"), cat: "river", alt: { en: "Riverside balcony view", th: "วิวจากระเบียงริมแม่น้ำ" } },
+  { src: unsplashSrc("photo-1414235077428-338989a2e8c0"), cat: "food", alt: { en: "Breakfast spread at the house", th: "สำรับอาหารเช้าของที่พัก" } },
+  { src: unsplashSrc("photo-1591087917153-872378c177a2"), cat: "food", alt: { en: "Dining table by the window", th: "โต๊ะอาหารริมหน้าต่าง" } },
+  { src: unsplashSrc("photo-1600585154340-be6161a56a0c"), cat: "rooms", alt: { en: "Teak house exterior", th: "ตัวอาคารบ้านไม้สัก" } },
 ];
 
 const FILTERS: { id: Cat; key: string }[] = [
@@ -38,7 +39,7 @@ const FILTERS: { id: Cat; key: string }[] = [
 ];
 
 export default function GalleryPage() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
   const [filter, setFilter] = useState<Cat>("all");
   const [lightbox, setLightbox] = useState<number | null>(null);
 
@@ -57,7 +58,10 @@ export default function GalleryPage() {
     <>
       <PageHero
         image={unsplashSrc("photo-1631049307264-da0ec9d70304")}
-        alt="Gallery of The Teak House interiors"
+        alt={tr({
+          en: "Gallery of The Teak House interiors",
+          th: "ภาพภายในของ The Teak House",
+        })}
         eyebrow={t("gal.page")}
         title={t("gal.page")}
         lead={t("gal.lead")}
@@ -95,7 +99,7 @@ export default function GalleryPage() {
                   >
                     <SafeImage
                       src={img.src}
-                      alt={img.alt}
+                      alt={tr(img.alt)}
                       width={480}
                       height={600}
                       quality={70}
@@ -115,12 +119,12 @@ export default function GalleryPage() {
           className="fixed inset-0 z-modal grid place-items-center bg-navy/85 p-4"
           role="dialog"
           aria-modal="true"
-          aria-label={items[lightbox].alt}
+          aria-label={tr(items[lightbox].alt)}
         >
           <button
             type="button"
             className="absolute inset-0"
-            aria-label="Close gallery"
+            aria-label={t("a11y.closeGallery")}
             onClick={() => setLightbox(null)}
           />
           <div className="relative z-10 w-full max-w-4xl">
@@ -128,14 +132,14 @@ export default function GalleryPage() {
               type="button"
               className="absolute -top-12 right-0 text-white"
               onClick={() => setLightbox(null)}
-              aria-label="Close gallery"
+              aria-label={t("a11y.closeGallery")}
             >
               <X className="h-7 w-7" />
             </button>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
               <SafeImage
                 src={items[lightbox].src}
-                alt={items[lightbox].alt}
+                alt={tr(items[lightbox].alt)}
                 fill
                 quality={80}
                 sizes="(max-width: 768px) 100vw, 896px"
@@ -147,7 +151,7 @@ export default function GalleryPage() {
                 type="button"
                 onClick={() => move(-1)}
                 className="rounded-full bg-white/10 p-3 text-white"
-                aria-label="Previous photo"
+                aria-label={t("a11y.prevPhoto")}
               >
                 <ChevronLeft />
               </button>
@@ -155,7 +159,7 @@ export default function GalleryPage() {
                 type="button"
                 onClick={() => move(1)}
                 className="rounded-full bg-white/10 p-3 text-white"
-                aria-label="Next photo"
+                aria-label={t("a11y.nextPhoto")}
               >
                 <ChevronRight />
               </button>

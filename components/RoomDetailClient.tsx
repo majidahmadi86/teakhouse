@@ -330,7 +330,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
               e.stopPropagation();
               goPhoto(-1);
             }}
-            aria-label="Previous"
+            aria-label={t("a11y.prev")}
           >
             <ChevronLeft className="h-8 w-8" />
           </button>
@@ -351,7 +351,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
               e.stopPropagation();
               goPhoto(1);
             }}
-            aria-label="Next"
+            aria-label={t("a11y.next")}
           >
             <ChevronRight className="h-8 w-8" />
           </button>

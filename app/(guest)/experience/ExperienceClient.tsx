@@ -10,11 +10,12 @@ import { SafeImage } from "@/components/SafeImage";
 import { Reveal, RevealItem, RevealStagger } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import type { DictEntry } from "@/lib/i18n-dict";
 
 const SECTIONS = [
   {
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0",
-    alt: "Breakfast table",
+    alt: { en: "Breakfast table", th: "โต๊ะอาหารเช้า" },
     title: "xp.1h",
     p1: "xp.1p",
     p2: "xp.1p2",
@@ -22,7 +23,7 @@ const SECTIONS = [
   },
   {
     image: "https://images.unsplash.com/photo-1584132967334-10e028bd69f7",
-    alt: "Courtyard pool",
+    alt: { en: "Courtyard pool", th: "สระว่ายน้ำในคอร์ตยาร์ด" },
     title: "xp.2h",
     p1: "xp.2p",
     p2: "xp.2p2",
@@ -30,7 +31,7 @@ const SECTIONS = [
   },
   {
     image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874",
-    alt: "Thai massage",
+    alt: { en: "Thai massage", th: "นวดแผนไทย" },
     title: "xp.3h",
     p1: "xp.3p",
     p2: "xp.3p2",
@@ -38,7 +39,7 @@ const SECTIONS = [
   },
   {
     image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
-    alt: "Evening on the Chao Phraya",
+    alt: { en: "Evening on the Chao Phraya", th: "ค่ำคืนริมแม่น้ำเจ้าพระยา" },
     title: "xp.4h",
     p1: "xp.4p",
     p2: "xp.4p2",
@@ -86,14 +87,17 @@ function ParallaxImage({
 }
 
 export default function ExperienceClient() {
-  const { t } = useI18n();
+  const { t, tr } = useI18n();
   const reduce = useReducedMotion();
 
   return (
     <>
       <PageHero
         image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
-        alt="Long-tail boat on the river"
+        alt={tr({
+          en: "Long-tail boat on the river",
+          th: "เรือหางยาวในแม่น้ำ",
+        })}
         eyebrow={t("nav.experience")}
         title={t("xp.h1")}
         lead={t("xp.lead")}
@@ -117,7 +121,7 @@ export default function ExperienceClient() {
               >
                 <ParallaxImage
                   src={section.image}
-                  alt={section.alt}
+                  alt={tr(section.alt)}
                   fromLeft={!reversed}
                 />
                 <motion.div

@@ -1,6 +1,7 @@
 import { hotelConfig } from "@/config/hotel.config";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { getServerLocale } from "@/lib/serverLocale";
+import { ROUTE_META } from "@/lib/routeMeta";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 import {
@@ -42,30 +43,47 @@ const sarabun = Sarabun({
   preload: false,
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: hotelConfig.metadata.title,
-    template: `%s · ${hotelConfig.name}`,
-  },
-  description: hotelConfig.metadata.description,
-  robots: {
-    index: true,
-    follow: true,
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_TH",
-    url: SITE_URL,
-    siteName: hotelConfig.name,
-    title: hotelConfig.metadata.title,
-    description: hotelConfig.metadata.description,
-  },
-  icons: {
-    icon: hotelConfig.logoPath,
-    apple: "/apple-touch-icon.png",
-  },
-};
+/**
+ * The site-wide defaults, in the request's language.
+ *
+ * A function rather than a constant because the title, the description and the
+ * openGraph locale all depend on the cookie · a Thai guest sharing the home
+ * page should not produce an English preview card. Every guest route already
+ * renders dynamically (they all read the locale cookie), so reading it here
+ * costs nothing extra. Route segments override title and description through
+ * routeMetadata(); this is what a route without its own copy falls back to.
+ */
+export function generateMetadata(): Metadata {
+  const locale = getServerLocale();
+  const home = ROUTE_META["/"];
+  const title = home.title[locale];
+  const description = home.description![locale];
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: title,
+      template: `%s · ${hotelConfig.name}`,
+    },
+    description,
+    robots: {
+      index: true,
+      follow: true,
+    },
+    openGraph: {
+      type: "website",
+      locale: locale === "th" ? "th_TH" : "en_TH",
+      url: SITE_URL,
+      siteName: hotelConfig.name,
+      title,
+      description,
+    },
+    icons: {
+      icon: hotelConfig.logoPath,
+      apple: "/apple-touch-icon.png",
+    },
+  };
+}
 
 const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 

@@ -216,7 +216,7 @@ export default function OwnerRatesPage() {
             type="button"
             onClick={() => shiftMonth(-1)}
             className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
-            aria-label="Previous month"
+            aria-label={t("ow.avail.prev")}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -227,7 +227,7 @@ export default function OwnerRatesPage() {
             type="button"
             onClick={() => shiftMonth(1)}
             className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
-            aria-label="Next month"
+            aria-label={t("ow.avail.next")}
           >
             <ChevronRight className="h-5 w-5" />
           </button>

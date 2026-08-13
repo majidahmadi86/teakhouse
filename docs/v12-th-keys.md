@@ -322,9 +322,9 @@ its box at 360, 390, 1093 and 1366 · **156/156**.
 | reserve seats (an event) | จองที่นั่ง | keeps "seat" literal, so it reads differently from จองโต๊ะ (book a table) |
 | guests (a count) | ท่าน | the polite counter for people; คน is neutral but flat for a hotel |
 | multiplier | ตัวคูณ | the arithmetic word an owner reads on a rate row |
-| date override | ราคาเชพาะวัน | "price for specific days", clearer than a loanword |
+| date override | ราคาเฉพาะวัน | "price for specific days", clearer than a loanword |
 | base rate | ราคาพื้นฐาน | pairs with the season and override rows above it |
-| season | ช่วงฑูกาล | a date range, not the weather |
+| season | ช่วงฤดูกาล | a date range, not the weather |
 | fixed price | ราคาคงที่ | the opposite of a multiplier, in the same register |
 | ADR | ADR | the hotel-industry acronym; Thai revenue managers use it untranslated |
 
@@ -350,3 +350,38 @@ the reference codes TBL-XXXX and EVT-XXXX are alphanumeric so they can be read
 down a phone line, and `stay@teakhouse.demo` is an address. Years stay
 Gregorian: the rates, policies and booking engine all quote Gregorian years,
 so Buddhist-era years would be a content decision rather than a formatting one.
+
+## Closing pass · the invisible layer
+
+The visible copy was done; three things that are read rather than seen were not.
+All now Thai and gated.
+
+**Image alt text** · 73 values. They follow the existing `DictEntry` shape
+(`alt: { en, th }`) resolved through `tr()`, deliberately NOT added to
+lib/i18n-dict: that dictionary is imported by the client provider, so anything
+in it ships to every browser, and alt text is only ever read by a screen reader
+or a crawler.
+
+**Route metadata** · every route's title and description, in lib/routeMeta.ts
+(server-only, same reasoning). `og:locale` is stamped `th_TH` / `en_TH` so a
+preview card declares its language.
+
+**Share previews** · a crawler carries no cookies, and this site keeps the
+language in a cookie rather than a URL prefix, so every shared Thai link used to
+preview in English. middleware.ts now promotes `?lang=th` into the request
+cookie before anything renders, so a Thai link previews in Thai and a visitor
+following it stays in Thai. Without a param the default is still English.
+
+**Modal and aria copy** · 74 hard-coded English props (55 owner, 20 guest, one
+`hint` each in three managers). The owner ones sat inside edit modals, the guest
+ones in aria-labels · which is precisely why th-leakage reported the owner panel
+CLEAN while every "Add a dish" dialog was English. A rendering audit can only
+grade what is on screen.
+
+`node scripts/th-meta-audit.js` covers all four: it scans the SOURCE for
+hard-coded English in copy-carrying props, then fetches every route in Thai and
+checks title, description, openGraph and alt. Both halves must be zero.
+
+Correct as Latin, by decision: `ADR`, `CVC`, `LINE ID`, `OTA`, and the
+"(EN)"/"(TH)" suffixes on owner form fields, which name the language column
+being edited rather than the interface language.

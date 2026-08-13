@@ -317,7 +317,7 @@ export default function OwnerDashboardPage() {
           <div
             className="flex h-40 items-end gap-2 sm:gap-3"
             role="img"
-            aria-label="Monthly revenue bar chart"
+            aria-label={t("ow.a11y.revenueChart")}
           >
             {revenue.months.map((key) => {
               const value = revenue.byMonth[key] ?? 0;

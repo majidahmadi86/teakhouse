@@ -158,7 +158,7 @@ export function ReservationsPanel() {
               type="button"
               role="switch"
               aria-checked={Boolean(hotel?.reservationsEnabled)}
-              aria-label="Accept table reservations"
+              aria-label={t("ow.f.acceptRsv")}
               disabled={!hotel}
               onClick={() =>
                 saveSettings({ reservationsEnabled: !hotel?.reservationsEnabled })

@@ -26,7 +26,7 @@ export function HomeHero({
     >
       <div className="absolute inset-0">
         <div className="absolute inset-0">
-          <HeroLCP />
+          <HeroLCP locale={locale} />
         </div>
         <div id="tkh-hero-slideshow" className="absolute inset-0" />
         <div className="hero-scrim-mobile absolute inset-0 md:hidden" />

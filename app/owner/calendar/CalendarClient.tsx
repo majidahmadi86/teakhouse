@@ -134,7 +134,7 @@ export default function OwnerCalendarPage() {
             type="button"
             onClick={prevMonth}
             className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
-            aria-label="Previous month"
+            aria-label={t("ow.avail.prev")}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -145,7 +145,7 @@ export default function OwnerCalendarPage() {
             type="button"
             onClick={nextMonth}
             className="owner-control flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-white transition"
-            aria-label="Next month"
+            aria-label={t("ow.avail.next")}
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -164,7 +164,7 @@ export default function OwnerCalendarPage() {
         <div
           className="owner-inset flex rounded-xl p-1"
           role="group"
-          aria-label="Calendar view mode"
+          aria-label={t("ow.a11y.viewMode")}
         >
           <button
             type="button"

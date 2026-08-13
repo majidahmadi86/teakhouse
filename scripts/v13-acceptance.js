@@ -17,6 +17,7 @@
  */
 
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 const fs = require("fs");
 const path = require("path");
 
@@ -346,9 +347,9 @@ async function run() {
     await page.fill("#rsv-date", "2027-03-04");
     await page.selectOption("#rsv-time", { index: 1 });
     await page.selectOption("#rsv-party", "3");
-    await page.fill("#rsv-name", "QA NoScript");
+    await page.fill("#rsv-name", qa("NoScript"));
     await page.fill("#rsv-contact", "+66 80 111 2222");
-    await page.fill("#rsv-notes", "Table near the water");
+    await page.fill("#rsv-notes", qa("Table near the water"));
     await submitReserveForm(page);
 
     const text = await mainText(page);
@@ -383,7 +384,7 @@ async function run() {
     await page.waitForTimeout(1200);
     await page.fill("#rsv-date", "2027-03-05");
     await page.selectOption("#rsv-party", "2");
-    await page.fill("#rsv-name", "QA Script");
+    await page.fill("#rsv-name", qa("Script"));
     await page.fill("#rsv-contact", "@qa-line-id");
     await page.check("input[name='contactKind'][value='line']");
     await submitReserveForm(page);
@@ -416,7 +417,7 @@ async function run() {
       const res = await fetchJson(`${BASE}/api/reservations`, {
         method: "POST",
         body: JSON.stringify({
-          name: "QA Invalid",
+          name: qa("Invalid"),
           contact: "+66 80 000 0000",
           contactKind: "phone",
           ...patch,
@@ -472,9 +473,9 @@ async function run() {
       row &&
         row.party === 3 &&
         row.date === "2027-03-04" &&
-        row.name === "QA NoScript" &&
+        row.name === qa("NoScript") &&
         row.status === "pending" &&
-        row.notes === "Table near the water",
+        row.notes === qa("Table near the water"),
       row ? `${row.date} ${row.time} p${row.party} ${row.status}` : "n/a"
     );
 
@@ -573,7 +574,7 @@ async function run() {
         date: "2027-04-01",
         time: "12:00",
         party: 2,
-        name: "QA Closed",
+        name: qa("Closed"),
         contact: "+66 80 000 0000",
         contactKind: "phone",
       }),
@@ -658,7 +659,5 @@ async function run() {
   }
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(run);

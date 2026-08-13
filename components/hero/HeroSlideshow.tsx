@@ -3,23 +3,24 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { unsplashSrc } from "@/lib/unsplashLoader";
+import type { Lang } from "@/lib/translate";
 
 const SLIDES = [
   {
     src: unsplashSrc("photo-1520250497591-112f2f40a3f4"),
-    alt: "Resort pool at dusk overlooking the Chao Phraya",
+    alt: { en: "Resort pool at dusk overlooking the Chao Phraya", th: "สระว่ายน้ำยามเย็นมองเห็นแม่น้ำเจ้าพระยา" },
     zoom: "in" as const,
     position: "object-[center_32%] md:object-[center_42%]",
   },
   {
     src: unsplashSrc("photo-1611892440504-42a792e24d32"),
-    alt: "Sharp luxury bedroom with teak finishes",
+    alt: { en: "Sharp luxury bedroom with teak finishes", th: "ห้องนอนหรูตกแต่งไม้สัก" },
     zoom: "out" as const,
     position: "object-[center_40%] md:object-[center_45%]",
   },
   {
     src: unsplashSrc("photo-1600585154340-be6161a56a0c"),
-    alt: "Warm teak house interior living space",
+    alt: { en: "Warm teak house interior living space", th: "มุมนั่งเล่นอบอุ่นในบ้านไม้สัก" },
     zoom: "in" as const,
     position: "object-[center_40%] md:object-[center_45%]",
   },
@@ -38,19 +39,41 @@ const HeroCrossfade = dynamic(
  */
 export function HeroSlideshow({
   lcp: _lcp,
+  locale,
 }: {
   lcp?: React.ReactNode;
+  /** Resolved by the layout · home renders outside the i18n provider. */
+  locale: Lang;
 }) {
   const [reduce, setReduce] = useState(false);
   const [index, setIndex] = useState(1);
   const [lazyReady, setLazyReady] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduce(mq.matches);
-    const onChange = () => setReduce(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    /**
+     * Desktop only, at the same 769px line the Ken Burns animation already uses.
+     *
+     * On a phone this crossfade cost far more than it gave. It swaps a
+     * full-bleed hero every seven seconds, which means two extra Unsplash
+     * frames pulled over mobile data (home measured 625KB against /rooms'
+     * 363KB) and, worse, a viewport that is still visibly changing long after
+     * first paint · Speed Index measures exactly that, and it sat at 4.7s
+     * against a 0.98s FCP, holding home mobile at 91-94 on PageSpeed.
+     *
+     * The static server hero underneath is the real LCP and is complete on its
+     * own, so a phone now gets one sharp photograph and desktop keeps the
+     * slideshow. `reduce` covers prefers-reduced-motion the same way.
+     */
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const wide = window.matchMedia("(min-width: 769px)");
+    const evaluate = () => setReduce(motion.matches || !wide.matches);
+    evaluate();
+    motion.addEventListener("change", evaluate);
+    wide.addEventListener("change", evaluate);
+    return () => {
+      motion.removeEventListener("change", evaluate);
+      wide.removeEventListener("change", evaluate);
+    };
   }, []);
 
   useEffect(() => {
@@ -79,6 +102,7 @@ export function HeroSlideshow({
         index={index}
         holdMs={HOLD_MS}
         kenBurns={!reduce}
+        locale={locale}
       />
     </div>
   );

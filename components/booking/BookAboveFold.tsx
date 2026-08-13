@@ -30,7 +30,7 @@ export function BookAboveFold() {
         <h1 className="font-display text-4xl text-ink">{t(locale, "bk.h1")}</h1>
         <p className="mt-3 max-w-prose text-ink/80">{t(locale, "bk.lead")}</p>
 
-        <nav className="my-8 flex flex-wrap gap-2" aria-label="Booking steps">
+        <nav className="my-8 flex flex-wrap gap-2" aria-label={t(locale, "a11y.bookingSteps")}>
           {steps.map((label, index) => {
             const current = index === 0;
             return (

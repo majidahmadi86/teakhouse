@@ -124,7 +124,7 @@ export function ConciergePanel({
           : "pointer-events-none translate-y-full opacity-0 md:translate-y-4 md:scale-[0.98]"
       )}
       role="dialog"
-      aria-label="Concierge chat"
+      aria-label={t("a11y.conciergeChat")}
       aria-hidden={!isOpen}
     >
       <div className="flex items-center gap-3 bg-navy px-5 py-4 text-white">
@@ -224,7 +224,7 @@ export function ConciergePanel({
         <button
           type="submit"
           className="grid h-11 w-11 place-items-center rounded-[10px] bg-blue text-white"
-          aria-label="Send"
+          aria-label={t("a11y.send")}
         >
           <Send className="h-[18px] w-[18px]" />
         </button>

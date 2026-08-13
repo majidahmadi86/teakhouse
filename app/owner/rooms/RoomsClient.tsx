@@ -318,7 +318,7 @@ export default function OwnerRoomsPage() {
 
                 <div className="space-y-5">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Name EN">
+                    <Field label={t("ow.f.nameEn")}>
                       <input
                         value={form.name.en}
                         onChange={(e) =>
@@ -330,7 +330,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="Name TH">
+                    <Field label={t("ow.f.nameTh")}>
                       <input
                         value={form.name.th}
                         onChange={(e) =>
@@ -344,7 +344,7 @@ export default function OwnerRoomsPage() {
                     </Field>
                   </div>
 
-                  <Field label="Slug">
+                  <Field label={t("ow.f.slug")}>
                     <input
                       value={form.slug}
                       onChange={(e) =>
@@ -356,7 +356,7 @@ export default function OwnerRoomsPage() {
                   </Field>
 
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <Field label="Size (m²)">
+                    <Field label={t("ow.f.size")}>
                       <input
                         type="number"
                         value={form.sizeM2}
@@ -369,7 +369,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="Sleeps">
+                    <Field label={t("cmp.sleeps")}>
                       <input
                         type="number"
                         value={form.capacity}
@@ -390,14 +390,14 @@ export default function OwnerRoomsPage() {
                         }
                         options={[
                           { value: "yes", label: t("ow.active") },
-                          { value: "no", label: "Inactive" },
+                          { value: "no", label: t("ow.inactive") },
                         ]}
                       />
                     </Field>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Bed EN">
+                    <Field label={t("ow.f.bedEn")}>
                       <input
                         value={form.bedType.en}
                         onChange={(e) =>
@@ -409,7 +409,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="Bed TH">
+                    <Field label={t("ow.f.bedTh")}>
                       <input
                         value={form.bedType.th}
                         onChange={(e) =>
@@ -424,7 +424,7 @@ export default function OwnerRoomsPage() {
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Floor EN">
+                    <Field label={t("ow.f.floorEn")}>
                       <input
                         value={form.floor.en}
                         onChange={(e) =>
@@ -436,7 +436,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="Floor TH">
+                    <Field label={t("ow.f.floorTh")}>
                       <input
                         value={form.floor.th}
                         onChange={(e) =>
@@ -451,7 +451,7 @@ export default function OwnerRoomsPage() {
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="View EN">
+                    <Field label={t("ow.f.viewEn")}>
                       <input
                         value={form.view.en}
                         onChange={(e) =>
@@ -463,7 +463,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="View TH">
+                    <Field label={t("ow.f.viewTh")}>
                       <input
                         value={form.view.th}
                         onChange={(e) =>
@@ -478,7 +478,7 @@ export default function OwnerRoomsPage() {
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Direct rate">
+                    <Field label={t("ow.f.directRate")}>
                       <input
                         type="number"
                         value={form.rate}
@@ -491,7 +491,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="OTA rate">
+                    <Field label={t("ow.f.otaRate")}>
                       <input
                         type="number"
                         value={form.ota}
@@ -575,7 +575,7 @@ export default function OwnerRoomsPage() {
                         one), so the owner never has to paste a URL. */}
                     <div className="mt-3">
                       <ImageUploadField
-                        label="Upload a room photo"
+                        label={t("ow.f.roomPhoto")}
                         value=""
                         folder="rooms"
                         onChange={(url) => {
@@ -587,13 +587,13 @@ export default function OwnerRoomsPage() {
                             return { ...p, photos };
                           });
                         }}
-                        hint="Added to the list above · the first photo is the room's cover."
+                        hint={t("ow.hint.roomPhoto")}
                       />
                     </div>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Description EN">
+                    <Field label={t("ow.f.descEn")}>
                       <textarea
                         rows={3}
                         value={form.description.en}
@@ -609,7 +609,7 @@ export default function OwnerRoomsPage() {
                         className={inputClass}
                       />
                     </Field>
-                    <Field label="Description TH">
+                    <Field label={t("ow.f.descTh")}>
                       <textarea
                         rows={3}
                         value={form.description.th}
@@ -629,17 +629,17 @@ export default function OwnerRoomsPage() {
 
                   <div className="flex flex-wrap gap-6">
                     <Checkbox
-                      label="Pet friendly"
+                      label={t("ow.f.pets")}
                       checked={form.pets}
                       onChange={(v) => setForm((p) => ({ ...p, pets: v }))}
                     />
                     <Checkbox
-                      label="Bathtub"
+                      label={t("cmp.bathtub")}
                       checked={form.bathtub}
                       onChange={(v) => setForm((p) => ({ ...p, bathtub: v }))}
                     />
                     <Checkbox
-                      label="Balcony"
+                      label={t("cmp.balcony")}
                       checked={form.balcony}
                       onChange={(v) => setForm((p) => ({ ...p, balcony: v }))}
                     />

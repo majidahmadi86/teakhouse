@@ -5,7 +5,7 @@ import { PageHero } from "@/components/PageHero";
 import { getHotelSettings, getUpcomingEvents } from "@/lib/cachedData";
 import { dfLocale } from "@/lib/dateLocale";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
-import { isoDate } from "@/lib/utils";
+import { hotelTodayIso } from "@/lib/utils";
 
 export const revalidate = 0;
 
@@ -14,15 +14,15 @@ const EVENT_TYPES = ["ev.t1", "ev.t2", "ev.t3"] as const;
 const STRIP = [
   {
     base: "/images/events/pavilion-dinner",
-    alt: "A long table laid for dinner under string lights",
+    alt: { en: "A long table laid for dinner under string lights", th: "โต๊ะยาวจัดสำหรับมื้อค่ำใต้สายไฟระย้อย" },
   },
   {
     base: "/images/events/celebration-table",
-    alt: "Glasses and flowers on a table set for a celebration",
+    alt: { en: "Glasses and flowers on a table set for a celebration", th: "แก้วและดอกไม้บนโต๊ะที่จัดไว้สำหรับงานเลี้ยง" },
   },
   {
     base: "/images/events/string-lights",
-    alt: "String lights over the pavilion deck after sunset",
+    alt: { en: "String lights over the pavilion deck after sunset", th: "ไฟระย้อยเหนือนอกชานศาลาหลังพระอาทิตย์ตก" },
   },
 ] as const;
 
@@ -34,7 +34,7 @@ const STRIP = [
  */
 export default async function EventsPage() {
   const locale = getServerLocale();
-  const todayIso = isoDate(new Date());
+  const todayIso = hotelTodayIso();
 
   // One cached read each, in parallel · both are tag-invalidated by owner saves.
   const [events, settings] = await Promise.all([
@@ -49,7 +49,10 @@ export default async function EventsPage() {
         imageAvif={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.avif"}
         imageWebp={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.webp"}
         unoptimized={Boolean(settings.eventsHeroImage)}
-        alt="A table set for dinner in the riverside pavilion under string lights"
+        alt={tr(locale, {
+          en: "A table set for dinner in the riverside pavilion under string lights",
+          th: "โต๊ะอาหารค่ำในศาลาริมแม่น้ำใต้สายไฟระย้อย",
+        })}
         eyebrow={t(locale, "nav.events")}
         title={t(locale, "ev.h1")}
         lead={t(locale, "ev.lead")}
@@ -100,7 +103,7 @@ export default async function EventsPage() {
               >
                 <LocalPicture
                   base={photo.base}
-                  alt={photo.alt}
+                  alt={tr(locale, photo.alt)}
                   width={640}
                   height={480}
                   sizes="(max-width: 640px) 100vw, 380px"

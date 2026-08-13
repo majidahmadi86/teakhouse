@@ -34,7 +34,7 @@ export default function MarketingLayout({
       <DemoModeBar variant="guest" locale={locale} />
       <HomeHeaderUpgrade shell={<HeaderShell locale={locale} />} />
       <main className="pb-0">{children}</main>
-      <HomeLate />
+      <HomeLate locale={locale} />
       {/* Order modal host · CTA opens it via the shared window event. */}
       <DemoModal strings={getDemoStrings(locale)} />
       {/* Concierge · static server FAB (present in raw HTML) + scoped launcher */}
@@ -43,7 +43,7 @@ export default function MarketingLayout({
       <ConciergeFabStatic label={t(locale, "cg.fab")} compact />
       <FabHeroClearance />
       <ConciergeMount lang={locale} />
-      <RouteProgress />
+      <RouteProgress label={t(locale, "a11y.loadingPage")} />
     </>
   );
 }

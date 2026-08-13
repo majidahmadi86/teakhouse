@@ -2,7 +2,7 @@ import Link from "next/link";
 import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { FACILITIES } from "@/lib/facilities";
-import { getServerLocale, t } from "@/lib/serverLocale";
+import { getServerLocale, t, tr } from "@/lib/serverLocale";
 
 /**
  * Facilities · a pure server component. Every card is static HTML at first
@@ -18,7 +18,10 @@ export default function FacilitiesPage() {
         image="/images/facilities/lobby-lounge-1280.webp"
         imageAvif="/images/facilities/lobby-lounge-1280.avif"
         imageWebp="/images/facilities/lobby-lounge-1280.webp"
-        alt="Teak lobby lounge with armchairs"
+        alt={tr(locale, {
+          en: "Teak lobby lounge with armchairs",
+          th: "เลานจ์ไม้สักพร้อมเก้าอี้นวม",
+        })}
         eyebrow={t(locale, "nav.facilities")}
         title={t(locale, "fac.h1")}
         lead={t(locale, "fac.lead")}
@@ -35,7 +38,7 @@ export default function FacilitiesPage() {
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <LocalPicture
                     base={facility.base}
-                    alt={facility.alt}
+                    alt={tr(locale, facility.alt)}
                     width={640}
                     height={480}
                     sizes="(max-width: 768px) 100vw, (max-width: 1180px) 50vw, 380px"

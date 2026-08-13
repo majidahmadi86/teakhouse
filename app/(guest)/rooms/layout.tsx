@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import { routeMetadata } from "@/lib/routeMeta";
 
-export const metadata: Metadata = {
-  title: "Rooms",
-  alternates: { canonical: "/rooms" },
-};
+export function generateMetadata(): Metadata {
+  return routeMetadata("/rooms");
+}
 
 export default function RoomsLayout({
   children,

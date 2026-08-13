@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import type { Lang } from "@/lib/translate";
 
 const HeroSlideshow = dynamic(
   () =>
@@ -11,7 +12,7 @@ const HeroSlideshow = dynamic(
 );
 
 /** Background crossfade portalled behind the hero · pure enhancement. */
-export function HomeDeferredIslands() {
+export function HomeDeferredIslands({ locale }: { locale: Lang }) {
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -19,5 +20,5 @@ export function HomeDeferredIslands() {
   }, []);
 
   if (!portalTarget) return null;
-  return createPortal(<HeroSlideshow lcp={null} />, portalTarget);
+  return createPortal(<HeroSlideshow lcp={null} locale={locale} />, portalTarget);
 }

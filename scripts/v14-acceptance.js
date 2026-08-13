@@ -17,6 +17,7 @@
  */
 
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 const fs = require("fs");
 const path = require("path");
 
@@ -251,7 +252,7 @@ async function run() {
     await page.click("main a[href^='/events/reserve']");
     await page.waitForLoadState("load");
     await page.selectOption("#evr-guests", "3");
-    await page.fill("#evr-name", "QA Seats NoJS");
+    await page.fill("#evr-name", qa("Seats NoJS"));
     await page.fill("#evr-contact", "+66 80 222 3333");
     await submitForm(page);
 
@@ -296,7 +297,7 @@ async function run() {
       method: "POST",
       body: JSON.stringify({
         eventId: "does-not-exist",
-        name: "QA",
+        name: qa("Seats"),
         contact: "+66 80 000 0000",
         guests: 2,
       }),
@@ -360,7 +361,7 @@ async function run() {
     const ctx = await contextFor(browser, { js: false });
     const page = await ctx.newPage();
     await page.goto(`${BASE}/contact?about=event`, { waitUntil: "load" });
-    await page.fill("#ct-name", "QA Contact NoJS");
+    await page.fill("#ct-name", qa("Contact NoJS"));
     await page.fill("#ct-contact", "qa-nojs@example.com");
     await page.fill("#ct-message", "Asking about the pavilion for a birthday.");
     await submitForm(page);
@@ -374,7 +375,7 @@ async function run() {
     await ctx.close();
 
     const msgs = await fetchJson(`${BASE}/api/contact`);
-    const mine = (msgs.body || []).find((m) => m.name === "QA Contact NoJS");
+    const mine = (msgs.body || []).find((m) => m.name === qa("Contact NoJS"));
     check(
       "the message is stored tagged with its purpose",
       mine && mine.purpose === "event",
@@ -526,7 +527,5 @@ async function run() {
   }
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(run);

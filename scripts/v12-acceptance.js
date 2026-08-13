@@ -16,6 +16,7 @@
  */
 
 const { chromium } = require("playwright");
+const { qa, withQaCleanup } = require("./lib/qa");
 const fs = require("fs");
 const path = require("path");
 
@@ -333,7 +334,7 @@ async function run() {
     // Dining category
     const created = await fetchJson(`${BASE}/api/dining/categories`, {
       method: "POST",
-      body: JSON.stringify({ name: { en: "QA Category", th: "QA Category" }, order: 99, published: true }),
+      body: JSON.stringify({ name: { en: qa("Category"), th: qa("Category") }, order: 99, published: true }),
     });
     check("dining category POST", created.ok && created.body?.id, created.body?.id ?? `${created.status}`);
     const catId = created.body?.id;
@@ -343,8 +344,8 @@ async function run() {
       method: "POST",
       body: JSON.stringify({
         categoryId: catId,
-        name: { en: "QA Dish", th: "QA Dish" },
-        description: { en: "QA description line.", th: "QA description line." },
+        name: { en: qa("Dish"), th: qa("Dish") },
+        description: { en: qa("description line."), th: qa("description line.") },
         price: 123,
         order: 0,
         published: true,
@@ -375,7 +376,7 @@ async function run() {
     const page = await ctx.newPage();
     await page.goto(BASE + "/dining", { waitUntil: "load" });
     const guestText = await mainText(page);
-    check("unpublished dish never renders for guests", !guestText.includes("QA Dish"));
+    check("unpublished dish never renders for guests", !guestText.includes(qa("Dish")));
     await ctx.close();
 
     const delDish = await fetchJson(`${BASE}/api/dining/items/${dishId}`, { method: "DELETE" });
@@ -388,9 +389,9 @@ async function run() {
     const ev = await fetchJson(`${BASE}/api/events`, {
       method: "POST",
       body: JSON.stringify({
-        title: { en: "QA Evening", th: "QA Evening" },
+        title: { en: qa("Evening"), th: qa("Evening") },
         date: "2030-01-15",
-        description: { en: "QA event description.", th: "QA event description." },
+        description: { en: qa("event description."), th: qa("event description.") },
         image: "",
         published: false,
       }),
@@ -402,7 +403,7 @@ async function run() {
     const evPage = await evCtx.newPage();
     await evPage.goto(BASE + "/events", { waitUntil: "load" });
     const evText = await mainText(evPage);
-    check("unpublished event never renders for guests", !evText.includes("QA Evening"));
+    check("unpublished event never renders for guests", !evText.includes(qa("Evening")));
 
     const evPatch = await fetchJson(`${BASE}/api/events/${evId}`, {
       method: "PATCH",
@@ -410,7 +411,7 @@ async function run() {
     });
     await evPage.goto(BASE + "/events", { waitUntil: "load" });
     const evText2 = await mainText(evPage);
-    check("published event renders for guests", evPatch.ok && evText2.includes("QA Evening"));
+    check("published event renders for guests", evPatch.ok && evText2.includes(qa("Evening")));
     await evCtx.close();
 
     const evDel = await fetchJson(`${BASE}/api/events/${evId}`, { method: "DELETE" });
@@ -454,7 +455,5 @@ async function run() {
   }
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+// Cleanup runs whether the suite passed, failed or threw · see lib/qa.js.
+withQaCleanup(run);
