@@ -55,6 +55,7 @@ import {
   otaEquivalent,
   quoteStay,
 } from "@/lib/pricing";
+import { dfLocale } from "@/lib/dateLocale";
 import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
@@ -82,12 +83,19 @@ const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
  * were hard-coded English, which a Thai guest with JS off would have seen.
  */
 function DateRangeShell() {
+  // Month names follow the UI language too · a Thai page showing
+  // "14 Aug - 15 Aug" is still English where the guest actually looks.
+  const { lang } = useI18n();
   // Hotel time on both sides · see hotelToday(). Rendering the server's day
   // here and the browser's day after hydration made this label jump a day for
   // a Bangkok guest between midnight and 07:00.
   const inDate = addDays(hotelToday(), 1);
   const outDate = addDays(hotelToday(), 2);
-  const label = `${dfFormat(inDate, "d MMM")} - ${dfFormat(outDate, "d MMM yyyy")}`;
+  const label = `${dfFormat(inDate, "d MMM", dfLocale(lang))} - ${dfFormat(
+    outDate,
+    "d MMM yyyy",
+    dfLocale(lang)
+  )}`;
 
   return (
     <div

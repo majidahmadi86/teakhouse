@@ -2,6 +2,7 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { PageHero } from "@/components/PageHero";
 import { getHotelSettings } from "@/lib/cachedData";
+import { dfLocale } from "@/lib/dateLocale";
 import {
   formatServiceWindow,
   serviceSlots,
@@ -53,7 +54,11 @@ export default async function ReservePage({
   const settings = await getHotelSettings();
   const slots = serviceSlots(settings.serviceStart, settings.serviceEnd);
   const today = isoDate(new Date());
-  const window = formatServiceWindow(settings.serviceStart, settings.serviceEnd);
+  const window = formatServiceWindow(
+    settings.serviceStart,
+    settings.serviceEnd,
+    locale
+  );
 
   const hero = (
     <PageHero
@@ -71,7 +76,7 @@ export default async function ReservePage({
   if (searchParams.ref) {
     const when =
       searchParams.date && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.date)
-        ? format(parseISO(searchParams.date), "EEEE d MMMM yyyy")
+        ? format(parseISO(searchParams.date), "EEEE d MMMM yyyy", dfLocale(locale))
         : "";
     return (
       <>

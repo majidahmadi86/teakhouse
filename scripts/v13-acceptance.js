@@ -444,9 +444,13 @@ async function run() {
         waitUntil: "load",
       });
       const text = await mainText(page);
+      // The message is locale-specific · asserting the English sentence in the
+      // Thai run would fail precisely BECAUSE the Thai pass landed.
+      const expectedError =
+        lang === "th" ? /กรุณาเลือกวันนี้/ : /today or a later date/i;
       check(
         `[${lang}] the date error renders above the form with JS off`,
-        /today or a later date/i.test(text) &&
+        expectedError.test(text) &&
           (await page.locator("#rsv-date").count()) === 1,
         text.replace(/\n/g, " ").slice(0, 70)
       );

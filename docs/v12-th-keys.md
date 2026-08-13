@@ -280,3 +280,80 @@ Messages: `All` · `A stay` · `Dining` · `An event` · `Something else` ·
 ## Page metadata (EN only, like every other guest layout)
 
 - `/events/reserve` · title "Reserve seats" · description "Request seats at a special evening on the house calendar at The Teak House · no payment, the house confirms. A demo by Mikaro Studio."
+
+---
+
+# Thai install · status after the Claude-authored pass
+
+The Thai block covering v12 and v13 keys is INSTALLED (72 dictionary keys, 3
+concierge replies, 3 dining categories, 18 dishes, 3 events). Verified with
+`node scripts/th-leakage.js`, which loads every guest route with tkh-lang=th
+and reports visible English, allowing brand names and proper nouns.
+
+Clean in Thai: `/dining/reserve` · `/book` · `/location` · `/gallery`.
+
+## Still English · v14 keys (no Thai supplied yet)
+
+| Key | English value |
+| --- | --- |
+| `rsv.cardEyebrow` | The kitchen |
+| `rsv.cardH` | Keep a table for you |
+| `rsv.cardP` | Pick a time and we will have it laid when you arrive. |
+| `evr.cta` | Reserve seats |
+| `evr.h1` | Seats at the table |
+| `evr.lead` | Tell us which evening and how many of you. No payment · the house confirms by phone or LINE. |
+| `evr.step1` | Which evening |
+| `evr.event` | Event |
+| `evr.guests` | Guests |
+| `evr.notesHint` | Allergies, a celebration, anything we should plan for |
+| `evr.submit` | Request seats |
+| `evr.noPayment` | No payment is taken. Seats are held once we confirm. |
+| `evr.okEyebrow` | Requested |
+| `evr.okH1` | Your seats are requested |
+| `evr.okLead` | The house has it. Keep this reference for when you arrive. |
+| `evr.okNext` | We will confirm by phone or LINE shortly. Evenings with limited seating fill quickly, so we will tell you either way. |
+| `evr.backToEvents` | Back to the events |
+| `evr.err.event` | That evening is no longer open. Please choose another from the list. |
+| `evr.err.name` | Please tell us your name. |
+| `evr.err.contact` | Please leave a phone number or LINE id so we can confirm. |
+| `evr.err.guests` | Please choose how many seats you need. |
+| `evr.err.failed` | Something went wrong at our end. Please try again, or contact the house. |
+| `ct.about` | What is this about? |
+| `ct.aboutStay` | A stay |
+| `ct.aboutDining` | Dining |
+| `ct.aboutEvent` | An event |
+| `ct.aboutOther` | Something else |
+| `ct.contactField` | Email, phone or LINE id |
+| `ct.dates` | Dates |
+| `ct.checkIn` | Check in |
+| `ct.checkOut` | Check out |
+| `ct.when` | When and how many |
+| `ct.party` | Guests |
+| `ct.sentH` | Thank you · it is with us |
+| `ct.sentP` | The house reads messages through the day and answers on the same channel you left. |
+| `ct.sendAnother` | Send another |
+| `ct.err.name` | Please tell us your name. |
+| `ct.err.contact` | Please leave an email, phone number or LINE id so we can reply. |
+| `ct.err.message` | Please write a short message. |
+| `ct.err.failed` | Something went wrong at our end. Please try again, or call the house. |
+| `nav.exploreGroup` | Experience |
+| `ow.messages` | Messages |
+
+Also still English: the v14 concierge events sentence "You can also reserve
+seats at one of our special evenings · no payment, we confirm by phone or
+LINE." (the rest of that reply is now Thai).
+
+## Still English · v11 debt (unchanged, tracked in docs/v11-th-keys.md)
+
+`fac.*` and `nav.facilities` (the facilities page and the home strip · 24 lines
+on /facilities, ~22 on the home page), `rooms.*` and the room meta strings
+(21 lines on /rooms), `house.*` and the experience copy (20 lines on
+/experience), and one `off.*` badge ("FREE").
+
+## Not translated on purpose
+
+Room names (River Loft, Teak Suite and the rest) are the property's own names,
+the reference codes TBL-XXXX and EVT-XXXX are alphanumeric so they can be read
+down a phone line, and `stay@teakhouse.demo` is an address. Years stay
+Gregorian: the rates, policies and booking engine all quote Gregorian years,
+so Buddhist-era years would be a content decision rather than a formatting one.

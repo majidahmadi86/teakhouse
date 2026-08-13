@@ -3,6 +3,7 @@ import { format, parseISO } from "date-fns";
 import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { getHotelSettings, getUpcomingEvents } from "@/lib/cachedData";
+import { dfLocale } from "@/lib/dateLocale";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
 import { isoDate } from "@/lib/utils";
 
@@ -145,7 +146,7 @@ export default async function EventsPage() {
                   ) : null}
                   <div className="p-6">
                     <p className="text-[0.78rem] font-bold uppercase tracking-[0.14em] text-blue">
-                      {format(parseISO(ev.date), "EEE d MMM yyyy")}
+                      {format(parseISO(ev.date), "EEE d MMM yyyy", dfLocale(locale))}
                     </p>
                     <h3 className="mt-2 font-display text-xl text-ink">
                       {tr(locale, ev.title)}

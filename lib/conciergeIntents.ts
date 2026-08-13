@@ -55,7 +55,7 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     k: /table|โต๊ะ/i,
     r: {
       en: 'With pleasure. Tell me a date, a time and how many, and the kitchen will hold a table · no deposit. Service runs 11:30 to 22:00. <a href="/dining/reserve" class="font-extrabold text-blue">Reserve a table here</a>',
-      th: 'With pleasure. Tell me a date, a time and how many, and the kitchen will hold a table · no deposit. Service runs 11:30 to 22:00. <a href="/dining/reserve" class="font-extrabold text-blue">Reserve a table here</a>',
+      th: 'ยินดีค่ะ บอกวันที่ เวลา และจำนวนท่าน ครัวจะจองโต๊ะไว้ให้ · ไม่มีมัดจำ ให้บริการ 11:30 ถึง 22:00 <a href="/dining/reserve" class="font-extrabold text-blue">จองโต๊ะที่นี่</a>',
     },
   },
   {
@@ -72,7 +72,7 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     k: /wedding|event|party|parties|celebrat|function|pavilion|private dinner|jazz|brunch|loy krathong|songkran/i,
     r: {
       en: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. You can also reserve seats at one of our special evenings · no payment, we confirm by phone or LINE. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
-      th: 'The riverside pavilion hosts weddings, private dinners and parties: 60 seated, 90 standing, arrivals by boat welcome. You can also reserve seats at one of our special evenings · no payment, we confirm by phone or LINE. <a href="/events" class="font-extrabold text-blue">Events &amp; Spaces</a>',
+      th: 'ศาลาริมน้ำของเรารองรับงานแต่งงาน มื้อค่ำส่วนตัว และงานเลี้ยงค่ะ · นั่ง 60 ยืน 90 มาถึงทางเรือได้ ค่ำคืนพิเศษดูได้ที่หน้าอีเวนต์ <a href="/events" class="font-extrabold text-blue">อีเวนต์และพื้นที่จัดงาน</a>',
     },
   },
   {
@@ -81,7 +81,7 @@ const INTENTS: { k: RegExp; r: ConciergeReply }[] = [
     k: /breakfast|food|dinner|restaurant|eat|menu|lunch|dining|cocktail|อาหาร|ข้าวเช้า|อาหารเช้า|ร้านอาหาร|กิน|เมนู/i,
     r: {
       en: 'Breakfast is served on the pier from 07:00 to 11:00: Thai rice soup, fresh fruit, eggs any way, and coffee roasted in Chiang Rai. The kitchen cooks until 22:00. <a href="/dining" class="font-extrabold text-blue">See the full menu</a>',
-      th: 'อาหารเช้าเสิร์ฟริมท่าเรือ 07:00 ถึง 11:00 น. มีข้าวต้ม ผลไม้สด ไข่ตามสั่ง และกาแฟคั่วจากเชียงรายค่ะ <a href="/dining" class="font-extrabold text-blue">See the full menu</a>',
+      th: 'อาหารเช้าเสิร์ฟริมท่าเรือ 07:00 ถึง 11:00 น. มีข้าวต้ม ผลไม้สด ไข่ตามสั่ง และกาแฟคั่วจากเชียงรายค่ะ ครัวเปิดถึง 22:00 น. <a href="/dining" class="font-extrabold text-blue">ดูเมนูทั้งหมด</a>',
     },
   },
   {

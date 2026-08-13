@@ -112,12 +112,16 @@ export function serviceSlots(
   return out;
 }
 
-/** Human 24h label · Thai and English both read HH:mm here, so no locale split. */
+/**
+ * Human 24h label. The numerals are the same in both locales; the word between
+ * them is not, so the separator follows the locale ("to" / "ถึง").
+ */
 export function formatServiceWindow(
   serviceStart: string,
-  serviceEnd: string
+  serviceEnd: string,
+  locale: "en" | "th" = "en"
 ): string {
-  return `${serviceStart} to ${serviceEnd}`;
+  return `${serviceStart} ${locale === "th" ? "ถึง" : "to"} ${serviceEnd}`;
 }
 
 export type ReservationInput = {

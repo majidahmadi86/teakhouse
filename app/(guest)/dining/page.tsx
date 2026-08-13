@@ -78,7 +78,8 @@ export default async function DiningPage() {
                     {t(locale, "rsv.window", {
                       w: formatServiceWindow(
                         settings.serviceStart,
-                        settings.serviceEnd
+                        settings.serviceEnd,
+                        locale
                       ),
                     })}
                   </span>

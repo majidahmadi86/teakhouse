@@ -637,6 +637,134 @@ function seedRateRules(roomId: string, anchor: Date): SeedRateRule[] {
 type SeedDish = { name: string; description: string; price: number };
 type SeedDiningCategory = { id: string; name: string; dishes: SeedDish[] };
 
+/**
+ * Thai for the seeded menu and events · installed verbatim from the Thai pass.
+ * Keyed by seeded id so the pairing is checkable line by line; anything absent
+ * falls back to the English string rather than rendering empty.
+ */
+const DINING_TH: Record<
+  string,
+  { name: string; dishes: { name: string; description: string }[] }
+> = {
+  "dc-pier-breakfast": {
+    name: "อาหารเช้าที่ท่าเรือ",
+    dishes: [
+      {
+        name: "ข้าวต้มกุ้งแม่น้ำ",
+        description:
+          "ข้าวต้มเคี่ยวในน้ำสต๊อกกุ้ง กุ้งแม่น้ำ ขิงอ่อน และกระเทียมเจียว",
+      },
+      {
+        name: "ไข่เจียวปู",
+        description:
+          "ไข่เจียวสไตล์ข้างทางแน่นด้วยเนื้อปู เสิร์ฟบนข้าวหอมมะลิพร้อมซอสศรีราชา",
+      },
+      {
+        name: "ผลไม้รวมจากท่าเรือ",
+        description:
+          "ตามแต่เรือเช้าจะพามา: มะม่วง ส้มโอ ชมพู่ และพริกเกลือมะนาว",
+      },
+      {
+        name: "ขนมครก",
+        description: "ขนมครกขอบกรอบจากกระทะทองเหลือง กะทิยังอุ่นจากเตา",
+      },
+      {
+        name: "ไข่สไตล์บ้านไม้สัก",
+        description:
+          "ไข่สองฟองจากนครปฐม มะเขือเทศย่าง ไส้กรอกหมู และขนมปังจากร้านหัวมุม",
+      },
+      {
+        name: "กาแฟดริปเชียงราย",
+        description:
+          "อาราบิก้าซิงเกิลออริจินคั่วที่เชียงราย ดริปช้า ๆ ที่เคาน์เตอร์ริมท่าเรือ",
+      },
+    ],
+  },
+  "dc-thai-kitchen": {
+    name: "ครัวไทย",
+    dishes: [
+      {
+        name: "ผัดไทยกุ้งแม่น้ำ",
+        description:
+          "เส้นผัดไฟแรงคลุกน้ำมะขาม ห่อด้วยไข่เน็ต ท็อปด้วยกุ้งแม่น้ำย่างหนึ่งตัว",
+      },
+      {
+        name: "มัสมั่นซี่โครงเนื้อ",
+        description:
+          "ซี่โครงเนื้อตุ๋นห้าชั่วโมงในแกงมัสมั่น ถั่วลิสงคั่ว และแตงกวาดอง",
+      },
+      {
+        name: "ปลาเผาเกลือ",
+        description:
+          "ปลานิลทั้งตัวพอกเกลือและตะไคร้ ย่างถ่าน เสิร์ฟพร้อมน้ำจิ้มสามแบบ",
+      },
+      {
+        name: "แกงเขียวหวานไก่ย่าง",
+        description:
+          "สะโพกไก่ย่างถ่านในแกงเขียวหวาน มะเขือพวงและโหระพา เสิร์ฟกับโรตี",
+      },
+      {
+        name: "ยำส้มโอ",
+        description:
+          "ส้มโอ มะพร้าวคั่ว กุ้งแห้ง และน้ำยำมะนาวรสจัดจ้าน",
+      },
+      {
+        name: "ผัดผักบุ้งไฟแดง",
+        description:
+          "ผักบุ้งผัดกระทะร้อนกับเต้าเจี้ยว กระเทียม และพริกเผ็ดนิด ๆ",
+      },
+      {
+        name: "ต้มยำกุ้งสูตรบ้าน",
+        description: "น้ำซุปเปรี้ยวเผ็ดกับกุ้งแม่น้ำ เห็ดฟาง และข่าอ่อน",
+      },
+      {
+        name: "ข้าวเหนียวมะม่วง",
+        description: "มะม่วงน้ำดอกไม้ ข้าวเหนียวมูน และกะทิเค็มหอมมัน",
+      },
+    ],
+  },
+  "dc-drinks": {
+    name: "เครื่องดื่มและค็อกเทล",
+    dishes: [
+      {
+        name: "ค็อกเทลริมน้ำ",
+        description:
+          "ค็อกเทลประจำบ้าน: รัมไทย มะขาม น้ำตาลมะพร้าว และมะนาว คนกับน้ำแข็งก้อนใหญ่",
+      },
+      {
+        name: "น้ำตะไคร้ใบเตย",
+        description: "ตะไคร้และใบเตยสกัดเย็นเสิร์ฟบนน้ำแข็ง หวานน้อย สดชื่น",
+      },
+      {
+        name: "ชาเก๊กฮวยเย็น",
+        description: "ชาเก๊กฮวยแบบตลาดเก่า ชงใหม่ทุกเช้า เลือกเติมน้ำผึ้งได้",
+      },
+      {
+        name: "สิงห์ที่ท่าเรือ",
+        description: "เบียร์เย็นเจี๊ยบพร้อมมะนาวหั่นซีก อร่อยที่สุดตอนพระอาทิตย์ตก",
+      },
+    ],
+  },
+};
+
+const EVENTS_TH: Record<string, { title: string; description: string }> = {
+  "ev-loy-krathong": {
+    title: "ดินเนอร์ลอยกระทงริมน้ำ",
+    description:
+      "ลอยกระทงจากท่าเรือของเรา แล้วนั่งลงกับดินเนอร์ไทย 5 คอร์สใต้แสงจันทร์เต็มดวง รอบเดียว 28 ที่นั่ง",
+  },
+  "ev-jazz-brunch": {
+    title: "แจ๊สบรันช์วันอาทิตย์",
+    description:
+      "วงทริโอบนลานศาลา บรันช์ไทยแบบฟรีโฟลว์ พร้อมวิวเรือที่ค่อย ๆ ผ่านไป ทุกวันอาทิตย์ 11:30 ถึง 15:00",
+  },
+  "ev-songkran-lunch": {
+    title: "มื้อกลางวันสงกรานต์ในสวน",
+    description:
+      "สงกรานต์แบบดั้งเดิม: น้ำสำหรับรดให้พร ไม่ใช่สาดกัน ขันโตกใต้ต้นมะม่วงกับทั้งบ้าน",
+  },
+};
+
 const DINING: SeedDiningCategory[] = [
   {
     id: "dc-pier-breakfast",
@@ -990,16 +1118,17 @@ export async function seedDatabase() {
         id: cat.id,
         hotelId: "default",
         nameEn: cat.name,
-        nameTh: cat.name,
+        nameTh: DINING_TH[cat.id]?.name ?? cat.name,
         order: c,
         published: true,
         items: {
           create: cat.dishes.map((d, i) => ({
             id: `${cat.id}-i${i + 1}`,
             nameEn: d.name,
-            nameTh: d.name,
+            nameTh: DINING_TH[cat.id]?.dishes[i]?.name ?? d.name,
             descriptionEn: d.description,
-            descriptionTh: d.description,
+            descriptionTh:
+              DINING_TH[cat.id]?.dishes[i]?.description ?? d.description,
             price: d.price,
             order: i,
             published: true,
@@ -1047,10 +1176,10 @@ export async function seedDatabase() {
         id: ev.id,
         hotelId: "default",
         titleEn: ev.title,
-        titleTh: ev.title,
+        titleTh: EVENTS_TH[ev.id]?.title ?? ev.title,
         date: ev.date,
         descriptionEn: ev.description,
-        descriptionTh: ev.description,
+        descriptionTh: EVENTS_TH[ev.id]?.description ?? ev.description,
         image: ev.image,
         published: true,
       },

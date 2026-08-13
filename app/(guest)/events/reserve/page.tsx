@@ -2,6 +2,7 @@ import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { PageHero } from "@/components/PageHero";
 import { getUpcomingEvents } from "@/lib/cachedData";
+import { dfLocale } from "@/lib/dateLocale";
 import { MAX_EVENT_GUESTS } from "@/lib/eventRequests";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
 import { isoDate } from "@/lib/utils";
@@ -55,7 +56,7 @@ export default async function EventReservePage({
   if (searchParams.ref) {
     const when =
       searchParams.date && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.date)
-        ? format(parseISO(searchParams.date), "EEEE d MMMM yyyy")
+        ? format(parseISO(searchParams.date), "EEEE d MMMM yyyy", dfLocale(locale))
         : "";
     return (
       <>
@@ -174,7 +175,8 @@ export default async function EventReservePage({
                 >
                   {events.map((ev) => (
                     <option key={ev.id} value={ev.id}>
-                      {tr(locale, ev.title)} · {format(parseISO(ev.date), "d MMM yyyy")}
+                      {tr(locale, ev.title)} ·{" "}
+                      {format(parseISO(ev.date), "d MMM yyyy", dfLocale(locale))}
                     </option>
                   ))}
                 </select>
