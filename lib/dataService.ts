@@ -16,7 +16,11 @@ export async function loadOwnerData(): Promise<OwnerData> {
   ]);
 
   return {
-    rooms: rooms.map(roomToClient),
+    rooms: rooms.map((r) => ({
+      ...roomToClient(r),
+      units: r.units,
+      hkStatus: r.hkStatus as "clean" | "dirty" | "inspected" | "ooo",
+    })),
     bookings: bookings.map(bookingToClient),
     blocks: blocksToRecord(blocks),
     priceRules: priceRules.map(toPriceRule),

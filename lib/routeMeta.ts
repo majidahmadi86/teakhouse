@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { hotelConfig } from "@/config/hotel.config";
 import { getServerLocale } from "@/lib/serverLocale";
+import { langMeta } from "@/lib/locales";
 import type { DictEntry } from "@/lib/i18n-dict";
 import type { Lang } from "@/lib/i18n";
 
@@ -152,13 +153,13 @@ export function buildMetadata(
     typeof overrides.title === "string"
       ? overrides.title
       : meta
-        ? meta.title[locale]
+        ? meta.title[locale === "th" ? "th" : "en"]
         : undefined;
   const description =
     typeof overrides.description === "string"
       ? overrides.description
       : meta?.description
-        ? meta.description[locale]
+        ? meta.description[locale === "th" ? "th" : "en"]
         : undefined;
 
   return {
@@ -173,7 +174,7 @@ export function buildMetadata(
       siteName: hotelConfig.name,
       ...(title ? { title } : {}),
       ...(description ? { description } : {}),
-      locale: locale === "th" ? "th_TH" : "en_TH",
+      locale: langMeta(locale).og,
       url: route,
     },
     ...overrides,

@@ -1,4 +1,6 @@
 import { hotelConfig } from "@/config/hotel.config";
+import { DICT_V15 } from "./i18n-dict-v15";
+import { DICT_V15_OWNER } from "./i18n-dict-v15-owner";
 
 export type DictEntry = { en: string; th: string };
 
@@ -1431,5 +1433,8 @@ DICT["ct.line"] = {
   th: `LINE ${hotelConfig.contact.line}`,
 };
 
+
+// v15 · Eight-Star copy · later keys win, so a v15 entry can retune an older one.
+Object.assign(DICT, DICT_V15, DICT_V15_OWNER);
 
 export type { DictEntry as _DictEntry };

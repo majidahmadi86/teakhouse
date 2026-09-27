@@ -17,6 +17,37 @@ Live demo: https://teakhouse.mikaro.studio
 
 ---
 
+## 0. v15 · "Eight-Star" · what is new
+
+Teak House v15 turns the boutique build into a hospitality engine. Read
+`docs/ARCHITECTURE.md` first; `docs/channel-manager.md` and `docs/security.md`
+are the deep dives.
+
+- **Guest** · sixteen languages (EN, TH, 中文, 日本語, 한국어, Русский, Deutsch, Français, Español, Italiano, Português, العربية, हिन्दी, Bahasa Indonesia, Tiếng Việt, Bahasa Melayu), a two-step booking flow (compose the stay → confirm & pay) with an
+  interactive plan of the house, bespoke packages (helicopter transfer, private
+  chef, spa itinerary…), thirteen currencies at live ECB rates, and four
+  payment rails (PromptPay QR, hosted card/wallet checkout, wire, crypto). The
+  concierge streams its replies and, once a booking code is linked, files real
+  requests with the front desk.
+- **Engine** · one quote engine (calendar rules → demand/yield rules → packages),
+  inventory in units, a locked booking service that cannot sell the last unit
+  twice, a transactional outbox that pushes availability and rates to connected
+  channels, and a signed inbound webhook for reservations.
+- **Portals** · executive view (RevPAR, ADR, occupancy, channel mix with
+  commission, payouts, reports) and operations view (arrivals, departures,
+  housekeeping, live request queue, guest preference log), gated by four roles.
+- **Security** · server sessions, scrypt hashes, an AES-GCM identity vault, audit
+  trail, rate limits, security headers. Card data never touches the site.
+
+Demo staff: `owner@teakhouse.demo` (password = `OWNER_PIN`, default `1234`),
+`manager@` / `desk@` / `housekeeping@teakhouse.demo` (password `teak<role>`,
+e.g. `teakfrontdesk`). In demo mode the sidebar role switcher signs in as any of
+them with one click.
+
+Gates: `BASE=http://localhost:3010 node scripts/v15-acceptance.js` (75 checks) and `node scripts/locale-coverage.js` (16 languages, 0 gaps).
+
+---
+
 ## 1. Quickstart (local, 5 minutes)
 
 ```bash

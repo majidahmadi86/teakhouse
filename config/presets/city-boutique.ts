@@ -56,7 +56,7 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1551882547-ff40c63fe5fa"),
   },
-  currencies: ["THB", "USD", "EUR"],
+  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "AED", "CHF"],
   languages: ["en", "th"],
   contact: {
     email: "hello@maisonlane.demo",

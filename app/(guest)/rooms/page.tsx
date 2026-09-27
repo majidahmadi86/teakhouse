@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CinematicLink } from "@/components/motion/CinematicLink";
 import { PageHero } from "@/components/PageHero";
 import { SafeImage } from "@/components/SafeImage";
 import { SEED_ROOMS } from "@/lib/rooms";
@@ -8,16 +9,15 @@ import { formatBaht } from "@/lib/utils";
 const INCLUDED = ["rp.i1", "rp.i2", "rp.i3", "rp.i4", "rp.i5", "rp.i6"] as const;
 
 /**
- * RSC rooms listing · no rooms-page client bundle.
+ * v15 · RSC rooms listing · editorial, no rooms-page client bundle.
  *
- * Every string here used to be an English literal, and the cards read
- * `room.name.en` / `room.meta.en` directly, so this page stayed in English no
- * matter what language the guest had chosen · it was the largest single block
- * of leakage on the Thai site. It now resolves the same dictionary keys the
- * rest of the site uses, and reads the room's bilingual fields through tr().
+ * Each room is a spread: a large photograph and, beside it, the room's name in
+ * Cormorant, its small-capitals facts, the description, and a quiet "from"
+ * price in gold. Spreads alternate sides like a magazine. The photograph
+ * carries a view-transition name so the click into the room glides.
  *
- * Room NAMES stay as they are: they are the property's own names, and the seed
- * carries them identically in both slots on purpose.
+ * Every string resolves through the dictionary in the guest's language; room
+ * names stay the property's own names.
  */
 export default function RoomsPage() {
   const locale = getServerLocale();
@@ -35,69 +35,83 @@ export default function RoomsPage() {
         objectPosition="center 40%"
       />
 
-      <section className="px-6 py-20">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="grid gap-7 md:grid-cols-2">
-            {rooms.map((room) => (
+      <section className="bg-cloud px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-[1240px] space-y-20 md:space-y-28">
+          {rooms.map((room, index) => {
+            const flip = index % 2 === 1;
+            return (
               <article
                 key={room.id}
-                className="group tkh-card flex flex-col overflow-hidden"
+                className="grid items-center gap-8 md:grid-cols-12 md:gap-12"
+                data-room-spread={room.slug}
               >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <SafeImage
-                    src={room.photos[0]}
-                    alt={tr(locale, room.name)}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 560px"
-                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                  />
+                <div className={flip ? "md:order-2 md:col-span-7" : "md:col-span-7"}>
+                  <div
+                    className="tkh-vt-room relative aspect-[4/3] overflow-hidden bg-line"
+                    style={{ viewTransitionName: `room-${room.slug}` }}
+                  >
+                    <SafeImage
+                      src={room.photos[0]}
+                      alt={tr(locale, room.name)}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 720px"
+                      className="object-cover transition duration-[1400ms] ease-out hover:scale-[1.03]"
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h2 className="font-display text-xl text-navy">
+                <div className={flip ? "md:order-1 md:col-span-5 md:pr-6" : "md:col-span-5 md:pl-6"}>
+                  <p className="luxe-caps text-gold">
+                    {String(index + 1).padStart(2, "0")} · {tr(locale, room.floor)}
+                  </p>
+                  <h2 className="mt-4 font-display text-[2.4rem] leading-[1.05] text-ink md:text-[2.9rem]">
                     {tr(locale, room.name)}
                   </h2>
-                  <p className="mt-1 text-sm text-sub">{tr(locale, room.meta)}</p>
-                  <p className="mt-4 text-lg font-bold text-navy">
-                    {t(locale, "room.from")} {formatBaht(room.rate)}
-                    <span className="text-sm font-semibold text-sub">
-                      {" "}
+                  <span className="luxe-rule mt-5" aria-hidden />
+                  <p className="luxe-caps mt-5 text-sub">
+                    {room.sizeM2} m² · {tr(locale, room.bedType)} · {tr(locale, room.view)}
+                  </p>
+                  <p className="mt-5 max-w-prose text-[1.02rem] leading-relaxed text-ink/80">
+                    {tr(locale, room.description)}
+                  </p>
+                  <p className="mt-6 font-display text-2xl text-ink">
+                    <span className="luxe-caps mr-3 text-gold">{t(locale, "room.from")}</span>
+                    {formatBaht(room.rate)}
+                    <span className="ml-2 font-sans text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-sub">
                       {t(locale, "room.night")}
                     </span>
                   </p>
-                  <div className="mt-auto flex gap-3 pt-5">
-                    <Link
+                  <div className="mt-8 flex flex-wrap items-center gap-6">
+                    <CinematicLink
                       href={`/rooms/${room.slug}`}
                       prefetch={false}
-                      className="btn-secondary flex-1 text-center"
+                      className="link-draw luxe-caps text-ink"
                     >
-                      {t(locale, "room.see")}
-                    </Link>
-                    <Link
-                      href={`/book?room=${room.slug}`}
-                      prefetch={false}
-                      className="btn-primary flex-1 text-center"
-                    >
+                      {t(locale, "room.see")} →
+                    </CinematicLink>
+                    <Link href={`/book?room=${room.slug}`} prefetch={false} className="btn-primary">
                       {t(locale, "room.book")}
                     </Link>
                   </div>
                 </div>
               </article>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      <section className="border-t border-line bg-white px-6 py-20">
-        <div className="mx-auto max-w-[1180px]">
+      <section className="border-t border-line bg-white px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-[1240px]">
+          <p className="eyebrow mb-4">{t(locale, "rooms.eyebrow")}</p>
           <h2>{t(locale, "rp.inc")}</h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {INCLUDED.map((key) => (
-              <article key={key} className="tkh-card p-6">
-                <h3 className="text-lg">{t(locale, key)}</h3>
+          <div className="mt-10 grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+            {INCLUDED.map((key, i) => (
+              <article key={key} className="border-t border-line pt-5">
+                <p className="luxe-caps text-gold">{String(i + 1).padStart(2, "0")}</p>
+                <h3 className="mt-2 font-display text-xl text-ink">{t(locale, key)}</h3>
               </article>
             ))}
           </div>
-          <p className="mt-12 text-center">
+          <p className="mt-14 text-center">
             <Link href="/book" prefetch={false} className="btn-primary">
               {t(locale, "nav.book")}
             </Link>

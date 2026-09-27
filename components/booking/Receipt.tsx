@@ -8,6 +8,7 @@ import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import type { RateLine } from "@/lib/pricing";
+import type { AddonLine } from "@/lib/addons";
 import type { Room } from "@/lib/rooms";
 import { formatBaht, isoDate } from "@/lib/utils";
 
@@ -28,6 +29,9 @@ export type ReceiptProps = {
   balance: number;
   /** One line per price band of the stay · the per-night breakdown. */
   rateLines?: RateLine[];
+  /** v15 · packages and how the deposit was (or will be) paid */
+  addonLines?: AddonLine[];
+  paymentLabel?: string;
   issuedAt?: Date;
 };
 
@@ -47,6 +51,8 @@ export function Receipt({
   deposit,
   balance,
   rateLines = [],
+  addonLines = [],
+  paymentLabel,
   issuedAt = new Date(),
 }: ReceiptProps) {
   const { t, tr } = useI18n();
@@ -139,6 +145,19 @@ export function Receipt({
                 <span className="font-semibold text-ink">{format(subtotal)}</span>
               </div>
             )}
+            {addonLines.length > 0 ? (
+              <ul className="space-y-1 border-t border-line pt-2" data-receipt-addons>
+                {addonLines.map((l) => (
+                  <li key={l.key} className="flex justify-between gap-3">
+                    <span className="text-sub">
+                      {tr(l.name)}
+                      {l.unit === "stay" && l.qty > 1 ? ` × ${l.qty}` : l.unit !== "stay" ? ` × ${l.factor}` : ""}
+                    </span>
+                    <span className="font-semibold text-ink">{format(l.total)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <div className="flex justify-between font-bold text-ink">
               <span>{t("bk.dep")}</span>
               <span>{format(deposit)}</span>
@@ -160,7 +179,7 @@ export function Receipt({
           </div>
 
           <div className="rounded-lg bg-deal-bg px-4 py-3 text-[0.82rem] font-semibold text-deal">
-            {t("trust.2")}
+            {paymentLabel ?? t("trust.2")}
           </div>
 
           <footer className="flex flex-col items-center gap-4 border-t border-line pt-6 text-center sm:flex-row sm:justify-between sm:text-left">

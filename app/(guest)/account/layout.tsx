@@ -11,5 +11,5 @@ export default function AccountLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OwnerStoreProvider>{children}</OwnerStoreProvider>;
+  return <OwnerStoreProvider scope="guest">{children}</OwnerStoreProvider>;
 }

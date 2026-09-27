@@ -5,6 +5,7 @@
 import { addDays, format } from "date-fns";
 import { prisma } from "@/lib/db";
 import { groupRulesByRoom, quoteStay, toPriceRule } from "@/lib/pricing";
+import { deleteV15, seedChannels, seedV15, SEED_HK, SEED_UNITS } from "@/lib/seedV15";
 
 const unsplash = (id: string) => `https://images.unsplash.com/${id}`;
 
@@ -904,6 +905,8 @@ export async function seedDatabase() {
   console.log("Seeding TEAK HOUSE v8…");
 
   await prisma.guestBooking.deleteMany();
+  // v15 · the Eight-Star tables · payments and requests hang off bookings, so first.
+  await deleteV15();
   await prisma.roomBlock.deleteMany();
   await prisma.seasonalPriceRule.deleteMany();
   await prisma.booking.deleteMany();
@@ -981,8 +984,13 @@ export async function seedDatabase() {
       active: r.active,
       urgencyEn: r.urgencyEn ?? null,
       urgencyTh: r.urgencyTh ?? null,
+      units: SEED_UNITS[r.id] ?? 1,
+      hkStatus: SEED_HK[r.id] ?? "clean",
     })),
   });
+
+  // v15 · channels before bookings, so OTA stays carry their channel id.
+  const channels = await seedChannels(ROOMS.map((r) => r.id));
 
   const today = new Date();
   today.setHours(12, 0, 0, 0);
@@ -1065,6 +1073,9 @@ export async function seedDatabase() {
       adults: 1 + (i % 2),
       children: i % 4 === 0 ? 1 : 0,
       passportId: i % 3 === 0 ? `P${100000 + i}` : null,
+      channelId:
+        source === "Agoda" ? channels.agoda : source === "Booking" ? channels.booking : null,
+      externalRef: source === "Direct" ? null : `${source.toUpperCase()}-${900000 + i}`,
     };
   });
 
@@ -1188,6 +1199,9 @@ export async function seedDatabase() {
       published: true,
     })),
   });
+
+  // v15 · staff, packages, yield, payments, requests, preference log.
+  await seedV15(iso(today), bookingRows);
 
   console.log(
     `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · ${DINING.length} dining categories · ${dishCount} dishes · ${EVENTS.length} events · guests + demo user`

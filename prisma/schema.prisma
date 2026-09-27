@@ -1,6 +1,12 @@
-// TEAK HOUSE v8 · data layer
+// TEAK HOUSE v15 · data layer
 // Supabase / any Postgres: DATABASE_URL (pooled) + DIRECT_URL (migrations).
 // Local SQLite swap: see README (provider = "sqlite", url = file:./dev.db).
+//
+// v15 "Eight-Star" additions, all additive:
+//   inventory units + housekeeping on Room · money/packages/channel/vault on Booking
+//   StaffUser/StaffSession/AuditLog (RBAC) · Addon (bespoke packages) · Payment
+//   Channel/ChannelRoomMap/OutboxEvent/InboundEvent (two-way OTA sync)
+//   ServiceRequest + GuestNote (concierge + front desk) · YieldRule · Report
 
 generator client {
   provider = "prisma-client-js"
@@ -39,6 +45,15 @@ model Hotel {
   /// v13 · owner-uploaded page heroes · empty falls back to the seeded local image
   diningHeroImage     String  @default("")
   eventsHeroImage     String  @default("")
+  /// v15 · localisation + money rails · IANA zone, ISO-4217 base, PromptPay ID (digits only)
+  timeZone            String  @default("Asia/Bangkok")
+  baseCurrency        String  @default("THB")
+  promptPayId         String  @default("")
+  /// v15 · wire-transfer instructions shown to a guest who chooses bank transfer
+  bankName            String  @default("")
+  bankAccountName     String  @default("")
+  bankAccountNo       String  @default("")
+  bankSwift           String  @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   rooms       Room[]
@@ -78,11 +93,18 @@ model Room {
   active      Boolean  @default(true)
   urgencyEn   String?
   urgencyTh   String?
+  /// v15 · inventory · how many physical units sell under this type. Availability is
+  /// units minus overlapping stays, so a villa type with 3 units takes 3 bookings a night.
+  units       Int      @default(1)
+  /// v15 · housekeeping board · "clean" | "dirty" | "inspected" | "ooo" (out of order)
+  hkStatus    String   @default("clean")
+  hkUpdatedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   bookings    Booking[]
   blocks      RoomBlock[]
   priceRules  SeasonalPriceRule[]
+  channelMaps ChannelRoomMap[]
 }
 
 /// Per-day rate rule · precedence override > season > room.rate (base).
@@ -102,6 +124,31 @@ model SeasonalPriceRule {
   updatedAt   DateTime @updatedAt
 
   @@index([roomId, startDate, endDate])
+}
+
+/// v15 · Yield rule · a demand-driven layer ON TOP of the per-day rate.
+/// kind "occupancy": when the house is >= threshold % full on that night, multiply.
+/// kind "lead_time": when the booking is made >= threshold days ahead, multiply (early
+///                   bird); with maxLeadDays set, when made <= maxLeadDays ahead (last minute).
+/// kind "min_stay":  stays shorter than minNights are refused for the covered dates.
+/// roomId null applies to every room. Dates optional (null = always).
+model YieldRule {
+  id          String   @id @default(cuid())
+  hotelId     String   @default("default")
+  roomId      String?
+  kind        String
+  label       String   @default("")
+  threshold   Float    @default(0)
+  maxLeadDays Int?
+  multiplier  Float    @default(1)
+  minNights   Int      @default(1)
+  startDate   String?
+  endDate     String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([hotelId, enabled])
 }
 
 model Booking {
@@ -126,9 +173,33 @@ model Booking {
   children        Int?
   arrivalTime     String?
   specialRequests String?
+  /// v15 · money · `amount` is always base currency (THB). What the guest SAW is
+  /// kept so a receipt can be re-issued in their currency at the rate of the day.
+  currency        String   @default("THB")
+  fxRate          Float    @default(1)
+  paidAmount      Int      @default(0)
+  /// "unpaid" | "deposit" | "paid" | "refunded" | "pending_wire"
+  paymentStatus   String   @default("unpaid")
+  /// v15 · bespoke stay packages · JSON [{ key, qty }] and their base-currency total
+  packages        String   @default("[]")
+  packagesAmount  Int      @default(0)
+  /// v15 · channel provenance · which connected channel delivered it, and its id there
+  channelId       String?
+  channel         Channel? @relation(fields: [channelId], references: [id])
+  externalRef     String?
+  /// v15 · front-desk lifecycle stamps
+  checkedInAt     DateTime?
+  checkedOutAt    DateTime?
+  /// v15 · encrypted identity vault (AES-256-GCM) · passport/ID live HERE when GUEST_VAULT_KEY is set
+  vault           String   @default("")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   guestLinks      GuestBooking[]
+  payments        Payment[]
+  serviceRequests ServiceRequest[]
+
+  @@unique([channelId, externalRef])
+  @@index([checkIn, checkOut])
 }
 
 model RoomBlock {
@@ -146,6 +217,7 @@ model User {
   id         String   @id
   name       String
   email      String   @unique
+  /// v15 · scrypt hash ("scrypt$salt$hash"). A legacy plaintext value is upgraded on next sign-in.
   password   String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -170,8 +242,27 @@ model Guest {
   phone       String?
   passportId  String?
   nationality String?
+  /// v15 · preference log · VIP flag, free-text preferences the desk keeps current
+  vip         Boolean  @default(false)
+  preferences String   @default("")
+  language    String   @default("en")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  notes       GuestNote[]
+}
+
+/// v15 · A dated line in a guest's preference log ("Prefers room 3", "Allergic to peanuts")
+model GuestNote {
+  id        String   @id @default(cuid())
+  guestId   String
+  guest     Guest    @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  /// "preference" | "allergy" | "occasion" | "incident" | "note"
+  tag       String   @default("note")
+  body      String
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  @@index([guestId, createdAt])
 }
 
 model EmailTemplate {
@@ -190,6 +281,207 @@ model EmailTemplate {
 model DemoMeta {
   id        String   @id @default("demo")
   lastReset DateTime @default(now())
+}
+
+/// v15 · Property staff · the owner panel is role-gated by these rows.
+/// role: "owner" | "manager" | "frontdesk" | "housekeeping"
+model StaffUser {
+  id           String   @id @default(cuid())
+  hotelId      String   @default("default")
+  email        String   @unique
+  name         String
+  role         String   @default("frontdesk")
+  passwordHash String
+  active       Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  sessions     StaffSession[]
+}
+
+/// v15 · Server-side staff session · the cookie carries a random token, the row its hash.
+model StaffSession {
+  id        String    @id @default(cuid())
+  staffId   String
+  staff     StaffUser @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  ip        String    @default("")
+  userAgent String    @default("")
+  createdAt DateTime  @default(now())
+
+  @@index([staffId])
+}
+
+/// v15 · Who did what · every staff mutation and every automated channel action.
+model AuditLog {
+  id        String   @id @default(cuid())
+  hotelId   String   @default("default")
+  actorId   String?
+  actorRole String   @default("system")
+  action    String
+  entity    String
+  entityId  String   @default("")
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([hotelId, createdAt])
+  @@index([entity, entityId])
+}
+
+/// v15 · Bespoke stay package (helicopter transfer, private chef, spa itinerary…)
+/// unit: "stay" (once) | "night" (× nights) | "person" (× guests)
+model Addon {
+  id            String   @id @default(cuid())
+  hotelId       String   @default("default")
+  key           String   @unique
+  nameEn        String
+  nameTh        String
+  descriptionEn String   @default("")
+  descriptionTh String   @default("")
+  /// "transfer" | "dining" | "wellness" | "experience" | "family"
+  category      String   @default("experience")
+  price         Int
+  unit          String   @default("stay")
+  image         String   @default("")
+  order         Int      @default(0)
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([hotelId, order])
+}
+
+/// v15 · A payment against a booking · one row per attempt, provider-agnostic.
+/// provider: "stripe" | "promptpay" | "wire" | "crypto" | "demo" | "channel"
+/// status:   "pending" | "succeeded" | "failed" | "refunded"
+model Payment {
+  id            String   @id @default(cuid())
+  bookingId     String
+  booking       Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  provider      String
+  method        String   @default("")
+  /// base currency (THB) amount
+  amount        Int
+  /// what the guest was charged, in their currency
+  currency      String   @default("THB")
+  fxRate        Float    @default(1)
+  chargedAmount Float    @default(0)
+  status        String   @default("pending")
+  providerRef   String   @default("")
+  payload       String   @default("{}")
+  createdAt     DateTime @default(now())
+  paidAt        DateTime?
+
+  @@index([bookingId])
+  @@index([provider, providerRef])
+}
+
+/// v15 · A connected distribution channel (OTA or channel manager).
+/// kind: "booking.com" | "agoda" | "expedia" | "siteminder" | "exely" | "hoteliers.guru" | "custom" | "loopback"
+model Channel {
+  id            String   @id @default(cuid())
+  hotelId       String   @default("default")
+  kind          String
+  name          String
+  enabled       Boolean  @default(false)
+  commissionPct Float    @default(15)
+  /// where ARI pushes go · empty for loopback
+  endpoint      String   @default("")
+  /// shared HMAC secret · stored encrypted through the vault when a key is set
+  secretEnc     String   @default("")
+  /// which sync direction is live · "both" | "push" | "pull" | "off"
+  mode          String   @default("both")
+  lastSyncAt    DateTime?
+  lastError     String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  roomMaps      ChannelRoomMap[]
+  bookings      Booking[]
+  inbound       InboundEvent[]
+}
+
+/// v15 · Room-type mapping between this PMS and a channel's own ids.
+model ChannelRoomMap {
+  id             String  @id @default(cuid())
+  channelId      String
+  channel        Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  roomId         String
+  room           Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  externalRoomId String
+  externalRateId String  @default("")
+
+  @@unique([channelId, roomId])
+}
+
+/// v15 · Transactional outbox · every inventory/rate change becomes one row here in the
+/// SAME transaction as the change, and the dispatcher pushes it to every channel.
+/// status: "pending" | "sent" | "failed"
+model OutboxEvent {
+  id        String   @id @default(cuid())
+  hotelId   String   @default("default")
+  type      String
+  /// idempotency key · a channel receiving the same key twice must not act twice
+  key       String   @unique
+  payload   String
+  status    String   @default("pending")
+  attempts  Int      @default(0)
+  lastError String   @default("")
+  createdAt DateTime @default(now())
+  sentAt    DateTime?
+
+  @@index([status, createdAt])
+}
+
+/// v15 · Every webhook a channel delivered · deduplicated on (channel, externalId).
+/// status: "processed" | "duplicate" | "rejected" | "overbooked"
+model InboundEvent {
+  id         String   @id @default(cuid())
+  channelId  String
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  externalId String
+  type       String
+  payload    String
+  status     String   @default("processed")
+  error      String   @default("")
+  createdAt  DateTime @default(now())
+
+  @@unique([channelId, externalId])
+  @@index([createdAt])
+}
+
+/// v15 · A guest ask routed to the desk · room service, spa, transfer, itinerary…
+/// source: "guest" | "concierge_ai" | "staff"  ·  status: "new" | "accepted" | "done" | "cancelled"
+model ServiceRequest {
+  id        String   @id @default(cuid())
+  hotelId   String   @default("default")
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  kind      String   @default("other")
+  title     String
+  details   String   @default("")
+  /// when the guest wants it · free text or ISO
+  due       String   @default("")
+  status    String   @default("new")
+  source    String   @default("guest")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hotelId, status, createdAt])
+}
+
+/// v15 · A generated executive report · the payload is the rendered numbers.
+model Report {
+  id          String   @id @default(cuid())
+  hotelId     String   @default("default")
+  /// "daily" | "weekly" | "monthly"
+  kind        String
+  periodStart String
+  periodEnd   String
+  payload     String
+  createdAt   DateTime @default(now())
+
+  @@index([hotelId, createdAt])
 }
 
 /// v12 · Dining menu category · owner-editable, guest page renders published only

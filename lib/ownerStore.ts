@@ -10,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { getSeedGuestRooms } from "./guestRooms";
+import type { Addon } from "./addons";
 import { groupRulesByRoom, type PriceRule } from "./pricing";
 import { SEED_ROOMS } from "./rooms";
 import type {
@@ -119,7 +120,25 @@ function computeOtaSavedMonth(data: OwnerData): number {
   return total;
 }
 
-async function fetchData(): Promise<OwnerData> {
+export type StoreScope = "owner" | "guest";
+
+/**
+ * v15 · Two scopes, one store.
+ *   owner · everything, staff session required (the demo sandbox passes)
+ *   guest · rooms, rate rules and packages only · the booking page and the
+ *           account page never download other people's bookings again
+ */
+async function fetchData(scope: StoreScope): Promise<OwnerData> {
+  if (scope === "guest") {
+    const res = await fetch("/api/public/rates", { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to load rates");
+    const body = (await res.json()) as {
+      rooms: RoomData[];
+      priceRules: PriceRule[];
+      addons: Addon[];
+    };
+    return { rooms: body.rooms, bookings: [], blocks: {}, priceRules: body.priceRules, addons: body.addons };
+  }
   const res = await fetch("/api/data", { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to load data");
   return res.json();
@@ -132,6 +151,8 @@ type OwnerCtx = {
   login: (email: string, pin: string) => boolean;
   logout: () => void;
   resetDemo: () => void;
+  /** v15 · re-read the store from the server */
+  refresh: () => Promise<void>;
   addBooking: (booking: BookingInput) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   deleteBooking: (id: string) => void;
@@ -151,7 +172,13 @@ type OwnerCtx = {
 
 const Ctx = createContext<OwnerCtx | null>(null);
 
-export function OwnerProvider({ children }: { children: React.ReactNode }) {
+export function OwnerProvider({
+  children,
+  scope = "owner",
+}: {
+  children: React.ReactNode;
+  scope?: StoreScope;
+}) {
   const [data, setData] = useState<OwnerData>(emptyData);
   const [hydrated, setHydrated] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
@@ -164,7 +191,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     const timeoutId = window.setTimeout(() => {
       void (async () => {
         try {
-          const loaded = await fetchData();
+          const loaded = await fetchData(scope);
           if (!cancelled) {
             startTransition(() => setData(loaded));
           }
@@ -191,28 +218,26 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [scope]);
 
   const refresh = useCallback(async () => {
     try {
-      const loaded = await fetchData();
+      const loaded = await fetchData(scope);
       setData(loaded);
     } catch {
       /* keep current */
     }
-  }, []);
+  }, [scope]);
 
-  const login = useCallback((email: string, pin: string) => {
-    const expected = process.env.NEXT_PUBLIC_OWNER_PIN ?? "1234";
-    if (pin !== expected) return false;
-    try {
-      localStorage.setItem(AUTH_KEY, "1");
-      localStorage.setItem(`${AUTH_KEY}-email`, email);
-    } catch {
-      /* ignore */
-    }
-    setIsAuthed(true);
-    return true;
+  /**
+   * v15 · Sign-in moved to the server (lib/staffSession + /api/staff). This
+   * stays for API compatibility with older callers and always refuses · a PIN
+   * compared in the browser was never a lock.
+   */
+  const login = useCallback((_email: string, _pin: string) => {
+    void _email;
+    void _pin;
+    return false;
   }, []);
 
   const logout = useCallback(() => {
@@ -455,6 +480,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       resetDemo,
+      refresh,
       addBooking,
       updateBooking,
       deleteBooking,
@@ -478,6 +504,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       resetDemo,
+      refresh,
       addBooking,
       updateBooking,
       deleteBooking,
@@ -535,6 +562,14 @@ const NO_RULES: PriceRule[] = [];
 export function useGuestPriceRules(): PriceRule[] {
   const ctx = useContext(Ctx);
   return ctx?.hydrated ? ctx.data.priceRules : NO_RULES;
+}
+
+const NO_ADDONS: Addon[] = [];
+
+/** v15 · Published stay packages for the booking page. */
+export function useGuestAddons(): Addon[] {
+  const ctx = useContext(Ctx);
+  return ctx?.hydrated ? ctx.data.addons ?? NO_ADDONS : NO_ADDONS;
 }
 
 /** Rate rules indexed by roomId · the shape the pricing engine consumes. */

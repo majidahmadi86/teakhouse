@@ -34,7 +34,7 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1582719478250-c89cae4dc85b"),
   },
-  currencies: ["THB", "USD", "EUR"],
+  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "AED", "CHF"],
   languages: ["en", "th"],
   contact: {
     email: "stay@teakhouse.demo",

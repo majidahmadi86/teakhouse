@@ -24,6 +24,9 @@ export type Room = {
   pets: boolean;
   active: boolean;
   urgency?: { en: string; th: string };
+  /** v15 · inventory units and housekeeping state · present on live rows */
+  units?: number;
+  hkStatus?: "clean" | "dirty" | "inspected" | "ooo";
 };
 
 export const SHORT_KEY_TO_SLUG: Record<RoomShortKey, string> = {

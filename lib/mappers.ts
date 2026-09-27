@@ -66,6 +66,19 @@ export type DbBooking = {
   children: number | null;
   arrivalTime: string | null;
   specialRequests: string | null;
+  /** v15 columns · optional so older callers (seed helpers) still satisfy the type */
+  currency?: string;
+  fxRate?: number;
+  paidAmount?: number;
+  paymentStatus?: string;
+  packages?: string;
+  packagesAmount?: number;
+  channelId?: string | null;
+  externalRef?: string | null;
+  checkedInAt?: Date | null;
+  checkedOutAt?: Date | null;
+  vault?: string;
+  createdAt?: Date;
 };
 
 export function roomToClient(r: DbRoom): Room {
@@ -150,7 +163,33 @@ export function bookingToClient(b: DbBooking): Booking {
     children: b.children ?? undefined,
     arrivalTime: b.arrivalTime ?? undefined,
     specialRequests: b.specialRequests ?? undefined,
+    currency: b.currency ?? "THB",
+    fxRate: b.fxRate ?? 1,
+    paidAmount: b.paidAmount ?? 0,
+    paymentStatus: (b.paymentStatus ?? "unpaid") as Booking["paymentStatus"],
+    packages: parsePackages(b.packages),
+    packagesAmount: b.packagesAmount ?? 0,
+    channelId: b.channelId ?? null,
+    externalRef: b.externalRef ?? null,
+    checkedInAt: b.checkedInAt ? b.checkedInAt.toISOString() : null,
+    checkedOutAt: b.checkedOutAt ? b.checkedOutAt.toISOString() : null,
+    vaulted: Boolean(b.vault),
+    createdAt: b.createdAt ? b.createdAt.toISOString() : undefined,
   };
+}
+
+function parsePackages(raw: string | undefined): { key: string; qty: number }[] {
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw) as { key?: unknown; qty?: unknown }[];
+    return Array.isArray(arr)
+      ? arr
+          .filter((p) => typeof p?.key === "string")
+          .map((p) => ({ key: p.key as string, qty: typeof p.qty === "number" ? p.qty : 1 }))
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 export function bookingToDb(b: Booking) {

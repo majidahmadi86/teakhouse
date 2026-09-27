@@ -6,6 +6,7 @@ import { SafeImage } from "@/components/SafeImage";
 import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { RateLine } from "@/lib/pricing";
+import type { AddonLine } from "@/lib/addons";
 import type { Room } from "@/lib/rooms";
 import { isoDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,11 @@ export type BookingSummaryProps = {
   balance: number;
   /** One line per price band of the stay · empty for an unpriced stay. */
   rateLines?: RateLine[];
+  /** v15 · packages the guest added */
+  addonLines?: AddonLine[];
+  addonsTotal?: number;
+  /** v15 · a currency/rate note under the totals */
+  note?: string;
   /** Mobile collapsible bar */
   mobile?: boolean;
   expanded?: boolean;
@@ -42,6 +48,9 @@ export function BookingSummary({
   deposit,
   balance,
   rateLines = [],
+  addonLines = [],
+  addonsTotal = 0,
+  note,
   mobile = false,
   expanded = false,
   onToggle,
@@ -128,6 +137,20 @@ export function BookingSummary({
               <span className="font-semibold text-ink">{format(subtotal)}</span>
             </div>
           )}
+          {addonLines.length > 0 ? (
+            <ul className="space-y-1 border-t border-line pt-2" data-summary-addons>
+              {addonLines.map((l) => (
+                <li key={l.key} className="flex justify-between gap-3">
+                  <span className="min-w-0 truncate text-sub">{tr(l.name)}</span>
+                  <span className="shrink-0 font-semibold text-ink">{format(l.total)}</span>
+                </li>
+              ))}
+              <li className="flex justify-between border-t border-line pt-2 font-semibold text-ink">
+                <span>{t("bk.stayTotal")}</span>
+                <span>{format(subtotal + addonsTotal)}</span>
+              </li>
+            </ul>
+          ) : null}
           {savings > 0 ? (
             <div className="flex justify-between text-deal">
               <span>{t("bk.save")}</span>
@@ -142,6 +165,7 @@ export function BookingSummary({
             <span>{t("bk.bal")}</span>
             <span>{format(balance)}</span>
           </div>
+          {note ? <p className="text-[0.74rem] font-semibold text-sub">{note}</p> : null}
         </div>
       ) : null}
     </div>
@@ -166,7 +190,7 @@ export function BookingSummary({
               {t("bk.summary")}
             </div>
             <div className="truncate font-display text-lg font-semibold text-ink">
-              {room && nights > 0 ? format(subtotal) : t("avail.selectDates")}
+              {room && nights > 0 ? format(subtotal + addonsTotal) : t("avail.selectDates")}
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">

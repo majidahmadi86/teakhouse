@@ -11,10 +11,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const src = fs.readFileSync(
-  path.join(__dirname, "..", "lib", "i18n-dict.ts"),
-  "utf8"
-);
+const src = ["i18n-dict.ts", "i18n-dict-v15.ts", "i18n-dict-v15-owner.ts"]
+  .map((f) => fs.readFileSync(path.join(__dirname, "..", "lib", f), "utf8"))
+  .join("\n");
 
 const THAI = /[฀-๿]/;
 const LATIN_WORD = /[A-Za-z]{3,}/;
@@ -27,7 +26,7 @@ const NOT_COPY =
   // Technical tokens first, WITHOUT a word boundary requirement on the left ·
   // a route path, a file extension and an env var name are code. A Thai
   // sentence that names /dining, a jpg file or EMAIL_PROVIDER is still Thai.
-  /\/[a-z-]+\b|\b(?:jpg|jpeg|png|webp|avif|csv|webhook|EMAIL_PROVIDER)\b|\{[a-z]+\}|\b(LINE|OTA|PIN|PDF|BTS|MRT|CSV|Google Maps|Google|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Visa|Mastercard|Agoda|Booking\.com|Booking|Mikaro Studio|The Teak House|Teak House|Nam|Claire|Daniel|Chao Phraya|Charoenkrung|Sriracha|Songkran|Loy Krathong|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december|tonight|today|tomorrow|weekend|next|the|this|week|night|nights)\b/gi;
+  /\/[a-z-]+\b|\b(?:jpg|jpeg|png|webp|avif|csv|webhook|EMAIL_PROVIDER)\b|\{[a-z]+\}|\b(LINE|OTA|PIN|PDF|BTS|MRT|CSV|Google Pay|Google Maps|Google|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Apple Pay|Stripe|SWIFT|QR|RevPAR|ADR|KPI|CSV|BTC|ETH|USDC|Visa|Mastercard|Agoda|Booking\.com|Booking|Mikaro Studio|The Teak House|Teak House|Nam|Claire|Daniel|Chao Phraya|Charoenkrung|Sriracha|Songkran|Loy Krathong|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december|tonight|today|tomorrow|weekend|next|the|this|week|night|nights)\b/gi;
 
 /** Values that are correct without any Thai at all. */
 const OK_WITHOUT_THAI = [

@@ -36,7 +36,7 @@ const config: Config = {
         "surface-2": "#F4F7FB",
       },
       fontFamily: {
-        display: ["var(--font-marcellus)", "serif"],
+        display: ["var(--font-marcellus)", "Cormorant Garamond", "Georgia", "serif"],
         sans: ["var(--font-jakarta)", "sans-serif"],
         "th-display": ["var(--font-kanit)", "sans-serif"],
         "th-body": ["var(--font-sarabun)", "sans-serif"],

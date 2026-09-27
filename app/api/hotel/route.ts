@@ -1,38 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { audit } from "@/lib/audit";
+import { gate, isDenied, readJson } from "@/lib/api";
 import type { HotelDto } from "@/lib/ownerTypes";
 import { revalidateHotel } from "@/lib/revalidate";
+import { isVaultEnabled } from "@/lib/vault";
 
 export const dynamic = "force-dynamic";
 
 const HOTEL_ID = "default";
 
-function toDto(row: {
-  id: string;
-  name: string;
-  tagline: string;
-  email: string;
-  phone: string;
-  lineId: string;
-  address: string;
-  addressLine: string;
-  city: string;
-  country: string;
-  postalCode: string;
-  lat: number;
-  lng: number;
-  checkInTime: string;
-  checkOutTime: string;
-  cancelPolicy: string;
-  petsPolicy: string;
-  depositPct: number;
-  reservationsEnabled: boolean;
-  serviceStart: string;
-  serviceEnd: string;
-  maxPartySize: number;
-  diningHeroImage: string;
-  eventsHeroImage: string;
-}): HotelDto {
+type Row = NonNullable<Awaited<ReturnType<typeof prisma.hotel.findUnique>>>;
+
+function toDto(row: Row): HotelDto {
   return {
     id: row.id,
     name: row.name,
@@ -58,6 +38,14 @@ function toDto(row: {
     maxPartySize: row.maxPartySize,
     diningHeroImage: row.diningHeroImage,
     eventsHeroImage: row.eventsHeroImage,
+    timeZone: row.timeZone,
+    baseCurrency: row.baseCurrency,
+    promptPayId: row.promptPayId,
+    bankName: row.bankName,
+    bankAccountName: row.bankAccountName,
+    bankAccountNo: row.bankAccountNo,
+    bankSwift: row.bankSwift,
+    vaultEnabled: isVaultEnabled(),
   };
 }
 
@@ -69,9 +57,14 @@ export async function GET() {
   return NextResponse.json(toDto(row));
 }
 
+const str = (v: unknown, fallback: string, max = 300) =>
+  typeof v === "string" ? v.trim().slice(0, max) : fallback;
+
 export async function PATCH(req: Request) {
+  const g = await gate(req, "settings:write");
+  if (isDenied(g)) return g.denied;
   try {
-    const body = (await req.json()) as Partial<HotelDto>;
+    const body = (await readJson<Partial<HotelDto>>(req)) ?? {};
     const existing = await prisma.hotel.findUnique({ where: { id: HOTEL_ID } });
     if (!existing) {
       return NextResponse.json({ error: "Hotel not found" }, { status: 404 });
@@ -80,43 +73,50 @@ export async function PATCH(req: Request) {
     const updated = await prisma.hotel.update({
       where: { id: HOTEL_ID },
       data: {
-        name: body.name ?? existing.name,
-        tagline: body.tagline ?? existing.tagline,
-        email: body.email ?? existing.email,
-        phone: body.phone ?? existing.phone,
-        lineId: body.lineId ?? existing.lineId,
-        address: body.address ?? existing.address,
-        addressLine: body.addressLine ?? existing.addressLine,
-        city: body.city ?? existing.city,
-        country: body.country ?? existing.country,
-        postalCode: body.postalCode ?? existing.postalCode,
+        name: str(body.name, existing.name),
+        tagline: str(body.tagline, existing.tagline),
+        email: str(body.email, existing.email),
+        phone: str(body.phone, existing.phone),
+        lineId: str(body.lineId, existing.lineId),
+        address: str(body.address, existing.address),
+        addressLine: str(body.addressLine, existing.addressLine),
+        city: str(body.city, existing.city),
+        country: str(body.country, existing.country),
+        postalCode: str(body.postalCode, existing.postalCode),
         lat: typeof body.lat === "number" ? body.lat : existing.lat,
         lng: typeof body.lng === "number" ? body.lng : existing.lng,
-        checkInTime: body.checkInTime ?? existing.checkInTime,
-        checkOutTime: body.checkOutTime ?? existing.checkOutTime,
-        cancelPolicy: body.cancelPolicy ?? existing.cancelPolicy,
-        petsPolicy: body.petsPolicy ?? existing.petsPolicy,
+        checkInTime: str(body.checkInTime, existing.checkInTime),
+        checkOutTime: str(body.checkOutTime, existing.checkOutTime),
+        cancelPolicy: str(body.cancelPolicy, existing.cancelPolicy, 2000),
+        petsPolicy: str(body.petsPolicy, existing.petsPolicy, 2000),
         depositPct:
-          typeof body.depositPct === "number"
-            ? body.depositPct
+          typeof body.depositPct === "number" && body.depositPct >= 0 && body.depositPct <= 100
+            ? Math.round(body.depositPct)
             : existing.depositPct,
         reservationsEnabled:
           typeof body.reservationsEnabled === "boolean"
             ? body.reservationsEnabled
             : existing.reservationsEnabled,
-        serviceStart: body.serviceStart ?? existing.serviceStart,
-        serviceEnd: body.serviceEnd ?? existing.serviceEnd,
+        serviceStart: str(body.serviceStart, existing.serviceStart),
+        serviceEnd: str(body.serviceEnd, existing.serviceEnd),
         maxPartySize:
           typeof body.maxPartySize === "number" && body.maxPartySize > 0
-            ? body.maxPartySize
+            ? Math.round(body.maxPartySize)
             : existing.maxPartySize,
-        diningHeroImage: body.diningHeroImage ?? existing.diningHeroImage,
-        eventsHeroImage: body.eventsHeroImage ?? existing.eventsHeroImage,
+        diningHeroImage: str(body.diningHeroImage, existing.diningHeroImage, 1000),
+        eventsHeroImage: str(body.eventsHeroImage, existing.eventsHeroImage, 1000),
+        timeZone: str(body.timeZone, existing.timeZone, 60),
+        baseCurrency: str(body.baseCurrency, existing.baseCurrency, 3).toUpperCase() || "THB",
+        promptPayId: str(body.promptPayId, existing.promptPayId, 20),
+        bankName: str(body.bankName, existing.bankName),
+        bankAccountName: str(body.bankAccountName, existing.bankAccountName),
+        bankAccountNo: str(body.bankAccountNo, existing.bankAccountNo, 40),
+        bankSwift: str(body.bankSwift, existing.bankSwift, 20),
       },
     });
 
     revalidateHotel();
-
+    await audit(g.actor, "hotel.updated", "hotel", HOTEL_ID, { keys: Object.keys(body) });
     return NextResponse.json(toDto(updated));
   } catch (e) {
     console.error("[api/hotel PATCH]", e);

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
   diningCategoryToClient,
@@ -10,6 +11,8 @@ import { revalidateDining } from "@/lib/revalidate";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const gate_ = await requireStaff(req, "content:write");
+  if (!gate_.ok) return gate_.response;
   try {
     const body = (await req.json()) as Omit<DiningCategory, "items">;
     const created = await prisma.diningCategory.create({

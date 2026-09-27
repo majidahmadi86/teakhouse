@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
   EVENT_REQUEST_STATUSES,
@@ -11,6 +12,8 @@ export const dynamic = "force-dynamic";
 type Ctx = { params: { id: string } };
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const gate_ = await requireStaff(req, "messages:write");
+  if (!gate_.ok) return gate_.response;
   try {
     const patch = (await req.json()) as { status?: string; notes?: string };
     if (

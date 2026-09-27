@@ -24,7 +24,8 @@ import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { ExperienceMenu } from "@/components/header/ExperienceMenu";
 import { RoomsMegaMenu } from "@/components/header/RoomsMegaMenu";
 import { useGuestAuth } from "@/lib/guestAuth";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
+import { LanguageMenu } from "@/components/LanguageMenu";
 import { cn } from "@/lib/utils";
 
 /**
@@ -85,35 +86,9 @@ const DRAWER_GROUP = [
 ] as const;
 
 function LangPair({ className }: { className?: string }) {
-  const { lang, setLang } = useI18n();
-
-  return (
-    <div className={cn("flex shrink-0 items-center gap-1.5 whitespace-nowrap", className)}>
-      {(["en", "th"] as Lang[]).map((l, i) => (
-        <span key={l} className="inline-flex items-center gap-1.5">
-          {i > 0 ? (
-            <span className="text-[13px] font-bold text-line" aria-hidden>
-              |
-            </span>
-          ) : null}
-          <button
-            type="button"
-            onClick={() => setLang(l)}
-            aria-label={l === "en" ? "EN English" : "ไทย Thai"}
-            aria-pressed={lang === l}
-            className={cn(
-              "whitespace-nowrap text-[13px] font-bold transition",
-              lang === l
-                ? "text-blue underline decoration-2 underline-offset-4"
-                : "text-sub hover:text-ink"
-            )}
-          >
-            {l === "en" ? "EN" : "ไทย"}
-          </button>
-        </span>
-      ))}
-    </div>
-  );
+  const { lang } = useI18n();
+  // v15 · the same zero-JS menu the shell renders (VISUAL PARITY LAW).
+  return <LanguageMenu current={lang} className={className} />;
 }
 
 function AccountEntry({ iconOnly }: { iconOnly?: boolean }) {

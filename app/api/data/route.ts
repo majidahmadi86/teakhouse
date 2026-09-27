@@ -1,10 +1,13 @@
 import { loadOwnerData } from "@/lib/dataService";
+import { requireStaff } from "@/lib/auth/session";
 import { maybeReseedDemo } from "@/lib/demoReset";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const gate_ = await requireStaff(req, "bookings:read");
+  if (!gate_.ok) return gate_.response;
   try {
     // A failed reseed must not cost the caller its data · serving slightly
     // stale demo rows beats dropping the client back to base-rate seed data.
