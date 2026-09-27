@@ -337,7 +337,13 @@ async function run() {
     await page.goto(BASE + "/owner/desk", { waitUntil: "load" });
     await page.waitForSelector("[data-role-switcher]", { timeout: 15000 });
     await page.locator('[data-role="housekeeping"]').click();
-    await page.waitForTimeout(2500);
+    // The switch signs in on the server and re-renders the shell · wait for the
+    // sidebar to actually change rather than guessing a delay (production
+    // latency made a fixed 2.5s read the old nav).
+    await page
+      .waitForFunction(() => /housekeeping|แม่บ้าน/i.test(document.querySelector("[data-whoami]")?.textContent || ""), null, { timeout: 20000 })
+      .catch(() => {});
+    await page.waitForTimeout(800);
     const navText = await page.locator("aside nav").innerText().catch(() => "");
     check(`[${lang}] housekeeping sidebar hides executive sections`, navText.length > 0 && !/Channels|ช่องทางขาย/.test(navText) && !/Settings|ตั้งค่า/.test(navText), navText.replace(/\s+/g, " ").slice(0, 80));
     await page.goto(BASE + "/owner/channels", { waitUntil: "load" });
