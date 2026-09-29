@@ -27,7 +27,7 @@ export function HeroSearchPillShell({
         className="pointer-events-none absolute -top-3 left-4 z-10 origin-bottom-left -rotate-[6deg]"
         aria-hidden
       >
-        <span className="inline-flex whitespace-nowrap rounded-full bg-navy px-3 py-1 text-[13px] font-bold text-white shadow-card">
+        <span className="inline-flex whitespace-nowrap rounded-full bg-[#C23418] px-3 py-1 text-[13px] font-bold text-white shadow-card">
           {tonightLabel}
         </span>
       </div>

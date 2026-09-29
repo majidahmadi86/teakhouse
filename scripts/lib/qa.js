@@ -120,27 +120,6 @@ async function purgeQaData({ quiet = false } = {}) {
       const ids = bookings.map((b) => b.id);
       await prisma.guestBooking.deleteMany({ where: { bookingId: { in: ids } } });
     }
-    // v15 · requests, channel test traffic and payments the suites create.
-    counts.serviceRequest = (
-      await prisma.serviceRequest.deleteMany({
-        where: { OR: [{ title: { startsWith: QA_PREFIX } }, { details: { startsWith: QA_PREFIX } }] },
-      })
-    ).count;
-    counts.inboundEvent = (
-      await prisma.inboundEvent.deleteMany({ where: { externalId: { startsWith: QA_PREFIX } } })
-    ).count;
-    counts.channel = (
-      await prisma.channel.deleteMany({ where: { name: { startsWith: QA_PREFIX } } })
-    ).count;
-    counts.addon = (
-      await prisma.addon.deleteMany({ where: { key: { startsWith: "qa-" } } })
-    ).count;
-    counts.staffUser = (
-      await prisma.staffUser.deleteMany({ where: { email: { startsWith: "qa_" } } })
-    ).count;
-    counts.user = (
-      await prisma.user.deleteMany({ where: { email: { startsWith: "qa_" } } })
-    ).count;
     counts.booking = (await prisma.booking.deleteMany({ where: byGuest })).count;
     counts.guest = (await prisma.guest.deleteMany({ where: byName })).count;
 

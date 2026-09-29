@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LanguageMenu } from "@/components/LanguageMenu";
 import { BadgePercent, CalendarDays, ChevronDown, Menu, User } from "lucide-react";
 import { LogoMark } from "@/components/LogoMark";
 import { getServerPathname, t, type Lang } from "@/lib/serverLocale";
@@ -32,6 +31,11 @@ export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
   const pathname = getServerPathname();
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
+  const langClass = (l: Lang) =>
+    cn(
+      "whitespace-nowrap text-[13px] font-bold",
+      l === locale ? "text-blue underline decoration-2 underline-offset-4" : "text-sub"
+    );
 
   return (
     <header className="sticky top-[var(--demo-bar-h)] z-header h-14 border-b border-line bg-white md:h-16">
@@ -139,8 +143,12 @@ export function HeaderShell({ locale = "en" }: { locale?: Lang }) {
               <ChevronDown className="h-3.5 w-3.5 shrink-0 text-sub" aria-hidden />
             </span>
 
-            {/* Language · sixteen languages, zero JS · identical to Header */}
-            <LanguageMenu current={locale} />
+            {/* Language · EN | ไทย */}
+            <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+              <span className={langClass("en")}>EN</span>
+              <span className="text-[13px] font-bold text-line" aria-hidden>|</span>
+              <span className={langClass("th")}>ไทย</span>
+            </div>
 
             {/* Account · signed-out */}
             <span className="group relative inline-flex">

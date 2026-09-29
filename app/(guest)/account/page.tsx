@@ -8,7 +8,7 @@ import { SafeImage } from "@/components/SafeImage";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
-import { useGuestRooms, type Booking } from "@/lib/ownerStore";
+import { useOwner, type Booking } from "@/lib/ownerStore";
 import { cn, isoDate } from "@/lib/utils";
 
 function canCancelFree(booking: Booking): boolean {
@@ -31,8 +31,8 @@ function statusLabel(
 export default function AccountPage() {
   const { t, tr, lang } = useI18n();
   const { format } = useCurrency();
-  const { user, hydrated, signOut, updateUser, cancelBooking } = useGuestAuth();
-  const rooms = useGuestRooms();
+  const { user, hydrated, signOut, updateUser } = useGuestAuth();
+  const { data, updateBooking } = useOwner();
   const router = useRouter();
 
   const [tab, setTab] = useState<"bookings" | "profile">("bookings");
@@ -61,8 +61,10 @@ export default function AccountPage() {
 
   const bookings = useMemo(() => {
     if (!user) return [];
-    return [...user.bookings].sort((a, b) => b.checkIn.localeCompare(a.checkIn));
-  }, [user]);
+    return data.bookings
+      .filter((b) => user.bookingIds.includes(b.id))
+      .sort((a, b) => b.checkIn.localeCompare(a.checkIn));
+  }, [user, data.bookings]);
 
   if (!hydrated || !user) {
     return (
@@ -80,7 +82,7 @@ export default function AccountPage() {
   }
 
   function handleCancel(id: string) {
-    void cancelBooking(id);
+    updateBooking(id, { status: "cancelled" });
     setConfirmId(null);
   }
 
@@ -143,7 +145,7 @@ export default function AccountPage() {
               </div>
             ) : (
               bookings.map((b) => {
-                const room = rooms.find((r) => r.slug === b.roomSlug);
+                const room = data.rooms.find((r) => r.slug === b.roomSlug);
                 const free = canCancelFree(b);
                 const cancelled = b.status === "cancelled";
 

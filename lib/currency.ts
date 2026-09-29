@@ -9,91 +9,59 @@ import React, {
   useState,
 } from "react";
 import { hotelConfig } from "@/config/hotel.config";
-import {
-  CURRENCY_CATALOGUE,
-  FALLBACK_RATES,
-  convertFromThb as convert,
-  formatMoney,
-  isCurrencyCode,
-  type CurrencyCode,
-  type RateTable,
-} from "@/lib/currencies";
 
-/**
- * v15 · Multi-currency with live rates.
- *
- * THB is the base; every other currency is a display conversion. The provider
- * starts from the offline table (so the first paint never waits on a fetch),
- * then loads /api/fx once per session and re-renders every price. The guest's
- * pick persists in localStorage; the rate used is exposed so a receipt can
- * record it.
- */
+export type Currency = "THB" | "USD" | "EUR";
 
-export type Currency = CurrencyCode;
+export const CURRENCIES: {
+  code: Currency;
+  symbol: string;
+  label: string;
+}[] = (
+  [
+    { code: "THB", symbol: "฿", label: "฿ THB" },
+    { code: "USD", symbol: "$", label: "$ USD" },
+    { code: "EUR", symbol: "€", label: "€ EUR" },
+  ] as const
+).filter((c) => hotelConfig.currencies.includes(c.code));
 
-export const CURRENCIES: { code: Currency; symbol: string; label: string }[] =
-  hotelConfig.currencies
-    .filter(isCurrencyCode)
-    .map((code) => ({ code, symbol: CURRENCY_CATALOGUE[code].symbol, label: CURRENCY_CATALOGUE[code].label }));
+
 
 const STORAGE_KEY = "tkh-cur";
 
-/** Static conversion · kept for server-free callers (uses the offline table). */
+/** Demo rates: USD = THB/36, EUR = THB/39 */
 export function convertFromThb(amountThb: number, currency: Currency): number {
-  return convert(amountThb, currency, FALLBACK_RATES);
+  if (currency === "USD") return amountThb / 36;
+  if (currency === "EUR") return amountThb / 39;
+  return amountThb;
 }
 
-/** Guest-facing price with the offline table · THB keeps ฿2,400. */
+/** Guest-facing price. THB keeps ฿2,400; USD/EUR whole numbers ($108, €100). */
 export function formatPrice(amountThb: number, currency: Currency): string {
-  return formatMoney(convert(amountThb, currency, FALLBACK_RATES), currency);
+  const converted = convertFromThb(amountThb, currency);
+  if (currency === "THB") {
+    return "฿" + Math.round(converted).toLocaleString("en-US");
+  }
+  const whole = Math.round(converted);
+  const symbol = currency === "USD" ? "$" : "€";
+  return symbol + whole.toLocaleString("en-US");
 }
 
 type CurrencyCtx = {
   currency: Currency;
   setCurrency: (c: Currency) => void;
   format: (amountThb: number) => string;
-  /** THB → current currency multiplier in use */
-  rate: number;
-  rates: RateTable;
-  /** "live" once /api/fx has answered, "fallback" before or when it cannot */
-  rateSource: "live" | "fallback";
 };
 
 const Ctx = createContext<CurrencyCtx | null>(null);
 
-const INITIAL_TABLE: RateTable = { base: "THB", rates: FALLBACK_RATES, date: "static", source: "fallback" };
-
-let cachedTable: RateTable | null = null;
-let inflight: Promise<RateTable> | null = null;
-
-async function loadRates(): Promise<RateTable> {
-  if (cachedTable) return cachedTable;
-  if (!inflight) {
-    inflight = fetch("/api/fx")
-      .then(async (r) => {
-        if (!r.ok) throw new Error(String(r.status));
-        const t = (await r.json()) as RateTable;
-        if (!t?.rates?.USD) throw new Error("bad table");
-        cachedTable = { ...t, rates: { ...FALLBACK_RATES, ...t.rates } };
-        return cachedTable;
-      })
-      .catch(() => INITIAL_TABLE)
-      .finally(() => {
-        inflight = null;
-      });
-  }
-  return inflight;
-}
-
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>("THB");
   const [ready, setReady] = useState(false);
-  const [table, setTable] = useState<RateTable>(cachedTable ?? INITIAL_TABLE);
 
   useEffect(() => {
     try {
       const s = localStorage.getItem(STORAGE_KEY);
-      if (isCurrencyCode(s) && CURRENCIES.some((c) => c.code === s)) setCurrencyState(s);
+      if (s === "THB" || s === "USD" || s === "EUR") setCurrencyState(s);
     } catch {
       /* ignore */
     }
@@ -109,29 +77,16 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currency, ready]);
 
-  // Rates are only needed once a non-THB currency is chosen · THB pages never fetch.
-  useEffect(() => {
-    if (currency === "THB" || table.source === "live") return;
-    let cancelled = false;
-    void loadRates().then((t) => {
-      if (!cancelled) setTable(t);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [currency, table.source]);
-
   const setCurrency = useCallback((c: Currency) => setCurrencyState(c), []);
-  const rate = currency === "THB" ? 1 : table.rates[currency] ?? FALLBACK_RATES[currency];
 
   const format = useCallback(
-    (amountThb: number) => formatMoney(convert(amountThb, currency, table.rates), currency),
-    [currency, table]
+    (amountThb: number) => formatPrice(amountThb, currency),
+    [currency]
   );
 
   const value = useMemo(
-    () => ({ currency, setCurrency, format, rate, rates: table, rateSource: table.source }),
-    [currency, setCurrency, format, rate, table]
+    () => ({ currency, setCurrency, format }),
+    [currency, setCurrency, format]
   );
 
   return React.createElement(Ctx.Provider, { value }, children);

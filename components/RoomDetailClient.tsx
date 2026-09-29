@@ -151,8 +151,7 @@ export function RoomDetailClient({ room }: RoomDetailClientProps) {
           <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_120px]">
             <button
               type="button"
-              className="tkh-vt-room relative aspect-[16/10] overflow-hidden rounded-[14px]"
-              style={{ viewTransitionName: `room-${room.slug}` }}
+              className="relative aspect-[16/10] overflow-hidden rounded-[14px]"
               onClick={() => setLightboxOpen(true)}
             >
               <SafeImage

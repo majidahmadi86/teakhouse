@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import type { EmailTemplateDto, HotelDto } from "@/lib/ownerTypes";
-import { MoneyRailsSection, StaffSection } from "@/components/owner/SettingsV15";
 
 const PLACEHOLDERS = [
   "{{guestName}}",
@@ -319,9 +318,6 @@ export default function OwnerSettingsPage() {
       </section>
 
       {/* Email template */}
-      <MoneyRailsSection hotel={hotel} setHotel={setHotel} saving={hotelSaving} onSave={saveHotel} />
-      <StaffSection />
-
       <section className="owner-panel rounded-2xl  p-6 md:p-8">
         <h2 className="mb-2 font-display text-xl font-semibold text-white">
           {t("ow.setEmailH")}

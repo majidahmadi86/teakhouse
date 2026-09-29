@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isLang, negotiateLang } from "@/lib/locales";
 
 const LOCALE_COOKIE = "tkh-lang";
 
@@ -11,27 +10,19 @@ const LOCALE_COOKIE = "tkh-lang";
  *     zero-JS HeaderShell can highlight the active nav item exactly like the
  *     hydrated Header (VISUAL PARITY LAW · components/header/HeaderShell.tsx).
  *
- * 2 · `?lang=xx` (any of the sixteen guest languages) is promoted into the
- *     locale cookie FOR THIS REQUEST, before any page or generateMetadata runs.
- *     The site has no locale path prefix · language lives in a cookie · which
- *     means a share-preview crawler, which carries no cookies, would always be
- *     served English no matter who shared the link. A link with ?lang=ja now
- *     previews in Japanese, and a real visitor following it keeps the language
- *     because the response sets the cookie too. A first visit with no cookie
- *     and no parameter is negotiated from Accept-Language and pinned the same
- *     way, so the language menu is the only thing that ever changes it.
+ * 2 · `?lang=th` (or `en`) is promoted into the locale cookie FOR THIS REQUEST,
+ *     before any page or generateMetadata runs. The site has no /th path prefix
+ *     · language lives in a cookie · which means a share-preview crawler, which
+ *     carries no cookies, would always be served English no matter who shared
+ *     the link. A link with ?lang=th now previews in Thai, and a real visitor
+ *     following it keeps the language because the response sets the cookie too.
  */
 export function middleware(req: NextRequest) {
   const headers = new Headers(req.headers);
   headers.set("x-pathname", req.nextUrl.pathname);
 
   const param = req.nextUrl.searchParams.get("lang");
-  const existing = req.cookies.get(LOCALE_COOKIE)?.value;
-  const lang = isLang(param)
-    ? param
-    : isLang(existing)
-      ? null
-      : negotiateLang(req.headers.get("accept-language"));
+  const lang = param === "th" || param === "en" ? param : null;
 
   if (lang) {
     // Rewrite the Cookie header the render will read. Building the header by

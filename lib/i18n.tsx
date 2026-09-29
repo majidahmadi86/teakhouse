@@ -10,10 +10,8 @@ import React, {
 } from "react";
 import { useRouter } from "next/navigation";
 import { DICT, type DictEntry } from "./i18n-dict";
-import { isLang, type Lang } from "./locales";
-import { translate, translateEntry } from "./translate";
 
-export type { Lang };
+export type Lang = "en" | "th";
 export type { DictEntry };
 export { DICT };
 
@@ -23,8 +21,8 @@ const LANG_EVENT = "tkh:lang";
 
 function readCookieLang(): Lang | null {
   if (typeof document === "undefined") return null;
-  const m = document.cookie.match(/(?:^|;\s*)tkh-lang=([a-z]{2})\b/);
-  return m && isLang(m[1]) ? m[1] : null;
+  const m = document.cookie.match(/(?:^|;\s*)tkh-lang=(en|th)\b/);
+  return m ? (m[1] as Lang) : null;
 }
 
 type I18nCtx = {
@@ -59,7 +57,7 @@ export function I18nProvider({
   useEffect(() => {
     const onLang = (e: Event) => {
       const detail = (e as CustomEvent<Lang>).detail;
-      if (isLang(detail)) setLangState(detail);
+      if (detail === "en" || detail === "th") setLangState(detail);
     };
     window.addEventListener(LANG_EVENT, onLang as EventListener);
     return () => window.removeEventListener(LANG_EVENT, onLang as EventListener);
@@ -67,7 +65,6 @@ export function I18nProvider({
 
   const setLang = useCallback(
     (l: Lang) => {
-      if (!isLang(l)) return;
       setLangState(l);
       try {
         document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
@@ -82,11 +79,20 @@ export function I18nProvider({
   );
 
   const t = useCallback(
-    (key: string, vars?: Record<string, string | number>) => translate(lang, key, vars),
+    (key: string, vars?: Record<string, string | number>) => {
+      const d = DICT[key];
+      let s = d ? d[lang] : key;
+      if (vars) {
+        Object.entries(vars).forEach(([k, v]) => {
+          s = s.replace(`{${k}}`, String(v));
+        });
+      }
+      return s;
+    },
     [lang]
   );
 
-  const tr = useCallback((entry: DictEntry) => translateEntry(lang, entry), [lang]);
+  const tr = useCallback((entry: DictEntry) => entry[lang], [lang]);
 
   const value = useMemo(
     () => ({ lang, setLang, t, tr }),

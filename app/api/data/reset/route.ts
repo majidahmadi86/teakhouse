@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { loadOwnerData } from "@/lib/dataService";
 import { prisma } from "@/lib/db";
 import { revalidateAll } from "@/lib/revalidate";
@@ -9,9 +8,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /** Reset DB to seed. Used by owner reset + demo sandbox. */
-export async function POST(req: Request) {
-  const gate_ = await requireStaff(req, "settings:write");
-  if (!gate_.ok) return gate_.response;
+export async function POST() {
   try {
     await seedDatabase();
     await prisma.demoMeta.upsert({

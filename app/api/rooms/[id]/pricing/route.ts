@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { audit } from "@/lib/audit";
-import { gate, isDenied } from "@/lib/api";
-import { enqueueOutboxNow } from "@/lib/channels/outbox";
-import { eachNightIso, toPriceRule } from "@/lib/pricing";
+import { toPriceRule } from "@/lib/pricing";
 import type { SeasonalPriceRuleDto } from "@/lib/ownerTypes";
-import { revalidateRooms } from "@/lib/revalidate";
 
 export const dynamic = "force-dynamic";
 
@@ -56,23 +52,10 @@ function validate(body: RuleBody, partial: boolean): string | null {
   if (typeof body.price === "number" && body.price <= 0) {
     return "price must be positive";
   }
+  if (body.kind && body.kind !== "season" && body.kind !== "override") {
+    return "kind must be season or override";
+  }
   return null;
-}
-
-/**
- * v15 · A rate change is a channel event: the calendar rate for every covered
- * date is pushed to every connected OTA, capped at 120 nights per event so a
- * multi-year rule cannot fan out into an enormous payload.
- */
-async function rateChanged(roomId: string, roomSlug: string, startDate: string, endDate: string, ruleId: string) {
-  revalidateRooms();
-  const dates = eachNightIso(startDate, endDate).concat(endDate).slice(0, 120);
-  await enqueueOutboxNow("rate.changed", `rate:${ruleId}:${Date.now()}`, {
-    roomId,
-    roomSlug,
-    dates,
-    reason: "rate.rule",
-  });
 }
 
 export async function GET(_req: Request, { params }: Ctx) {
@@ -88,8 +71,6 @@ export async function GET(_req: Request, { params }: Ctx) {
 }
 
 export async function POST(req: Request, { params }: Ctx) {
-  const g = await gate(req, "rates:write");
-  if (isDenied(g)) return g.denied;
   try {
     const room = await resolveRoom(params.id);
     if (!room) {
@@ -110,8 +91,6 @@ export async function POST(req: Request, { params }: Ctx) {
         price: typeof body.price === "number" ? Math.round(body.price) : null,
       },
     });
-    await rateChanged(room.id, room.slug, created.startDate, created.endDate, created.id);
-    await audit(g.actor, "rate.created", "priceRule", created.id, { roomId: room.id });
     return NextResponse.json(toPriceRule(created), { status: 201 });
   } catch (e) {
     console.error("[api/rooms pricing POST]", e);
@@ -120,8 +99,6 @@ export async function POST(req: Request, { params }: Ctx) {
 }
 
 export async function PATCH(req: Request, { params }: Ctx) {
-  const g = await gate(req, "rates:write");
-  if (isDenied(g)) return g.denied;
   try {
     const room = await resolveRoom(params.id);
     if (!room) {
@@ -158,10 +135,6 @@ export async function PATCH(req: Request, { params }: Ctx) {
               : Math.round(body.price),
       },
     });
-    const from = existing.startDate < updated.startDate ? existing.startDate : updated.startDate;
-    const to = existing.endDate > updated.endDate ? existing.endDate : updated.endDate;
-    await rateChanged(room.id, room.slug, from, to, updated.id);
-    await audit(g.actor, "rate.updated", "priceRule", updated.id, { roomId: room.id });
     return NextResponse.json(toPriceRule(updated));
   } catch (e) {
     console.error("[api/rooms pricing PATCH]", e);
@@ -170,8 +143,6 @@ export async function PATCH(req: Request, { params }: Ctx) {
 }
 
 export async function DELETE(req: Request, { params }: Ctx) {
-  const g = await gate(req, "rates:write");
-  if (isDenied(g)) return g.denied;
   try {
     const room = await resolveRoom(params.id);
     if (!room) {
@@ -197,8 +168,6 @@ export async function DELETE(req: Request, { params }: Ctx) {
       return NextResponse.json({ error: "Rule not found" }, { status: 404 });
     }
     await prisma.seasonalPriceRule.delete({ where: { id: existing.id } });
-    await rateChanged(room.id, room.slug, existing.startDate, existing.endDate, existing.id);
-    await audit(g.actor, "rate.deleted", "priceRule", existing.id, { roomId: room.id });
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("[api/rooms pricing DELETE]", e);

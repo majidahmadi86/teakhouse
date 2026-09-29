@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import type { EmailTemplateDto } from "@/lib/ownerTypes";
 
@@ -54,8 +53,6 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const gate_ = await requireStaff(req, "settings:write");
-  if (!gate_.ok) return gate_.response;
   try {
     const body = (await req.json()) as { subject?: string; body?: string };
     const existing = await ensureTemplate();

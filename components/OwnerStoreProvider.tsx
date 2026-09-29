@@ -1,17 +1,12 @@
 "use client";
 
-import { OwnerProvider, type StoreScope } from "@/lib/ownerStore";
+import { OwnerProvider } from "@/lib/ownerStore";
 
-/**
- * Mount the live store only on routes that need it. The guest scope carries
- * rooms, rate rules and packages · never bookings.
- */
+/** Mount owner/guest room store only on routes that need live booking data. */
 export function OwnerStoreProvider({
   children,
-  scope = "owner",
 }: {
   children: React.ReactNode;
-  scope?: StoreScope;
 }) {
-  return <OwnerProvider scope={scope}>{children}</OwnerProvider>;
+  return <OwnerProvider>{children}</OwnerProvider>;
 }

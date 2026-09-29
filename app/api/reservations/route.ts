@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { createReservation } from "@/lib/reservationService";
 import {
@@ -11,9 +10,7 @@ import {
 export const dynamic = "force-dynamic";
 
 /** Owner list · soonest first, then by time within the day. */
-export async function GET(req: Request) {
-  const gate_ = await requireStaff(req, "bookings:read");
-  if (!gate_.ok) return gate_.response;
+export async function GET() {
   const rows = await prisma.tableReservation.findMany({
     orderBy: [{ date: "asc" }, { time: "asc" }],
   });

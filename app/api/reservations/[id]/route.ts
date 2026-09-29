@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
   RESERVATION_STATUSES,
@@ -13,8 +12,6 @@ type Ctx = { params: { id: string } };
 
 /** Owner edits · status is the field that moves; the rest is the guest's word. */
 export async function PATCH(req: Request, { params }: Ctx) {
-  const gate_ = await requireStaff(req, "bookings:write");
-  if (!gate_.ok) return gate_.response;
   try {
     const patch = (await req.json()) as {
       status?: string;

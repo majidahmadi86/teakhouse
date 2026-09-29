@@ -2,8 +2,7 @@
  * Single re-brand switch.
  * Uncomment exactly one preset import line below.
  */
-export { config as hotelConfig } from "./presets/eight-star";
-// export { config as hotelConfig } from "./presets/tropical-resort";
+export { config as hotelConfig } from "./presets/tropical-resort";
 // export { config as hotelConfig } from "./presets/city-boutique";
 // export { config as hotelConfig } from "./presets/minimal-zen";
 

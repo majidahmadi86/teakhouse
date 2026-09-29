@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import {
   MAX_UPLOAD_BYTES,
   isAllowedMime,
@@ -29,8 +28,6 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const gate_ = await requireStaff(req, "content:write");
-  if (!gate_.ok) return gate_.response;
   if (!storageConfigured()) {
     return NextResponse.json(
       { error: "storage-not-configured" },

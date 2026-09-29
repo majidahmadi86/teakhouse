@@ -45,10 +45,6 @@ const OWNER_ROUTES = [
   "/owner/rates",
   "/owner/calendar",
   "/owner/settings",
-  // v15 · dual-role portal
-  "/owner/desk",
-  "/owner/channels",
-  "/owner/packages",
 ];
 
 const ROUTES = process.env.OWNER === "1" ? OWNER_ROUTES : GUEST_ROUTES;
@@ -68,9 +64,6 @@ const ALLOWED = [
   /^usd$/i,
   /^eur$/i,
   /^gbp$/i,
-  // v15 · the wider currency menu · ISO codes and their symbols are correct in Thai copy
-  /^(s$|a$|hk$|chf|aed)?s?(jpy|cny|sgd|aud|hkd|krw|chf|aed|inr|usd|eur|gbp|thb)$/i,
-  /^(revpar|adr|kpi|csv|qr|promptpay|stripe|apple pay|google pay|swift|iban|api|ota|pms)$/i,
   /^google$/i,
   /^promptpay$/i,
   // An address is an address, and the reviewers are named people · both are
@@ -84,17 +77,6 @@ const ALLOWED = [
   /^(TKH|AGD|BKG)-\d+ /,
   /^(Direct|Agoda|Booking)$/,
   /^(High season|Weekend premium)$/,
-  // v15 · the owner-typed yield labels, seeded staff names, provider brands,
-  // channel kinds, emails and the desk's seeded guest requests/notes are DATA.
-  /^(High demand|Early bird|New Year minimum stay)( · .*)?$/,
-  /^(Pim Vorasingha|Nok Srisuk|Aom Chaiyo|Daniel Hoare)$/,
-  /^[\w.+-]+@[\w.-]+\.\w+$/,
-  /^(Stripe|PromptPay|Expedia|SiteMinder|Exely|Hoteliers\.guru|Sandbox)( · .*)?$/,
-  /^(Direct|Channel|Stripe|PromptPay) · \d+$/,
-  /^(Airport car for Sunday departure|Flight TG910 at 13:00, pick up 09:15.|Breakfast on the balcony at 07:30|Two Thai breakfasts, one without chilli, cold-brew for both.|Couples massage before dinner|Around 17:00, the teak spa room if it is free.)$/,
-  /^(River-facing only · feather-free pillows · reads the FT at breakfast)$/,
-  /(Prefers the top floor and a late breakfast.|Anniversary every stay in August · flowers in the room.|Travels with a small dog · Garden Room.|Shellfish allergy · kitchen briefed.)$/,
-  /^[\w.+-]+@[\w.-]+\.\w+ · \+[\d ]+ · [A-Z]{2}$/,
   // Email-template placeholders are code · they must stay verbatim or the
   // substitution stops working.
   /^\{\{[a-zA-Z]+\}\}$/,
@@ -122,9 +104,7 @@ const ALLOWED = [
 const BRAND_TOKENS =
   // Acronyms and paths first, WITHOUT a leading word boundary · the owner tables
   // render "฿1,900OTA ฿2,300" with no space, so \bOTA would never match there.
-  // v15 · dotted event names (availability.changed) and kebab-case keys
-  // (helicopter-transfer, river-loft) are code, not copy.
-  /(?:OTA|ADR|RevPAR|CSV|PDF|CVC|QR|KPI|API|PMS|ARI|VIP|SWIFT|webhook|EMAIL_PROVIDER)|\b[a-z]+\.[a-z]+(?:\.[a-z]+)?\b|\b[a-z]+(?:-[a-z]+)+\b|\/[a-z-]+\b|\b(BTS|MRT|Google Maps|Google|LINE|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Teak House|The Teak House|Mikaro Studio|Chao Phraya|Charoenkrung|Agoda|Booking\.com|Booking|Sriracha|Songkran|Loy Krathong|khan tok|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide)\b/gi;
+  /(?:OTA|ADR|CSV|PDF|CVC|webhook|EMAIL_PROVIDER)|\/[a-z-]+\b|\b(BTS|MRT|Google Maps|Google|LINE|Wi-?Fi|THB|USD|EUR|GBP|PromptPay|Teak House|The Teak House|Mikaro Studio|Chao Phraya|Charoenkrung|Agoda|Booking\.com|Booking|Sriracha|Songkran|Loy Krathong|khan tok|River Loft|Teak Suite|Garden Room|Courtyard Twin|Pier Studio|Mango Corner|Captain's Cabin|Family Annex|Attic Nook|Poolside Hide)\b/gi;
 
 /**
  * A line counts as English if it has a run of >=3 Latin letters, OR one of the

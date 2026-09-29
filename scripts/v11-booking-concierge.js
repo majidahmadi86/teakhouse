@@ -60,20 +60,13 @@ async function main() {
   const checkIn = addDays(upcoming.startDate, -1);
   const checkOut = addDays(upcoming.endDate, 1);
 
-  // v15 · the calendar rules are only half the price now: a demand layer
-  // (yield rules) sits on top, so the expected number is the ENGINE's quote ·
-  // the same one the booking page shows and the booking service charges.
-  const calendarNights = [];
+  const nights = [];
   for (let d = checkIn; d < checkOut; d = addDays(d, 1)) {
-    calendarNights.push({ date: d, ...nightly(room.rate, d, rules) });
+    nights.push({ date: d, ...nightly(room.rate, d, rules) });
   }
-  const quote = await (
-    await fetch(`${BASE}/api/quote?room=${room.slug}&in=${checkIn}&out=${checkOut}&g=2`)
-  ).json();
-  const nights = quote.stay.nights.map((n) => ({ date: n.date, price: n.price, label: n.label }));
-  const expected = quote.roomTotal;
+  const expected = nights.reduce((s, n) => s + n.price, 0);
   const flat = room.rate * nights.length;
-  const distinct = new Set(calendarNights.map((n) => n.price));
+  const distinct = new Set(nights.map((n) => n.price));
 
   console.log(`\nStay ${checkIn} → ${checkOut} · ${room.name.en} · base ${baht(room.rate)}`);
   nights.forEach((n) => console.log(`   ${n.date}  ${baht(n.price)}  ${n.label || "base"}`));
@@ -112,7 +105,7 @@ async function main() {
 
   await page.locator(`#room-${room.slug} button`, { hasText: "Select" }).first().click();
   await page.waitForTimeout(400);
-  await page.locator("[data-continue]").first().click();
+  await page.locator("button", { hasText: "Continue to deposit" }).first().click();
   await page.waitForTimeout(800);
 
   // Step 3 · per-night breakdown.
@@ -134,9 +127,8 @@ async function main() {
     .fill(qa(`Season Test ${stamp}`));
   await page.locator('input[type="email"]').first().fill(`v11-${stamp}@example.test`);
   await page.locator('input[type="tel"]').first().fill("+66 80 000 0000");
-  await page.locator("[data-confirm]").first().click();
-  await page.waitForSelector("#tkh-receipt", { timeout: 30000 });
-  await page.waitForTimeout(600);
+  await page.locator("button", { hasText: "Pay deposit" }).first().click();
+  await page.waitForTimeout(2500);
 
   // Step 4 · receipt.
   const receipt = await page.locator("#tkh-receipt").innerText();

@@ -119,7 +119,7 @@ export function serviceSlots(
 export function formatServiceWindow(
   serviceStart: string,
   serviceEnd: string,
-  locale: string = "en"
+  locale: "en" | "th" = "en"
 ): string {
   return `${serviceStart} ${locale === "th" ? "ถึง" : "to"} ${serviceEnd}`;
 }

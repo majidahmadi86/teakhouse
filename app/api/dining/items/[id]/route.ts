@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { diningItemToClient, type DiningItem } from "@/lib/dining";
 import { revalidateDining } from "@/lib/revalidate";
@@ -9,8 +8,6 @@ export const dynamic = "force-dynamic";
 type Ctx = { params: { id: string } };
 
 export async function PATCH(req: Request, { params }: Ctx) {
-  const gate_ = await requireStaff(req, "content:write");
-  if (!gate_.ok) return gate_.response;
   try {
     const patch = (await req.json()) as Partial<DiningItem>;
     const existing = await prisma.diningItem.findUnique({

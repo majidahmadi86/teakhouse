@@ -11,5 +11,5 @@ export default function BookLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <OwnerStoreProvider scope="guest">{children}</OwnerStoreProvider>;
+  return <OwnerStoreProvider>{children}</OwnerStoreProvider>;
 }

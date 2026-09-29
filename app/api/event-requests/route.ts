@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { createEventRequest } from "@/lib/eventRequestService";
 import {
@@ -11,9 +10,7 @@ import type { ContactKind } from "@/lib/reservations";
 export const dynamic = "force-dynamic";
 
 /** Owner list · newest first, with the event each one belongs to. */
-export async function GET(req: Request) {
-  const gate_ = await requireStaff(req, "messages:read");
-  if (!gate_.ok) return gate_.response;
+export async function GET() {
   const rows = await prisma.eventRequest.findMany({
     orderBy: { createdAt: "desc" },
     include: { event: { select: { titleEn: true, titleTh: true, date: true } } },

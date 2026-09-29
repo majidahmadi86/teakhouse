@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import {
   CONTACT_PURPOSES,
@@ -13,9 +12,7 @@ import {
 export const dynamic = "force-dynamic";
 
 /** Owner list · newest first. */
-export async function GET(req: Request) {
-  const gate_ = await requireStaff(req, "messages:read");
-  if (!gate_.ok) return gate_.response;
+export async function GET() {
   const rows = await prisma.contactMessage.findMany({
     orderBy: { createdAt: "desc" },
     take: 200,

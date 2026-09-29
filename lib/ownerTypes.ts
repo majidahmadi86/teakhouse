@@ -2,7 +2,7 @@ import type { PriceRule } from "./pricing";
 import type { Room } from "./rooms";
 
 export type BookingStatus = "in" | "ok" | "out" | "cancelled";
-export type BookingSource = "Direct" | "Agoda" | "Booking" | (string & {});
+export type BookingSource = "Direct" | "Agoda" | "Booking";
 
 export type Booking = {
   id: string;
@@ -23,20 +23,6 @@ export type Booking = {
   children?: number;
   arrivalTime?: string;
   specialRequests?: string;
-  /** v15 · money, packages, channel provenance, lifecycle stamps */
-  currency?: string;
-  fxRate?: number;
-  paidAmount?: number;
-  paymentStatus?: "unpaid" | "deposit" | "paid" | "refunded" | "pending_wire";
-  packages?: { key: string; qty: number }[];
-  packagesAmount?: number;
-  channelId?: string | null;
-  externalRef?: string | null;
-  checkedInAt?: string | null;
-  checkedOutAt?: string | null;
-  /** true when identity fields are sealed in the vault (reveal via /identity) */
-  vaulted?: boolean;
-  createdAt?: string;
 };
 
 export type BookingInput = Partial<Booking> &
@@ -67,8 +53,6 @@ export type OwnerData = {
   blocks: Record<string, true>;
   /** Per-day rate rules, all rooms · the booking engine prices nights from these. */
   priceRules: PriceRule[];
-  /** v15 · published packages · guest scope only */
-  addons?: import("./addons").Addon[];
   seedVersion?: number;
 };
 
@@ -99,16 +83,6 @@ export type HotelDto = {
   /** v13 · uploaded page heroes · empty means the seeded local image */
   diningHeroImage: string;
   eventsHeroImage: string;
-  /** v15 · localisation + money rails */
-  timeZone: string;
-  baseCurrency: string;
-  promptPayId: string;
-  bankName: string;
-  bankAccountName: string;
-  bankAccountNo: string;
-  bankSwift: string;
-  /** true when GUEST_VAULT_KEY is set on the server */
-  vaultEnabled: boolean;
 };
 
 /** Wire shape of a per-day rate rule · identical to lib/pricing PriceRule. */

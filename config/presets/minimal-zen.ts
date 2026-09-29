@@ -56,7 +56,7 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1600210492486-724fe5c67fb0"),
   },
-  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "AED", "CHF"],
+  currencies: ["THB", "USD", "EUR"],
   languages: ["en", "th"],
   contact: {
     email: "stay@quiethouse.demo",

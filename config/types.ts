@@ -42,10 +42,7 @@ export type HotelConfig = {
     gallery: string[];
     about: string;
   };
-  /** ISO-4217 codes from lib/currencies · THB first, the rest in menu order */
-  currencies: Array<
-    | "THB" | "USD" | "EUR" | "GBP" | "JPY" | "CNY" | "SGD" | "AUD" | "HKD" | "KRW" | "CHF" | "AED" | "INR"
-  >;
+  currencies: Array<"THB" | "USD" | "EUR">;
   languages: Array<"en" | "th">;
   contact: {
     email: string;

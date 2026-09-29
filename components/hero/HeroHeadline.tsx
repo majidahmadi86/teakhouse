@@ -4,7 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 const GRADIENT =
-  "linear-gradient(105deg, #F1DFA8 0%, #C8A24E 100%)";
+  "linear-gradient(105deg, #E8C87A 0%, #FF6B4A 100%)";
 
 function AccentWord({ word, italic }: { word: string; italic?: boolean }) {
   return (

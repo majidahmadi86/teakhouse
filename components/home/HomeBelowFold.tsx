@@ -3,7 +3,6 @@ import { Calendar, MessageCircle, User } from "lucide-react";
 import { LocalPicture } from "@/components/LocalPicture";
 import { OfferCard } from "@/components/OfferCard";
 import { HomeRoomCard } from "@/components/home/HomeRoomCard";
-import { HomeSignature } from "@/components/home/HomeSignature";
 import {
   CurtainReveal,
   MotionCard,
@@ -210,9 +209,6 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
           </RevealStagger>
         </div>
       </section>
-
-      {/* v15 · signature packages · one cached read, no client JS */}
-      <HomeSignature locale={locale} />
 
       <section className="tkh-below-section section-pad bg-coral-bg">
         <div className="mx-auto max-w-[1180px]">

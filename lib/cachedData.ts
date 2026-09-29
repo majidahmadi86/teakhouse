@@ -156,22 +156,3 @@ export async function getHotelSettings(): Promise<CachedHotelSettings> {
     return SETTINGS_FALLBACK;
   }
 }
-
-/**
- * v15 · What the GUEST side needs to price a stay locally while the
- * authoritative quote is in flight: active rooms and every rate rule. No
- * bookings, no guests · the old guest store downloaded the whole owner data
- * set (every booking, with names and phones) to get at these two lists.
- */
-export const getPublicRates = unstable_cache(
-  async () => {
-    const [rooms, rules, addons] = await Promise.all([
-      prisma.room.findMany({ where: { active: true }, orderBy: { rate: "desc" } }),
-      prisma.seasonalPriceRule.findMany({ orderBy: { startDate: "asc" } }),
-      prisma.addon.findMany({ where: { published: true }, orderBy: { order: "asc" } }),
-    ]);
-    return { rooms, rules, addons };
-  },
-  ["public-rates"],
-  { tags: [TAG_ROOMS], revalidate: HOUR }
-);

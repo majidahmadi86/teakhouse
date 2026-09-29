@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireStaff } from "@/lib/auth/session";
 import { prisma } from "@/lib/db";
 import { contactMessageToClient } from "@/lib/contactMessages";
 
@@ -10,8 +9,6 @@ type Ctx = { params: { id: string } };
 const STATUSES = ["new", "read", "done"];
 
 export async function PATCH(req: Request, { params }: Ctx) {
-  const gate_ = await requireStaff(req, "messages:write");
-  if (!gate_.ok) return gate_.response;
   try {
     const patch = (await req.json()) as { status?: string };
     if (patch.status !== undefined && !STATUSES.includes(patch.status)) {

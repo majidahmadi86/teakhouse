@@ -1,21 +1,24 @@
 /**
- * Live availability + pricing for a date range · server only.
+ * Live availability + per-day pricing for a date range · server only.
  *
- * v15 · a thin view over lib/inventory. The concierge, the quote API and the
- * booking service read the SAME snapshot and price with the SAME engine
- * (calendar rules, then yield), so the concierge can never quote a room the
- * booking page would refuse, or a price the receipt would contradict.
+ * This is the concierge's single source of truth about what is free and what
+ * it costs. It reads the same tables the booking engine writes to and prices
+ * with the same engine, so the concierge can never quote a room the booking
+ * page would refuse, or a price the receipt would contradict.
  */
 
+import { prisma } from "./db";
 import {
-  loadSnapshot,
-  priceStay,
-  unitsLeft,
-  type InventoryRoom,
-  type Snapshot,
-} from "@/lib/inventory";
-import { addDaysIso, nightsBetweenIso, type NightRate, type RateLine } from "@/lib/pricing";
-import { hotelTodayIso } from "@/lib/utils";
+  addDaysIso,
+  eachNightIso,
+  groupNights,
+  nightsBetweenIso,
+  otaEquivalent,
+  quoteStay,
+  toPriceRule,
+  type NightRate,
+  type RateLine,
+} from "./pricing";
 
 export type RoomAvailability = {
   roomId: string;
@@ -26,7 +29,6 @@ export type RoomAvailability = {
   available: boolean;
   /** Why it is not available · "booked" | "blocked" | null */
   reason: "booked" | "blocked" | null;
-  unitsLeft: number;
   nights: NightRate[];
   lines: RateLine[];
   total: number;
@@ -34,7 +36,6 @@ export type RoomAvailability = {
   maxNight: number;
   mixed: boolean;
   otaTotal: number;
-  minStay: { minNights: number; label: string } | null;
 };
 
 export type AlternativeStay = {
@@ -55,40 +56,122 @@ export type AvailabilityResult = {
   alternatives: AlternativeStay[];
 };
 
-function evaluate(snapshot: Snapshot, checkIn: string, checkOut: string, todayIso: string): RoomAvailability[] {
-  return snapshot.rooms.map((room: InventoryRoom) => {
-    const left = unitsLeft(snapshot, room, checkIn, checkOut);
-    const blocked = left === 0 && nightsBlocked(snapshot, room, checkIn, checkOut);
-    const price = priceStay(snapshot, room, checkIn, checkOut, todayIso);
-    const available = left > 0 && !price.minStay;
+/** Half-open overlap: a booking blocks a range if it touches any of its nights. */
+function overlaps(
+  bookingIn: string,
+  bookingOut: string,
+  rangeIn: string,
+  rangeOut: string
+): boolean {
+  return bookingIn < rangeOut && bookingOut > rangeIn;
+}
+
+type Snapshot = {
+  rooms: {
+    id: string;
+    slug: string;
+    nameEn: string;
+    nameTh: string;
+    capacity: number;
+    rate: number;
+    ota: number;
+  }[];
+  bookings: { roomSlug: string; checkIn: string; checkOut: string }[];
+  blocked: Set<string>;
+  rulesByRoom: Record<string, ReturnType<typeof toPriceRule>[]>;
+};
+
+/**
+ * One DB round trip for the whole question, including the alternative windows.
+ * The lookahead is bounded so a concierge reply can never fan out into a scan.
+ */
+async function loadSnapshot(
+  windowStart: string,
+  windowEnd: string
+): Promise<Snapshot> {
+  const [rooms, bookings, blocks, rules] = await Promise.all([
+    prisma.room.findMany({
+      where: { active: true },
+      orderBy: { rate: "asc" },
+      select: {
+        id: true,
+        slug: true,
+        nameEn: true,
+        nameTh: true,
+        capacity: true,
+        rate: true,
+        ota: true,
+      },
+    }),
+    prisma.booking.findMany({
+      where: {
+        status: { not: "cancelled" },
+        checkIn: { lt: windowEnd },
+        checkOut: { gt: windowStart },
+      },
+      select: { roomSlug: true, checkIn: true, checkOut: true },
+    }),
+    prisma.roomBlock.findMany({
+      where: { dateIso: { gte: windowStart, lt: windowEnd } },
+      select: { dateIso: true, room: { select: { slug: true } } },
+    }),
+    prisma.seasonalPriceRule.findMany(),
+  ]);
+
+  const rulesByRoom: Snapshot["rulesByRoom"] = {};
+  for (const row of rules) {
+    (rulesByRoom[row.roomId] ??= []).push(toPriceRule(row));
+  }
+
+  return {
+    rooms,
+    bookings,
+    blocked: new Set(blocks.map((b) => `${b.room.slug}:${b.dateIso}`)),
+    rulesByRoom,
+  };
+}
+
+function evaluate(
+  snapshot: Snapshot,
+  checkIn: string,
+  checkOut: string
+): RoomAvailability[] {
+  const stayNights = eachNightIso(checkIn, checkOut);
+
+  return snapshot.rooms.map((room) => {
+    const booked = snapshot.bookings.some(
+      (b) =>
+        b.roomSlug === room.slug &&
+        overlaps(b.checkIn, b.checkOut, checkIn, checkOut)
+    );
+    const blocked = stayNights.some((n) =>
+      snapshot.blocked.has(`${room.slug}:${n}`)
+    );
+
+    const quote = quoteStay(
+      room.rate,
+      checkIn,
+      checkOut,
+      snapshot.rulesByRoom[room.id] ?? []
+    );
+
     return {
       roomId: room.id,
       slug: room.slug,
       nameEn: room.nameEn,
       nameTh: room.nameTh,
       capacity: room.capacity,
-      available,
-      reason: left > 0 ? null : blocked ? "blocked" : "booked",
-      unitsLeft: left,
-      nights: price.nights,
-      lines: price.lines,
-      total: price.total,
-      minNight: price.minNight,
-      maxNight: price.maxNight,
-      mixed: price.mixed,
-      otaTotal: price.otaTotal,
-      minStay: price.minStay,
+      available: !booked && !blocked,
+      reason: booked ? "booked" : blocked ? "blocked" : null,
+      nights: quote.nights,
+      lines: groupNights(quote.nights),
+      total: quote.total,
+      minNight: quote.minNight,
+      maxNight: quote.maxNight,
+      mixed: quote.mixed,
+      otaTotal: otaEquivalent(quote.total, room.rate, room.ota),
     };
   });
-}
-
-function nightsBlocked(snapshot: Snapshot, room: InventoryRoom, checkIn: string, checkOut: string): boolean {
-  let d = checkIn;
-  while (d < checkOut) {
-    if (snapshot.blocked.has(`${room.slug}:${d}`)) return true;
-    d = addDaysIso(d, 1);
-  }
-  return false;
 }
 
 /** How far either side of the asked dates we look for a nearest alternative. */
@@ -107,19 +190,21 @@ export async function checkAvailability(
   const windowStart = addDaysIso(checkIn, -8);
   const windowEnd = addDaysIso(checkOut, 8);
   const snapshot = await loadSnapshot(windowStart, windowEnd);
-  const todayIso = hotelTodayIso();
 
-  const rooms = evaluate(snapshot, checkIn, checkOut, todayIso);
+  const rooms = evaluate(snapshot, checkIn, checkOut);
   const free = rooms.filter((r) => r.available);
 
   const alternatives: AlternativeStay[] = [];
   if (free.length === 0) {
+    const todayIso = new Date().toISOString().slice(0, 10);
     for (const shift of ALTERNATIVE_SHIFTS) {
       if (alternatives.length >= 2) break;
       const altIn = addDaysIso(checkIn, shift);
       const altOut = addDaysIso(checkOut, shift);
       if (altIn < todayIso) continue;
-      const altFree = evaluate(snapshot, altIn, altOut, todayIso).filter((r) => r.available);
+      const altFree = evaluate(snapshot, altIn, altOut).filter(
+        (r) => r.available
+      );
       if (altFree.length === 0) continue;
       alternatives.push({
         checkIn: altIn,

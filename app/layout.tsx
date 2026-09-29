@@ -1,38 +1,29 @@
 import { hotelConfig } from "@/config/hotel.config";
 import { paletteStyleString } from "@/lib/paletteCss";
-import { langMeta } from "@/lib/locales";
 import { getServerLocale } from "@/lib/serverLocale";
 import { ROUTE_META } from "@/lib/routeMeta";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 import {
-  Cormorant_Garamond,
   Kanit,
+  Marcellus,
   Plus_Jakarta_Sans,
   Sarabun,
 } from "next/font/google";
 import type { Metadata } from "next";
 
-/**
- * v15 · Cormorant Garamond carries every headline · the serif of the house.
- * Plus Jakarta stays as the quiet sans for interface copy. Thai keeps Kanit
- * and Sarabun. Other scripts (CJK, Arabic, Devanagari, Cyrillic) use the
- * system's own typefaces through the per-language stacks in globals.css, so
- * no language costs a font download.
- */
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin", "latin-ext", "cyrillic", "vietnamese"],
+const marcellus = Marcellus({
+  subsets: ["latin"],
   variable: "--font-marcellus",
   display: "swap",
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
+  weight: ["400"],
 });
 
 const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin", "latin-ext", "vietnamese"],
+  subsets: ["latin"],
   variable: "--font-jakarta",
   display: "swap",
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
   preload: false,
 });
 
@@ -65,8 +56,8 @@ const sarabun = Sarabun({
 export function generateMetadata(): Metadata {
   const locale = getServerLocale();
   const home = ROUTE_META["/"];
-  const title = home.title[locale === "th" ? "th" : "en"];
-  const description = home.description![locale === "th" ? "th" : "en"];
+  const title = home.title[locale];
+  const description = home.description![locale];
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -81,7 +72,7 @@ export function generateMetadata(): Metadata {
     },
     openGraph: {
       type: "website",
-      locale: langMeta(locale).og,
+      locale: locale === "th" ? "th_TH" : "en_TH",
       url: SITE_URL,
       siteName: hotelConfig.name,
       title,
@@ -103,15 +94,12 @@ export default function RootLayout({
 }>) {
   const paletteStyle = paletteStyleString(hotelConfig.palette);
   const locale = getServerLocale();
-  const meta = langMeta(locale);
 
   return (
     <html
-      lang={meta.tag}
-      dir={meta.dir}
-      data-lang={locale}
+      lang={locale}
       data-demo={DEMO_MODE ? "true" : undefined}
-      className={`${cormorant.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
+      className={`${marcellus.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
