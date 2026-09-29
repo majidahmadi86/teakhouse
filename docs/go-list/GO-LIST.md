@@ -5,10 +5,11 @@ been run. Each item is an exact action; run them in order once approved.
 
 ## Teak House (teakhouse.mikaro.studio)
 
-1. **Push the restore.** Local `main` is `origin/main` plus two commits:
-   `221cf1d restore: Teak House boutique (pre-v15)` (tree identical to
-   `fe811bc`) and `286dc1c docs: split diagnosis, restore proof shots, RLS
-   hardening`. Vercel `teakhouse-preview` builds `main` automatically.
+1. **Push the restore.** Local `main` is `origin/main` plus the restore
+   commit `221cf1d restore: Teak House boutique (pre-v15)` (tree identical
+   to `fe811bc`) and its docs commits (split diagnosis, restore proof shots,
+   RLS hardening, this go-list). Vercel `teakhouse-preview` builds `main`
+   automatically.
 
    ```bash
    git -C D:/WorkSpace/projects/customers/teakhouse push origin main
