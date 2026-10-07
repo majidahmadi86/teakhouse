@@ -184,13 +184,13 @@ Repo tags: (T) teakhouse, (S) sovra, (both).
 - [x] (both) Dev database: `node tools/devdb/dev-db.mjs` (embedded-postgres, own package.json so Vercel never installs it; data gitignored). Teak House :55432, Sovra :55433, both migrated and seeded fresh on 2026-10-07. The old scratchpad copies were damaged by the 10-01 crash and are set aside in tools/devdb/data-copy-damaged-1001 (not deleted). Local .env and .env.local now point only at the dev database; Teak House production URLs moved to .env.prod-readonly.local (gitignored, loaded by nothing automatically).
 
 ### Phase 0 · diagnosis (read-only) → docs/v17-diagnosis.md
-- [ ] 1 Databases per environment, production migration/seed history, additive or not, dormant v15 tables in Teak House
-- [ ] 2 Regions and measured per-query round trip
-- [ ] 3 Owner panel query, TTFB, JS and middleware profile, top causes
-- [ ] 4 Guest calibration: PSI (3-run median) vs local LH (5-run median), offset, LCP/TBT/JS/fonts/images, /dining
-- [ ] 5 Image slot inventory, placeholders and reuse
-- [ ] 6 Teak House five-star branch review
-- [ ] 7 Engine inventory vs tiers, portable sovra modules
+- [x] 1 Databases per environment, production migration/seed history, additive or not, dormant v15 tables in Teak House
+- [x] 2 Regions and measured per-query round trip
+- [x] 3 Owner panel query, TTFB, JS and middleware profile, top causes
+- [x] 4 Guest calibration: PSI (3-run median) vs local LH (5-run median), offset, LCP/TBT/JS/fonts/images, /dining
+- [x] 5 Image slot inventory, placeholders and reuse
+- [x] 6 Teak House five-star branch review
+- [x] 7 Engine inventory vs tiers, portable sovra modules
 
 ### Milestone A · first glance (branch v17-a)
 - [ ] Preview safety proven (no migrate/seed in preview builds, previews cannot write production)
