@@ -1,7 +1,13 @@
 /**
  * Multi-provider chat adapter · Anthropic / OpenAI / Groq.
  * Selected by AI_PROVIDER + matching API key. No SDK deps · fetch only.
+ *
+ * v17 · A read-only deployment (a preview, lib/readOnly.ts) makes no outbound
+ * AI call: it reports AI as not configured, and completeChat() returns before
+ * any fetch. The provider keys are shared with production, so a preview must
+ * not spend them or send guest text out.
  */
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 
 export type AiProvider = "anthropic" | "openai" | "groq";
 
@@ -40,14 +46,16 @@ function apiKeyFor(provider: AiProvider): string | undefined {
   return process.env.GROQ_API_KEY?.trim();
 }
 
-/** True when AI_PROVIDER is set and the matching key is present. */
+/**
+ * True when AI_PROVIDER is set, the matching key is present, and this is not
+ * a read-only deployment.
+ */
 export function isAiConfigured(): boolean {
-  const provider = normalizeProvider(process.env.AI_PROVIDER);
-  if (!provider) return false;
-  return Boolean(apiKeyFor(provider));
+  return getAiProvider() !== null;
 }
 
 export function getAiProvider(): AiProvider | null {
+  if (isReadOnlyDeployment()) return null;
   const provider = normalizeProvider(process.env.AI_PROVIDER);
   if (!provider || !apiKeyFor(provider)) return null;
   return provider;
@@ -176,6 +184,9 @@ async function completeOpenAiCompatible(
 export async function completeChat(
   input: CompleteChatInput
 ): Promise<CompleteChatResult> {
+  if (isReadOnlyDeployment()) {
+    return { ok: false, error: "Read-only deployment · no outbound AI call" };
+  }
   const provider = getAiProvider();
   if (!provider) {
     return { ok: false, error: "AI not configured · set AI_PROVIDER and API key" };

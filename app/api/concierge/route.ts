@@ -8,8 +8,13 @@ import {
   composeAvailabilityReply,
   handoffHref,
 } from "@/lib/conciergeAvailability";
+import {
+  CONCIERGE_FALLBACK,
+  matchConciergeIntent,
+} from "@/lib/conciergeIntents";
 import { parseDateIntent } from "@/lib/dateIntent";
 import { prisma } from "@/lib/db";
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -210,6 +215,18 @@ export async function POST(req: Request) {
     : availabilityFailed
       ? availabilityUnknownReply(lang)
       : null;
+
+  // v17 · A read-only deployment (a preview) makes no outbound AI call. The
+  // guest still gets a deterministic local answer: the computed availability
+  // for a dated question, otherwise the same intent matcher the panel uses
+  // offline. Nothing here writes.
+  if (isReadOnlyDeployment()) {
+    return NextResponse.json({
+      reply:
+        deterministic ?? (matchConciergeIntent(message) ?? CONCIERGE_FALLBACK)[lang],
+      source: deterministic ? "availability" : "read-only-local",
+    });
+  }
 
   if (!isAiConfigured()) {
     if (deterministic) {

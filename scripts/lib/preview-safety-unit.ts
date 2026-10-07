@@ -9,6 +9,7 @@
  * The parent compares a full database fingerprint before and after this run.
  * Prints PASS/FAIL lines; exit code 1 on any FAIL.
  */
+import { completeChat, getAiProvider, isAiConfigured } from "../../lib/ai";
 import { prisma, readOnlyAllows } from "../../lib/db";
 import { claimDemoReset } from "../../lib/demoReset";
 import { sendConfirmationEmail } from "../../lib/email";
@@ -177,6 +178,56 @@ const RAW_BYPASS_FORMS: [string, string][] = [
   ["dollar-quoted DO block", 'DO $q$ BEGIN DELETE FROM "SeasonalPriceRule"; END $q$'],
 ];
 
+/**
+ * The concierge makes no outbound AI call when read-only, even with a
+ * provider and key configured. fetch is replaced by a spy that records and
+ * refuses, so nothing could leave the machine even if the guard failed.
+ */
+async function concierge() {
+  const keys = ["AI_PROVIDER", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GROQ_API_KEY"] as const;
+  const keep: Record<string, string | undefined> = {};
+  for (const k of keys) keep[k] = process.env[k];
+  const realFetch = globalThis.fetch;
+  const calls: string[] = [];
+  globalThis.fetch = (async (input: unknown) => {
+    calls.push(String(input instanceof Request ? input.url : input));
+    throw new Error("qa: outbound fetch refused by the preview-safety spy");
+  }) as typeof fetch;
+  try {
+    for (const [provider, keyVar] of [["anthropic", "ANTHROPIC_API_KEY"], ["openai", "OPENAI_API_KEY"], ["groq", "GROQ_API_KEY"]] as const) {
+      process.env.AI_PROVIDER = provider;
+      process.env[keyVar] = "qa-preview-safety-not-a-key";
+      const configured = isAiConfigured();
+      const chosen = getAiProvider();
+      const before = calls.length;
+      const r = await completeChat({ system: "QA", messages: [{ role: "user", content: "QA" }], timeoutMs: 2000 });
+      const fetched = calls.length - before;
+      report(
+        !configured && chosen === null && !r.ok && fetched === 0,
+        `concierge AI with ${provider} configured: not configured, completeChat() makes no outbound call`,
+        `configured=${configured} provider=${chosen} ok=${r.ok} fetches=${fetched}`
+      );
+    }
+    // Control: the spy does see a call when the process is writable (off
+    // Vercel, dev DB on localhost). The spy refuses it, so nothing leaves.
+    const vercelEnv = process.env.VERCEL_ENV;
+    delete process.env.VERCEL_ENV;
+    try {
+      const before = calls.length;
+      await completeChat({ system: "QA", messages: [{ role: "user", content: "QA" }], timeoutMs: 2000 });
+      report(calls.length - before === 1, "control: the fetch spy sees the call when writable (so 0 above is real)", `fetches=${calls.length - before}`);
+    } finally {
+      process.env.VERCEL_ENV = vercelEnv;
+    }
+  } finally {
+    globalThis.fetch = realFetch;
+    for (const k of keys) {
+      if (keep[k] === undefined) delete process.env[k];
+      else process.env[k] = keep[k];
+    }
+  }
+}
+
 async function main() {
   if (process.env.VERCEL_ENV !== "preview") {
     console.log("FAIL  unit  must run with VERCEL_ENV=preview");
@@ -305,6 +356,7 @@ async function main() {
   report(!up.ok && up.error === "read-only-deployment", "uploadMedia() refuses (Supabase storage)", JSON.stringify(up));
   const mail = await sendConfirmationEmail({ to: "qa@example.com", subject: "QA", body: "QA" });
   report(!mail.ok, "sendConfirmationEmail() sends nothing", JSON.stringify(mail));
+  await concierge();
 
   // Reads keep working.
   await allowed("findMany", () => prisma.room.findMany({ take: 3 }));

@@ -393,6 +393,18 @@ function staticChecks() {
   const tplGet = handlerBody(read("app/api/email-template/route.ts"), "GET") || "";
   result(tplGet.length > 0 && !PRISMA_WRITE.test(tplGet) && !/ensureTemplate\(/.test(tplGet), S, "GET /api/email-template does not create the row");
 
+  const concierge = handlerBody(read("app/api/concierge/route.ts"), "POST") || "";
+  const roAt = concierge.indexOf("if (isReadOnlyDeployment())");
+  const aiAt = concierge.indexOf("completeChat(");
+  result(roAt > 0 && aiAt > roAt, S, "POST /api/concierge answers locally in read-only mode before any completeChat()");
+  const aiSrc = read("lib/ai.ts");
+  result(
+    /export function getAiProvider\(\)[^{]*\{\s*\r?\n\s*if \(isReadOnlyDeployment\(\)\) return null;/.test(aiSrc) &&
+      /export async function completeChat\([\s\S]{0,200}?if \(isReadOnlyDeployment\(\)\)/.test(aiSrc),
+    S,
+    "lib/ai.ts: no provider and no fetch in read-only mode"
+  );
+
   const checks = [
     ["lib/seedDatabase.ts", /export async function seedDatabase\([^)]*\)\s*\{[\s\S]{0,300}?assertWritable\("seedDatabase"\);\s*\r?\n\s*console\.log/, "seedDatabase() refuses before its transaction opens"],
     ["lib/storage.ts", /export async function uploadMedia[\s\S]{0,400}?isReadOnlyDeployment\(\)/, "uploadMedia() refuses before any Supabase call"],
@@ -583,11 +595,17 @@ async function runtimeApiChecks(S, ids) {
         }
         continue;
       }
+      if (key === "POST /api/concierge") {
+        // A dated question gets the computed availability, anything else the
+        // local intent matcher; both 200, neither reaches an AI provider.
+        const dated = await call(m, url, { body: { message: "Do you have a room for two next weekend?", lang: "en" } });
+        result(dated.status === 200 && dated.json && dated.json.source === "availability" && !dated.json.provider, S, `${key} dated question -> 200 computed availability, no AI call`, `got ${dated.status} ${dated.text.slice(0, 100)}`);
+        const plain = await call(m, url, { body: { message: "Can you arrange an airport pickup?", lang: "th" } });
+        result(plain.status === 200 && plain.json && plain.json.source === "read-only-local" && typeof plain.json.reply === "string" && plain.json.reply.length > 0, S, `${key} undated question -> 200 local answer (source read-only-local), no AI call`, `got ${plain.status} ${plain.text.slice(0, 100)}`);
+        continue;
+      }
       if (READ_ONLY_BY_DESIGN[key]) {
-        const res =
-          r.url === "/api/owner/session"
-            ? await call(m, url, { body: m === "POST" ? {} : undefined, headers: { origin: BASE } })
-            : await call(m, url, { body: { message: "Do you have a room for two next weekend?", lang: "en" } });
+        const res = await call(m, url, { body: m === "POST" ? {} : undefined, headers: { origin: BASE } });
         result(res.status > 0 && res.status < 500 && res.status !== 403, S, `${key} -> ${res.status} (${READ_ONLY_BY_DESIGN[key]})`, res.status >= 500 ? res.text.slice(0, 120) : "");
         continue;
       }
