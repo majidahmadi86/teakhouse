@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cronAuthorized } from "@/lib/cronAuth";
 import { maybeReseedDemo } from "@/lib/demoReset";
 import { prisma } from "@/lib/db";
 import { revalidateAll } from "@/lib/revalidate";
@@ -7,9 +8,9 @@ export const dynamic = "force-dynamic";
 
 /** Vercel cron fallback · daily on Hobby · DEMO_MODE reseeds on API if >60m */
 export async function GET(req: Request) {
-  const auth = req.headers.get("authorization");
-  const secret = process.env.CRON_SECRET;
-  if (secret && auth !== `Bearer ${secret}`) {
+  // Fail closed: a missing header, a wrong bearer and an unset CRON_SECRET
+  // are all the same 401 · see lib/cronAuth.ts.
+  if (!cronAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   if (
