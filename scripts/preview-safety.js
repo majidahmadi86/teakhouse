@@ -340,6 +340,11 @@ function staticChecks() {
 
   const dbSrc = read("lib/db.ts");
   result(/\$extends\(/.test(dbSrc) && /isReadOnlyDeployment\(\)\s*\?\s*readOnlyClient/.test(dbSrc), S, "lib/db.ts wraps the client in the read-only extension when read-only");
+  result(
+    /return Boolean\(model\) && READ_MODEL_OPS\.has\(operation\);/.test(dbSrc) && !/isReadOnlySql|rawSqlText/.test(dbSrc + read("lib/readOnly.ts")),
+    S,
+    "the guard is a model-read allowlist: no raw SQL classifier, every raw or unknown operation refused"
+  );
 
   // Every write handler refuses first.
   const missing = [];

@@ -7,9 +7,9 @@
  * Preview. So a preview is treated as if it reaches the production database,
  * and in a preview NOTHING writes:
  *
- *  - lib/db.ts wraps Prisma so every write (model writes, $executeRaw, and any
- *    $queryRaw that is not a plain read) throws ReadOnlyDeploymentError before
- *    a statement is sent;
+ *  - lib/db.ts wraps Prisma so everything but a model read (model writes and
+ *    all raw SQL, reads included) throws ReadOnlyDeploymentError before a
+ *    statement is sent;
  *  - every write route answers 403 through readOnlyResponse();
  *  - the reseed paths (the cron, POST /api/data/reset, seedDatabase) return
  *    before any work; HF-1 already took the reseed off every request path;
@@ -87,56 +87,4 @@ export function readOnlyResponse(): Response | null {
       "cache-control": "no-store",
     },
   });
-}
-
-/* ------------------------------------------------------------------------ */
-/* Raw SQL classification for the Prisma guard                               */
-/* ------------------------------------------------------------------------ */
-
-/**
- * Words that make a statement a write (or let it become one). Scanned over the
- * ORIGINAL text, comments and string literals included: a false positive only
- * refuses a read in a preview, while stripping first could hide a write
- * behind a `--` inside a literal. INTO catches SELECT ... INTO new_table;
- * UPDATE also catches SELECT ... FOR UPDATE, which is a lock and not needed in
- * a read-only deployment.
- */
-const WRITE_WORDS =
-  /\b(insert|update|delete|merge|truncate|alter|drop|create|grant|revoke|copy|call|do|into|vacuum|reindex|cluster|refresh|comment|lock|listen|notify|prepare|execute|discard|reset|security|import|load)\b/i;
-
-/**
- * Functions that change state although they run inside a SELECT. Advisory
- * locks (pg_advisory_*) are deliberately absent: they write no data.
- */
-const SIDE_EFFECT_FUNCTIONS =
-  /\b(nextval|setval|set_config|pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_rotate_logfile|pg_switch_wal|pg_promote|pg_notify|pg_logical_emit_message|pg_create_\w+|pg_drop_\w+|pg_replication_origin_\w+|pg_stat_reset\w*|pg_file_\w+|pg_import_\w+|lo_\w+|dblink\w*)\s*\(/i;
-
-/** Leading block and line comments, whitespace and opening parens. */
-function stripLead(sql: string): string {
-  let s = sql;
-  for (;;) {
-    const next = s
-      .replace(/^\s+/, "")
-      .replace(/^\(+/, "")
-      .replace(/^--[^\n]*(\n|$)/, "")
-      .replace(/^\/\*[\s\S]*?\*\//, "");
-    if (next === s) return s;
-    s = next;
-  }
-}
-
-/**
- * True only for a single statement that starts with SELECT, WITH, SHOW or
- * EXPLAIN and contains no write word, no side-effect function and no second
- * statement.
- */
-export function isReadOnlySql(sql: string): boolean {
-  if (typeof sql !== "string" || !sql.trim()) return false;
-  const lead = stripLead(sql);
-  if (!/^(select|with|show|explain)\b/i.test(lead)) return false;
-  if (WRITE_WORDS.test(sql)) return false;
-  if (SIDE_EFFECT_FUNCTIONS.test(sql)) return false;
-  // A second statement after a semicolon. A trailing semicolon is fine.
-  if (/;\s*\S/.test(sql.replace(/;\s*$/, ""))) return false;
-  return true;
 }

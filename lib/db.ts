@@ -3,21 +3,22 @@
  *
  * v17 · In a read-only deployment (a Vercel preview, see lib/readOnly.ts) the
  * client is wrapped in a query extension that refuses every write BEFORE it
- * reaches the database: model writes, $executeRaw / $executeRawUnsafe, and any
- * $queryRaw / $queryRawUnsafe whose SQL is not a plain read. Reads pass
- * through untouched. Operations inside interactive and batch $transaction
- * calls run through the same extension (scripts/preview-safety.js proves it).
- * Production and local dev get the plain client, exactly as before.
+ * reaches the database. It is an allowlist: the eight model read operations
+ * pass, everything else throws ReadOnlyDeploymentError. That includes ALL raw
+ * SQL ($queryRaw, $queryRawUnsafe, $executeRaw, $executeRawUnsafe), reads
+ * included, and any top-level operation Prisma may add later. The app reads
+ * nothing through raw SQL, and no text classifier can be trusted to tell a
+ * read from a write (quoted or commented function names, bare-CR comments and
+ * volatile user functions all walked past the one that was here).
+ * Operations inside interactive and batch $transaction calls run through the
+ * same extension (scripts/preview-safety.js proves it). Production and local
+ * dev get the plain client, exactly as before.
  */
 import { PrismaClient } from "@prisma/client";
-import {
-  ReadOnlyDeploymentError,
-  isReadOnlyDeployment,
-  isReadOnlySql,
-} from "./readOnly";
+import { ReadOnlyDeploymentError, isReadOnlyDeployment } from "./readOnly";
 
 /** Model operations that only read. Anything else is refused (fail closed). */
-const READ_MODEL_OPS = new Set([
+const READ_MODEL_OPS: ReadonlySet<string> = new Set([
   "findUnique",
   "findUniqueOrThrow",
   "findFirst",
@@ -28,18 +29,16 @@ const READ_MODEL_OPS = new Set([
   "groupBy",
 ]);
 
-/** The SQL text of a raw query, whichever way it was called. */
-function rawSqlText(args: unknown): string {
-  // $queryRawUnsafe(sql, ...values) arrives as [sql, ...values].
-  if (Array.isArray(args)) return typeof args[0] === "string" ? args[0] : "";
-  if (typeof args === "string") return args;
-  if (args && typeof args === "object") {
-    // $queryRaw`...` arrives as a Prisma.Sql object.
-    const a = args as { sql?: unknown; strings?: unknown };
-    if (typeof a.sql === "string") return a.sql;
-    if (Array.isArray(a.strings)) return a.strings.join("$?");
-  }
-  return "";
+/**
+ * The read-only decision for one Prisma operation: true only for a model
+ * read. `model` is undefined for top-level operations ($queryRaw and the
+ * rest), which are always refused. Exported for the gate.
+ */
+export function readOnlyAllows(
+  model: string | undefined,
+  operation: string
+): boolean {
+  return Boolean(model) && READ_MODEL_OPS.has(operation);
 }
 
 function readOnlyClient(base: PrismaClient): PrismaClient {
@@ -47,19 +46,10 @@ function readOnlyClient(base: PrismaClient): PrismaClient {
     name: "read-only-deployment",
     query: {
       async $allOperations({ model, operation, args, query }) {
-        if (model) {
-          if (READ_MODEL_OPS.has(operation)) return query(args);
-          throw new ReadOnlyDeploymentError(`${model}.${operation}`);
-        }
-        if (
-          (operation === "$queryRaw" || operation === "$queryRawUnsafe") &&
-          isReadOnlySql(rawSqlText(args))
-        ) {
-          return query(args);
-        }
-        // $executeRaw, $executeRawUnsafe, a raw query that writes, and any
-        // operation this list does not know.
-        throw new ReadOnlyDeploymentError(operation);
+        if (readOnlyAllows(model, operation)) return query(args);
+        throw new ReadOnlyDeploymentError(
+          model ? `${model}.${operation}` : operation
+        );
       },
     },
     // The query extension leaves the model API unchanged, so the client keeps

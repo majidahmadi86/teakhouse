@@ -9,14 +9,10 @@
  * The parent compares a full database fingerprint before and after this run.
  * Prints PASS/FAIL lines; exit code 1 on any FAIL.
  */
-import { prisma } from "../../lib/db";
+import { prisma, readOnlyAllows } from "../../lib/db";
 import { claimDemoReset } from "../../lib/demoReset";
 import { sendConfirmationEmail } from "../../lib/email";
-import {
-  READ_ONLY_CODE,
-  isReadOnlyDeployment,
-  isReadOnlySql,
-} from "../../lib/readOnly";
+import { READ_ONLY_CODE, isReadOnlyDeployment } from "../../lib/readOnly";
 import { seedDatabase } from "../../lib/seedDatabase";
 import { uploadMedia } from "../../lib/storage";
 
@@ -84,53 +80,58 @@ function envMatrix() {
   else process.env.DB_READ_ONLY = keep.d;
 }
 
-function sqlClassifier() {
-  const reads = [
-    "SELECT 1",
-    "  select * from \"Room\" where rate > 0",
-    "WITH r AS (SELECT id FROM \"Room\") SELECT count(*) FROM r",
-    "SHOW server_version",
-    "EXPLAIN SELECT 1",
-    "/* lead */ SELECT 1",
-    "-- lead\nSELECT 1;",
-    "(SELECT 1)",
-    "SELECT pg_try_advisory_xact_lock(4242)",
-    "SELECT \"lastReset\" FROM \"DemoMeta\"",
+/**
+ * The guard is an allowlist of model reads. Every top-level operation is
+ * refused, including ones this Prisma version does not have yet, and every
+ * model operation that is not one of the eight reads.
+ */
+function operationAllowlist() {
+  const reads = ["findUnique", "findUniqueOrThrow", "findFirst", "findFirstOrThrow", "findMany", "count", "aggregate", "groupBy"];
+  const bad = reads.filter((op) => !readOnlyAllows("Room", op));
+  report(bad.length === 0, `guard allows the ${reads.length} model reads`, bad.join(", "));
+  const refusedOps: [string | undefined, string][] = [
+    [undefined, "$queryRaw"],
+    [undefined, "$queryRawUnsafe"],
+    [undefined, "$executeRaw"],
+    [undefined, "$executeRawUnsafe"],
+    [undefined, "$queryRawTyped"],
+    [undefined, "$runCommandRaw"],
+    [undefined, "$someFutureOperation"],
+    [undefined, "findMany"],
+    ["Room", "updateManyAndReturn"],
+    ["Room", "findRaw"],
+    ["Room", "aggregateRaw"],
+    ["Room", "someFutureWrite"],
+    ["", "findMany"],
   ];
-  const writes = [
-    "INSERT INTO \"DemoMeta\" (id) VALUES ('x')",
-    "UPDATE \"Room\" SET rate = 1",
-    "DELETE FROM \"Room\"",
-    "WITH d AS (DELETE FROM \"Room\" RETURNING 1) SELECT count(*) FROM d",
-    "WITH u AS (UPDATE \"Room\" SET rate = 1 RETURNING 1) SELECT 1",
-    "SELECT * INTO qa_copy FROM \"Room\"",
-    "SELECT 1; DELETE FROM \"Room\"",
-    "SELECT '--'; DELETE FROM \"Room\"",
-    "EXPLAIN ANALYZE DELETE FROM \"Room\"",
-    "/* x */ DELETE FROM \"Room\"",
-    "TRUNCATE \"Room\"",
-    "ALTER TABLE \"Room\" ADD COLUMN x int",
-    "DROP TABLE \"Room\"",
-    "CREATE TABLE qa_x (id int)",
-    "GRANT ALL ON \"Room\" TO public",
-    "REVOKE ALL ON \"Room\" FROM public",
-    "COPY \"Room\" TO STDOUT",
-    "CALL qa_proc()",
-    "DO $$ BEGIN DELETE FROM \"Room\"; END $$",
-    "MERGE INTO \"Room\" r USING \"Room\" s ON r.id = s.id WHEN MATCHED THEN DELETE",
-    "SELECT nextval('qa_seq')",
-    "SELECT setval('qa_seq', 1)",
-    "SELECT set_config('default_transaction_read_only', 'off', false)",
-    "SELECT pg_terminate_backend(1)",
-    "SELECT * FROM \"Room\" FOR UPDATE",
-    "VACUUM \"Room\"",
-    "",
-  ];
-  let bad = reads.filter((s) => !isReadOnlySql(s));
-  report(bad.length === 0, `isReadOnlySql accepts ${reads.length} read statements`, bad.join(" | "));
-  bad = writes.filter((s) => isReadOnlySql(s));
-  report(bad.length === 0, `isReadOnlySql rejects ${writes.length} write statements`, bad.join(" | "));
+  const leaks = refusedOps.filter(([m, op]) => readOnlyAllows(m, op)).map(([m, op]) => `${m ?? "(top level)"}.${op}`);
+  report(leaks.length === 0, `guard refuses ${refusedOps.length} non-read operations (all raw SQL, unknown top-level and model operations)`, leaks.join(", "));
 }
+
+/**
+ * Raw SQL in every form a reviewer used to walk past the old text classifier,
+ * plus plain reads: with no classifier, a read is refused exactly like a write.
+ * Each string goes to $queryRawUnsafe; each must throw the read-only error
+ * before Postgres sees it.
+ */
+const RAW_BYPASS_FORMS: [string, string][] = [
+  ["plain read SELECT 1", "SELECT 1"],
+  ["read of a real table", 'SELECT count(*)::int AS n FROM "Room"'],
+  ["SHOW", "SHOW server_version"],
+  ["EXPLAIN", "EXPLAIN SELECT 1"],
+  ["advisory lock", "SELECT pg_try_advisory_xact_lock(4242) AS ok"],
+  ["quoted function name", `SELECT "setval"('qa_preview_safety_seq', 1)`],
+  ["schema-qualified quoted name", `SELECT "pg_catalog"."set_config"('application_name', 'qa', false)`],
+  ["comment between name and paren", "SELECT setval/**/('qa_preview_safety_seq', 1)"],
+  ["comment inside set_config", "SELECT set_config/* x */('application_name', 'qa', false)"],
+  ["bare-CR line comment, then a DELETE", '-- read only\rDELETE FROM "SeasonalPriceRule" RETURNING id'],
+  ["bare-CR comment hiding a writable CTE", 'SELECT 1 --\r, (WITH d AS (DELETE FROM "SeasonalPriceRule" RETURNING 1) SELECT count(*) FROM d)'],
+  ["volatile user function", "SELECT qa_preview_safety_volatile()"],
+  ["large object create", "SELECT lo_create(0)"],
+  ["large object from bytea", "SELECT lo_from_bytea(0, 'qa'::bytea)"],
+  ["nextval", "SELECT nextval('qa_preview_safety_seq')"],
+  ["dollar-quoted DO block", 'DO $q$ BEGIN DELETE FROM "SeasonalPriceRule"; END $q$'],
+];
 
 async function main() {
   if (process.env.VERCEL_ENV !== "preview") {
@@ -139,7 +140,7 @@ async function main() {
   }
   report(isReadOnlyDeployment(), "VERCEL_ENV=preview makes the deployment read-only");
   envMatrix();
-  sqlClassifier();
+  operationAllowlist();
 
   const room = await prisma.room.findFirst({ orderBy: { id: "asc" } });
   if (!room) {
@@ -213,6 +214,22 @@ async function main() {
   await refused("$queryRawUnsafe set_config", () =>
     prisma.$queryRawUnsafe("SELECT set_config('application_name', 'qa', false)")
   );
+  for (const [label, sql] of RAW_BYPASS_FORMS) {
+    await refused(`$queryRawUnsafe ${label}`, () => prisma.$queryRawUnsafe(sql));
+  }
+  await refused("$queryRaw SELECT (tagged read)", () =>
+    prisma.$queryRaw`SELECT id FROM "Room" WHERE id = ${room.id}`
+  );
+  await refused("$queryRaw quoted setval (tagged)", () =>
+    prisma.$queryRaw`SELECT "setval"('qa_preview_safety_seq', ${1})`
+  );
+  await refused("$executeRaw SELECT (tagged)", () => prisma.$executeRaw`SELECT ${1}`);
+  await refused("raw read inside interactive $transaction", () =>
+    prisma.$transaction(async (tx) => tx.$queryRawUnsafe("SELECT 1"))
+  );
+  await refused("raw read inside batch $transaction", () =>
+    prisma.$transaction([prisma.$queryRawUnsafe("SELECT 1")])
+  );
 
   // Transactions: interactive and batch.
   await refused("write inside interactive $transaction", () =>
@@ -253,21 +270,6 @@ async function main() {
     await prisma.room.aggregate({ _max: { rate: true } });
     await prisma.room.groupBy({ by: ["capacity"], _count: true });
   });
-  await allowed("$queryRawUnsafe SELECT", async () => {
-    const r = (await prisma.$queryRawUnsafe('SELECT count(*)::int AS n FROM "Room"')) as { n: number }[];
-    if (!(r[0]?.n > 0)) throw new Error("no rows");
-  });
-  await allowed("$queryRaw SELECT (tagged)", () =>
-    prisma.$queryRaw`SELECT id FROM "Room" WHERE id = ${room.id}`
-  );
-  await allowed("WITH / SHOW / EXPLAIN", async () => {
-    await prisma.$queryRawUnsafe('WITH r AS (SELECT id FROM "Room") SELECT count(*)::int AS n FROM r');
-    await prisma.$queryRawUnsafe("SHOW server_version");
-    await prisma.$queryRawUnsafe("EXPLAIN SELECT 1");
-  });
-  await allowed("SELECT pg_try_advisory_xact_lock (read-only in effect)", () =>
-    prisma.$queryRawUnsafe("SELECT pg_try_advisory_xact_lock(4242) AS ok")
-  );
   await allowed("reads inside interactive $transaction", () =>
     prisma.$transaction(async (tx) => {
       await tx.room.count();
