@@ -1,20 +1,33 @@
 import bundleAnalyzer from "@next/bundle-analyzer";
+import { writePolicy } from "./lib/writePolicy.mjs";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
 /**
- * v17 · Preview safety. A build made for a Vercel preview is read-only for
- * its whole life: this bakes DB_READ_ONLY="1" into the bundle, so the build
- * refuses writes even if VERCEL_ENV is not exposed at runtime (lib/readOnly.ts).
- * Production and local builds bake "" and stay writable. DB_READ_ONLY=1 in the
- * build env opts a local build in, for the gate (scripts/preview-safety.js).
+ * v17 · Preview safety. A Vercel build always knows its environment. VERCEL
+ * set without VERCEL_ENV means the build env is not what we think it is, and
+ * a guess could make a preview writable against production: stop instead.
  */
-const DB_READ_ONLY =
-  process.env.VERCEL_ENV === "preview" || process.env.DB_READ_ONLY === "1"
-    ? "1"
-    : "";
+if (process.env.VERCEL && !process.env.VERCEL_ENV) {
+  throw new Error(
+    "next.config.mjs: VERCEL is set but VERCEL_ENV is missing; refusing to " +
+      "build or start (preview safety, see lib/writePolicy.mjs)."
+  );
+}
+
+/**
+ * The build's own write decision (lib/writePolicy.mjs: writable only for
+ * VERCEL_ENV=production, or off Vercel against a database on localhost),
+ * baked into the bundle as a NON-EMPTY literal: "1" read-only, "0" writable.
+ * Next inlines only truthy `env` values, so an empty string would not be
+ * baked at all. "0" never makes a deployment writable by itself:
+ * lib/readOnly.ts re-checks the runtime env, so a writable build served as a
+ * preview is still read-only. DB_READ_ONLY=1 in the build env opts a local
+ * build in, for the gate (scripts/preview-safety.js).
+ */
+const DB_READ_ONLY = writePolicy(process.env).writable ? "0" : "1";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

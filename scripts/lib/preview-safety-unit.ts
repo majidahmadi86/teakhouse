@@ -56,28 +56,72 @@ async function allowed(label: string, run: () => Promise<unknown>) {
   }
 }
 
+/**
+ * The fail-closed matrix. Writable only for VERCEL_ENV=production, or off
+ * Vercel with a database URL that genuinely points at this machine. The
+ * remote host is under .invalid, which never resolves; nothing connects.
+ */
+const MATRIX_KEYS = ["VERCEL_ENV", "VERCEL", "VERCEL_URL", "VERCEL_REGION", "VERCEL_DEPLOYMENT_ID", "DATABASE_URL", "DB_READ_ONLY"] as const;
+const LOCAL_URL = "postgresql://qa:qa@localhost:55432/teakhouse";
+const REMOTE_URL = "postgresql://qa:qa@db.qa-remote.invalid:6543/postgres?pgbouncer=true";
+type MatrixEnv = Partial<Record<(typeof MATRIX_KEYS)[number], string>>;
+const MATRIX: [string, MatrixEnv, boolean][] = [
+  ["VERCEL_ENV=preview, local DB", { VERCEL_ENV: "preview", VERCEL: "1", DATABASE_URL: LOCAL_URL }, true],
+  ["VERCEL_ENV=preview, remote DB", { VERCEL_ENV: "preview", VERCEL: "1", DATABASE_URL: REMOTE_URL }, true],
+  ["VERCEL_ENV=development", { VERCEL_ENV: "development", DATABASE_URL: LOCAL_URL }, true],
+  ["VERCEL_ENV=production, remote DB", { VERCEL_ENV: "production", VERCEL: "1", DATABASE_URL: REMOTE_URL }, false],
+  ["VERCEL_ENV=production without VERCEL", { VERCEL_ENV: "production", DATABASE_URL: REMOTE_URL }, false],
+  ["VERCEL_ENV=Production (wrong case)", { VERCEL_ENV: "Production", DATABASE_URL: REMOTE_URL }, true],
+  ["VERCEL_ENV unset, remote DB (local script)", { DATABASE_URL: REMOTE_URL }, true],
+  ["VERCEL=1, no VERCEL_ENV, local DB", { VERCEL: "1", DATABASE_URL: LOCAL_URL }, true],
+  ["VERCEL=1, no VERCEL_ENV, remote DB", { VERCEL: "1", DATABASE_URL: REMOTE_URL }, true],
+  ["VERCEL_URL only, local DB", { VERCEL_URL: "x.vercel.app", DATABASE_URL: LOCAL_URL }, true],
+  ["VERCEL_REGION only, local DB", { VERCEL_REGION: "hnd1", DATABASE_URL: LOCAL_URL }, true],
+  ["VERCEL_DEPLOYMENT_ID only, local DB", { VERCEL_DEPLOYMENT_ID: "dpl_qa", DATABASE_URL: LOCAL_URL }, true],
+  ["off Vercel, localhost", { DATABASE_URL: LOCAL_URL }, false],
+  ["off Vercel, 127.0.0.1", { DATABASE_URL: "postgresql://qa@127.0.0.1:55432/teakhouse" }, false],
+  ["off Vercel, [::1]", { DATABASE_URL: "postgresql://qa@[::1]:55432/teakhouse" }, false],
+  ["off Vercel, postgres:// scheme", { DATABASE_URL: "postgres://qa@localhost:55432/teakhouse" }, false],
+  ["off Vercel, LOCALHOST upper case", { DATABASE_URL: "postgresql://qa@LOCALHOST:55432/teakhouse" }, false],
+  ["localhost with ?host= (remote)", { DATABASE_URL: `${LOCAL_URL}?host=db.qa-remote.invalid` }, true],
+  ["localhost with ?host= (socket dir)", { DATABASE_URL: `${LOCAL_URL}?host=/var/run/postgresql` }, true],
+  ["localhost with ?hostaddr=", { DATABASE_URL: `${LOCAL_URL}?sslmode=disable&hostaddr=203.0.113.9` }, true],
+  ["localhost with ?HOST= (upper case)", { DATABASE_URL: `${LOCAL_URL}?HOST=db.qa-remote.invalid` }, true],
+  ["localhost with ?ho%73t= (encoded)", { DATABASE_URL: `${LOCAL_URL}?ho%73t=db.qa-remote.invalid` }, true],
+  ["localhost with ?service=", { DATABASE_URL: `${LOCAL_URL}?service=prod` }, true],
+  ["localhost.<remote> lookalike", { DATABASE_URL: "postgresql://qa@localhost.qa-remote.invalid:5432/x" }, true],
+  ["127.0.0.1.<remote> lookalike", { DATABASE_URL: "postgresql://qa@127.0.0.1.qa-remote.invalid:5432/x" }, true],
+  ["multi-host list", { DATABASE_URL: "postgresql://qa@localhost:55432,db.qa-remote.invalid:5432/x" }, true],
+  ["userinfo trick (localhost@remote)", { DATABASE_URL: "postgresql://localhost@db.qa-remote.invalid:5432/x" }, true],
+  ["127.1 shorthand", { DATABASE_URL: "postgresql://qa@127.1:55432/x" }, true],
+  ["IPv4-mapped ::ffff:127.0.0.1", { DATABASE_URL: "postgresql://qa@[::ffff:127.0.0.1]:55432/x" }, true],
+  ["http:// scheme on localhost", { DATABASE_URL: "http://localhost:55432/x" }, true],
+  ["prisma:// (Accelerate)", { DATABASE_URL: "prisma://accelerate.prisma-data.net/?api_key=qa" }, true],
+  ["DATABASE_URL unset", {}, true],
+  ["DATABASE_URL not a URL", { DATABASE_URL: "not a url" }, true],
+  ["DB_READ_ONLY=1, local DB", { DATABASE_URL: LOCAL_URL, DB_READ_ONLY: "1" }, true],
+  ["DB_READ_ONLY=1, production", { VERCEL_ENV: "production", VERCEL: "1", DATABASE_URL: REMOTE_URL, DB_READ_ONLY: "1" }, true],
+  ["DB_READ_ONLY=0, local DB", { DATABASE_URL: LOCAL_URL, DB_READ_ONLY: "0" }, false],
+];
+
 function envMatrix() {
-  const keep = { v: process.env.VERCEL_ENV, d: process.env.DB_READ_ONLY };
-  const cases: [string | undefined, string | undefined, boolean][] = [
-    ["preview", undefined, true],
-    ["production", undefined, false],
-    [undefined, undefined, false],
-    ["development", undefined, false],
-    [undefined, "1", true],
-    ["production", "", false],
-  ];
-  for (const [v, d, want] of cases) {
-    if (v === undefined) delete process.env.VERCEL_ENV;
-    else process.env.VERCEL_ENV = v;
-    if (d === undefined) delete process.env.DB_READ_ONLY;
-    else process.env.DB_READ_ONLY = d;
-    const got = isReadOnlyDeployment();
-    report(got === want, `isReadOnlyDeployment() VERCEL_ENV=${v ?? "unset"} DB_READ_ONLY=${d ?? "unset"} -> ${want}`, got === want ? "" : `got ${got}`);
+  const keep: Record<string, string | undefined> = {};
+  for (const k of MATRIX_KEYS) keep[k] = process.env[k];
+  const set = (env: Record<string, string | undefined>) => {
+    for (const k of MATRIX_KEYS) {
+      if (env[k] === undefined) delete process.env[k];
+      else process.env[k] = env[k];
+    }
+  };
+  try {
+    for (const [label, env, want] of MATRIX) {
+      set(env);
+      const got = isReadOnlyDeployment();
+      report(got === want, `isReadOnlyDeployment() ${label} -> ${want ? "read-only" : "writable"}`, got === want ? "" : `got ${got ? "read-only" : "writable"}`);
+    }
+  } finally {
+    set(keep);
   }
-  if (keep.v === undefined) delete process.env.VERCEL_ENV;
-  else process.env.VERCEL_ENV = keep.v;
-  if (keep.d === undefined) delete process.env.DB_READ_ONLY;
-  else process.env.DB_READ_ONLY = keep.d;
 }
 
 /**

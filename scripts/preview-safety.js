@@ -319,8 +319,15 @@ function staticChecks() {
 
   const nextCfg = read("next.config.mjs");
   const bakes =
-    /VERCEL_ENV\s*===\s*"preview"/.test(nextCfg) && /env:\s*\{[\s\S]*?DB_READ_ONLY/.test(nextCfg);
-  result(bakes, S, "next.config.mjs bakes DB_READ_ONLY from the build's VERCEL_ENV");
+    /writePolicy\(process\.env\)\.writable\s*\?\s*"0"\s*:\s*"1"/.test(nextCfg) && /env:\s*\{[\s\S]*?DB_READ_ONLY/.test(nextCfg);
+  result(bakes, S, 'next.config.mjs bakes DB_READ_ONLY as "1" or "0" (never empty) from lib/writePolicy.mjs');
+  result(/if\s*\(process\.env\.VERCEL\s*&&\s*!process\.env\.VERCEL_ENV\)\s*\{\s*throw/.test(nextCfg), S, "next.config.mjs throws when VERCEL is set without VERCEL_ENV");
+  const roSrc = read("lib/readOnly.ts");
+  result(
+    /if \(process\.env\.DB_READ_ONLY === "1"\) return true;\s*\r?\n(\s*\/\/[^\n]*\r?\n)*\s*return !writePolicy\(process\.env\)\.writable;/.test(roSrc),
+    S,
+    "isReadOnlyDeployment() checks the baked constant AND the runtime rule"
+  );
 
   const appFiles = [
     ...walk(path.join(ROOT, "app"), (p) => /\.(ts|tsx|js|mjs)$/.test(p)),

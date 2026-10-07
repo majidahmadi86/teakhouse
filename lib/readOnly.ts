@@ -15,28 +15,41 @@
  *    before any work; HF-1 already took the reseed off every request path;
  *  - the guest forms show their existing "something went wrong" message.
  *
- * Two signals, either one is enough:
- *  - VERCEL_ENV is "preview" at runtime;
- *  - DB_READ_ONLY is "1". next.config.mjs bakes this at build time from the
- *    build's own VERCEL_ENV, so a preview build stays read-only even if the
- *    system env vars are not exposed to the function at runtime. In a Next
- *    build `process.env.DB_READ_ONLY` is replaced by that literal, so a
- *    runtime value cannot switch a production build to read-only or back.
+ * The rule fails closed (lib/writePolicy.mjs): writable only when VERCEL_ENV
+ * is exactly "production", or when the process is not on Vercel at all and
+ * DATABASE_URL genuinely points at this machine. Every other case, a local
+ * script aimed at a remote database included, is read-only.
  *
- * Production (VERCEL_ENV=production) and local dev (unset) stay writable.
+ * It is applied twice, and either half is enough to make a process read-only:
+ *  - build half: next.config.mjs runs the rule on the build's own env and
+ *    bakes the answer into the bundle as DB_READ_ONLY, "1" (read-only) or "0"
+ *    (writable). The value is never empty because Next only inlines truthy
+ *    `env` values: an empty string would not be baked at all, and this line
+ *    would quietly read the live variable instead. Inside a Next bundle the
+ *    dot-access form below is replaced by the literal, so the runtime env
+ *    cannot undo a read-only build. Outside Next (tsx scripts) it is the live
+ *    variable, and DB_READ_ONLY=1 opts a process in.
+ *  - runtime half: the same rule on the live process.env, in every process.
+ *    A "0" build is therefore still read-only when it is served as a preview,
+ *    on Vercel without VERCEL_ENV, or against a database not on this machine.
  *
- * This module is server code with no imports, so lib/db.ts and the gate
- * script (scripts/preview-safety.js, through tsx) can load it directly.
+ * Writable in practice: the production deployment (VERCEL_ENV=production)
+ * and local dev, the gates and the seed against the dev DB on localhost.
+ *
+ * This module is server code whose only import is the plain-JS rule, so
+ * lib/db.ts and the gate script (through tsx) can load it directly.
  */
+import { writePolicy } from "./writePolicy.mjs";
 
 export const READ_ONLY_CODE = "READ_ONLY_DEPLOYMENT";
 
-/** True when this deployment must not write anywhere. */
+/** True when this process must not write anywhere. */
 export function isReadOnlyDeployment(): boolean {
-  // Dot access on purpose: next.config.mjs `env` inlines exactly this form.
-  return (
-    process.env.VERCEL_ENV === "preview" || process.env.DB_READ_ONLY === "1"
-  );
+  // Build half. Dot access on purpose: next.config.mjs `env` inlines exactly
+  // this form ("1" or "0").
+  if (process.env.DB_READ_ONLY === "1") return true;
+  // Runtime half, never skipped.
+  return !writePolicy(process.env).writable;
 }
 
 /** Thrown by the Prisma guard and the other write paths in read-only mode. */
