@@ -273,7 +273,7 @@ HF-1 DEPLOY + VERIFY
 - Then continue straight into imagery and Milestone A.
 
 ### Amendment 1 checklist
-- [ ] Preview safety committed on v17-a (both repos) and adversarially reviewed; escapes closed
+- [x] (T) Preview safety committed on v17-a and adversarially reviewed; escapes closed: read-only mode refuses ALL raw SQL and any unknown Prisma operation (no classifier left to fool), fails closed (lib/writePolicy.mjs: writable only for VERCEL_ENV=production, or off Vercel against a database genuinely on localhost; next.config.mjs bakes "1"/"0" and refuses VERCEL without VERCEL_ENV), the concierge makes no outbound AI call when read-only, and next is on 14.2.35 (CVE-2025-29927). Gate: node scripts/preview-safety.js 268/268 on the dev DB. (S) done separately in the sovra repo.
 - [ ] HF-1 Teak House: hotfix/hf-1 cut from the production commit
 - [ ] HF-1 Teak House a: Deployment Protection on every generated URL (custom domain stays public)
 - [ ] HF-1 Teak House b: CRON_SECRET set for Production; cron route 401 without a valid bearer, also when unset
@@ -285,4 +285,4 @@ HF-1 DEPLOY + VERIFY
 - [ ] HF-1 Solenne: v17-a reseed atomic and schema-correct
 - [ ] HF-1 gates: v14 suites, security gate (every write and reset path refused unauthenticated, fingerprint unchanged), cron with and without secret, forced mid-reseed failure leaves data unchanged
 - [ ] HF-1 deployed, production smoke passed, owner TTFB before and after recorded, next scheduled cron confirmed in logs
-- [ ] v17-a rebased onto hf-1 in both repos
+- [x] (T) v17-a rebased onto hotfix/hf-1 (b709563, live in production): the superseded cron commit dropped, every write handler refuses read-only first and then runs HF-1's session, cron and same-origin checks, seedDatabase keeps HF-1's single transaction with the read-only refusal before it opens. HF-1 gate 141/141, v11 36/36, v12 110/110, v13 263/263, v14 153/153, reserve-bug-check 33/33, th-missing 0, tsc clean. (S) done separately in the sovra repo.
