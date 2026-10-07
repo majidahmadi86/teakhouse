@@ -1,18 +1,16 @@
 import { loadOwnerData } from "@/lib/dataService";
-import { maybeReseedDemo } from "@/lib/demoReset";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Read-only. /book, /account and /owner all fetch this on mount, so it must
+ * never write: it used to touch the DemoMeta marker and reseed the whole
+ * database inline when the marker was over an hour old. The reseed now runs
+ * only from the authenticated cron (app/api/cron/reseed).
+ */
 export async function GET() {
   try {
-    // A failed reseed must not cost the caller its data · serving slightly
-    // stale demo rows beats dropping the client back to base-rate seed data.
-    try {
-      await maybeReseedDemo();
-    } catch (e) {
-      console.error("[api/data] reseed skipped", e);
-    }
     const data = await loadOwnerData();
     return NextResponse.json(data);
   } catch (e) {

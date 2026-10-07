@@ -186,8 +186,8 @@ export const DICT: Record<string, DictEntry> = {
   "do.primary": { en: "Chat on LINE", th: "คุยทาง LINE" },
   "do.secondary": { en: "Platform details", th: "รายละเอียดแพลตฟอร์ม" },
   "ow.demoData": {
-    en: "Demo data · resets hourly",
-    th: "ข้อมูลตัวอย่าง · รีเซ็ตทุกชั่วโมง",
+    en: "Demo data · resets daily",
+    th: "ข้อมูลตัวอย่าง · รีเซ็ตทุกวัน",
   },
 
   "rp.h1": { en: "Rooms and rates", th: "ห้องพักและราคา" },

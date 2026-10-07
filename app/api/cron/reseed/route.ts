@@ -1,36 +1,31 @@
 import { NextResponse } from "next/server";
 import { cronAuthorized } from "@/lib/cronAuth";
-import { maybeReseedDemo } from "@/lib/demoReset";
-import { prisma } from "@/lib/db";
+import { isDemoModeServer } from "@/lib/demoReset";
 import { revalidateAll } from "@/lib/revalidate";
+import { seedDatabase } from "@/lib/seedDatabase";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-/** Vercel cron fallback · daily on Hobby · DEMO_MODE reseeds on API if >60m */
+/**
+ * The demo reseed · the ONLY place it runs on a schedule.
+ *
+ * Vercel Cron calls this daily at 00:00 UTC (vercel.json; Hobby allows one
+ * run a day). Guest and owner request paths never reseed: GET /api/data used
+ * to reseed inline when the marker was over an hour old, which made any load
+ * of /book, /account or /owner a potential full database rewrite.
+ */
 export async function GET(req: Request) {
   // Fail closed: a missing header, a wrong bearer and an unset CRON_SECRET
   // are all the same 401 · see lib/cronAuth.ts.
   if (!cronAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (
-    process.env.DEMO_MODE !== "true" &&
-    process.env.NEXT_PUBLIC_DEMO_MODE !== "true"
-  ) {
+  if (!isDemoModeServer()) {
     return NextResponse.json({ skipped: true, reason: "DEMO_MODE off" });
   }
-  const did = await maybeReseedDemo();
-  if (did) revalidateAll();
-  // Force reseed on cron even if under 60m (cron is the schedule of record)
-  if (!did) {
-    const { seedDatabase } = await import("@/lib/seedDatabase");
-    await seedDatabase();
-    await prisma.demoMeta.upsert({
-      where: { id: "demo" },
-      create: { id: "demo", lastReset: new Date() },
-      update: { lastReset: new Date() },
-    });
-    revalidateAll();
-  }
-  return NextResponse.json({ ok: true, reseeding: true });
+  // The seed writes the DemoMeta marker itself.
+  await seedDatabase();
+  revalidateAll();
+  return NextResponse.json({ ok: true, reseeded: true });
 }
