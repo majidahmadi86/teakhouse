@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { ConciergeProvider, useConcierge } from "@/components/providers";
-import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
+import { I18nProvider, useI18n, type Lang, type Messages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 /** Shared container geometry · matches ConciergePanel so there is no jump. */
@@ -63,9 +63,9 @@ export function ConciergeLauncher() {
  * Self-contained mount for layouts without the full Providers tree (home).
  * Provides its own i18n + concierge context so the panel works standalone.
  */
-export function ConciergeMount({ lang }: { lang: Lang }) {
+export function ConciergeMount({ lang, messages }: { lang: Lang; messages: Messages }) {
   return (
-    <I18nProvider initialLang={lang}>
+    <I18nProvider initialLang={lang} messages={messages}>
       <ConciergeProvider>
         <ConciergeLauncher />
       </ConciergeProvider>

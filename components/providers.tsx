@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { CurrencyProvider } from "@/lib/currency";
 import { GuestAuthProvider } from "@/lib/guestAuth";
-import { I18nProvider, type Lang } from "@/lib/i18n";
+import { I18nProvider, type Lang, type Messages } from "@/lib/i18n";
 
 type ConciergeCtx = {
   isOpen: boolean;
@@ -43,15 +43,21 @@ export function useConcierge() {
   return ctx;
 }
 
+/**
+ * Guest providers · language (one language's strings, handed down by the
+ * server through messagesFor), currency, guest account and concierge.
+ */
 export function Providers({
   children,
   initialLang,
+  messages,
 }: {
   children: React.ReactNode;
-  initialLang?: Lang;
+  initialLang: Lang;
+  messages: Messages;
 }) {
   return (
-    <I18nProvider initialLang={initialLang}>
+    <I18nProvider initialLang={initialLang} messages={messages}>
       <CurrencyProvider>
         <GuestAuthProvider>
           <ConciergeProvider>{children}</ConciergeProvider>

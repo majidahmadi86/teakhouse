@@ -3,6 +3,7 @@ import { HomeBelowFold } from "@/components/home/HomeBelowFold";
 import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
 import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
 import { getServerLocale, t } from "@/lib/serverLocale";
+import { messagesFor } from "@/lib/locales";
 
 /** Server page · locale + hero + below-fold all render server-side in one paint. */
 export default function HomePage() {
@@ -29,6 +30,8 @@ export default function HomePage() {
         locale={locale}
         searchSlot={
           <DeferredHeroSearch
+            lang={locale}
+            messages={messagesFor(locale, ["avail.", "drp.", "g1", "g2", "g3", "g4", "hero.tonight", "mobile.close"])}
             checkInLabel={dateLabel}
             guestLabel={t(locale, "g2")}
             checkRatesLabel={t(locale, "avail.go")}

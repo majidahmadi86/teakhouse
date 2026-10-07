@@ -7,6 +7,7 @@ import { HeaderShell } from "@/components/header/HeaderShell";
 import { Providers } from "@/components/providers";
 import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale, t } from "@/lib/serverLocale";
+import { messagesFor } from "@/lib/locales";
 import { GuestShell } from "./GuestShell";
 import { RouteProgress } from "@/components/RouteProgress";
 
@@ -20,7 +21,7 @@ export default function GuestLayout({
 }) {
   const locale = getServerLocale();
   return (
-    <Providers initialLang={locale}>
+    <Providers initialLang={locale} messages={messagesFor(locale)}>
       <DemoModeBar variant="guest" locale={locale} />
       <DemoModal strings={getDemoStrings(locale)}>
         <GuestShell headerShell={<HeaderShell locale={locale} />}>

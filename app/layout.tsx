@@ -1,6 +1,8 @@
 import { hotelConfig } from "@/config/hotel.config";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { getServerLocale } from "@/lib/serverLocale";
+import { translateEntry } from "@/lib/i18n-core";
+import { langMeta } from "@/lib/locales/meta";
 import { ROUTE_META } from "@/lib/routeMeta";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -56,8 +58,8 @@ const sarabun = Sarabun({
 export function generateMetadata(): Metadata {
   const locale = getServerLocale();
   const home = ROUTE_META["/"];
-  const title = home.title[locale];
-  const description = home.description![locale];
+  const title = translateEntry(locale, home.title);
+  const description = translateEntry(locale, home.description!);
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -72,7 +74,7 @@ export function generateMetadata(): Metadata {
     },
     openGraph: {
       type: "website",
-      locale: locale === "th" ? "th_TH" : "en_TH",
+      locale: langMeta(locale).og,
       url: SITE_URL,
       siteName: hotelConfig.name,
       title,
@@ -94,10 +96,12 @@ export default function RootLayout({
 }>) {
   const paletteStyle = paletteStyleString(hotelConfig.palette);
   const locale = getServerLocale();
+  const meta = langMeta(locale);
 
   return (
     <html
-      lang={locale}
+      lang={meta.tag}
+      dir={meta.dir}
       data-demo={DEMO_MODE ? "true" : undefined}
       className={`${marcellus.variable} ${jakarta.variable} ${kanit.variable} ${sarabun.variable}`}
     >

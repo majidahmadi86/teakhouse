@@ -1,29 +1,24 @@
-import { DICT, type DictEntry } from "./i18n-dict";
+import { interpolate, translateEntry } from "./i18n-core";
+import { lookup } from "./locales";
+import type { Lang } from "./locales/meta";
+import type { DictEntry } from "./i18n-dict";
 
-export type Lang = "en" | "th";
+export type { Lang, DictEntry };
+export { translateEntry };
 
 /**
- * Pure dictionary lookup · no next/headers, no hooks. Safe in server AND client
- * components (pass the resolved locale in). Server code reads the locale from
- * the cookie (serverLocale); client code from the i18n context.
+ * Server-side dictionary lookup · sixteen languages. EN and TH are authored
+ * pairs; the other fourteen come from lib/locales and fall back to English per
+ * key. Client components never import this module (it pulls every dictionary):
+ * they read the one language they were handed through useI18n(), or take
+ * already-translated strings as props.
  */
 export function translate(
   locale: Lang,
   key: string,
   vars?: Record<string, string | number>
 ): string {
-  const entry = DICT[key];
-  let s = entry ? entry[locale] : key;
-  if (vars) {
-    for (const [k, v] of Object.entries(vars)) {
-      s = s.replace(`{${k}}`, String(v));
-    }
-  }
-  return s;
-}
-
-export function translateEntry(locale: Lang, entry: DictEntry): string {
-  return entry[locale];
+  return interpolate(lookup(locale, key) ?? key, vars);
 }
 
 /** Base-currency (THB) price for zero-JS server rendering. */

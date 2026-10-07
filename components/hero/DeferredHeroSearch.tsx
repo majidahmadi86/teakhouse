@@ -3,9 +3,10 @@
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { HeroSearchPillShell } from "@/components/hero/HeroSearchPillShell";
 import { mountAfterLoad } from "@/lib/deferMount";
+import type { Lang, Messages } from "@/lib/i18n";
 
 type Bundle = {
-  Providers: ComponentType<{ children: ReactNode }>;
+  Providers: ComponentType<{ children: ReactNode; initialLang: Lang; messages: Messages }>;
   Pill: ComponentType<{ className?: string }>;
 };
 
@@ -19,7 +20,12 @@ export function DeferredHeroSearch({
   guestLabel,
   checkRatesLabel,
   tonightLabel,
+  lang,
+  messages,
 }: {
+  lang: Lang;
+  /** The pill's strings in the page language (messagesFor on the server). */
+  messages: Messages;
   checkInLabel: string;
   guestLabel?: string;
   checkRatesLabel?: string;
@@ -63,7 +69,7 @@ export function DeferredHeroSearch({
 
   const { Providers, Pill } = bundle;
   return (
-    <Providers>
+    <Providers initialLang={lang} messages={messages}>
       <Pill />
     </Providers>
   );

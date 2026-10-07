@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ComponentType } from "react";
 import { mountAfterLoad } from "@/lib/deferMount";
-import type { Lang } from "@/lib/translate";
+import type { Lang } from "@/lib/locales/meta";
 
 /**
  * Background crossfade slideshow only · pure visual enhancement over the static

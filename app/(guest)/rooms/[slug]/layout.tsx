@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata, ROOM_META_FALLBACK } from "@/lib/routeMeta";
 import { getServerLocale } from "@/lib/serverLocale";
+import { translateEntry } from "@/lib/i18n-core";
 import { SEED_ROOMS } from "@/lib/rooms";
 
 type Props = { params: { slug: string } };
@@ -15,8 +16,8 @@ type Props = { params: { slug: string } };
 export function generateMetadata({ params }: Props): Metadata {
   const locale = getServerLocale();
   const room = SEED_ROOMS.find((r) => r.slug === params.slug);
-  const name = room?.name[locale] ?? room?.name.en ?? "Room";
-  const raw = room?.description[locale] ?? ROOM_META_FALLBACK[locale];
+  const name = room ? translateEntry(locale, room.name) : "Room";
+  const raw = translateEntry(locale, room?.description ?? ROOM_META_FALLBACK);
   // Keep descriptions inside the ~160 characters a search result shows. Thai
   // has no spaces to break on, so cut on length and let the ellipsis do the
   // work rather than hunting for a word boundary that may not exist.

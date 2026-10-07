@@ -1,6 +1,8 @@
 import { hotelConfig } from "@/config/hotel.config";
 
-export type DictEntry = { en: string; th: string };
+import type { DictEntry } from "./i18n-core";
+
+export type { DictEntry };
 
 export const DICT: Record<string, DictEntry> = {
   "nav.rooms": { en: "Rooms", th: "ห้องพัก" },

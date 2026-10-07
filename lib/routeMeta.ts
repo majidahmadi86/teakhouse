@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { hotelConfig } from "@/config/hotel.config";
 import { getServerLocale } from "@/lib/serverLocale";
 import type { DictEntry } from "@/lib/i18n-dict";
-import type { Lang } from "@/lib/i18n";
+import { translateEntry } from "@/lib/i18n-core";
+import { langMeta, type Lang } from "@/lib/locales/meta";
 
 /**
  * Per-route title and description, in both languages.
@@ -152,13 +153,13 @@ export function buildMetadata(
     typeof overrides.title === "string"
       ? overrides.title
       : meta
-        ? meta.title[locale]
+        ? translateEntry(locale, meta.title)
         : undefined;
   const description =
     typeof overrides.description === "string"
       ? overrides.description
       : meta?.description
-        ? meta.description[locale]
+        ? translateEntry(locale, meta.description)
         : undefined;
 
   return {
@@ -173,7 +174,7 @@ export function buildMetadata(
       siteName: hotelConfig.name,
       ...(title ? { title } : {}),
       ...(description ? { description } : {}),
-      locale: locale === "th" ? "th_TH" : "en_TH",
+      locale: langMeta(locale).og,
       url: route,
     },
     ...overrides,

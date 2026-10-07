@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { unsplashSrc } from "@/lib/unsplashLoader";
-import type { Lang } from "@/lib/translate";
+import type { Lang } from "@/lib/locales/meta";
 
 const SLIDES = [
   {

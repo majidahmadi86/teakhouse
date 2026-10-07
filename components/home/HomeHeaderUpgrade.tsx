@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { mountAfterLoad } from "@/lib/deferMount";
+import type { Lang, Messages } from "@/lib/i18n";
 
 /**
  * SSR HeaderShell (correct locale, pixel-identical to the hydrated Header) then
@@ -9,7 +10,15 @@ import { mountAfterLoad } from "@/lib/deferMount";
  * window load · no idle, no interaction. The shell looks identical, so the
  * upgrade is invisible and never gates content.
  */
-export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
+export function HomeHeaderUpgrade({
+  shell,
+  lang,
+  messages,
+}: {
+  shell: ReactNode;
+  lang: Lang;
+  messages: Messages;
+}) {
   const [header, setHeader] = useState<ReactNode>(null);
 
   useEffect(() => {
@@ -23,10 +32,12 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
         if (cancelled) return;
         const Providers = prov.Providers as ComponentType<{
           children: ReactNode;
+          initialLang: Lang;
+          messages: Messages;
         }>;
         const Header = hdr.Header as ComponentType;
         setHeader(
-          <Providers>
+          <Providers initialLang={lang} messages={messages}>
             <Header />
           </Providers>
         );
@@ -39,7 +50,7 @@ export function HomeHeaderUpgrade({ shell }: { shell: ReactNode }) {
       cancelled = true;
       cleanup();
     };
-  }, []);
+  }, [lang, messages]);
 
   return <>{header ?? shell}</>;
 }

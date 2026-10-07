@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import dynamic from "next/dynamic";
-import type { DemoStrings } from "@/lib/demoStrings";
+import type { DemoStrings } from "@/lib/demoLinks";
 
 const DM_KEY = "tkh-dm2";
 const DEMO_OPEN_EVENT = "tkh:demo-open";

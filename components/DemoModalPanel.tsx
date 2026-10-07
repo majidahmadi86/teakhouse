@@ -7,7 +7,7 @@ import {
   DEMO_DETAILS_URL,
   DEMO_LINE_URL,
   type DemoStrings,
-} from "@/lib/demoStrings";
+} from "@/lib/demoLinks";
 
 const SECONDARY_BTN =
   "inline-flex min-h-11 items-center justify-center rounded-full border border-line px-7 text-[15px] font-bold text-ink transition hover:border-blue hover:text-blue";

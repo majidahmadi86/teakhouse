@@ -9,6 +9,7 @@ import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
 import { HomeLate } from "@/components/home/HomeLate";
 import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale, t } from "@/lib/serverLocale";
+import { messagesFor } from "@/lib/locales";
 import { RouteProgress } from "@/components/RouteProgress";
 
 export const metadata: Metadata = {
@@ -32,7 +33,11 @@ export default function MarketingLayout({
   return (
     <>
       <DemoModeBar variant="guest" locale={locale} />
-      <HomeHeaderUpgrade shell={<HeaderShell locale={locale} />} />
+      <HomeHeaderUpgrade
+        shell={<HeaderShell locale={locale} />}
+        lang={locale}
+        messages={messagesFor(locale)}
+      />
       <main className="pb-0">{children}</main>
       <HomeLate locale={locale} />
       {/* Order modal host · CTA opens it via the shared window event. */}
@@ -42,7 +47,7 @@ export default function MarketingLayout({
           phone. FabHeroClearance expands it once the widget scrolls away. */}
       <ConciergeFabStatic label={t(locale, "cg.fab")} compact />
       <FabHeroClearance />
-      <ConciergeMount lang={locale} />
+      <ConciergeMount lang={locale} messages={messagesFor(locale, ["cg.", "a11y."])} />
       <RouteProgress label={t(locale, "a11y.loadingPage")} />
     </>
   );

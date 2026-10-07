@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SafeImage } from "@/components/SafeImage";
 import { cn } from "@/lib/utils";
 import type { DictEntry } from "@/lib/i18n-dict";
-import { translateEntry as tr, type Lang } from "@/lib/translate";
+import { translateEntry as tr } from "@/lib/i18n-core";
+import type { Lang } from "@/lib/locales/meta";
 
 const FADE_S = 1.25;
 const HERO_SIZES = "(max-width: 768px) 100vw, 100vw";

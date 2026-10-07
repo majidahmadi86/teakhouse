@@ -9,21 +9,14 @@ import React, {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { DICT, type DictEntry } from "./i18n-dict";
+import { interpolate, translateEntry, type DictEntry } from "./i18n-core";
+import { isLang, LOCALE_COOKIE, type Lang } from "./locales/meta";
 
-export type Lang = "en" | "th";
-export type { DictEntry };
-export { DICT };
+export type { Lang, DictEntry };
+export { LOCALE_COOKIE };
 
-/** Single source of truth · mirrors lib/serverLocale.ts. */
-export const LOCALE_COOKIE = "tkh-lang";
-const LANG_EVENT = "tkh:lang";
-
-function readCookieLang(): Lang | null {
-  if (typeof document === "undefined") return null;
-  const m = document.cookie.match(/(?:^|;\s*)tkh-lang=(en|th)\b/);
-  return m ? (m[1] as Lang) : null;
-}
+/** One language's strings, flat · computed on the server by messagesFor(). */
+export type Messages = Record<string, string>;
 
 type I18nCtx = {
   lang: Lang;
@@ -35,69 +28,75 @@ type I18nCtx = {
 const Ctx = createContext<I18nCtx | null>(null);
 
 /**
- * Locale is server-resolved from the tkh-lang cookie. On SSR'd trees it is
- * handed in as initialLang (no English-first flash); deferred client islands
- * seed from the cookie at mount. Toggling writes the cookie, broadcasts a
- * tkh:lang event so every mounted provider (header, booking pill, …) stays in
- * sync, and router.refresh()es so all server-rendered text re-renders · one
- * atomic switch, no reload, no mixed language.
+ * The client receives ONE language's strings (`messages`, computed on the
+ * server by lib/locales messagesFor) instead of every dictionary, so no guest
+ * bundle carries a dictionary.
+ *
+ * Changing language on a guest page is a full navigation to `?lang=xx`: the
+ * middleware promotes it into the cookie and serves that language's static
+ * page, so a tree is never half one language and half another.
+ *
+ * The owner panel (lib/ownerI18n.tsx) passes `messagesForLang` instead · it
+ * keeps its EN/TH dictionary in its own bundle as before and switches in place
+ * (cookie + router.refresh), unchanged from v14.
  */
 export function I18nProvider({
   children,
   initialLang,
+  messages,
+  messagesForLang,
 }: {
   children: React.ReactNode;
-  initialLang?: Lang;
+  initialLang: Lang;
+  messages?: Messages;
+  messagesForLang?: (l: Lang) => Messages;
 }) {
-  const [lang, setLangState] = useState<Lang>(
-    () => initialLang ?? readCookieLang() ?? "en"
-  );
+  const [lang, setLangState] = useState<Lang>(initialLang);
   const router = useRouter();
 
   useEffect(() => {
-    const onLang = (e: Event) => {
-      const detail = (e as CustomEvent<Lang>).detail;
-      if (detail === "en" || detail === "th") setLangState(detail);
-    };
-    window.addEventListener(LANG_EVENT, onLang as EventListener);
-    return () => window.removeEventListener(LANG_EVENT, onLang as EventListener);
-  }, []);
+    if (isLang(initialLang)) setLangState(initialLang);
+  }, [initialLang]);
+
+  const dict = useMemo<Messages>(
+    () => (messagesForLang ? messagesForLang(lang) : messages ?? {}),
+    [messagesForLang, messages, lang]
+  );
 
   const setLang = useCallback(
     (l: Lang) => {
-      setLangState(l);
+      if (!isLang(l)) return;
+      if (messagesForLang) {
+        setLangState(l);
+        try {
+          document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+          document.documentElement.lang = l;
+        } catch {
+          /* ignore */
+        }
+        router.refresh();
+        return;
+      }
       try {
-        document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
-        document.documentElement.lang = l;
-        window.dispatchEvent(new CustomEvent(LANG_EVENT, { detail: l }));
+        const url = new URL(window.location.href);
+        url.searchParams.set("lang", l);
+        window.location.assign(url.toString());
       } catch {
         /* ignore */
       }
-      router.refresh();
     },
-    [router]
+    [messagesForLang, router]
   );
 
   const t = useCallback(
-    (key: string, vars?: Record<string, string | number>) => {
-      const d = DICT[key];
-      let s = d ? d[lang] : key;
-      if (vars) {
-        Object.entries(vars).forEach(([k, v]) => {
-          s = s.replace(`{${k}}`, String(v));
-        });
-      }
-      return s;
-    },
-    [lang]
+    (key: string, vars?: Record<string, string | number>) =>
+      interpolate(dict[key] ?? key, vars),
+    [dict]
   );
 
-  const tr = useCallback((entry: DictEntry) => entry[lang], [lang]);
+  const tr = useCallback((entry: DictEntry) => translateEntry(lang, entry), [lang]);
 
-  const value = useMemo(
-    () => ({ lang, setLang, t, tr }),
-    [lang, setLang, t, tr]
-  );
+  const value = useMemo(() => ({ lang, setLang, t, tr }), [lang, setLang, t, tr]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

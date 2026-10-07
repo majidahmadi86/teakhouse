@@ -1,20 +1,7 @@
 import { translate, type Lang } from "@/lib/translate";
+import type { DemoStrings } from "@/lib/demoLinks";
 
-/** LINE contact for the deployment enquiry · opens in a new tab. */
-export const DEMO_LINE_URL = "https://line.me/ti/p/l059F3WkI7";
-/** Platform details page. */
-export const DEMO_DETAILS_URL = "https://mikaro.studio/teakhouse";
-
-export type DemoStrings = {
-  title: string;
-  line: string;
-  primary: string;
-  secondary: string;
-  l1: string;
-  l2: string;
-  l3: string;
-  close: string;
-};
+export { DEMO_DETAILS_URL, DEMO_LINE_URL, type DemoStrings } from "@/lib/demoLinks";
 
 /**
  * Server-resolved copy for the order funnel · lets the demo bar and order modal

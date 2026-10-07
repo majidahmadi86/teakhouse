@@ -15,6 +15,7 @@ import {
 import { parseDateIntent } from "@/lib/dateIntent";
 import { prisma } from "@/lib/db";
 import { isReadOnlyDeployment } from "@/lib/readOnly";
+import { isLang, langMeta } from "@/lib/locales/meta";
 
 export const dynamic = "force-dynamic";
 
@@ -135,9 +136,11 @@ function buildSystemPrompt(
   roomFacts: string,
   availability: AvailabilityResult | null,
   availabilityFailed: boolean,
-  houseFacts = ""
+  houseFacts = "",
+  /** The guest's page language when it is one of the sixteen (v17). */
+  pageLanguage?: string
 ): string {
-  const replyLang = lang === "th" ? "Thai" : "English";
+  const replyLang = pageLanguage ?? (lang === "th" ? "Thai" : "English");
   const name = hotelConfig.concierge.name[lang];
 
   const linkHref = handoffHref(availability);
@@ -265,7 +268,8 @@ export async function POST(req: Request) {
       roomFacts,
       availability,
       availabilityFailed,
-      houseFacts
+      houseFacts,
+      isLang(body.lang) ? langMeta(body.lang).english : undefined
     ),
     messages: [{ role: "user", content: message }],
     timeoutMs: TIMEOUT_MS,

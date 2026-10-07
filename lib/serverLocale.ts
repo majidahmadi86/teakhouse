@@ -1,16 +1,20 @@
 import { cookies, headers } from "next/headers";
-import { translate, translateEntry, type Lang } from "./translate";
+import { isLang, LOCALE_COOKIE, negotiateLang, type Lang } from "./locales/meta";
+import { translate, translateEntry } from "./translate";
 import type { DictEntry } from "./i18n-dict";
 
 export type { Lang };
+export { LOCALE_COOKIE };
 
-/** Single source of truth for the guest/owner UI language. */
-export const LOCALE_COOKIE = "tkh-lang";
-
-/** Server-resolved locale · read once per render from the request cookie. */
+/**
+ * Request-resolved locale · the cookie when set, otherwise the browser's
+ * Accept-Language (the middleware pins that first choice as the cookie, so
+ * the next request is deterministic).
+ */
 export function getServerLocale(): Lang {
   const value = cookies().get(LOCALE_COOKIE)?.value;
-  return value === "th" ? "th" : "en";
+  if (isLang(value)) return value;
+  return negotiateLang(headers().get("accept-language"));
 }
 
 /**

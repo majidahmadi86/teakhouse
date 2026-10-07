@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, X } from "lucide-react";
 import { useConcierge } from "@/components/providers";
 import { useI18n } from "@/lib/i18n";
+import { translateEntry } from "@/lib/i18n-core";
 import {
   CONCIERGE_CHIPS,
   CONCIERGE_FALLBACK,
@@ -40,7 +41,7 @@ export function ConciergePanel({
   const handledPrefill = useRef("");
 
   const pick = useCallback(
-    (entry: { en: string; th: string }) => entry[lang],
+    (entry: { en: string; th: string }) => translateEntry(lang, entry),
     [lang]
   );
 
@@ -109,7 +110,7 @@ export function ConciergePanel({
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing]);
 
-  const chips = CONCIERGE_CHIPS[lang];
+  const chips = lang === "th" ? CONCIERGE_CHIPS.th : CONCIERGE_CHIPS.en;
 
   return (
     <div

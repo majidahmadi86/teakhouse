@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import type { Lang } from "@/lib/translate";
+import type { Lang } from "@/lib/locales/meta";
 
 const HeroSlideshow = dynamic(
   () =>
