@@ -1,0 +1,3538 @@
+{
+  "site": "teakhouse",
+  "bible": "docs/art-direction.md",
+  "generated": "2026-10-07",
+  "notes": [
+    "Slots come from docs/v17-diagnosis.md item 5 and Tables A to C plus the A4 five-star room catalogue (6 rooms x 4 slots).",
+    "The 6 DB-only boutique rooms and the 4 lib/rooms.ts boutique rooms retire with the A4 catalogue; their photos are not carried over.",
+    "The two desktop slideshow frames on the home hero are not briefed: the diagnosis allows dropping the slideshow; hero-home is the only home hero.",
+    "brightness_min is the true greyscale mean (64 px inside, greyscale, raw byte mean). Evening or dawn slots carry 100.",
+    "Every slot needs its own photograph; gallery frames are distinct from every other slot."
+  ],
+  "slot_count": 103,
+  "groups": {
+    "arrival-and-river": [
+      "hero-home",
+      "og-default",
+      "hero-experience",
+      "hero-location",
+      "exp-house",
+      "gallery-city-skyline",
+      "gallery-palm-shadows"
+    ],
+    "lobby-and-house": [
+      "exp-about-house",
+      "hero-gallery",
+      "fac-lounge",
+      "gallery-orchid-console",
+      "gallery-teak-corridor",
+      "hero-rooms",
+      "hero-book",
+      "hero-account"
+    ],
+    "pool-and-garden": [
+      "hero-facilities",
+      "fac-pool",
+      "exp-pool",
+      "gallery-pool-from-above",
+      "gallery-pool-cabana",
+      "fac-garden",
+      "gallery-lotus-basin"
+    ],
+    "spa-and-linen": [
+      "fac-beyond",
+      "exp-massage",
+      "gallery-spa-still-life",
+      "fac-housekeeping",
+      "exp-team-housekeeping",
+      "gallery-wardrobe-robes"
+    ],
+    "service-and-arrival": [
+      "hero-contact",
+      "fac-transfer",
+      "offers-airport-pickup",
+      "fac-luggage",
+      "exp-team-front-desk",
+      "exp-team-concierge"
+    ],
+    "deluxe-rooms": [
+      "room-deluxe-king",
+      "room-deluxe-king-bath",
+      "room-deluxe-king-view",
+      "room-deluxe-king-detail",
+      "room-deluxe-twin",
+      "room-deluxe-twin-bath",
+      "room-deluxe-twin-view",
+      "room-deluxe-twin-detail"
+    ],
+    "river-rooms": [
+      "room-premier-river",
+      "room-premier-river-bath",
+      "room-premier-river-view",
+      "room-premier-river-detail",
+      "room-junior-suite",
+      "room-junior-suite-bath",
+      "room-junior-suite-view",
+      "room-junior-suite-detail"
+    ],
+    "teak-suites": [
+      "room-teak-suite",
+      "room-teak-suite-bath",
+      "room-teak-suite-view",
+      "room-teak-suite-detail",
+      "room-royal-teak-suite",
+      "room-royal-teak-suite-bath",
+      "room-royal-teak-suite-view",
+      "room-royal-teak-suite-detail"
+    ],
+    "restaurant-and-breakfast": [
+      "hero-dining",
+      "hero-dining-reserve",
+      "dining-beyond",
+      "dining-breakfast",
+      "dining-thai-kitchen",
+      "exp-breakfast",
+      "fac-pier",
+      "gallery-chef-hands"
+    ],
+    "breakfast-plates": [
+      "dish-rice-soup",
+      "dish-crab-omelette",
+      "dish-fruit-tray",
+      "dish-coconut-pancakes",
+      "dish-eggs",
+      "dish-coffee",
+      "exp-team-kitchen",
+      "gallery-fruit-basket"
+    ],
+    "thai-kitchen-plates": [
+      "dish-pad-thai",
+      "dish-massaman",
+      "dish-grilled-fish",
+      "dish-green-curry",
+      "dish-pomelo-salad",
+      "dish-morning-glory",
+      "dish-tom-yum",
+      "dish-mango-sticky-rice"
+    ],
+    "bar-and-drinks": [
+      "dining-drinks",
+      "dish-sundowner",
+      "dish-lemongrass-cooler",
+      "dish-iced-tea",
+      "dish-beer",
+      "gallery-river-rail-cocktails",
+      "gallery-tea-set"
+    ],
+    "event-spaces": [
+      "hero-events",
+      "hero-events-reserve",
+      "events-beyond",
+      "events-strip-wedding",
+      "events-strip-dinner",
+      "events-strip-party"
+    ],
+    "seasonal-events": [
+      "events-loy-krathong",
+      "events-jazz-brunch",
+      "events-songkran-lunch",
+      "exp-longtail"
+    ],
+    "offers-and-stays": [
+      "hero-offers",
+      "offers-early-bird",
+      "offers-stay-longer",
+      "gallery-window-seat"
+    ]
+  },
+  "slots": [
+    {
+      "slot": "hero-home",
+      "group": "arrival-and-river",
+      "page": "/",
+      "section": "Hero (LCP)",
+      "subject": "The river pool terrace of Teak House: an infinity-edge pool on a teak deck with a few empty loungers and palms, contemporary teak-louvred and white stone architecture at one side, the wide grey-green river and a soft, landmark-free city skyline beyond, bright morning",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "bright, airy, welcoming, five-star calm",
+      "must": [
+        "pool or river water clearly in frame",
+        "warm teak and white stone visible",
+        "tropical green",
+        "bright sky or bright soft cloud",
+        "calm area top-left for the headline",
+        "focal subject in the central 50 percent of the width"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "people on loungers or in the water",
+        "Solenne-style limestone pavilion on a reflecting pool",
+        "night or dusk"
+      ],
+      "source_data": "components/hero/HeroLCP.tsx:42; app/(marketing)/page.tsx:14-20; docs/v17-diagnosis.md Table A row 1",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "4:5",
+          "note": "same photograph; pool edge and architecture inside the central 50 percent so the 4:5 crop holds them"
+        }
+      ]
+    },
+    {
+      "slot": "og-default",
+      "group": "arrival-and-river",
+      "page": "all pages",
+      "section": "Open Graph and Twitter share image (1200 x 630)",
+      "subject": "The riverside lawn and teak deck of the hotel with garden umbrellas and palms, the wide river and the far bank behind, bright afternoon; a wide frame that crops cleanly to 1.91:1",
+      "aspect": "1.91:1",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "bright, open, unmistakably riverside",
+      "must": [
+        "river across the frame",
+        "teak deck or lawn edge in the foreground",
+        "centred subject with safe margins",
+        "reads at small size in a chat preview"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "anything that needs the full height to read"
+      ],
+      "source_data": "app/layout.tsx:73-80 (no og:image or twitter:image); docs/v17-diagnosis.md Table A row 102",
+      "crops": [
+        {
+          "use": "og",
+          "aspect": "1.91:1",
+          "size": "1200x630"
+        }
+      ]
+    },
+    {
+      "slot": "hero-experience",
+      "group": "arrival-and-river",
+      "page": "/experience",
+      "section": "Page hero",
+      "subject": "The wide river in mid-morning light from the hotel's teak riverside promenade: calm water filling the lower half, a green far bank, a soft low skyline, at most one small wooden boat far off",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "spacious, fresh, slow river morning",
+      "must": [
+        "wide river dominant",
+        "daylight with clear or bright sky",
+        "a hint of the promenade or rail in the foreground"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "Krabi-style limestone karsts or beach (the current stand-in)"
+      ],
+      "source_data": "app/(guest)/experience/ExperienceClient.tsx:96; docs/v17-diagnosis.md Table A row 71",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "hero-location",
+      "group": "arrival-and-river",
+      "page": "/location",
+      "section": "Page hero",
+      "subject": "The riverside neighbourhood seen across the water: low old shophouses and trees on the far bank with a few modern towers behind, wide calm river in the foreground, bright afternoon",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "a real city neighbourhood, sunny and walkable",
+      "must": [
+        "river in the lower third",
+        "mixed old and new skyline, none of it nameable",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "readable shop signs or billboards"
+      ],
+      "source_data": "app/(guest)/location/page.tsx:24; docs/v17-diagnosis.md Table A row 97",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "exp-house",
+      "group": "arrival-and-river",
+      "page": "/experience",
+      "section": "House and team: house portrait (4:5)",
+      "subject": "Portrait of the building from its garden: a contemporary tropical facade of vertical teak louvres, white stone and planted balconies, tall palms in front, clear blue sky",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "confident, warm, contemporary",
+      "must": [
+        "teak louvres or screens on the facade",
+        "white stone or render",
+        "palms or lush planting",
+        "blue or bright sky"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "traditional wooden Thai house (the current Unsplash+ frame)",
+        "hotel name or signage on the building"
+      ],
+      "source_data": "components/HouseAndTeam.tsx:31 (house/story, Unsplash+ licence risk); docs/v17-diagnosis.md Table A row 76",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "gallery-city-skyline",
+      "group": "arrival-and-river",
+      "page": "/gallery",
+      "section": "Gallery tile (river)",
+      "subject": "The city skyline across the river from the hotel rooftop on a clear bright afternoon, water in the lower third",
+      "aspect": "3:2",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "clear, bright, panoramic",
+      "must": [
+        "river and skyline together",
+        "clear sky"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "night or dusk skyline (the current \"River dusk skyline\" frame)"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:26 (replaces 1508009603885, dark Yaowarat neon)"
+    },
+    {
+      "slot": "gallery-palm-shadows",
+      "group": "arrival-and-river",
+      "page": "/gallery",
+      "section": "Gallery tile (house)",
+      "subject": "Palm-leaf shadows falling across a white stone wall and a teak bench in strong morning sun",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "graphic, sunny, quiet",
+      "must": [
+        "crisp leaf shadows",
+        "white wall",
+        "teak element"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "dark or grey wall",
+        "faded or mossy surfaces"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "exp-about-house",
+      "group": "lobby-and-house",
+      "page": "/",
+      "section": "About the house (4:5 desktop, 5:4 mobile)",
+      "subject": "The double-height lobby lounge: teak ceiling battens and screens, white stone floor, low linen sofas, large potted palms, tall windows full of river light",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "generous, airy, the first breath inside",
+      "must": [
+        "teak and white stone together",
+        "tall windows with daylight",
+        "plants",
+        "subject in the centre so both 4:5 and 5:4 crops work"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "residential exterior (the current 1600585154340 frame)"
+      ],
+      "source_data": "components/home/HomeBelowFold.tsx:51; docs/v17-diagnosis.md Table A row 4",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "4:5"
+        },
+        {
+          "use": "mobile",
+          "aspect": "5:4"
+        }
+      ],
+      "min_long_side": 3000
+    },
+    {
+      "slot": "hero-gallery",
+      "group": "lobby-and-house",
+      "page": "/gallery",
+      "section": "Page hero",
+      "subject": "The sculptural teak staircase of the atrium seen from its foot: floating teak treads, white stone walls, a cascade of hanging green plants, daylight from a skylight",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "signature, crafted, light-filled",
+      "must": [
+        "teak staircase as the subject",
+        "white stone",
+        "daylight from above"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "distinctive staircase of a famous building"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:60; docs/v17-diagnosis.md Table A row 81",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "fac-lounge",
+      "group": "lobby-and-house",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: the lobby lounge",
+      "subject": "A corner of the lobby lounge set for afternoon tea: two armchairs, a low teak table with a tea service and small cakes, a teak screen behind, soft daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "unhurried, hospitable",
+      "must": [
+        "armchairs",
+        "tea service on a teak table",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "dark corridor (the current lobby-lounge frame, 35.1)"
+      ],
+      "source_data": "lib/facilities.ts:36 (fac.lounge); docs/v17-diagnosis.md Table A row 67"
+    },
+    {
+      "slot": "gallery-orchid-console",
+      "group": "lobby-and-house",
+      "page": "/gallery",
+      "section": "Gallery tile (house)",
+      "subject": "A tall white orchid arrangement in a stone vessel on a white stone console against a teak wall, lobby daylight",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "composed, fresh",
+      "must": [
+        "white orchids",
+        "teak wall or screen",
+        "white stone"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "gold vase",
+        "dark background"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "gallery-teak-corridor",
+      "group": "lobby-and-house",
+      "page": "/gallery",
+      "section": "Gallery tile (rooms)",
+      "subject": "The guest corridor: a long run of teak doors along a white stone floor leading to a bright window at the far end",
+      "aspect": "3:2",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "quiet, ordered, warm",
+      "must": [
+        "repeating teak doors",
+        "light at the end",
+        "straight verticals"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "room numbers or door signs",
+        "dim hotel hallway"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)"
+    },
+    {
+      "slot": "hero-rooms",
+      "group": "lobby-and-house",
+      "page": "/rooms",
+      "section": "Page hero",
+      "subject": "Morning in a river-facing bedroom: sheer curtains half drawn, the corner of a crisply made white bed in the foreground, river light flooding through floor-to-ceiling glass (an atmosphere frame, not a single category)",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "soft morning, quiet luxury",
+      "must": [
+        "white linen",
+        "big window with daylight",
+        "a glimpse of water or sky"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "pool or exterior (the current hero-lcp frame)"
+      ],
+      "source_data": "app/(guest)/rooms/page.tsx:29-30; lib/i18n-dict.ts:861; docs/v17-diagnosis.md Table A row 21",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "hero-book",
+      "group": "lobby-and-house",
+      "page": "/book",
+      "section": "Page hero",
+      "subject": "A white robe and slippers set out on a teak bench at the foot of a freshly made bed, soft daylight",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "reassuring, ready for you",
+      "must": [
+        "robe and slippers",
+        "teak bench",
+        "made bed edge"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "monogram or logo on the robe"
+      ],
+      "source_data": "app/(guest)/book/page.tsx (no hero image today; added by A4 per the task slot list)",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "hero-account",
+      "group": "lobby-and-house",
+      "page": "/account/signin, /account/signup",
+      "section": "Auth panel (portrait, 45vw by full height)",
+      "subject": "A quiet corner: a cane armchair beside a tall window with a sheer curtain and a potted palm, white walls, daylight",
+      "aspect": "2:3",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "calm, private, welcoming",
+      "must": [
+        "vertical composition",
+        "window light",
+        "cane or rattan chair",
+        "plant"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "resort pool under karsts (the current hero-lcp frame)"
+      ],
+      "source_data": "components/AuthShell.tsx:11 (fallbacks :43-44); docs/v17-diagnosis.md Table A row 100",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "hero-facilities",
+      "group": "pool-and-garden",
+      "page": "/facilities",
+      "section": "Page hero",
+      "subject": "The rooftop infinity pool overlooking the river and the city: a long pool edge, teak deck, a neat row of empty loungers, bright clear day",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "expansive, sunny, five-star",
+      "must": [
+        "pool edge",
+        "river or city beyond",
+        "clear bright sky"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "swimmers",
+        "named sky pool of a known building"
+      ],
+      "source_data": "app/(guest)/facilities/page.tsx:18-20 (lobby-lounge, 35.1 dark); docs/v17-diagnosis.md Table A row 63",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "fac-pool",
+      "group": "pool-and-garden",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: the courtyard pool",
+      "subject": "The courtyard saltwater pool under a mature mango tree: loungers with folded white towels on a teak deck, dappled morning light",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "shaded, cool, private",
+      "must": [
+        "pool",
+        "a large tree giving shade",
+        "loungers with towels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "people"
+      ],
+      "source_data": "lib/facilities.ts:21 (fac.pool); lib/i18n-dict.ts:360; docs/v17-diagnosis.md Table A row 64"
+    },
+    {
+      "slot": "exp-pool",
+      "group": "pool-and-garden",
+      "page": "/experience",
+      "section": "Story 2: the courtyard pool",
+      "subject": "Morning laps: the pool's stone steps and rail with a rolled towel on the edge, the water surface catching sun and leaf shadows, no swimmers",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "fresh, still, inviting",
+      "must": [
+        "pool steps or edge close up",
+        "sunlit water",
+        "leaf shadow"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "seaside or beach pool (the current 1584132967334 frame)"
+      ],
+      "source_data": "app/(guest)/experience/ExperienceClient.tsx:24-31 (xp.2h); lib/i18n-dict.ts:236"
+    },
+    {
+      "slot": "gallery-pool-from-above",
+      "group": "pool-and-garden",
+      "page": "/gallery",
+      "section": "Gallery tile (pool)",
+      "subject": "Top-down view of the pool deck: a neat row of loungers with white towels beside turquoise water",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "graphic, sunny",
+      "must": [
+        "overhead angle",
+        "loungers in a row",
+        "water"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "people",
+        "inflatables"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:23 (replaces dead 1571008887538 \"Pool deck loungers\")",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "gallery-pool-cabana",
+      "group": "pool-and-garden",
+      "page": "/gallery",
+      "section": "Gallery tile (pool)",
+      "subject": "A white-draped poolside cabana with a daybed and linen cushions, palms behind, bright afternoon",
+      "aspect": "3:2",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "languid, bright",
+      "must": [
+        "cabana or daybed",
+        "white fabric",
+        "pool edge"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)"
+    },
+    {
+      "slot": "fac-garden",
+      "group": "pool-and-garden",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: the courtyard garden",
+      "subject": "The courtyard garden in flower: white stone paths through tropical planting, orchids and a mango tree, a teak bench, bright",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "lush but tidy, green and white",
+      "must": [
+        "white stone path",
+        "tropical planting in flower",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "cluttered or overgrown garden (the current frame)"
+      ],
+      "source_data": "lib/facilities.ts:31 (fac.garden); docs/v17-diagnosis.md Table A row 66"
+    },
+    {
+      "slot": "gallery-lotus-basin",
+      "group": "pool-and-garden",
+      "page": "/gallery",
+      "section": "Gallery tile (garden)",
+      "subject": "Lotus leaves and a single pink lotus flower in a round stone water basin in the garden, daylight",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "serene, Thai, fresh",
+      "must": [
+        "lotus",
+        "stone basin",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "reflecting pool as the subject (Solenne)",
+        "murky water"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)"
+    },
+    {
+      "slot": "fac-beyond",
+      "group": "spa-and-linen",
+      "page": "/",
+      "section": "Beyond the rooms: facilities card",
+      "subject": "The spa lounge: two teak daybeds with linen cushions, a tray of herbal tea, a garden seen through tall windows",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "restful, green, bright",
+      "must": [
+        "daybeds",
+        "tea tray",
+        "garden or window light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "sauna or red-lit room",
+        "the same frame as fac-pool"
+      ],
+      "source_data": "components/home/HomeBelowFold.tsx:176 (reuses facilities/pool today)"
+    },
+    {
+      "slot": "exp-massage",
+      "group": "spa-and-linen",
+      "page": "/experience",
+      "section": "Story 3: Thai massage upstairs",
+      "subject": "A Thai massage room: a low massage mattress with folded towels, a bowl of oil and herbal compresses, teak shutters letting in soft daylight; a therapist's hands allowed, no faces",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "calm, skilled, warm",
+      "must": [
+        "massage mattress or table",
+        "towels",
+        "herbal compress or oil",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "face in focus (the current 1544161515 frame)",
+        "hot stones on a back"
+      ],
+      "source_data": "app/(guest)/experience/ExperienceClient.tsx:32-39 (xp.3h); lib/i18n-dict.ts:245"
+    },
+    {
+      "slot": "gallery-spa-still-life",
+      "group": "spa-and-linen",
+      "page": "/gallery",
+      "section": "Gallery tile (spa)",
+      "subject": "Spa still life: rolled white towels, a stone bowl of jasmine flowers and a small unlabelled glass oil bottle on teak",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, fragrant, simple",
+      "must": [
+        "rolled towels",
+        "jasmine or white flowers",
+        "teak surface"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "candles in the dark",
+        "pink tulips or roses",
+        "frangipani as the motif"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:24 (replaces 1544161515, face in focus)"
+    },
+    {
+      "slot": "fac-housekeeping",
+      "group": "spa-and-linen",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: daily housekeeping",
+      "subject": "Folded white linen and towels stacked on a teak shelf in daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "crisp, fresh, cared for",
+      "must": [
+        "folded white linen",
+        "teak",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "store shelves",
+        "coloured towels"
+      ],
+      "source_data": "lib/facilities.ts:46 (fac.housekeeping); docs/v17-diagnosis.md Table A row 69"
+    },
+    {
+      "slot": "exp-team-housekeeping",
+      "group": "spa-and-linen",
+      "page": "/experience",
+      "section": "House and team: housekeeping lead (square)",
+      "subject": "The housekeeping trolley in an upstairs corridor: folded towels, fresh linen and a small orchid, no people",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "tidy, attentive",
+      "must": [
+        "trolley or cart",
+        "folded towels",
+        "corridor daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "face of a housekeeper (the current housekeeping-team frame)"
+      ],
+      "source_data": "components/HouseAndTeam.tsx:19 (house.r3); lib/i18n-dict.ts:463-465"
+    },
+    {
+      "slot": "gallery-wardrobe-robes",
+      "group": "spa-and-linen",
+      "page": "/gallery",
+      "section": "Gallery tile (rooms)",
+      "subject": "Two white robes and slippers in an open teak wardrobe, soft light",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "quiet comfort",
+      "must": [
+        "white robes",
+        "teak wardrobe"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "monogram or hotel logo on the robe"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "hero-contact",
+      "group": "service-and-arrival",
+      "page": "/contact",
+      "section": "Page hero",
+      "subject": "The hotel entrance: a teak-canopied porte-cochere and tall glass doors over a white stone forecourt, palms, no cars and no people",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "welcoming, open door",
+      "must": [
+        "entrance canopy or doors",
+        "teak and white stone",
+        "palms"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "dark modern residential house (the current contact-hero)",
+        "hotel name on the canopy"
+      ],
+      "source_data": "app/(guest)/contact/page.tsx:52-54; docs/v17-diagnosis.md Table A row 99",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "fac-transfer",
+      "group": "service-and-arrival",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: airport transfer",
+      "subject": "The hotel car waiting at the entrance: a clean sedan with its rear door open, daylight, palms around",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "effortless arrival",
+      "must": [
+        "car with open rear door",
+        "daylight",
+        "hotel forecourt feel"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "car badge, logo or licence plate",
+        "dark garage or night (the current frame, 47.9)"
+      ],
+      "source_data": "lib/facilities.ts:41 (fac.transfer); docs/v17-diagnosis.md Table A row 68"
+    },
+    {
+      "slot": "offers-airport-pickup",
+      "group": "service-and-arrival",
+      "page": "/offers and /",
+      "section": "Offer card 3: direct perk, free airport pickup",
+      "subject": "Inside the hotel car: a light leather rear seat with a chilled unlabelled water bottle and a folded cold towel on a small tray, daylight through the windows",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "cool, cared for",
+      "must": [
+        "rear seat interior",
+        "water bottle or towel",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "dashboard or steering wheel as the subject",
+        "brand logo on wheel, seat or bottle"
+      ],
+      "source_data": "components/OfferCard.tsx:16-22 (gradient today); lib/i18n-dict.ts:726-733 (off.3)"
+    },
+    {
+      "slot": "fac-luggage",
+      "group": "service-and-arrival",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: luggage storage",
+      "subject": "Guest luggage on a brass bell cart in a bright lobby corner, neatly stacked suitcases",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "orderly, safe, bright",
+      "must": [
+        "bell cart or neat luggage stack",
+        "bright surroundings"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "suitcase brand logos",
+        "vintage suitcase pile (the current frame)"
+      ],
+      "source_data": "lib/facilities.ts:51 (fac.luggage); docs/v17-diagnosis.md Table A row 70"
+    },
+    {
+      "slot": "exp-team-front-desk",
+      "group": "service-and-arrival",
+      "page": "/experience",
+      "section": "House and team: general manager (square)",
+      "subject": "The front desk: a teak reception counter with a white stone top and a vase of white orchids, no people",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "welcoming, composed",
+      "must": [
+        "reception counter",
+        "teak and stone",
+        "orchids"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staff faces",
+        "computer screens"
+      ],
+      "source_data": "components/HouseAndTeam.tsx:17 (house.r1; house/front-desk is Unsplash+); lib/i18n-dict.ts:451-453"
+    },
+    {
+      "slot": "exp-team-concierge",
+      "group": "service-and-arrival",
+      "page": "/experience",
+      "section": "House and team: concierge (square)",
+      "subject": "Close-up on the concierge desk: a brass service bell and a fountain pen on a leather desk pad, daylight",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "attentive, crafted",
+      "must": [
+        "brass bell",
+        "desk surface",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "maps or papers with text",
+        "dark background (the current frame, 59.0)"
+      ],
+      "source_data": "components/HouseAndTeam.tsx:18 (house.r2); lib/i18n-dict.ts:457-459"
+    },
+    {
+      "slot": "room-deluxe-king",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-king, /rooms, /, /book, header mega menu",
+      "section": "Deluxe King: cover (bedroom)",
+      "subject": "Deluxe King bedroom: a king bed with a teak headboard and white linen facing a wide city-view window, an armchair and a desk, bright daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 40 m2 (city view, king bed)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-king \"Deluxe King\" 40 m2, city view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-deluxe-king-bath",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-king, /book room modal",
+      "section": "Deluxe King: bathroom",
+      "subject": "Deluxe King bathroom: a glass walk-in rain shower and a single white stone vanity with a round mirror and a teak shelf, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-king \"Deluxe King\" 40 m2, city view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-deluxe-king-view",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-king, /book room modal",
+      "section": "Deluxe King: view, terrace or window",
+      "subject": "The Deluxe King window: floor-to-ceiling glass with sheer curtains framing the city skyline by day, a lounge chair in the foreground",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-king \"Deluxe King\" 40 m2, city view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-deluxe-king-detail",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-king, /book room modal",
+      "section": "Deluxe King: detail",
+      "subject": "Work desk detail: a teak desk with a brass lamp, a leather blotter and a closed notebook by the window",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-king \"Deluxe King\" 40 m2, city view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-deluxe-twin",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-twin, /rooms, /, /book, header mega menu",
+      "section": "Deluxe Twin: cover (bedroom)",
+      "subject": "Deluxe Twin bedroom: two queen beds side by side with teak headboards and white linen, a city-view window, bright daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 40 m2 (city view, two queen beds)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-twin \"Deluxe Twin\" 40 m2, city view, two queen beds; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-deluxe-twin-bath",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-twin, /book room modal",
+      "section": "Deluxe Twin: bathroom",
+      "subject": "Deluxe Twin bathroom: twin white stone basins under two round mirrors and a walk-in shower, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-twin \"Deluxe Twin\" 40 m2, city view, two queen beds; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-deluxe-twin-view",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-twin, /book room modal",
+      "section": "Deluxe Twin: view, terrace or window",
+      "subject": "City view from the Deluxe Twin: a reading armchair and floor lamp at the window, rooftops and towers beyond in daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-twin \"Deluxe Twin\" 40 m2, city view, two queen beds; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-deluxe-twin-detail",
+      "group": "deluxe-rooms",
+      "page": "/rooms/deluxe-twin, /book room modal",
+      "section": "Deluxe Twin: detail",
+      "subject": "Coffee and tea station: a teak cabinet with a pour-over kit, cups and a glass jar of biscuits",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): deluxe-twin \"Deluxe Twin\" 40 m2, city view, two queen beds; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-premier-river",
+      "group": "river-rooms",
+      "page": "/rooms/premier-river, /rooms, /, /book, header mega menu",
+      "section": "Premier River View: cover (bedroom)",
+      "subject": "Premier River View bedroom: a king bed facing floor-to-ceiling glass on the wide river, teak floor, white linen, bright",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 46 m2 (floor-to-ceiling river view, king bed)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): premier-river \"Premier River View\" 46 m2, floor-to-ceiling river view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-premier-river-bath",
+      "group": "river-rooms",
+      "page": "/rooms/premier-river, /book room modal",
+      "section": "Premier River View: bathroom",
+      "subject": "Premier River View bathroom: a freestanding white bathtub against a window with river light, white stone floor",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): premier-river \"Premier River View\" 46 m2, floor-to-ceiling river view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-premier-river-view",
+      "group": "river-rooms",
+      "page": "/rooms/premier-river, /book room modal",
+      "section": "Premier River View: view, terrace or window",
+      "subject": "The river through the Premier window: floor-to-ceiling glass with a teak daybed and cushions in the foreground, the wide river by day",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): premier-river \"Premier River View\" 46 m2, floor-to-ceiling river view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-premier-river-detail",
+      "group": "river-rooms",
+      "page": "/rooms/premier-river, /book room modal",
+      "section": "Premier River View: detail",
+      "subject": "Bedside detail: a teak nightstand with a brass reading lamp, a white orchid and a glass carafe",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): premier-river \"Premier River View\" 46 m2, floor-to-ceiling river view, king bed; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-junior-suite",
+      "group": "river-rooms",
+      "page": "/rooms/junior-suite, /rooms, /, /book, header mega menu",
+      "section": "Junior Suite: cover (bedroom)",
+      "subject": "Junior Suite bedroom: a king bed with a river view through a wide window, teak and white stone, an open sliding door to the lounge",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 64 m2 (river view with a separate lounge)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): junior-suite \"Junior Suite\" 64 m2, river view with a separate lounge; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-junior-suite-bath",
+      "group": "river-rooms",
+      "page": "/rooms/junior-suite, /book room modal",
+      "section": "Junior Suite: bathroom",
+      "subject": "Junior Suite bathroom: a double vanity in white stone and a deep soaking tub with teak details, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): junior-suite \"Junior Suite\" 64 m2, river view with a separate lounge; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-junior-suite-view",
+      "group": "river-rooms",
+      "page": "/rooms/junior-suite, /book room modal",
+      "section": "Junior Suite: view, terrace or window",
+      "subject": "River view from the Junior Suite balcony: two chairs and a small table on a teak balcony above the wide river",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): junior-suite \"Junior Suite\" 64 m2, river view with a separate lounge; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-junior-suite-detail",
+      "group": "river-rooms",
+      "page": "/rooms/junior-suite, /book room modal",
+      "section": "Junior Suite: detail",
+      "subject": "The separate lounge: a sofa, two armchairs and a coffee table in teak and linen beside a bright window",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): junior-suite \"Junior Suite\" 64 m2, river view with a separate lounge; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-teak-suite",
+      "group": "teak-suites",
+      "page": "/rooms/teak-suite, /rooms, /, /book, header mega menu",
+      "section": "Teak Suite: cover (bedroom)",
+      "subject": "Teak Suite bedroom: warm teak-panelled walls, a king bed in white linen, bright river light through tall glass doors to the terrace",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 92 m2 (teak-panelled, wraparound river terrace)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): teak-suite \"Teak Suite\" 92 m2, teak-panelled, wraparound river terrace; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-teak-suite-bath",
+      "group": "teak-suites",
+      "page": "/rooms/teak-suite, /book room modal",
+      "section": "Teak Suite: bathroom",
+      "subject": "Teak Suite bathroom: teak-slatted walls around a stone soaking tub, a walk-in rain shower behind glass, window light",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): teak-suite \"Teak Suite\" 92 m2, teak-panelled, wraparound river terrace; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-teak-suite-view",
+      "group": "teak-suites",
+      "page": "/rooms/teak-suite, /book room modal",
+      "section": "Teak Suite: view, terrace or window",
+      "subject": "The wraparound river terrace: teak decking with loungers and planting curving around the suite, the river and skyline beyond",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): teak-suite \"Teak Suite\" 92 m2, teak-panelled, wraparound river terrace; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-teak-suite-detail",
+      "group": "teak-suites",
+      "page": "/rooms/teak-suite, /book room modal",
+      "section": "Teak Suite: detail",
+      "subject": "Texture detail: teak panelling with brass handles and a woven cane inset in raking daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): teak-suite \"Teak Suite\" 92 m2, teak-panelled, wraparound river terrace; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-royal-teak-suite",
+      "group": "teak-suites",
+      "page": "/rooms/royal-teak-suite, /rooms, /, /book, header mega menu",
+      "section": "Royal Teak Suite: cover (bedroom)",
+      "subject": "Royal Teak Suite master bedroom: a large king bed, teak and white stone, floor-to-ceiling glass opening to the terrace and the river",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, generous, five-star calm",
+      "must": [
+        "bed as the subject",
+        "teak and white linen",
+        "window daylight",
+        "room reads as 210 m2 (two bedrooms, private plunge-pool terrace over the river)"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "staged apartment living room",
+        "beds unmade or clutter"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): royal-teak-suite \"Royal Teak Suite\" 210 m2, two bedrooms, private plunge-pool terrace over the river; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C",
+      "crops": [
+        {
+          "use": "card",
+          "aspect": "4:3"
+        },
+        {
+          "use": "room page",
+          "aspect": "16:10"
+        },
+        {
+          "use": "/book mobile",
+          "aspect": "16:9"
+        }
+      ]
+    },
+    {
+      "slot": "room-royal-teak-suite-bath",
+      "group": "teak-suites",
+      "page": "/rooms/royal-teak-suite, /book room modal",
+      "section": "Royal Teak Suite: bathroom",
+      "subject": "Royal Teak Suite master bathroom: twin vanities and a freestanding tub in the middle of a white stone room with a river window",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "clean, bright, spa-like",
+      "must": [
+        "white stone",
+        "daylight",
+        "no toiletries with labels"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "toilet as the subject",
+        "black tiles or dark bathroom"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): royal-teak-suite \"Royal Teak Suite\" 210 m2, two bedrooms, private plunge-pool terrace over the river; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-royal-teak-suite-view",
+      "group": "teak-suites",
+      "page": "/rooms/royal-teak-suite, /book room modal",
+      "section": "Royal Teak Suite: view, terrace or window",
+      "subject": "The private plunge-pool terrace over the river: a plunge pool edged in white stone, teak deck and two loungers, the river below",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "open, light, the city or river at your feet",
+      "must": [
+        "window, balcony or terrace",
+        "daylight view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): royal-teak-suite \"Royal Teak Suite\" 210 m2, two bedrooms, private plunge-pool terrace over the river; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "room-royal-teak-suite-detail",
+      "group": "teak-suites",
+      "page": "/rooms/royal-teak-suite, /book room modal",
+      "section": "Royal Teak Suite: detail",
+      "subject": "The suite dining room set for six: a teak table with linen and flowers in front of river windows",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "crafted, tactile",
+      "must": [
+        "single clear subject",
+        "teak or white stone",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window"
+      ],
+      "source_data": "A4 five-star room catalogue (orchestrator decision): royal-teak-suite \"Royal Teak Suite\" 210 m2, two bedrooms, private plunge-pool terrace over the river; replaces lib/rooms.ts:49-255 and lib/seedDatabase.ts:42 ROOMS; docs/v17-diagnosis.md Table C"
+    },
+    {
+      "slot": "hero-dining",
+      "group": "restaurant-and-breakfast",
+      "page": "/dining",
+      "section": "Page hero",
+      "subject": "The riverside restaurant in daylight: teak tables and cane chairs, white stone floor, ceiling fans, open glass walls to the terrace and the river, no diners",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "bright lunch, breezy, refined",
+      "must": [
+        "set tables",
+        "teak and cane",
+        "daylight from the river side"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "dark tiled table (the current dining hero)"
+      ],
+      "source_data": "app/(guest)/dining/page.tsx:55-57; docs/v17-diagnosis.md Table A row 32",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "hero-dining-reserve",
+      "group": "restaurant-and-breakfast",
+      "page": "/dining/reserve",
+      "section": "Page hero",
+      "subject": "A table for two at the river rail set for lunch: white linen, two glasses, a small orchid, the river softly out of focus",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "a table waiting for you",
+      "must": [
+        "table for two",
+        "river behind",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "candle-lit rustic picnic table (the current frame)"
+      ],
+      "source_data": "app/(guest)/dining/reserve/page.tsx:67-69; docs/v17-diagnosis.md Table A row 54",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "dining-beyond",
+      "group": "restaurant-and-breakfast",
+      "page": "/",
+      "section": "Beyond the rooms: dining card",
+      "subject": "The restaurant's river terrace: rows of set tables under ceiling fans along the water, bright afternoon",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "open-air, sunny",
+      "must": [
+        "outdoor terrace tables",
+        "water alongside",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "public pier with metal chairs (the current pier-breakfast frame)"
+      ],
+      "source_data": "components/home/HomeBelowFold.tsx:162 (reuses facilities/pier-breakfast today)"
+    },
+    {
+      "slot": "dining-breakfast",
+      "group": "restaurant-and-breakfast",
+      "page": "/dining",
+      "section": "Category strip 16:7: Breakfast on the pier",
+      "subject": "Breakfast laid on a teak table by the river: rice soup, a tropical fruit plate, eggs and coffee, at 45 degrees, river light behind",
+      "aspect": "16:7",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "morning, generous, local",
+      "must": [
+        "several breakfast dishes",
+        "teak table",
+        "subject in the central horizontal band for the 16:7 crop"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "app/(guest)/dining/page.tsx:15-18; lib/seedDatabase.ts:771 (dc-pier-breakfast)"
+    },
+    {
+      "slot": "dining-thai-kitchen",
+      "group": "restaurant-and-breakfast",
+      "page": "/dining",
+      "section": "Category strip 16:7: Thai kitchen",
+      "subject": "Thai kitchen spread: a curry, a salad and a stir-fry in celadon and white ceramic bowls with jasmine rice on a teak table, daylight",
+      "aspect": "16:7",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "abundant, authentic, refined",
+      "must": [
+        "three or more Thai dishes",
+        "ceramic tableware",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "dark slate (the current frame, 68.0)"
+      ],
+      "source_data": "app/(guest)/dining/page.tsx:19-22; lib/seedDatabase.ts:813 (dc-thai-kitchen)"
+    },
+    {
+      "slot": "exp-breakfast",
+      "group": "restaurant-and-breakfast",
+      "page": "/experience",
+      "section": "Story 1: breakfast on the pier",
+      "subject": "Breakfast being served: a server's hands (no face) setting a bowl of rice soup beside coffee at a river-edge table, morning",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "made to order, unhurried",
+      "must": [
+        "hands setting down a bowl",
+        "breakfast table",
+        "river light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "dinner setting (the current 1414235077428 frame)"
+      ],
+      "source_data": "app/(guest)/experience/ExperienceClient.tsx:16-23 (xp.1h); lib/i18n-dict.ts:227"
+    },
+    {
+      "slot": "fac-pier",
+      "group": "restaurant-and-breakfast",
+      "page": "/facilities and / (facilities strip)",
+      "section": "Facility: breakfast on the river pier",
+      "subject": "The hotel's teak river pier set for breakfast: a few tables with white linen and cane chairs on the deck, the wide river beyond, early morning",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "fresh river morning",
+      "must": [
+        "teak pier deck",
+        "set tables",
+        "river"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "public pier with metal chairs or a person (the current frame)"
+      ],
+      "source_data": "lib/facilities.ts:26 (fac.pier); docs/v17-diagnosis.md Table A row 65"
+    },
+    {
+      "slot": "gallery-chef-hands",
+      "group": "restaurant-and-breakfast",
+      "page": "/gallery",
+      "section": "Gallery tile (food)",
+      "subject": "A chef's hands plating a Thai dish at the pass with a spoon, steel and teak, bright kitchen; hands only",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "craft, precision",
+      "must": [
+        "hands plating",
+        "bright kitchen"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "face"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:28-29 (food tiles replaced)",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "dish-rice-soup",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Rice soup with river prawns: a bowl of khao tom with whole prawns, young ginger, crispy garlic and coriander, overhead",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:775; lib/dishArt.ts:16 (rice-soup)"
+    },
+    {
+      "slot": "dish-crab-omelette",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Thai omelette with crab: a fluffy golden omelette heavy with crab meat over jasmine rice, chilli sauce on the side",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:781; lib/dishArt.ts:20 (crab-omelette)"
+    },
+    {
+      "slot": "dish-fruit-tray",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Pier fruit tray: sliced mango, pomelo segments, rose apple and lime with a small dish of chilli salt",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:787; lib/dishArt.ts:24 (fruit-tray)"
+    },
+    {
+      "slot": "dish-coconut-pancakes",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Coconut pancakes (khanom krok): small crisp-edged coconut cups with coconut cream, on a plate or in their pan",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:793; lib/dishArt.ts:28 (coconut-pancakes)"
+    },
+    {
+      "slot": "dish-eggs",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Eggs any way: two fried eggs with grilled tomato, pork sausage and toast on a white plate",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:799; lib/dishArt.ts:32 (eggs)"
+    },
+    {
+      "slot": "dish-coffee",
+      "group": "breakfast-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Breakfast on the pier)",
+      "subject": "Chiang Rai pour-over: coffee dripping through a pour-over dripper into a glass server, a cup beside it",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "fresh, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or cup centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:805; lib/dishArt.ts:36 (coffee)"
+    },
+    {
+      "slot": "exp-team-kitchen",
+      "group": "breakfast-plates",
+      "page": "/experience",
+      "section": "House and team: breakfast cook (square)",
+      "subject": "The breakfast cook's hands cutting a ripe mango on a wooden board, morning light; hands only",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "early, caring, real",
+      "must": [
+        "hands and knife",
+        "mango",
+        "morning light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "face"
+      ],
+      "source_data": "components/HouseAndTeam.tsx:20 (house.r4); lib/i18n-dict.ts:469-472"
+    },
+    {
+      "slot": "gallery-fruit-basket",
+      "group": "breakfast-plates",
+      "page": "/gallery",
+      "section": "Gallery tile (food)",
+      "subject": "A woven basket of whole tropical fruit (mangoes, mangosteen, rambutan, pomelo) on a white stone counter",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "colourful, generous",
+      "must": [
+        "whole tropical fruit",
+        "basket",
+        "white stone"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "market stall"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:28 (replaces 1414235077428)"
+    },
+    {
+      "slot": "dish-pad-thai",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "River prawn pad thai: charred rice noodles with tamarind wrapped in an egg net, one grilled river prawn on top, lime and bean sprouts",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:817; lib/dishArt.ts:42 (pad-thai)"
+    },
+    {
+      "slot": "dish-massaman",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Massaman beef short rib: a braised short rib in massaman curry with roasted peanuts and pickled cucumber",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:823; lib/dishArt.ts:46 (massaman)"
+    },
+    {
+      "slot": "dish-grilled-fish",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Grilled river fish in salt crust: a whole salt-crusted fish stuffed with lemongrass, three dipping sauces",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:829; lib/dishArt.ts:50 (grilled-fish)"
+    },
+    {
+      "slot": "dish-green-curry",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Green curry with grilled chicken: charcoal chicken in green curry with Thai eggplant and sweet basil, roti on the side",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:835; lib/dishArt.ts:54 (green-curry)"
+    },
+    {
+      "slot": "dish-pomelo-salad",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Pomelo salad (yam som-o): pomelo, toasted coconut, dried shrimp and herbs with a lime dressing",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:841; lib/dishArt.ts:58 (pomelo-salad)"
+    },
+    {
+      "slot": "dish-morning-glory",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Stir-fried morning glory: wok-blistered water spinach with yellow bean, garlic and chilli",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:847; lib/dishArt.ts:62 (morning-glory)"
+    },
+    {
+      "slot": "dish-tom-yum",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Tom yum goong: hot-sour broth with river prawns, straw mushrooms, galangal and lemongrass in a bowl",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:853; lib/dishArt.ts:66 (tom-yum)"
+    },
+    {
+      "slot": "dish-mango-sticky-rice",
+      "group": "thai-kitchen-plates",
+      "page": "/dining",
+      "section": "Dish thumbnail (Thai kitchen)",
+      "subject": "Mango sticky rice: sliced nam dok mai mango with coconut sticky rice and salted coconut cream",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "vivid, appetising, daylight",
+      "must": [
+        "the named dish clearly recognisable",
+        "single plate or bowl centred",
+        "teak or white stone surface",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "lib/seedDatabase.ts:859; lib/dishArt.ts:70 (mango-sticky-rice)"
+    },
+    {
+      "slot": "dining-drinks",
+      "group": "bar-and-drinks",
+      "page": "/dining",
+      "section": "Category strip 16:7: Drinks and cocktails",
+      "subject": "The bar counter by day: a teak bar top with citrus, herbs, a shaker and two finished cocktails, bottles out of focus, river light",
+      "aspect": "16:7",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "bright, convivial",
+      "must": [
+        "bar counter",
+        "cocktails",
+        "daylight",
+        "subject in the central horizontal band for the 16:7 crop"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "legible bottle labels",
+        "dark bar"
+      ],
+      "source_data": "app/(guest)/dining/page.tsx:23-26; lib/seedDatabase.ts:867 (dc-drinks)"
+    },
+    {
+      "slot": "dish-sundowner",
+      "group": "bar-and-drinks",
+      "page": "/dining",
+      "section": "Dish thumbnail (Drinks and cocktails)",
+      "subject": "The riverside sundowner: an amber Thai rum, tamarind and lime cocktail over one large clear ice cube in a rocks glass, lime twist",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "cool, bright, refreshing",
+      "must": [
+        "the named drink clearly recognisable",
+        "single glass centred",
+        "bright background",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "visible brand label"
+      ],
+      "source_data": "lib/seedDatabase.ts:871; lib/dishArt.ts:76 (sundowner)"
+    },
+    {
+      "slot": "dish-lemongrass-cooler",
+      "group": "bar-and-drinks",
+      "page": "/dining",
+      "section": "Dish thumbnail (Drinks and cocktails)",
+      "subject": "Lemongrass pandan cooler: a tall glass of pale green drink over crushed ice with a lemongrass stalk",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "cool, bright, refreshing",
+      "must": [
+        "the named drink clearly recognisable",
+        "single glass centred",
+        "bright background",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "visible brand label"
+      ],
+      "source_data": "lib/seedDatabase.ts:877; lib/dishArt.ts:80 (lemongrass-cooler)"
+    },
+    {
+      "slot": "dish-iced-tea",
+      "group": "bar-and-drinks",
+      "page": "/dining",
+      "section": "Dish thumbnail (Drinks and cocktails)",
+      "subject": "Chrysanthemum iced tea: a tall glass of golden tea over ice with dried chrysanthemum flowers beside it",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "cool, bright, refreshing",
+      "must": [
+        "the named drink clearly recognisable",
+        "single glass centred",
+        "bright background",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "visible brand label"
+      ],
+      "source_data": "lib/seedDatabase.ts:883; lib/dishArt.ts:84 (iced-tea)"
+    },
+    {
+      "slot": "dish-beer",
+      "group": "bar-and-drinks",
+      "page": "/dining",
+      "section": "Dish thumbnail (Drinks and cocktails)",
+      "subject": "Beer on the pier: an ice-cold beer bottle with its label turned away and a lime wedge beside a frosted glass on a teak rail",
+      "aspect": "1:1",
+      "orientation": "square",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "cool, bright, refreshing",
+      "must": [
+        "the named drink clearly recognisable",
+        "single glass centred",
+        "bright background",
+        "reads at 64 px"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle",
+        "visible brand label"
+      ],
+      "source_data": "lib/seedDatabase.ts:889; lib/dishArt.ts:88 (beer)"
+    },
+    {
+      "slot": "gallery-river-rail-cocktails",
+      "group": "bar-and-drinks",
+      "page": "/gallery",
+      "section": "Gallery tile (river, evening allowed)",
+      "subject": "Two cocktails on the river terrace rail at golden hour, the river and a soft skyline blurred behind",
+      "aspect": "4:5",
+      "orientation": "portrait",
+      "min_width": 3000,
+      "brightness_min": 100,
+      "mood": "golden, convivial, clean",
+      "must": [
+        "two glasses on a rail",
+        "river behind",
+        "warm clean light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "night"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)",
+      "min_long_side": 3000
+    },
+    {
+      "slot": "gallery-tea-set",
+      "group": "bar-and-drinks",
+      "page": "/gallery",
+      "section": "Gallery tile (food)",
+      "subject": "A Thai tea service of celadon cups and a pot on a teak tray by a bright window",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "gentle, ceremonial",
+      "must": [
+        "tea set",
+        "teak tray",
+        "window light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "street-stall table, plastic or metal tray",
+        "dark surface or dark background",
+        "clutter around the plate",
+        "brand label on packaging or bottle"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)"
+    },
+    {
+      "slot": "hero-events",
+      "group": "event-spaces",
+      "page": "/events",
+      "section": "Page hero",
+      "subject": "The riverside teak pavilion on the lawn set for a daytime reception: long tables with white linen and white flowers, the river beyond",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "celebratory, bright, elegant",
+      "must": [
+        "pavilion or canopy",
+        "dressed tables",
+        "river or water",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "night terrace with a figure (the current events hero)",
+        "guests"
+      ],
+      "source_data": "app/(guest)/events/page.tsx:48-50; docs/v17-diagnosis.md Table A row 55",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "hero-events-reserve",
+      "group": "event-spaces",
+      "page": "/events/reserve",
+      "section": "Page hero",
+      "subject": "The river ballroom in daylight: tall windows, round tables dressed in white with low white flowers, a pale stone floor",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "grand but light",
+      "must": [
+        "round dressed tables",
+        "tall windows",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "dark pavilion dinner (the current frame)",
+        "stage with screens"
+      ],
+      "source_data": "app/(guest)/events/reserve/page.tsx:45-47; docs/v17-diagnosis.md Table A row 62",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "events-beyond",
+      "group": "event-spaces",
+      "page": "/",
+      "section": "Beyond the rooms: events card",
+      "subject": "Event table detail: white flowers, crystal glassware, folded linen napkins and place settings, bright and close",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "festive, fresh",
+      "must": [
+        "table setting close up",
+        "white flowers",
+        "bright"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "place cards or menus with text",
+        "dark background"
+      ],
+      "source_data": "components/home/HomeBelowFold.tsx:169 (reuses facilities/courtyard-garden today)"
+    },
+    {
+      "slot": "events-strip-wedding",
+      "group": "event-spaces",
+      "page": "/events",
+      "section": "Strip: weddings (ev.t1)",
+      "subject": "A wedding ceremony set up on the river lawn: rows of white chairs, an aisle and a floral arch, the river behind, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "romantic, bright",
+      "must": [
+        "chairs and aisle",
+        "floral arch",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "bride, groom or guests"
+      ],
+      "source_data": "app/(guest)/events/page.tsx:12-27 (EVENT_TYPES ev.t1; strip pavilion-dinner)"
+    },
+    {
+      "slot": "events-strip-dinner",
+      "group": "event-spaces",
+      "page": "/events",
+      "section": "Strip: private dinners (ev.t2)",
+      "subject": "A private dining room: one long teak table set for twelve, glass walls to a garden, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "intimate, refined",
+      "must": [
+        "long table set for a group",
+        "glass walls or windows",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "guests"
+      ],
+      "source_data": "app/(guest)/events/page.tsx:12-27 (EVENT_TYPES ev.t2; strip celebration-table)"
+    },
+    {
+      "slot": "events-strip-party",
+      "group": "event-spaces",
+      "page": "/events",
+      "section": "Strip: parties (ev.t3, evening allowed)",
+      "subject": "A sundowner party set up on the river terrace: high tables, lanterns and a bar cart at golden hour, no guests",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 100,
+      "mood": "warm, lively but empty and ready",
+      "must": [
+        "terrace with party set-up",
+        "golden light",
+        "river"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "dark park party with a crowd (the current string-lights frame)"
+      ],
+      "source_data": "app/(guest)/events/page.tsx:12-27 (EVENT_TYPES ev.t3; strip string-lights)"
+    },
+    {
+      "slot": "events-loy-krathong",
+      "group": "seasonal-events",
+      "page": "/events",
+      "section": "Event card: Loy Krathong riverside dinner (evening)",
+      "subject": "Loy Krathong evening: handmade banana-leaf krathongs with flowers and small candles on a teak tray at the pier, the river at dusk",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 100,
+      "mood": "festive, glowing, clean dusk",
+      "must": [
+        "krathongs",
+        "pier or river",
+        "clean dusk light, subject readable"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "crowds releasing lanterns",
+        "pitch-dark frame"
+      ],
+      "source_data": "lib/seedDatabase.ts EVENTS ev-loy-krathong (line 1156 in the working tree)"
+    },
+    {
+      "slot": "events-jazz-brunch",
+      "group": "seasonal-events",
+      "page": "/events",
+      "section": "Event card: Sunday jazz brunch",
+      "subject": "Sunday jazz brunch on the pavilion deck: brunch plates on a table and a double bass or saxophone resting on a stand nearby, daytime, no faces",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "easy Sunday, bright",
+      "must": [
+        "brunch table",
+        "a musical instrument at rest",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "musicians' faces"
+      ],
+      "source_data": "lib/seedDatabase.ts EVENTS ev-jazz-brunch (line 1165 in the working tree; reuses facilities/pier-breakfast today)"
+    },
+    {
+      "slot": "events-songkran-lunch",
+      "group": "seasonal-events",
+      "page": "/events",
+      "section": "Event card: Songkran garden lunch",
+      "subject": "Songkran garden lunch: silver bowls of jasmine water and khan tok low tables with Thai dishes under a mango tree, daylight",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "gentle blessing, family, green",
+      "must": [
+        "bowls of water with flowers",
+        "low tables",
+        "tree shade"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "water fights or crowds"
+      ],
+      "source_data": "lib/seedDatabase.ts EVENTS ev-songkran-lunch (line 1174 in the working tree; reuses facilities/courtyard-garden today)"
+    },
+    {
+      "slot": "exp-longtail",
+      "group": "seasonal-events",
+      "page": "/experience",
+      "section": "Story 4: evening long-tail ride (golden hour)",
+      "subject": "A private wooden long-tail boat moored at the hotel's teak pier at golden hour, empty, on the calm wide river",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 100,
+      "mood": "golden, private, slow",
+      "must": [
+        "one wooden boat, empty",
+        "pier",
+        "calm river in warm light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "rows of long-tails or passengers",
+        "sea or beach"
+      ],
+      "source_data": "app/(guest)/experience/ExperienceClient.tsx:40-47 (xp.4h); lib/i18n-dict.ts:254-256"
+    },
+    {
+      "slot": "hero-offers",
+      "group": "offers-and-stays",
+      "page": "/offers",
+      "section": "Page hero",
+      "subject": "A suite's private river terrace with a teak daybed and a chilled bottle in an ice bucket, late afternoon, the river beyond",
+      "aspect": "16:9",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 135,
+      "mood": "treat yourself, sunny",
+      "must": [
+        "terrace daybed",
+        "ice bucket",
+        "river"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers",
+        "bottle label"
+      ],
+      "source_data": "app/(guest)/offers/page.tsx:17 (Krabi stand-in); docs/v17-diagnosis.md Table A row 98",
+      "crops": [
+        {
+          "use": "desktop",
+          "aspect": "16:9"
+        },
+        {
+          "use": "phone",
+          "aspect": "6:7",
+          "note": "about 420 x 440 to 490 CSS px, subject centred"
+        }
+      ]
+    },
+    {
+      "slot": "offers-early-bird",
+      "group": "offers-and-stays",
+      "page": "/offers and /",
+      "section": "Offer card 1: early bird (dawn allowed)",
+      "subject": "Sunrise from a balcony: a cup of coffee and a pastry on the rail, the river and city in early light",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 100,
+      "mood": "early, hopeful, warm",
+      "must": [
+        "coffee on a rail",
+        "river in early light"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "beach, sea horizon, karst islands or mountains",
+        "tourist boats, ferries or crowds",
+        "temples, prangs or named towers"
+      ],
+      "source_data": "components/OfferCard.tsx:6-10 (gradient today); lib/i18n-dict.ts:714-718 (off.1)"
+    },
+    {
+      "slot": "offers-stay-longer",
+      "group": "offers-and-stays",
+      "page": "/offers and /",
+      "section": "Offer card 2: stay longer",
+      "subject": "Settled in: a suite pantry and dining nook with a bowl of fresh fruit, a coffee machine and two chairs, morning light",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "at home, unhurried",
+      "must": [
+        "dining nook or pantry",
+        "fruit bowl",
+        "daylight"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "kitchen appliances as the subject"
+      ],
+      "source_data": "components/OfferCard.tsx:11-15 (gradient today); lib/i18n-dict.ts:719-724 (off.2)"
+    },
+    {
+      "slot": "gallery-window-seat",
+      "group": "offers-and-stays",
+      "page": "/gallery",
+      "section": "Gallery tile (rooms)",
+      "subject": "A cushioned window seat with an open book and a cup of tea, the river below",
+      "aspect": "4:3",
+      "orientation": "landscape",
+      "min_width": 3000,
+      "brightness_min": 120,
+      "mood": "lazy afternoon",
+      "must": [
+        "window seat",
+        "book and cup",
+        "river view"
+      ],
+      "must_not": [
+        "text, signage, menus, labels or numbers of any kind",
+        "logos or brand marks (bottles, robes, cars, amenities)",
+        "faces in focus",
+        "a real or identifiable property, or a landmark",
+        "haze, smoke, heavy vignette or murky shadows",
+        "CGI render, AI artefacts, warped lines or odd hands",
+        "television as the main subject",
+        "patterned carpet, heavy chandelier or dark wood with gold",
+        "beach, sea or mountain view through the window",
+        "legible book text"
+      ],
+      "source_data": "app/(guest)/gallery/page.tsx:15-31 (gallery replaced entirely by the new set)"
+    }
+  ]
+}
