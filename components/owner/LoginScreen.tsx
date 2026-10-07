@@ -12,15 +12,16 @@ export function LoginScreen() {
   const [email, setEmail] = useState("owner@teakhouse.co");
   const [pin, setPin] = useState("");
   const [error, setError] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  // HF-1 · the server checks the PIN and sets the owner session cookie.
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const ok = login(email.trim(), pin);
-    if (!ok) {
-      setError(true);
-      return;
-    }
-    setError(false);
+    if (busy) return;
+    setBusy(true);
+    const ok = await login(email.trim(), pin).catch(() => false);
+    setBusy(false);
+    setError(!ok);
   }
 
   return (
@@ -84,6 +85,7 @@ export function LoginScreen() {
 
           <button
             type="submit"
+            disabled={busy}
             className="min-h-[44px] w-full rounded-xl bg-own-blue px-6 py-3 text-base font-extrabold text-white transition hover:bg-gold/90"
           >
             {t("ow.signin")}

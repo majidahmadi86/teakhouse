@@ -20,6 +20,10 @@ import {
 import { Logo } from "@/components/Logo";
 import { useI18n } from "@/lib/i18n";
 import { useOwner } from "@/lib/ownerStore";
+import {
+  OWNER_SESSION_LOST,
+  ensureOwnerSession,
+} from "@/lib/ownerSessionClient";
 import { cn } from "@/lib/utils";
 
 const LoginScreen = dynamic(
@@ -60,6 +64,48 @@ function useIsDesktop() {
   }, []);
 
   return isDesktop;
+}
+
+/**
+ * HF-1 · The panel asks the server for its owner session when it opens. In
+ * demo mode that is a demo session, requested at once and not waited for
+ * (every owner write waits for it instead, through ownerFetch). After a PIN
+ * login the shell waits for the check, and a session the server no longer
+ * accepts (expired, or the key rotated) signs the panel out to the PIN screen.
+ */
+function useOwnerSession(
+  hydrated: boolean,
+  isAuthed: boolean,
+  demoMode: boolean,
+  logout: () => void
+): "pending" | "ok" | "none" {
+  const [state, setState] = useState<"pending" | "ok" | "none">("pending");
+
+  useEffect(() => {
+    if (!demoMode && !hydrated) return;
+    if (!demoMode && !isAuthed) {
+      setState("none");
+      return;
+    }
+    let cancelled = false;
+    void ensureOwnerSession().then((ok) => {
+      if (cancelled) return;
+      setState(ok ? "ok" : "none");
+      if (!ok && !demoMode) logout();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [demoMode, hydrated, isAuthed, logout]);
+
+  useEffect(() => {
+    if (demoMode) return;
+    const onLost = () => logout();
+    window.addEventListener(OWNER_SESSION_LOST, onLost);
+    return () => window.removeEventListener(OWNER_SESSION_LOST, onLost);
+  }, [demoMode, logout]);
+
+  return state;
 }
 
 function Spinner() {
@@ -174,12 +220,17 @@ export function OwnerShell({
   const { hydrated, isAuthed, logout, resetDemo } = useOwner();
   const isDesktop = useIsDesktop();
   const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  const session = useOwnerSession(hydrated, isAuthed, demoMode, logout);
 
   if (!hydrated || isDesktop === null) return <Spinner />;
   if (!isAuthed && !demoMode) return <LoginScreen />;
+  if (!demoMode && session === "pending") return <Spinner />;
 
   const onReset = () => {
-    if (window.confirm(t("ow.sure"))) resetDemo();
+    if (!window.confirm(t("ow.sure"))) return;
+    void resetDemo().then((result) => {
+      if (result === "rate-limited") window.alert(t("ow.resetWait"));
+    });
   };
 
   return (

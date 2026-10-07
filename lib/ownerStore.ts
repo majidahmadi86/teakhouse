@@ -10,6 +10,11 @@ import React, {
   useState,
 } from "react";
 import { getSeedGuestRooms } from "./guestRooms";
+import {
+  endOwnerSession,
+  ownerFetch,
+  startOwnerSession,
+} from "./ownerSessionClient";
 import { groupRulesByRoom, type PriceRule } from "./pricing";
 import { SEED_ROOMS } from "./rooms";
 import type {
@@ -129,9 +134,9 @@ type OwnerCtx = {
   data: OwnerData;
   hydrated: boolean;
   isAuthed: boolean;
-  login: (email: string, pin: string) => boolean;
+  login: (email: string, pin: string) => Promise<boolean>;
   logout: () => void;
-  resetDemo: () => void;
+  resetDemo: () => Promise<"ok" | "rate-limited" | "failed">;
   addBooking: (booking: BookingInput) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
   deleteBooking: (id: string) => void;
@@ -202,9 +207,10 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = useCallback((email: string, pin: string) => {
-    const expected = process.env.NEXT_PUBLIC_OWNER_PIN ?? "1234";
-    if (pin !== expected) return false;
+  // HF-1 · the PIN is checked by the server, which sets the owner session
+  // cookie. The localStorage flag only remembers that this tab signed in.
+  const login = useCallback(async (email: string, pin: string) => {
+    if (!(await startOwnerSession(pin))) return false;
     try {
       localStorage.setItem(AUTH_KEY, "1");
       localStorage.setItem(`${AUTH_KEY}-email`, email);
@@ -216,6 +222,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    endOwnerSession();
     try {
       localStorage.removeItem(AUTH_KEY);
       localStorage.removeItem(`${AUTH_KEY}-email`);
@@ -225,14 +232,19 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     setIsAuthed(false);
   }, []);
 
-  const resetDemo = useCallback(() => {
-    void (async () => {
-      const res = await fetch("/api/data/reset", { method: "POST" });
-      if (res.ok) {
-        const loaded = (await res.json()) as OwnerData;
-        setData(loaded);
-      }
-    })();
+  // HF-1 · needs the owner session, and the server allows one reset per
+  // 10 minutes site-wide (429 otherwise) · the shell tells the owner.
+  const resetDemo = useCallback(async () => {
+    try {
+      const res = await ownerFetch("/api/data/reset", { method: "POST" });
+      if (res.status === 429) return "rate-limited" as const;
+      if (!res.ok) return "failed" as const;
+      const loaded = (await res.json()) as OwnerData;
+      setData(loaded);
+      return "ok" as const;
+    } catch {
+      return "failed" as const;
+    }
   }, []);
 
   const addBooking = useCallback((booking: BookingInput) => {
