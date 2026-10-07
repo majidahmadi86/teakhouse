@@ -10,6 +10,8 @@
  *   node scripts/lib/preview-safety-db.js ids
  *   node scripts/lib/preview-safety-db.js marker-get
  *   node scripts/lib/preview-safety-db.js marker-set <iso>
+ *   node scripts/lib/preview-safety-db.js lo-create | lo-unlink <oid>
+ *   node scripts/lib/preview-safety-db.js purge-preview-qa
  */
 const { PrismaClient } = require("@prisma/client");
 
@@ -59,6 +61,13 @@ async function fingerprint(db) {
   );
   const sequences = {};
   for (const { s, q, v } of seqs) sequences[`${s}.${q}`] = v;
+  // Large objects (lo_create, lo_import, lo_from_bytea) live in the catalog,
+  // outside every user table and write counter, so count them on their own.
+  const [lo] = await db.$queryRawUnsafe(
+    "SELECT count(*)::text AS n, md5(coalesce(string_agg(oid::text, ',' ORDER BY oid), '')) AS h " +
+      "FROM pg_catalog.pg_largeobject_metadata"
+  );
+  rows["pg_catalog.pg_largeobject_metadata"] = `${lo.n}:${lo.h}`;
   const stats = await db.$queryRawUnsafe(
     "SELECT schemaname AS s, relname AS t, n_tup_ins::text AS i, n_tup_upd::text AS u, n_tup_del::text AS d " +
       "FROM pg_stat_user_tables ORDER BY 1, 2"
@@ -110,6 +119,23 @@ async function main() {
       if (Number.isNaN(at.getTime())) throw new Error("marker-set needs an ISO time");
       const n = await db.demoMeta.updateMany({ where: { id: "demo" }, data: { lastReset: at } });
       out = { updated: n.count, lastReset: at.toISOString() };
+    } else if (cmd === "lo-create") {
+      // The fingerprint's measuring stick for large objects; lo-unlink undoes it.
+      const [r] = await db.$queryRawUnsafe("SELECT lo_create(0)::text AS oid");
+      out = { oid: r.oid };
+    } else if (cmd === "lo-unlink") {
+      const oid = String(process.argv[3] || "");
+      if (!/^[0-9]+$/.test(oid)) throw new Error("lo-unlink needs an oid");
+      const [r] = await db.$queryRawUnsafe(`SELECT lo_unlink(${oid}::oid) AS ok`);
+      out = { unlinked: r.ok === 1 };
+    } else if (cmd === "purge-preview-qa") {
+      // Only the production control writes, and only rows named QA_PreviewSafety.
+      const where = { name: { startsWith: "QA_PreviewSafety" } };
+      out = {
+        tableReservation: (await db.tableReservation.deleteMany({ where })).count,
+        eventRequest: (await db.eventRequest.deleteMany({ where })).count,
+        contactMessage: (await db.contactMessage.deleteMany({ where })).count,
+      };
     } else throw new Error(`unknown command ${cmd}`);
     process.stdout.write(JSON.stringify(out));
   } finally {

@@ -4,17 +4,29 @@
  *
  * Proves, against the LOCAL dev database only (localhost:55432), that
  *   a) static · no build step migrates or seeds, and every write path is guarded;
+ *      policy · the fail-closed rule as next.config.mjs really bakes it ("1"
+ *                or "0", a throw for VERCEL without VERCEL_ENV), and a local
+ *                script aimed at a remote database is refused by lib/db;
  *   b) unit    · with VERCEL_ENV=preview the real lib/db refuses every write
- *                (model ops, raw SQL, interactive and batch transactions) and
- *                a full database fingerprint is identical before and after;
+ *                (model ops, ALL raw SQL in every bypass form, interactive and
+ *                batch transactions), the env matrix fails closed, the
+ *                concierge makes no outbound call, and a full database
+ *                fingerprint is identical before and after;
  *   c) runtime · a preview build (`prisma generate && next build` with
  *                VERCEL_ENV=preview) served by `next start -p 3021` writes
- *                nothing when every API write handler, every GET writer, the
- *                demo reset and the three guest server-action forms are hit,
- *                while the guest pages still answer 200; the same build is
- *                still read-only with VERCEL_ENV absent at runtime (baked);
- *   d) restore · rebuilds normally so .next is a regular build again, and
- *                checks that build is writable (validation runs, no 403).
+ *                nothing when every API write handler (carrying a valid owner
+ *                session), every GET writer, the demo reset and the three
+ *                guest server-action forms are hit, while the guest pages
+ *                still answer 200; the same build is still read-only with
+ *                VERCEL_ENV absent at runtime (baked);
+ *   d) restore · rebuilds normally so .next is a regular build again, then
+ *                serves THAT build as a preview (runtime rule, not the baked
+ *                constant), on Vercel without VERCEL_ENV, and against a remote
+ *                database URL (all read-only), and finally as production
+ *                (VERCEL_ENV=production): a write reaches validation and a
+ *                real QA write lands, then is purged.
+ * The fingerprint covers every user table (rows + md5), sequences, write
+ * counters and pg_largeobject_metadata (large objects live outside them).
  *
  * Usage (from the repo root):
  *   node scripts/preview-safety.js              full gate (about 10 minutes)
@@ -100,7 +112,7 @@ const DEV_DB = devDbUrl();
 /** Env for every child: dev DB only; outbound services pointed nowhere. */
 function childEnv(extra = {}) {
   const env = { ...process.env };
-  for (const k of ["VERCEL_ENV", "DB_READ_ONLY", "CRON_SECRET", "VERCEL", "VERCEL_URL"]) delete env[k];
+  for (const k of ["VERCEL_ENV", "DB_READ_ONLY", "CRON_SECRET", "VERCEL", "VERCEL_URL", "VERCEL_REGION", "VERCEL_DEPLOYMENT_ID"]) delete env[k];
   Object.assign(env, {
     DATABASE_URL: DEV_DB,
     DIRECT_URL: DEV_DB,
@@ -140,9 +152,9 @@ async function fingerprint() {
   return db("fingerprint");
 }
 
-function fpDiff(a, b) {
+function fpDiff(a, b, parts = ["rows", "sequences", "writeCounters"]) {
   const out = [];
-  for (const part of ["rows", "sequences", "writeCounters"]) {
+  for (const part of parts) {
     const keys = new Set([...Object.keys(a[part]), ...Object.keys(b[part])]);
     for (const k of keys) {
       if (a[part][k] !== b[part][k]) out.push(`${part}.${k}: ${a[part][k]} -> ${b[part][k]}`);
@@ -153,7 +165,13 @@ function fpDiff(a, b) {
 
 function compare(section, label, a, b) {
   const d = fpDiff(a, b);
-  result(d.length === 0, section, `${label} (${a.tableCount} tables: rows+md5, sequences, write counters)`, d.slice(0, 6).join(" | "));
+  result(d.length === 0, section, `${label} (${a.tableCount} tables + large objects: rows+md5, sequences, write counters)`, d.slice(0, 6).join(" | "));
+}
+
+/** Content only: for a run that writes and then purges what it wrote. */
+function compareRows(section, label, a, b) {
+  const d = fpDiff(a, b, ["rows", "sequences"]);
+  result(d.length === 0, section, `${label} (${a.tableCount} tables + large objects: rows+md5, sequences)`, d.slice(0, 6).join(" | "));
 }
 
 /* ------------------------------------------------------------------------ */
@@ -185,8 +203,12 @@ function runLogged(name, command, env) {
   return { ok: r.status === 0, status: r.status, secs, log, tail };
 }
 
-/** `next start -p 3021` through the next bin, so the PID is the server. */
-async function startServer(name, env) {
+/**
+ * `next start -p 3021` through the next bin, so the PID is the server. With
+ * allowExit, a server that refuses to start resolves { exited, logPath }
+ * instead of throwing (next.config.mjs throws for VERCEL without VERCEL_ENV).
+ */
+async function startServer(name, env, { allowExit = false } = {}) {
   if (await portOpen(PORT)) throw new Error(`port ${PORT} is already in use; not touching whatever runs there`);
   const logPath = path.join(LOG_DIR, `${name}.log`);
   const fd = fs.openSync(logPath, "w");
@@ -197,9 +219,10 @@ async function startServer(name, env) {
     windowsHide: true,
   });
   let exited = null;
-  child.on("exit", (code) => (exited = code));
+  child.on("exit", (code) => (exited = code === null ? -1 : code));
   const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
+    if (exited !== null && allowExit) return { child: null, exited, logPath };
     if (exited !== null) throw new Error(`server exited early (code ${exited}); see ${logPath}`);
     try {
       const r = await fetch(`${BASE}/api/media`, { signal: AbortSignal.timeout(5000) });
@@ -417,6 +440,80 @@ function staticChecks() {
 }
 
 /* ------------------------------------------------------------------------ */
+/* a2) Policy: what next.config.mjs bakes, and local scripts                 */
+/* ------------------------------------------------------------------------ */
+
+// Never resolves (RFC 6761), so nothing is ever contacted.
+const REMOTE_DB = "postgresql://qa:qa@db.qa-remote.invalid:6543/postgres?pgbouncer=true";
+
+/** Import next.config.mjs in a bare node process (no .env loading) with env. */
+const NEXT_CONFIG_PROBE =
+  'import(require("url").pathToFileURL(process.argv[1]).href).then(' +
+  '(m) => process.stdout.write("BAKED=" + JSON.stringify(m.default.env.DB_READ_ONLY)),' +
+  '(e) => process.stdout.write("THREW=" + JSON.stringify(String((e && e.message) || e))))';
+
+function bakedFor(extra) {
+  const r = cp.spawnSync(process.execPath, ["-e", NEXT_CONFIG_PROBE, path.join(ROOT, "next.config.mjs")], {
+    cwd: ROOT,
+    env: childEnv(extra),
+    encoding: "utf8",
+    timeout: 60000,
+  });
+  const out = r.stdout || "";
+  const baked = out.match(/BAKED=(.*)$/);
+  if (baked) return { baked: JSON.parse(baked[1]) };
+  const threw = out.match(/THREW=(.*)$/);
+  if (threw) return { threw: JSON.parse(threw[1]) };
+  return { error: `${out} ${r.stderr || ""}`.trim().slice(0, 200) };
+}
+
+function probeFor(extra) {
+  const r = cp.spawnSync("npx tsx scripts/lib/preview-safety-probe.ts", {
+    cwd: ROOT,
+    env: childEnv(extra),
+    shell: true,
+    encoding: "utf8",
+    timeout: 120000,
+  });
+  const m = (r.stdout || "").match(/PROBE (\{.*\})/);
+  return m ? JSON.parse(m[1]) : { crashed: `${r.stdout || ""} ${r.stderr || ""}`.trim().slice(0, 200) };
+}
+
+function policyChecks() {
+  const S = "policy";
+  const bakes = [
+    ["off Vercel, dev DB on localhost", {}, "0"],
+    ["off Vercel, remote DB", { DATABASE_URL: REMOTE_DB, DIRECT_URL: REMOTE_DB }, "1"],
+    ["off Vercel, localhost with ?host= override", { DATABASE_URL: `${DEV_DB}${DEV_DB.includes("?") ? "&" : "?"}host=db.qa-remote.invalid` }, "1"],
+    ["off Vercel, no DATABASE_URL", { DATABASE_URL: undefined, DIRECT_URL: undefined }, "1"],
+    ["Vercel preview build", { VERCEL: "1", VERCEL_ENV: "preview" }, "1"],
+    ["Vercel development build", { VERCEL: "1", VERCEL_ENV: "development" }, "1"],
+    ["Vercel production build, remote DB", { VERCEL: "1", VERCEL_ENV: "production", DATABASE_URL: REMOTE_DB }, "0"],
+    ["DB_READ_ONLY=1 opt-in on a local build", { DB_READ_ONLY: "1" }, "1"],
+  ];
+  for (const [label, extra, want] of bakes) {
+    const got = bakedFor(extra);
+    result(got.baked === want, S, `next.config.mjs, ${label}: bakes DB_READ_ONLY="${want}"`, JSON.stringify(got));
+  }
+  const noEnv = bakedFor({ VERCEL: "1" });
+  result(typeof noEnv.threw === "string" && /VERCEL_ENV is missing/.test(noEnv.threw), S, "next.config.mjs, VERCEL=1 without VERCEL_ENV: throws (build refused)", JSON.stringify(noEnv));
+
+  // A local script (tsx, outside Next) through the real lib/db.
+  const probes = [
+    ["local script, remote DB, no Vercel vars", { DATABASE_URL: REMOTE_DB, DIRECT_URL: REMOTE_DB }, true],
+    ["local script, localhost with ?host= override", { DATABASE_URL: `${DEV_DB}${DEV_DB.includes("?") ? "&" : "?"}host=db.qa-remote.invalid` }, true],
+    ["local script, VERCEL=1 without VERCEL_ENV", { VERCEL: "1" }, true],
+    ["local script, VERCEL_ENV=development", { VERCEL_ENV: "development" }, true],
+    ["control: local script, dev DB on localhost", {}, false],
+  ];
+  for (const [label, extra, wantRo] of probes) {
+    const got = probeFor(extra);
+    const ok = wantRo ? got.readOnly === true && got.write === "refused" : got.readOnly === false && got.write === "reached-prisma";
+    result(ok, S, `${label}: ${wantRo ? "read-only, lib/db refuses the write before any connection" : "writable, the write reaches Prisma (invalid on purpose, nothing stored)"}`, JSON.stringify(got));
+  }
+}
+
+/* ------------------------------------------------------------------------ */
 /* b) Unit                                                                   */
 /* ------------------------------------------------------------------------ */
 
@@ -571,10 +668,35 @@ const GUEST_PAGES = [
   "/owner",
 ];
 
+/**
+ * A valid demo owner session from the server under test (HF-1). Writes carry
+ * it, so the read-only refusal is the ONLY thing between a request and the
+ * database: without the guard they would be accepted and write.
+ */
+async function ownerAuth() {
+  try {
+    const res = await fetch(`${BASE}/api/owner/session`, {
+      method: "POST",
+      headers: { origin: BASE, "content-type": "application/json" },
+      body: "{}",
+      redirect: "manual",
+      signal: AbortSignal.timeout(30000),
+    });
+    const all = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : [res.headers.get("set-cookie") || ""];
+    const c = all.map((s) => s.split(";")[0]).find((s) => s.startsWith("tkh-owner="));
+    return c ? { cookie: c, origin: BASE } : null;
+  } catch {
+    return null;
+  }
+}
+
 async function runtimeApiChecks(S, ids) {
   const B = bodies(ids);
   const routes = apiRoutes();
   info(`${routes.length} route files, ${routes.reduce((n, r) => n + r.methods.length, 0)} handlers`);
+  const auth = await ownerAuth();
+  result(!!auth, S, "a valid owner session is issued; every write below carries it (only the read-only refusal stands in the way)");
+  const H = auth || { origin: BASE };
   for (const r of routes) {
     const url = concreteUrl(r.url, ids);
     for (const m of r.methods) {
@@ -583,8 +705,8 @@ async function runtimeApiChecks(S, ids) {
         const res = await call("GET", url);
         if (r.url === "/api/cron/reseed") {
           result(isReadOnly403(res), S, `GET ${r.url} -> 403 read-only`, `got ${res.status} ${res.text.slice(0, 80)}`);
-          const auth = await call("GET", url, { headers: { authorization: "Bearer qa-preview-secret" } });
-          result(isReadOnly403(auth), S, `GET ${r.url} with the right CRON_SECRET bearer -> still 403 read-only`, `got ${auth.status}`);
+          const withBearer = await call("GET", url, { headers: { authorization: "Bearer qa-preview-secret" } });
+          result(isReadOnly403(withBearer), S, `GET ${r.url} with the right CRON_SECRET bearer -> still 403 read-only`, `got ${withBearer.status}`);
         } else if (r.url === "/api/data") {
           const ok = res.status === 200 && res.json && Array.isArray(res.json.rooms) && res.json.rooms.length > 0;
           result(ok, S, `GET ${r.url} -> 200 with data, no reseed (marker is stale)`, `got ${res.status} ${res.text.slice(0, 80)}`);
@@ -616,7 +738,7 @@ async function runtimeApiChecks(S, ids) {
           ["update", { action: "update", userId: ids.User, patch: { name: QA_NAME } }],
         ];
         for (const [a, body] of actions) {
-          const res = await call(m, url, { body });
+          const res = await call(m, url, { body, headers: H });
           result(isReadOnly403(res), S, `POST /api/users action=${a} -> 403 read-only`, `got ${res.status} ${res.text.slice(0, 80)}`);
         }
         const si = await call(m, url, { body: { action: "signin", email: "nobody-qa@example.com", password: "x" } });
@@ -628,7 +750,7 @@ async function runtimeApiChecks(S, ids) {
         const form = new FormData();
         form.append("file", new Blob([png], { type: "image/png" }), "qa.png");
         form.append("folder", "qa");
-        const res = await call(m, url, { form });
+        const res = await call(m, url, { form, headers: H });
         result(isReadOnly403(res), S, `${key} (multipart PNG) -> 403 read-only, no Supabase upload`, `got ${res.status} ${res.text.slice(0, 80)}`);
         continue;
       }
@@ -636,7 +758,7 @@ async function runtimeApiChecks(S, ids) {
       let body = B[key];
       if (key === "DELETE /api/rooms/[id]/pricing" && ids.SeasonalPriceRule) target = `${url}?id=${encodeURIComponent(ids.SeasonalPriceRule)}`;
       if (body === undefined && m !== "DELETE") body = {};
-      const res = await call(m, target, { body });
+      const res = await call(m, target, { body, headers: H });
       result(isReadOnly403(res), S, `${m} ${target.replace(/\?.*/, "")} -> 403 read-only`, `got ${res.status} ${res.text.slice(0, 100)}`);
     }
   }
@@ -647,8 +769,8 @@ async function runtimeApiChecks(S, ids) {
     result(res.status === 404 || isReadOnly403(res), S, `GET ${p.replace(/\/api\/bookings\/[^/]+/, "/api/bookings/<id>")} -> ${res.status === 404 ? "404 (no such route in Teak House)" : "403 read-only"}`, `got ${res.status}`);
   }
   // The demo reset once more, explicitly.
-  const reset = await call("POST", "/api/data/reset");
-  result(isReadOnly403(reset), S, "POST /api/data/reset -> 403 read-only (no partial reseed)", `got ${reset.status}`);
+  const reset = await call("POST", "/api/data/reset", { headers: H });
+  result(isReadOnly403(reset), S, "POST /api/data/reset with an owner session -> 403 read-only (no partial reseed)", `got ${reset.status}`);
 }
 
 async function pageChecks(S) {
@@ -791,11 +913,12 @@ async function runtimeChecks() {
   try {
     srv = await startServer("serve-preview-baked", childEnv());
     result(true, S, "same preview build restarted with NO VERCEL_ENV at runtime");
-    const reset = await call("POST", "/api/data/reset");
+    const H = (await ownerAuth()) || { origin: BASE };
+    const reset = await call("POST", "/api/data/reset", { headers: H });
     result(isReadOnly403(reset), S, "baked: POST /api/data/reset -> 403 read-only", `got ${reset.status}`);
     const cron = await call("GET", "/api/cron/reseed");
     result(isReadOnly403(cron), S, "baked: GET /api/cron/reseed -> 403 read-only", `got ${cron.status}`);
-    const rsv = await call("POST", "/api/reservations", { body: bodies(db("ids"))["POST /api/reservations"] });
+    const rsv = await call("POST", "/api/reservations", { body: bodies(db("ids"))["POST /api/reservations"], headers: H });
     result(isReadOnly403(rsv), S, "baked: POST /api/reservations -> 403 read-only", `got ${rsv.status}`);
     const data = await call("GET", "/api/data");
     result(data.status === 200, S, "baked: GET /api/data -> 200, no reseed", `got ${data.status}`);
@@ -821,22 +944,102 @@ async function restoreBuild() {
   const build = gen.ok ? runLogged("build-normal-next", "npx next build", env) : gen;
   result(gen.ok && build.ok, S, `normal build succeeded (${gen.secs + (gen.ok ? build.secs : 0)} s)`, gen.ok && build.ok ? "" : `${build.tail} (log ${build.log})`);
   if (!(gen.ok && build.ok)) return;
+  const ids = db("ids");
   const fp0 = await fingerprint();
+
+  // 1 · The NORMAL build (baked "0") served as a preview: the runtime rule
+  // alone has to refuse, the baked constant cannot help here.
+  await readOnlyRun(S, "serve-normal-as-preview", childEnv({ VERCEL: "1", VERCEL_ENV: "preview", CRON_SECRET: "qa-preview-secret" }), "normal build as VERCEL_ENV=preview", ids);
+
+  // 2 · On Vercel without VERCEL_ENV: next.config.mjs refuses to start it.
   let srv;
+  try {
+    srv = await startServer("serve-normal-vercel-no-env", childEnv({ VERCEL: "1" }), { allowExit: true });
+    if (srv.exited !== undefined) {
+      const log = fs.readFileSync(srv.logPath, "utf8");
+      result(/VERCEL_ENV is missing/.test(log), S, `normal build with VERCEL=1 and no VERCEL_ENV: next start refuses to run (exit ${srv.exited})`, log.slice(-200));
+    } else {
+      const H = (await ownerAuth()) || { origin: BASE };
+      const reset = await call("POST", "/api/data/reset", { headers: H });
+      result(isReadOnly403(reset), S, "normal build with VERCEL=1 and no VERCEL_ENV: started, but POST /api/data/reset -> 403 read-only", `got ${reset.status}`);
+    }
+  } catch (e) {
+    result(false, S, "VERCEL=1 without VERCEL_ENV run", String(e && e.message));
+  } finally {
+    await stopServer(srv);
+  }
+
+  // 3 · Off Vercel, aimed at a database that is not on this machine.
+  await readOnlyRun(S, "serve-normal-remote-db", childEnv({ DATABASE_URL: REMOTE_DB, DIRECT_URL: REMOTE_DB }), "normal build off Vercel with a remote DATABASE_URL", ids, { dbReachable: false });
+
+  await devDbsUp(S);
+  const fp1 = await fingerprint();
+  compare(S, "dev DB fingerprint identical after the normal build was served read-only", fp0, fp1);
+
+  // 4 · Production control: the same build as VERCEL_ENV=production writes.
+  try {
+    srv = await startServer("serve-normal-production", childEnv({ VERCEL: "1", VERCEL_ENV: "production", CRON_SECRET: "qa-preview-secret" }));
+    const invalid = await call("POST", "/api/reservations", { body: {} });
+    result(invalid.status === 400, S, "production control: POST /api/reservations {} reaches validation (400, not 403)", `got ${invalid.status} ${invalid.text.slice(0, 80)}`);
+    const body = { ...bodies(ids)["POST /api/reservations"], date: hotelIsoPlus(10) };
+    const real = await call("POST", "/api/reservations", { body });
+    const ref = real.json && (real.json.ref || (real.json.reservation && real.json.reservation.ref));
+    result(real.status === 201 && typeof ref === "string", S, "production control: a real QA table reservation is accepted and stored (201 with a ref)", `got ${real.status} ${real.text.slice(0, 120)}`);
+    const H = await ownerAuth();
+    const reset = await call("POST", "/api/data/reset", { headers: { origin: BASE } });
+    result(!!H && reset.status === 401, S, "production control: owner sessions issue, and an anonymous reset meets HF-1's 401 (not the read-only 403)", `session ${!!H}, reset ${reset.status}`);
+  } catch (e) {
+    result(false, S, "production control run", String(e && e.message));
+  } finally {
+    await stopServer(srv);
+  }
+  const purged = db("purge-preview-qa");
+  info(`purged the production control's QA rows: ${JSON.stringify(purged)}`);
+  const fp2 = await fingerprint();
+  compareRows(S, "after purging the control's QA rows, every table's rows and md5 are as before", fp0, fp2);
+
+  // 5 · Plain local serve, as every other suite runs it.
   try {
     srv = await startServer("serve-normal", env);
     // An invalid body reaches validation (400) instead of the read-only 403:
     // the normal build is writable, and nothing is written to prove it.
     const r = await call("POST", "/api/reservations", { body: {} });
-    result(r.status === 400, S, "normal build is writable: POST /api/reservations {} reaches validation (400, not 403)", `got ${r.status} ${r.text.slice(0, 80)}`);
+    result(r.status === 400, S, "normal build served locally is writable: POST /api/reservations {} reaches validation (400, not 403)", `got ${r.status} ${r.text.slice(0, 80)}`);
   } catch (e) {
     result(false, S, "normal server run", String(e && e.message));
   } finally {
     await stopServer(srv);
   }
   await devDbsUp(S);
-  const fp1 = await fingerprint();
-  compare(S, "dev DB fingerprint identical across the normal-build check", fp0, fp1);
+  const fp3 = await fingerprint();
+  compare(S, "dev DB fingerprint identical across the local normal-build check", fp2, fp3);
+}
+
+/** Serve the current build with env and prove the writes that matter are refused. */
+async function readOnlyRun(S, name, env, label, ids, { dbReachable = true } = {}) {
+  let srv;
+  try {
+    srv = await startServer(name, env);
+    const H = (await ownerAuth()) || { origin: BASE };
+    const reset = await call("POST", "/api/data/reset", { headers: H });
+    result(isReadOnly403(reset), S, `${label}: POST /api/data/reset with an owner session -> 403 read-only`, `got ${reset.status} ${reset.text.slice(0, 80)}`);
+    const cron = await call("GET", "/api/cron/reseed", { headers: { authorization: "Bearer qa-preview-secret" } });
+    result(isReadOnly403(cron), S, `${label}: GET /api/cron/reseed with the bearer -> 403 read-only`, `got ${cron.status}`);
+    const rsv = await call("POST", "/api/reservations", { body: bodies(ids)["POST /api/reservations"], headers: H });
+    result(isReadOnly403(rsv), S, `${label}: POST /api/reservations (valid body) -> 403 read-only`, `got ${rsv.status}`);
+    const hotel = await call("PATCH", "/api/hotel", { body: { tagline: QA_NAME }, headers: H });
+    result(isReadOnly403(hotel), S, `${label}: PATCH /api/hotel with an owner session -> 403 read-only`, `got ${hotel.status}`);
+    const plain = await call("POST", "/api/concierge", { body: { message: "Can you arrange an airport pickup?", lang: "en" } });
+    result(plain.status === 200 && plain.json && plain.json.source === "read-only-local", S, `${label}: POST /api/concierge answers locally, no AI call`, `got ${plain.status} ${plain.text.slice(0, 80)}`);
+    if (dbReachable) {
+      const data = await call("GET", "/api/data");
+      result(data.status === 200, S, `${label}: GET /api/data -> 200 (reads still work)`, `got ${data.status}`);
+    }
+  } catch (e) {
+    result(false, S, `${label} run`, String(e && e.message));
+  } finally {
+    await stopServer(srv);
+  }
 }
 
 /* ------------------------------------------------------------------------ */
@@ -844,6 +1047,19 @@ async function restoreBuild() {
 async function main() {
   console.log(`preview-safety · Teak House · dev DB localhost:${DEV_DB_PORT} · logs ${LOG_DIR}`);
   staticChecks();
+  policyChecks();
+
+  // The measuring stick for large objects, which live outside user tables.
+  {
+    const loA = await fingerprint();
+    const lo = db("lo-create");
+    const loB = await fingerprint();
+    db("lo-unlink", lo.oid);
+    const loC = await fingerprint();
+    const d = fpDiff(loA, loB);
+    result(d.some((x) => x.startsWith("rows.pg_catalog.pg_largeobject_metadata")), "fp", "fingerprint detects a new large object (pg_largeobject_metadata)", d.join(" | ") || "no difference seen");
+    compareRows("fp", "the probe large object is gone again", loA, loC);
+  }
 
   // Make the demo marker stale so an unguarded reseed path WOULD fire.
   const marker = db("marker-get");
