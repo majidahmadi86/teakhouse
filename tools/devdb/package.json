@@ -1,0 +1,9 @@
+{
+  "name": "devdb",
+  "private": true,
+  "type": "module",
+  "description": "Local development Postgres (embedded-postgres). Never production.",
+  "dependencies": {
+    "embedded-postgres": "17.10.0-beta.17"
+  }
+}

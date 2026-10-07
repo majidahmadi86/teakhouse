@@ -181,7 +181,7 @@ Repo tags: (T) teakhouse, (S) sovra, (both).
 - [x] (S) 47f366b (estate engine) is on local `main`, not pushed. `v17-a` branches from it.
 - [x] (T) `v17-a` branches from `main` (fa44219, the live boutique).
 - [x] (both) This directive saved with its checklist.
-- [ ] (both) Dev database via the embedded-postgres package as a repo script (replaces the scratchpad starter that died).
+- [x] (both) Dev database: `node tools/devdb/dev-db.mjs` (embedded-postgres, own package.json so Vercel never installs it; data gitignored). Teak House :55432, Sovra :55433, both migrated and seeded fresh on 2026-10-07. The old scratchpad copies were damaged by the 10-01 crash and are set aside in tools/devdb/data-copy-damaged-1001 (not deleted). Local .env and .env.local now point only at the dev database; Teak House production URLs moved to .env.prod-readonly.local (gitignored, loaded by nothing automatically).
 
 ### Phase 0 · diagnosis (read-only) → docs/v17-diagnosis.md
 - [ ] 1 Databases per environment, production migration/seed history, additive or not, dormant v15 tables in Teak House
