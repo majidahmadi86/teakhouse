@@ -606,7 +606,7 @@ export const DICT: Record<string, DictEntry> = {
   "ow.reset": { en: "Reset demo data", th: "รีเซ็ตข้อมูลตัวอย่าง" },
   "ow.resetWait": {
     en: "The demo data can be reset once every 10 minutes. Please try again shortly.",
-    th: "รีเซ็ตข้อมูลตัวอย่างได้ครั้งเดียวทุก 10 นาที โปรดลองใหม่อีกครั้งในภายหลัง",
+    th: "รีเซ็ตข้อมูลตัวอย่างได้ 1 ครั้งในทุก 10 นาที กรุณาลองใหม่อีกครั้งในอีกสักครู่",
   },
   "ow.guestInfo": { en: "Guest info", th: "ข้อมูลแขก" },
   "ow.phone": { en: "Phone", th: "โทรศัพท์" },
