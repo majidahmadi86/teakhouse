@@ -1,6 +1,6 @@
 /**
  * Seed · 10 rooms · ~40 bookings past+future · guests · email template · demo meta
- * Shared by prisma/seed.ts and /api/data/reset
+ * Shared by prisma/seed.ts, the reseed cron and POST /api/data/reset
  */
 import { addDays, format } from "date-fns";
 import { prisma } from "@/lib/db";
@@ -900,95 +900,134 @@ function nextOccurrence(anchor: Date, month1: number, day: number): string {
   return candidate >= iso(anchor) ? candidate : ymd(y + 1, month1, day);
 }
 
-export async function seedDatabase() {
+/**
+ * The steps of a reseed, in the order they run inside the transaction. Named
+ * so a test can stop the seed after any one of them (see SeedOptions).
+ */
+export const SEED_STEPS = [
+  "deletes",
+  "hotel",
+  "rooms",
+  "rates",
+  "bookings",
+  "guests",
+  "emailTemplate",
+  "demoMeta",
+  "users",
+  "guestBookings",
+  "diningCategories",
+  "diningItems",
+  "events",
+] as const;
+export type SeedStep = (typeof SEED_STEPS)[number];
+
+export type SeedOptions = {
+  /**
+   * Test hook · throw right after this step, inside the transaction, so the
+   * gate (scripts/hf1-seed-abort.ts) can prove a failed reseed rolls back to
+   * exactly the data that was there before. A function parameter only: no
+   * route passes it, and no env var or request input can reach it.
+   */
+  failAfter?: SeedStep;
+};
+
+/** Thrown by the failAfter test hook. */
+export class SeedAbortedForTest extends Error {
+  constructor(public step: SeedStep) {
+    super(`seed aborted after step "${step}" (test hook)`);
+    this.name = "SeedAbortedForTest";
+  }
+}
+
+/**
+ * Transaction budget. The reset route and the cron both run with
+ * maxDuration 60 s on Vercel. Rows are built before the transaction opens, so
+ * it holds one pooled connection only for 16 deletes and 12 bulk inserts:
+ * about a second next to the database, and about 10 s even from a distant
+ * region. maxWait + timeout stays under the function limit, so the database
+ * rolls back on its own terms rather than the platform killing the function
+ * midway.
+ */
+const SEED_TX_MAX_WAIT_MS = 10_000;
+const SEED_TX_TIMEOUT_MS = 40_000;
+
+/**
+ * Replace every boutique table with the demo seed, as ONE all-or-nothing
+ * interactive transaction: the deletes and one createMany per table either all
+ * commit or none do, so a timeout, a crash or a constraint error can never
+ * leave a half-empty site (before HF-1 a 504 after the deletes left production
+ * without a menu or events). Works through the Supabase pooler in transaction
+ * mode (pgbouncer=true): an interactive transaction holds one server
+ * connection for its whole life and uses no named prepared statements.
+ */
+export async function seedDatabase(options: SeedOptions = {}) {
   console.log("Seeding TEAK HOUSE v8…");
 
-  await prisma.guestBooking.deleteMany();
-  await prisma.roomBlock.deleteMany();
-  await prisma.seasonalPriceRule.deleteMany();
-  await prisma.booking.deleteMany();
-  await prisma.guest.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.emailTemplate.deleteMany();
-  await prisma.room.deleteMany();
-  await prisma.hotel.deleteMany();
-  await prisma.demoMeta.deleteMany();
-  await prisma.diningItem.deleteMany();
-  await prisma.diningCategory.deleteMany();
-  // v14 · seat requests point at events, so they go first. Table reservations
-  // and contact messages are guest-generated demo traffic · the reseed clears
-  // them too, so the sandbox starts each hour from the same known state.
-  await prisma.eventRequest.deleteMany();
-  await prisma.hotelEvent.deleteMany();
-  await prisma.tableReservation.deleteMany();
-  await prisma.contactMessage.deleteMany();
-
-  await prisma.hotel.create({
-    data: {
-      id: "default",
-      name: "The Teak House",
-      tagline: "Riverside Boutique Hotel · Bangkok",
-      email: "stay@teakhouse.demo",
-      phone: "+66 2 000 0000",
-      lineId: "@teakhouse",
-      address: "Charoenkrung 44, Bang Rak, Bangkok 10500",
-      addressLine: "Charoenkrung 44, Bang Rak",
-      city: "Bangkok",
-      country: "Thailand",
-      postalCode: "10500",
-      lat: 13.7234,
-      lng: 100.5142,
-      checkInTime: "14:00",
-      checkOutTime: "12:00",
-      cancelPolicy: "Free cancellation up to 3 days before arrival.",
-      petsPolicy: "Pets welcome in Garden Room and Mango Corner (fee applies).",
-      depositPct: 30,
-    },
-  });
+  // ── Build every row first · no database work in here ─────────────────────
+  // Each table is written with a single createMany, so every row object is
+  // complete: required columns set explicitly, the rest left to their
+  // schema defaults (ids by cuid, timestamps by now()).
+  const hotelRow = {
+    id: "default",
+    name: "The Teak House",
+    tagline: "Riverside Boutique Hotel · Bangkok",
+    email: "stay@teakhouse.demo",
+    phone: "+66 2 000 0000",
+    lineId: "@teakhouse",
+    address: "Charoenkrung 44, Bang Rak, Bangkok 10500",
+    addressLine: "Charoenkrung 44, Bang Rak",
+    city: "Bangkok",
+    country: "Thailand",
+    postalCode: "10500",
+    lat: 13.7234,
+    lng: 100.5142,
+    checkInTime: "14:00",
+    checkOutTime: "12:00",
+    cancelPolicy: "Free cancellation up to 3 days before arrival.",
+    petsPolicy: "Pets welcome in Garden Room and Mango Corner (fee applies).",
+    depositPct: 30,
+  };
 
   // One round trip per table, not one per row. The demo reset runs inside a
   // serverless function with a hard time budget, and ~96 sequential creates
   // against a remote database blew through it · the gateway returned 504 having
   // already deleted everything, which left the live demo with no menu and no
   // events. Bulk writes take the same work down to a handful of round trips.
-  await prisma.room.createMany({
-    data: ROOMS.map((r) => ({
-      id: r.id,
-      hotelId: "default",
-      slug: r.slug,
-      shortKey: r.shortKey,
-      nameEn: r.nameEn,
-      nameTh: r.nameTh,
-      rate: r.rate,
-      ota: r.ota,
-      metaEn: r.metaEn,
-      metaTh: r.metaTh,
-      descriptionEn: r.descriptionEn,
-      descriptionTh: r.descriptionTh,
-      photos: JSON.stringify(r.photos),
-      amenities: JSON.stringify(r.amenities),
-      capacity: r.capacity,
-      bedTypeEn: r.bedTypeEn,
-      bedTypeTh: r.bedTypeTh,
-      sizeM2: r.sizeM2,
-      viewEn: r.viewEn,
-      viewTh: r.viewTh,
-      floorEn: r.floorEn,
-      floorTh: r.floorTh,
-      bathtub: r.bathtub,
-      balcony: r.balcony,
-      pets: r.pets,
-      active: r.active,
-      urgencyEn: r.urgencyEn ?? null,
-      urgencyTh: r.urgencyTh ?? null,
-    })),
-  });
+  const roomRows = ROOMS.map((r) => ({
+    id: r.id,
+    hotelId: "default",
+    slug: r.slug,
+    shortKey: r.shortKey,
+    nameEn: r.nameEn,
+    nameTh: r.nameTh,
+    rate: r.rate,
+    ota: r.ota,
+    metaEn: r.metaEn,
+    metaTh: r.metaTh,
+    descriptionEn: r.descriptionEn,
+    descriptionTh: r.descriptionTh,
+    photos: JSON.stringify(r.photos),
+    amenities: JSON.stringify(r.amenities),
+    capacity: r.capacity,
+    bedTypeEn: r.bedTypeEn,
+    bedTypeTh: r.bedTypeTh,
+    sizeM2: r.sizeM2,
+    viewEn: r.viewEn,
+    viewTh: r.viewTh,
+    floorEn: r.floorEn,
+    floorTh: r.floorTh,
+    bathtub: r.bathtub,
+    balcony: r.balcony,
+    pets: r.pets,
+    active: r.active,
+    urgencyEn: r.urgencyEn ?? null,
+    urgencyTh: r.urgencyTh ?? null,
+  }));
 
   const today = new Date();
   today.setHours(12, 0, 0, 0);
 
   const seededRules = ROOMS.flatMap((r) => seedRateRules(r.id, today));
-  await prisma.seasonalPriceRule.createMany({ data: seededRules });
 
   // Same rules the booking engine will see, keyed the way it wants them.
   const rateRulesByRoom = groupRulesByRoom(
@@ -1027,8 +1066,8 @@ export async function seedDatabase() {
   }
 
   let codeN = 4200;
-  // Build the rows first, write once. Guests are deduplicated here rather than
-  // upserted row by row · the same fifteen people recur across forty bookings.
+  // Guests are deduplicated here rather than upserted row by row · the same
+  // fifteen people recur across forty bookings.
   const bookingRows = bookingSpecs.map((spec, i) => {
     const room = ROOMS[i % ROOMS.length];
     const g = GUESTS[i % GUESTS.length];
@@ -1068,8 +1107,6 @@ export async function seedDatabase() {
     };
   });
 
-  await prisma.booking.createMany({ data: bookingRows });
-
   const guestRows = new Map<string, {
     id: string;
     name: string;
@@ -1086,46 +1123,37 @@ export async function seedDatabase() {
       nationality: g.nationality,
     });
   }
-  await prisma.guest.createMany({ data: Array.from(guestRows.values()) });
 
-  await prisma.emailTemplate.create({
-    data: {
-      hotelId: "default",
-      key: "booking_confirmation",
-      subject: "Your stay at {{hotelName}} · {{code}}",
-      body: "Dear {{guestName}},\n\nThank you for booking {{roomName}} from {{checkIn}} to {{checkOut}}.\nTotal: {{amount}}\nDeposit received: {{deposit}}\n\nSee you by the river.\n{{hotelName}}",
-    },
-  });
+  const emailTemplateRow = {
+    hotelId: "default",
+    key: "booking_confirmation",
+    subject: "Your stay at {{hotelName}} · {{code}}",
+    body: "Dear {{guestName}},\n\nThank you for booking {{roomName}} from {{checkIn}} to {{checkOut}}.\nTotal: {{amount}}\nDeposit received: {{deposit}}\n\nSee you by the river.\n{{hotelName}}",
+  };
 
-  await prisma.demoMeta.create({
-    data: { id: "demo", lastReset: new Date() },
-  });
-
-  // Demo guest account linked to two bookings
-  await prisma.user.create({
-    data: {
-      id: "gu-demo",
-      name: "Demo Guest",
-      email: "guest@teakhouse.demo",
-      password: "demo1234",
-      bookings: {
-        create: [{ bookingId: "bk-4300" }, { bookingId: "bk-4315" }],
-      },
-    },
-  });
+  // Demo guest account linked to two bookings · the user and its links are
+  // two bulk writes (a nested create is not available in createMany).
+  const userRow = {
+    id: "gu-demo",
+    name: "Demo Guest",
+    email: "guest@teakhouse.demo",
+    password: "demo1234",
+  };
+  const guestBookingRows = ["bk-4300", "bk-4315"].map((bookingId) => ({
+    userId: userRow.id,
+    bookingId,
+  }));
 
   // v12 · dining menu · *Th columns mirror EN pending the Thai pass
   // Two writes for the whole menu · categories, then every dish at once.
-  await prisma.diningCategory.createMany({
-    data: DINING.map((cat, c) => ({
-      id: cat.id,
-      hotelId: "default",
-      nameEn: cat.name,
-      nameTh: DINING_TH[cat.id]?.name ?? cat.name,
-      order: c,
-      published: true,
-    })),
-  });
+  const categoryRows = DINING.map((cat, c) => ({
+    id: cat.id,
+    hotelId: "default",
+    nameEn: cat.name,
+    nameTh: DINING_TH[cat.id]?.name ?? cat.name,
+    order: c,
+    published: true,
+  }));
 
   const dishRows = DINING.flatMap((cat) =>
     cat.dishes.map((d, i) => ({
@@ -1141,8 +1169,6 @@ export async function seedDatabase() {
       published: true,
     }))
   );
-  await prisma.diningItem.createMany({ data: dishRows });
-  const dishCount = dishRows.length;
 
   // v12 · special events · dates roll to the next occurrence so the demo
   // sandbox never shows a past festival, however long after launch it reseeds.
@@ -1175,21 +1201,78 @@ export async function seedDatabase() {
       image: "/images/facilities/courtyard-garden-1280.webp",
     },
   ];
-  await prisma.hotelEvent.createMany({
-    data: EVENTS.map((ev) => ({
-      id: ev.id,
-      hotelId: "default",
-      titleEn: ev.title,
-      titleTh: EVENTS_TH[ev.id]?.title ?? ev.title,
-      date: ev.date,
-      descriptionEn: ev.description,
-      descriptionTh: EVENTS_TH[ev.id]?.description ?? ev.description,
-      image: ev.image,
-      published: true,
-    })),
-  });
+  const eventRows = EVENTS.map((ev) => ({
+    id: ev.id,
+    hotelId: "default",
+    titleEn: ev.title,
+    titleTh: EVENTS_TH[ev.id]?.title ?? ev.title,
+    date: ev.date,
+    descriptionEn: ev.description,
+    descriptionTh: EVENTS_TH[ev.id]?.description ?? ev.description,
+    image: ev.image,
+    published: true,
+  }));
+
+  // ── One transaction: delete everything, write everything ─────────────────
+  const done = (step: SeedStep) => {
+    if (options.failAfter === step) throw new SeedAbortedForTest(step);
+  };
+
+  await prisma.$transaction(
+    async (tx) => {
+      // Children before parents, so no foreign key trips. v14 · seat requests
+      // point at events, so they go before events. Table reservations and
+      // contact messages are guest-generated demo traffic · the reseed clears
+      // them too, so the sandbox starts each day from the same known state.
+      await tx.guestBooking.deleteMany();
+      await tx.roomBlock.deleteMany();
+      await tx.seasonalPriceRule.deleteMany();
+      await tx.booking.deleteMany();
+      await tx.guest.deleteMany();
+      await tx.user.deleteMany();
+      await tx.emailTemplate.deleteMany();
+      await tx.room.deleteMany();
+      await tx.hotel.deleteMany();
+      await tx.demoMeta.deleteMany();
+      await tx.diningItem.deleteMany();
+      await tx.diningCategory.deleteMany();
+      await tx.eventRequest.deleteMany();
+      await tx.hotelEvent.deleteMany();
+      await tx.tableReservation.deleteMany();
+      await tx.contactMessage.deleteMany();
+      done("deletes");
+
+      await tx.hotel.createMany({ data: [hotelRow] });
+      done("hotel");
+      await tx.room.createMany({ data: roomRows });
+      done("rooms");
+      await tx.seasonalPriceRule.createMany({ data: seededRules });
+      done("rates");
+      await tx.booking.createMany({ data: bookingRows });
+      done("bookings");
+      await tx.guest.createMany({ data: Array.from(guestRows.values()) });
+      done("guests");
+      await tx.emailTemplate.createMany({ data: [emailTemplateRow] });
+      done("emailTemplate");
+      await tx.demoMeta.createMany({
+        data: [{ id: "demo", lastReset: new Date() }],
+      });
+      done("demoMeta");
+      await tx.user.createMany({ data: [userRow] });
+      done("users");
+      await tx.guestBooking.createMany({ data: guestBookingRows });
+      done("guestBookings");
+      await tx.diningCategory.createMany({ data: categoryRows });
+      done("diningCategories");
+      await tx.diningItem.createMany({ data: dishRows });
+      done("diningItems");
+      await tx.hotelEvent.createMany({ data: eventRows });
+      done("events");
+    },
+    { maxWait: SEED_TX_MAX_WAIT_MS, timeout: SEED_TX_TIMEOUT_MS }
+  );
 
   console.log(
-    `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · ${DINING.length} dining categories · ${dishCount} dishes · ${EVENTS.length} events · guests + demo user`
+    `Done · ${ROOMS.length} rooms · ${bookingSpecs.length} bookings · ${DINING.length} dining categories · ${dishRows.length} dishes · ${EVENTS.length} events · guests + demo user`
   );
 }
