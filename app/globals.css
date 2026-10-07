@@ -995,3 +995,169 @@ input.auth-input:-webkit-autofill {
     box-shadow: none !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · Server chrome (components/header/SiteHeader.tsx, GuestShell)
+   Everything the header used to need a hydrated twin for, in CSS.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Active navigation · a page declares its section with <NavMark> and the
+   header lights the matching item, in the static HTML, with JS off, and with
+   nothing to swap on hydration. HeaderSync mirrors it into aria-current. */
+body:has([data-nav-mark="rooms"]) [data-nav="rooms"],
+body:has([data-nav-mark="dining"]) [data-nav="dining"],
+body:has([data-nav-mark="events"]) [data-nav="events"],
+body:has([data-nav-mark="experience"]) [data-nav="experience"],
+body:has([data-nav-mark="facilities"]) [data-nav="facilities"],
+body:has([data-nav-mark="gallery"]) [data-nav="gallery"],
+body:has([data-nav-mark="location"]) [data-nav="location"],
+body:has([data-nav-mark="contact"]) [data-nav="contact"],
+body:has([data-nav-mark="offers"]) [data-nav="offers"],
+body:has([data-nav-mark="experience"]) [data-nav-group="experience"],
+body:has([data-nav-mark="facilities"]) [data-nav-group="experience"],
+body:has([data-nav-mark="gallery"]) [data-nav-group="experience"] {
+  color: rgb(var(--color-blue-rgb, 10 108 222));
+}
+body:has([data-nav-mark="rooms"]) [data-nav="rooms"] [data-nav-rule],
+body:has([data-nav-mark="experience"]) [data-nav-group="experience"] [data-nav-rule],
+body:has([data-nav-mark="facilities"]) [data-nav-group="experience"] [data-nav-rule],
+body:has([data-nav-mark="gallery"]) [data-nav-group="experience"] [data-nav-rule] {
+  width: 100%;
+}
+body:has([data-nav-mark="offers"]) .offers-hit[data-nav="offers"] {
+  background-color: rgb(var(--color-coral-bg-rgb, 255 240 236));
+}
+
+/* Page chrome · <ChromeMark> on the pages that carry their own booking bar
+   (/book, room pages) or are a focused task (sign-in). */
+body:has([data-chrome~="flush-main"]) [data-guest-main] {
+  padding-bottom: 0;
+}
+body:has([data-chrome~="white-main"]) [data-guest-main] {
+  background-color: rgb(var(--color-white-rgb, 255 255 255));
+}
+body:has([data-chrome~="no-footer"]) [data-site-footer],
+body:has([data-chrome~="no-bookbar"]) [data-mobile-book-bar] {
+  display: none;
+}
+
+/* Header · frosted once the page scrolls (HeaderSync sets data-scrolled).
+   Without scripts it simply stays solid white. */
+.tkh-header[data-scrolled] {
+  border-color: rgb(var(--color-line-rgb, 227 232 239) / 0.8);
+  background-color: rgb(var(--color-white-rgb, 255 255 255) / 0.85);
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Phone menu · a native popover (top layer, light dismiss, Escape). The UA
+   gives popovers a small centred box; this makes it the full-screen solid
+   sheet that slides in from the inline end. Display is set ONLY on the open
+   state: an author `display` on a closed popover would override the UA's
+   hiding and leave the menu permanently open. */
+.tkh-drawer:popover-open {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: env(safe-area-inset-top) 0 0;
+  border: 0;
+  background: rgb(var(--color-white-rgb, 255 255 255));
+  color: rgb(var(--color-ink-rgb, 23 33 46));
+  overflow: hidden;
+  animation: tkh-drawer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[dir="rtl"] .tkh-drawer:popover-open {
+  animation-name: tkh-drawer-in-rtl;
+}
+@keyframes tkh-drawer-in-rtl {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+.tkh-drawer::backdrop {
+  background: rgba(10, 27, 46, 0.4);
+}
+html:has(.tkh-drawer:popover-open) {
+  overflow: hidden;
+}
+
+/* Where the Popover API is missing, the menu still opens with no script:
+   the header's #mobile-nav-drawer link targets the drawer, and the close
+   link moves the target away. */
+.tkh-menu-fallback {
+  display: none;
+}
+@supports not selector(:popover-open) {
+  .tkh-menu-btn {
+    display: none !important;
+  }
+  .tkh-menu-fallback {
+    display: flex;
+  }
+  .tkh-drawer {
+    display: none;
+  }
+  .tkh-drawer:target {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer, 70);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background: rgb(var(--color-white-rgb, 255 255 255));
+    color: rgb(var(--color-ink-rgb, 23 33 46));
+    animation: tkh-drawer-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Phone Book bar on home · waits below the screen until the hero's own
+   booking widget has scrolled away. A scroll-driven animation where the
+   browser has one (transform only); elsewhere HeaderSync sets data-shown. */
+@keyframes tkh-bookbar-in {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+[data-mobile-book-bar][data-defer] {
+  transform: translateY(110%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-mobile-book-bar][data-defer][data-shown] {
+  transform: none;
+}
+@supports (animation-timeline: scroll()) {
+  [data-mobile-book-bar][data-defer] {
+    transition: none;
+    animation: tkh-bookbar-in linear both;
+    animation-timeline: scroll(root block);
+    animation-range: 55vh 85vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-mobile-book-bar][data-defer] {
+    transition: none;
+  }
+}
+
+/* The language menu (components/header/LanguageMenu.tsx). */
+.tkh-lang summary::-webkit-details-marker {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-mobile-book-bar][data-defer] {
+    animation: none !important;
+  }
+}

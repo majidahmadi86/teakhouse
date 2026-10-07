@@ -1304,6 +1304,9 @@ export const DICT: Record<string, DictEntry> = {
   "a11y.send": { en: "Send", th: "ส่ง" },
   "a11y.demoSwitcher": { en: "Demo mode switcher", th: "สลับโหมดเดโม" },
   "a11y.loadingPage": { en: "Loading page", th: "กำลังโหลดหน้า" },
+  "a11y.language": { en: "Language", th: "ภาษา" },
+  "a11y.currency": { en: "Currency", th: "สกุลเงิน" },
+  "a11y.mainNav": { en: "Main navigation", th: "เมนูหลัก" },
 
   // Screen-reader only · never painted, so nothing above would have caught it.
   "ow.a11y.nav": { en: "Owner navigation", th: "เมนูนำทางสำหรับเจ้าของ" },

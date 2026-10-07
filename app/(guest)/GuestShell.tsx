@@ -1,42 +1,30 @@
-"use client";
+import { SiteHeader } from "@/components/header/SiteHeader";
+import { MobileBookBar } from "@/components/MobileBookBar";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import type { Lang } from "@/lib/locales/meta";
 
-import { usePathname } from "next/navigation";
-import { type ReactNode } from "react";
-import { DeferredMobileBookBar } from "@/components/DeferredMobileBookBar";
-import { DeferredHeader } from "@/components/header/DeferredHeader";
-import { Footer } from "@/components/Footer";
-import { cn } from "@/lib/utils";
-
+/**
+ * The guest page frame · all server HTML. It used to be a client component
+ * that read usePathname() to decide the main padding, the footer and the
+ * phone Book bar; a page now declares those itself with <ChromeMark> and CSS
+ * applies them (app/globals.css, "Page chrome"), so the frame renders the
+ * same on the server, in the browser and in every language.
+ */
 export function GuestShell({
+  locale,
   children,
-  headerShell,
 }: {
+  locale: Lang;
   children: React.ReactNode;
-  headerShell: ReactNode;
 }) {
-  const pathname = usePathname();
-  const isBook = pathname === "/book";
-  const isRoomDetail =
-    pathname.startsWith("/rooms/") && pathname !== "/rooms";
-  const isAuth =
-    pathname === "/account/signin" || pathname === "/account/signup";
-  const showMobileBookBar = !isBook && !isRoomDetail && !isAuth;
-
   return (
     <>
-      {/* SSR shell stays visible · upgrades to interactive Header on idle */}
-      <DeferredHeader shell={headerShell} />
-      <main
-        className={
-          isBook || isRoomDetail || isAuth
-            ? cn("pb-0", isRoomDetail && "bg-white")
-            : "pb-24 md:pb-8"
-        }
-      >
+      <SiteHeader locale={locale} />
+      <main data-guest-main className="pb-24 md:pb-8">
         {children}
       </main>
-      {isAuth ? null : <Footer />}
-      {showMobileBookBar ? <DeferredMobileBookBar /> : null}
+      <SiteFooter locale={locale} />
+      <MobileBookBar locale={locale} />
     </>
   );
 }

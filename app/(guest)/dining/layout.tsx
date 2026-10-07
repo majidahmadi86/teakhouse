@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { routeMetadata } from "@/lib/routeMeta";
+import { NavMark } from "@/components/site/PageMarks";
 
 export function generateMetadata(): Metadata {
   return routeMetadata("/dining");
@@ -10,5 +11,10 @@ export default function DiningLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <NavMark section="dining" />
+      {children}
+    </>
+  );
 }

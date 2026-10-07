@@ -3,6 +3,7 @@ import { buildMetadata, ROOM_META_FALLBACK } from "@/lib/routeMeta";
 import { getServerLocale } from "@/lib/serverLocale";
 import { translateEntry } from "@/lib/i18n-core";
 import { SEED_ROOMS } from "@/lib/rooms";
+import { ChromeMark } from "@/components/site/PageMarks";
 
 type Props = { params: { slug: string } };
 
@@ -31,10 +32,16 @@ export function generateMetadata({ params }: Props): Metadata {
   });
 }
 
+/** Room pages carry their own booking bar and a white ground. */
 export default function RoomSlugLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <ChromeMark noBookBar flushMain whiteMain />
+      {children}
+    </>
+  );
 }

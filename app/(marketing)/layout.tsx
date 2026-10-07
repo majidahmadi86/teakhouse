@@ -4,8 +4,9 @@ import { ConciergeMount } from "@/components/ConciergeLauncher";
 import { FabHeroClearance } from "@/components/home/FabHeroClearance";
 import { DemoModal } from "@/components/DemoModal";
 import { DemoModeBar } from "@/components/DemoModeBar";
-import { HeaderShell } from "@/components/header/HeaderShell";
-import { HomeHeaderUpgrade } from "@/components/home/HomeHeaderUpgrade";
+import { SiteHeader } from "@/components/header/SiteHeader";
+import { MobileBookBar } from "@/components/MobileBookBar";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { HomeLate } from "@/components/home/HomeLate";
 import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale, t } from "@/lib/serverLocale";
@@ -20,9 +21,9 @@ export const metadata: Metadata = {
 
 /**
  * Home layout · hero + below-fold are server components (rendered in the page)
- * so no provider sits on the LCP path. The SSR HeaderShell renders in the
- * resolved locale and upgrades to the full interactive Header on idle /
- * interaction; the crossfade slideshow stays deferred in HomeLate.
+ * so no provider sits on the LCP path. The header, the footer and the phone
+ * Book bar are the same server chrome as every guest page, with no hydrated
+ * twin; the crossfade slideshow stays deferred in HomeLate.
  */
 export default function MarketingLayout({
   children,
@@ -33,12 +34,12 @@ export default function MarketingLayout({
   return (
     <>
       <DemoModeBar variant="guest" locale={locale} />
-      <HomeHeaderUpgrade
-        shell={<HeaderShell locale={locale} />}
-        lang={locale}
-        messages={messagesFor(locale)}
-      />
+      <SiteHeader locale={locale} />
       <main className="pb-0">{children}</main>
+      <SiteFooter locale={locale} />
+      {/* On home the phone Book bar waits below the screen until the hero's
+          own booking widget has scrolled away. */}
+      <MobileBookBar locale={locale} deferUntilScroll />
       <HomeLate locale={locale} />
       {/* Order modal host · CTA opens it via the shared window event. */}
       <DemoModal strings={getDemoStrings(locale)} />

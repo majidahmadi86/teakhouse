@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { NavMark } from "@/components/site/PageMarks";
 import { routeMetadata } from "@/lib/routeMeta";
 
 export function generateMetadata(): Metadata {
@@ -12,6 +13,7 @@ export default function RoomsLayout({
 }) {
   return (
     <>
+      <NavMark section="rooms" />
       <link
         rel="preload"
         as="image"
