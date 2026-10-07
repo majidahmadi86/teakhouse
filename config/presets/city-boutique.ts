@@ -56,8 +56,8 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1551882547-ff40c63fe5fa"),
   },
-  currencies: ["THB", "USD", "EUR"],
-  languages: ["en", "th"],
+  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "KRW", "CHF", "AED", "INR"],
+  languages: ["en", "th", "zh", "ja", "ko", "ru", "de", "fr", "es", "it", "pt", "ar", "hi", "id", "vi", "ms"],
   contact: {
     email: "hello@maisonlane.demo",
     phone: "+66 2 111 2222",

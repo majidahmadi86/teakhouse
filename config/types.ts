@@ -1,3 +1,6 @@
+import type { CurrencyCode } from "../lib/currencies";
+import type { Lang } from "../lib/locales/meta";
+
 export type HotelPalette = {
   white: string;
   cloud: string;
@@ -42,8 +45,10 @@ export type HotelConfig = {
     gallery: string[];
     about: string;
   };
-  currencies: Array<"THB" | "USD" | "EUR">;
-  languages: Array<"en" | "th">;
+  /** Display currencies, THB first (the base every amount is stored in). */
+  currencies: CurrencyCode[];
+  /** Guest languages offered in the language menu. */
+  languages: Lang[];
   contact: {
     email: string;
     phone: string;

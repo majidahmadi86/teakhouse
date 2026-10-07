@@ -56,8 +56,8 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1600210492486-724fe5c67fb0"),
   },
-  currencies: ["THB", "USD", "EUR"],
-  languages: ["en", "th"],
+  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "KRW", "CHF", "AED", "INR"],
+  languages: ["en", "th", "zh", "ja", "ko", "ru", "de", "fr", "es", "it", "pt", "ar", "hi", "id", "vi", "ms"],
   contact: {
     email: "stay@quiethouse.demo",
     phone: "+66 53 000 111",

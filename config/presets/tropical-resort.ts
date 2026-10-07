@@ -34,8 +34,8 @@ export const config: HotelConfig = {
     ],
     about: u("photo-1582719478250-c89cae4dc85b"),
   },
-  currencies: ["THB", "USD", "EUR"],
-  languages: ["en", "th"],
+  currencies: ["THB", "USD", "EUR", "GBP", "JPY", "CNY", "SGD", "AUD", "HKD", "KRW", "CHF", "AED", "INR"],
+  languages: ["en", "th", "zh", "ja", "ko", "ru", "de", "fr", "es", "it", "pt", "ar", "hi", "id", "vi", "ms"],
   contact: {
     email: "stay@teakhouse.demo",
     phone: "+66 2 000 0000",
