@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { EmailTemplateDto } from "@/lib/ownerTypes";
 import { requireOwner } from "@/lib/ownerSession";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {
@@ -94,6 +97,8 @@ export async function PATCH(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   return PATCH(req);

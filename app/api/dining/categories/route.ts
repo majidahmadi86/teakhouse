@@ -7,10 +7,13 @@ import {
 } from "@/lib/dining";
 import { revalidateDining } from "@/lib/revalidate";
 import { requireOwner } from "@/lib/ownerSession";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {

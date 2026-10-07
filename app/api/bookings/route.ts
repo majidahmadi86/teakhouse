@@ -8,6 +8,7 @@ import { bookingToClient, bookingToDb } from "@/lib/mappers";
 import type { Booking } from "@/lib/ownerTypes";
 import { quoteStay, toPriceRule } from "@/lib/pricing";
 import { formatBaht } from "@/lib/utils";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,8 @@ async function authoritativeAmount(body: Booking): Promise<number> {
 }
 
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   try {
     const body = (await req.json()) as Booking;
     const data = bookingToDb({

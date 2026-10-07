@@ -8,6 +8,7 @@ import {
   type ContactInput,
   type ContactPurpose,
 } from "@/lib/contactMessages";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   let body: Partial<ContactInput>;
   try {
     body = (await req.json()) as Partial<ContactInput>;

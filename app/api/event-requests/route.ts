@@ -6,6 +6,7 @@ import {
   type EventRequestInput,
 } from "@/lib/eventRequests";
 import type { ContactKind } from "@/lib/reservations";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   let body: Partial<EventRequestInput>;
   try {
     body = (await req.json()) as Partial<EventRequestInput>;

@@ -5,6 +5,7 @@ import { requireOwner } from "@/lib/ownerSession";
 import { revalidateAll } from "@/lib/revalidate";
 import { isSameOrigin } from "@/lib/sameOrigin";
 import { seedDatabase } from "@/lib/seedDatabase";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -13,6 +14,7 @@ export const maxDuration = 60;
  * Reset DB to seed · the owner panel's "Reset demo data".
  *
  * HF-1: this was an anonymous full database rewrite. Now, in order:
+ *   403  a read-only deployment (a preview, v17): refused before any check
  *   401  no valid owner or demo session (always, whatever else is wrong)
  *   403  not same-origin (Origin must name this host, or Sec-Fetch-Site
  *        must say same-origin when there is no Origin)
@@ -21,6 +23,8 @@ export const maxDuration = 60;
  *        through the DemoMeta marker
  */
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   if (!isSameOrigin(req)) {

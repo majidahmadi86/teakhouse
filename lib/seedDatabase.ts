@@ -4,6 +4,7 @@
  */
 import { addDays, format } from "date-fns";
 import { prisma } from "@/lib/db";
+import { assertWritable } from "@/lib/readOnly";
 import { groupRulesByRoom, quoteStay, toPriceRule } from "@/lib/pricing";
 
 const unsplash = (id: string) => `https://images.unsplash.com/${id}`;
@@ -961,6 +962,9 @@ const SEED_TX_TIMEOUT_MS = 40_000;
  * connection for its whole life and uses no named prepared statements.
  */
 export async function seedDatabase(options: SeedOptions = {}) {
+  // v17 · A read-only deployment (a preview) never seeds. Refuse before the
+  // transaction opens, so not even a connection is taken for it.
+  assertWritable("seedDatabase");
   console.log("Seeding TEAK HOUSE v8…");
 
   // ── Build every row first · no database work in here ─────────────────────

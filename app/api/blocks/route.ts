@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { blocksToRecord } from "@/lib/mappers";
 import { requireOwner } from "@/lib/ownerSession";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,8 @@ export async function GET() {
 
 /** Toggle block for roomSlug + dateIso */
 export async function POST(req: Request) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {

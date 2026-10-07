@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cronAuthorized } from "@/lib/cronAuth";
 import { isDemoModeServer } from "@/lib/demoReset";
+import { readOnlyResponse } from "@/lib/readOnly";
 import { revalidateAll } from "@/lib/revalidate";
 import { seedDatabase } from "@/lib/seedDatabase";
 
@@ -16,6 +17,10 @@ export const maxDuration = 60;
  * of /book, /account or /owner a potential full database rewrite.
  */
 export async function GET(req: Request) {
+  // v17 · A read-only deployment (a preview) never reseeds: 403, no work.
+  const ro = readOnlyResponse();
+  if (ro) return ro;
+
   // Fail closed: a missing header, a wrong bearer and an unset CRON_SECRET
   // are all the same 401 · see lib/cronAuth.ts.
   if (!cronAuthorized(req)) {

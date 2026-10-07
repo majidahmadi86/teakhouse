@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { bookingToClient } from "@/lib/mappers";
 import type { Booking } from "@/lib/ownerTypes";
 import { requireOwner } from "@/lib/ownerSession";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,8 @@ async function guestCancel(
 }
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   let body: unknown = null;
   try {
@@ -102,6 +105,8 @@ export async function PATCH(req: Request, { params }: Ctx) {
 }
 
 export async function DELETE(req: Request, { params }: Ctx) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {

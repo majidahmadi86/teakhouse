@@ -5,6 +5,7 @@
  * (e.g. "resend" | "sendgrid" | "postmark"). Keep secrets in
  * EMAIL_API_KEY / provider-specific env vars · do not send from the client.
  */
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 
 export type ConfirmationEmailPayload = {
   to: string;
@@ -27,6 +28,11 @@ export async function sendConfirmationEmail(
 
   if (!payload.to) {
     return { ok: false, stub: true, message: "Missing recipient" };
+  }
+
+  // v17 · A read-only deployment (a preview) never sends mail to a guest.
+  if (isReadOnlyDeployment()) {
+    return { ok: false, stub: true, message: "Read-only deployment · not sent" };
   }
 
   // No provider configured · log and return without sending.

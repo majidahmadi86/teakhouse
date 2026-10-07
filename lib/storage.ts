@@ -9,6 +9,7 @@
  * Until SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY exist, `storageConfigured()`
  * is false and the owner managers say so instead of offering a dead control.
  */
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 
 export const MEDIA_BUCKET = "hotel-media";
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -175,6 +176,10 @@ export async function uploadMedia(
   body: ArrayBuffer,
   mime: AllowedMime
 ): Promise<UploadResult> {
+  // v17 · SUPABASE_URL and the service role key are shared by Production and
+  // Preview, so a preview upload would land in the production bucket. A
+  // read-only deployment never uploads (POST /api/media also refuses first).
+  if (isReadOnlyDeployment()) return { ok: false, error: "read-only-deployment" };
   const cfg = env();
   if (!cfg) return { ok: false, error: "storage-not-configured" };
 

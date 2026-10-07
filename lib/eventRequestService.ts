@@ -3,6 +3,7 @@
  * and the API route, so both are held to the same rules.
  */
 import { prisma } from "@/lib/db";
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 import {
   eventRequestToClient,
   makeEventRef,
@@ -31,6 +32,9 @@ export async function createEventRequest(
     })
     .catch(() => null);
   if (!event) return { ok: false, error: "event" };
+  // v17 · A read-only deployment (a preview) takes no request. The guest sees
+  // the form's existing "something went wrong" message.
+  if (isReadOnlyDeployment()) return { ok: false, error: "failed" };
 
   for (let attempt = 0; attempt < 5; attempt++) {
     try {

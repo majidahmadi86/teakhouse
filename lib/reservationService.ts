@@ -5,6 +5,7 @@
  */
 import { prisma } from "@/lib/db";
 import { getReservationSettings } from "@/lib/hotelSettings";
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 import {
   makeReservationRef,
   reservationToClient,
@@ -27,6 +28,9 @@ export async function createReservation(
   // server's. These two differ for seven hours of every Bangkok day.
   const invalid = validateReservation(input, settings, hotelTodayIso());
   if (invalid) return { ok: false, error: invalid };
+  // v17 · A read-only deployment (a preview) takes no booking. The guest sees
+  // the form's existing "something went wrong" message.
+  if (isReadOnlyDeployment()) return { ok: false, error: "failed" };
 
   // The ref is short and human-readable, so a collision is possible rather
   // than unthinkable · retry a few times before giving up.

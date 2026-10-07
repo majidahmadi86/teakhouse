@@ -6,6 +6,7 @@ import {
   type ReservationStatus,
 } from "@/lib/reservations";
 import { requireOwner } from "@/lib/ownerSession";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ type Ctx = { params: { id: string } };
 
 /** Owner edits · status is the field that moves; the rest is the guest's word. */
 export async function PATCH(req: Request, { params }: Ctx) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {
@@ -56,6 +59,8 @@ export async function PATCH(req: Request, { params }: Ctx) {
 }
 
 export async function DELETE(req: Request, { params }: Ctx) {
+  const ro = readOnlyResponse();
+  if (ro) return ro;
   const denied = requireOwner(req);
   if (denied) return denied;
   try {

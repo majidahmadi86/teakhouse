@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -64,6 +65,13 @@ export async function POST(req: Request) {
       userId?: string;
       patch?: { name?: string; email?: string };
     };
+
+    // v17 · Sign-in only reads, so it keeps working in a read-only deployment
+    // (a preview); signup, attach and update are refused there.
+    if (body.action !== "signin") {
+      const ro = readOnlyResponse();
+      if (ro) return ro;
+    }
 
     if (body.action === "signup") {
       const trimmedEmail = (body.email ?? "").trim().toLowerCase();

@@ -9,6 +9,7 @@ import {
   type ContactPurpose,
 } from "@/lib/contactMessages";
 import { prisma } from "@/lib/db";
+import { isReadOnlyDeployment } from "@/lib/readOnly";
 
 /**
  * Send a message · a server action, so the contact form posts and confirms
@@ -43,6 +44,11 @@ export async function sendMessage(formData: FormData) {
   const invalid = validateContact(input);
   if (invalid) {
     redirect(`/contact?about=${purpose}&error=${invalid}`);
+  }
+  // v17 · A read-only deployment (a preview) stores no message. The guest sees
+  // the form's existing "something went wrong" message.
+  if (isReadOnlyDeployment()) {
+    redirect(`/contact?about=${purpose}&error=failed`);
   }
 
   try {

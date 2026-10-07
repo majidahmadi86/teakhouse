@@ -4,8 +4,23 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+/**
+ * v17 · Preview safety. A build made for a Vercel preview is read-only for
+ * its whole life: this bakes DB_READ_ONLY="1" into the bundle, so the build
+ * refuses writes even if VERCEL_ENV is not exposed at runtime (lib/readOnly.ts).
+ * Production and local builds bake "" and stay writable. DB_READ_ONLY=1 in the
+ * build env opts a local build in, for the gate (scripts/preview-safety.js).
+ */
+const DB_READ_ONLY =
+  process.env.VERCEL_ENV === "preview" || process.env.DB_READ_ONLY === "1"
+    ? "1"
+    : "";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    DB_READ_ONLY,
+  },
   experimental: {
     optimizePackageImports: [
       "lucide-react",
