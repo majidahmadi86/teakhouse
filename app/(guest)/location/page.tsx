@@ -1,8 +1,6 @@
-"use client";
-
 import { Plane, Ship, Train } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
-import { useI18n } from "@/lib/i18n";
+import { getServerLocale, t, tr } from "@/lib/serverLocale";
 
 const DIRECTIONS = [
   { icon: Train, title: "lc.1h", body: "lc.1p" },
@@ -15,27 +13,28 @@ const MAP_EMBED =
 const MAP_ROUTE =
   "https://maps.google.com/?q=Charoenkrung+44+Bang+Rak+Bangkok";
 
+/** Location · a server page (no dictionary in the browser, no hydration). */
 export default function LocationPage() {
-  const { t, tr } = useI18n();
+  const locale = getServerLocale();
 
   return (
     <>
       <PageHero
         image="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a"
-        alt={tr({
+        alt={tr(locale, {
           en: "Old Bangkok riverside",
           th: "ย่านเมืองเก่าริมแม่น้ำกรุงเทพ",
         })}
-        eyebrow={t("nav.location")}
-        title={t("lc.h1")}
-        lead={t("lc.lead")}
+        eyebrow={t(locale, "nav.location")}
+        title={t(locale, "lc.h1")}
+        lead={t(locale, "lc.lead")}
       />
 
       <section className="px-6 py-24">
         <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[1fr_1.1fr]">
           <div className="overflow-hidden rounded-2xl border-2 border-blue shadow-panel">
             <iframe
-              title={t("a11y.onGoogleMaps")}
+              title={t(locale, "a11y.onGoogleMaps")}
               src={MAP_EMBED}
               className="h-[460px] w-full border-0"
               loading="lazy"
@@ -46,9 +45,9 @@ export default function LocationPage() {
 
           <div className="rounded-[14px] bg-white p-8 shadow-panel">
             <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-blue">
-              {t("lc.dir")}
+              {t(locale, "lc.dir")}
             </p>
-            <h2 className="mb-6 text-2xl">{t("lc.h1")}</h2>
+            <h2 className="mb-6 text-2xl">{t(locale, "lc.h1")}</h2>
             <div className="space-y-6">
               {DIRECTIONS.map(({ icon: Icon, title, body }) => (
                 <article key={title} className="flex gap-4">
@@ -56,15 +55,15 @@ export default function LocationPage() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg">{t(title)}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-ink/85">{t(body)}</p>
+                    <h3 className="font-display text-lg">{t(locale, title)}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-ink/85">{t(locale, body)}</p>
                   </div>
                 </article>
               ))}
             </div>
             <article className="mt-6 border-t border-line pt-6">
-              <h3 className="font-display text-lg">{t("lc.4h")}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-ink/85">{t("lc.4p")}</p>
+              <h3 className="font-display text-lg">{t(locale, "lc.4h")}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-ink/85">{t(locale, "lc.4p")}</p>
             </article>
             <a
               href={MAP_ROUTE}
@@ -72,7 +71,7 @@ export default function LocationPage() {
               rel="noopener noreferrer"
               className="mt-8 inline-flex rounded-full bg-navy px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark"
             >
-              {t("lc.route")}
+              {t(locale, "lc.route")}
             </a>
           </div>
         </div>

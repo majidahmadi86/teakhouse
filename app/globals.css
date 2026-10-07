@@ -1161,3 +1161,35 @@ html:has(.tkh-drawer:popover-open) {
     animation: none !important;
   }
 }
+
+/* Gallery · CSS-only filters (radio + :has) and :target lightbox
+   (app/(guest)/gallery/page.tsx). Works with scripting off. */
+.tkh-gallery:has(#gal-rooms:checked) [data-cat]:not([data-cat="rooms"]),
+.tkh-gallery:has(#gal-pool:checked) [data-cat]:not([data-cat="pool"]),
+.tkh-gallery:has(#gal-river:checked) [data-cat]:not([data-cat="river"]),
+.tkh-gallery:has(#gal-food:checked) [data-cat]:not([data-cat="food"]) {
+  display: none;
+}
+html:has(.tkh-lightbox:target) {
+  overflow: hidden;
+}
+
+/* Experience · image parallax on scroll, transform only, desktop only, and
+   only where the browser drives it from the scroll position itself. */
+@keyframes tkh-parallax {
+  from {
+    transform: translateY(-6%);
+  }
+  to {
+    transform: translateY(6%);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .tkh-parallax {
+      animation: tkh-parallax linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}

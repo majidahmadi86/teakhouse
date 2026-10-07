@@ -1,13 +1,9 @@
-"use client";
-
-import { useMemo, useState } from "react";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
-import { SafeImage } from "@/components/SafeImage";
-import { Reveal, RevealItem, RevealStagger, ScaleIn } from "@/components/motion/Reveal";
+import { Reveal, RevealStagger, ScaleIn } from "@/components/motion/Reveal";
 import { unsplashSrc } from "@/lib/unsplashLoader";
-import { useI18n } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import { getServerLocale, t, tr } from "@/lib/serverLocale";
 import type { DictEntry } from "@/lib/i18n-dict";
 
 type Cat = "all" | "rooms" | "pool" | "river" | "food";
@@ -38,135 +34,132 @@ const FILTERS: { id: Cat; key: string }[] = [
   { id: "food", key: "gal.food" },
 ];
 
+/**
+ * Gallery · a server page with no JavaScript of its own.
+ *
+ * The filters are radio buttons: CSS (app/globals.css, "Gallery") hides the
+ * photos of the other categories with :has(), so they work with scripting off
+ * and cost nothing to hydrate. Each photo links to its own lightbox, which
+ * opens through :target (back closes it, and HeaderSync closes it on Escape);
+ * the lightbox image is lazy, so it downloads only when opened.
+ */
 export default function GalleryPage() {
-  const { t, tr } = useI18n();
-  const [filter, setFilter] = useState<Cat>("all");
-  const [lightbox, setLightbox] = useState<number | null>(null);
-
-  const items = useMemo(
-    () =>
-      filter === "all" ? IMAGES : IMAGES.filter((img) => img.cat === filter),
-    [filter]
-  );
-
-  function move(dir: -1 | 1) {
-    if (lightbox == null) return;
-    setLightbox((lightbox + dir + items.length) % items.length);
-  }
+  const locale = getServerLocale();
+  const n = IMAGES.length;
 
   return (
     <>
       <PageHero
         image={unsplashSrc("photo-1631049307264-da0ec9d70304")}
-        alt={tr({
+        alt={tr(locale, {
           en: "Gallery of The Teak House interiors",
           th: "ภาพภายในของ The Teak House",
         })}
-        eyebrow={t("gal.page")}
-        title={t("gal.page")}
-        lead={t("gal.lead")}
+        eyebrow={t(locale, "gal.page")}
+        title={t(locale, "gal.page")}
+        lead={t(locale, "gal.lead")}
       />
 
-      <section className="section-pad bg-cloud">
+      <section className="tkh-gallery section-pad bg-cloud">
         <div className="mx-auto max-w-[1180px]">
           <Reveal className="mb-8 flex flex-wrap gap-2">
             {FILTERS.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setFilter(f.id)}
-                className={cn(
-                  "rounded-full px-4 py-2 text-sm font-bold transition",
-                  filter === f.id
-                    ? "bg-blue text-white shadow-cta"
-                    : "bg-white text-ink border border-line hover:border-blue"
-                )}
-              >
-                {t(f.key)}
-              </button>
+              <span key={f.id} className="relative inline-flex">
+                <input
+                  type="radio"
+                  name="gallery-filter"
+                  id={`gal-${f.id}`}
+                  defaultChecked={f.id === "all"}
+                  className="peer sr-only"
+                />
+                <label
+                  htmlFor={`gal-${f.id}`}
+                  className="cursor-pointer rounded-full border border-line bg-white px-4 py-2 text-sm font-bold text-ink transition hover:border-blue peer-checked:border-blue peer-checked:bg-blue peer-checked:text-white peer-checked:shadow-cta peer-focus-visible:ring-2 peer-focus-visible:ring-sky"
+                >
+                  {t(locale, f.key)}
+                </label>
+              </span>
             ))}
           </Reveal>
 
           <RevealStagger stagger={0.06} className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-            {items.map((img, i) => (
-              <RevealItem key={img.src + i} className="mb-4 break-inside-avoid">
-                <ScaleIn>
-                  <button
-                    type="button"
-                    onClick={() => setLightbox(i)}
-                    className="group relative w-full overflow-hidden rounded-card"
-                    aria-label={`Open ${img.alt}`}
-                  >
-                    <SafeImage
-                      src={img.src}
-                      alt={tr(img.alt)}
-                      width={480}
-                      height={600}
-                      quality={70}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
-                    />
-                  </button>
-                </ScaleIn>
-              </RevealItem>
+            {IMAGES.map((img, i) => (
+              <div key={img.src} data-cat={img.cat} className="mb-4 break-inside-avoid">
+                  <ScaleIn>
+                    <a
+                      href={`#photo-${i + 1}`}
+                      className="group relative block w-full overflow-hidden rounded-card"
+                      aria-label={tr(locale, img.alt)}
+                    >
+                      <Image
+                        src={img.src}
+                        alt={tr(locale, img.alt)}
+                        width={480}
+                        height={600}
+                        quality={70}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="w-full object-cover transition duration-500 group-hover:scale-[1.06]"
+                      />
+                    </a>
+                  </ScaleIn>
+              </div>
             ))}
           </RevealStagger>
         </div>
       </section>
 
-      {lightbox != null ? (
-        <div
-          className="fixed inset-0 z-modal grid place-items-center bg-navy/85 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={tr(items[lightbox].alt)}
-        >
-          <button
-            type="button"
-            className="absolute inset-0"
-            aria-label={t("a11y.closeGallery")}
-            onClick={() => setLightbox(null)}
-          />
-          <div className="relative z-10 w-full max-w-4xl">
-            <button
-              type="button"
-              className="absolute -top-12 right-0 text-white"
-              onClick={() => setLightbox(null)}
-              aria-label={t("a11y.closeGallery")}
-            >
-              <X className="h-7 w-7" />
-            </button>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
-              <SafeImage
-                src={items[lightbox].src}
-                alt={tr(items[lightbox].alt)}
-                fill
-                quality={80}
-                sizes="(max-width: 768px) 100vw, 896px"
-                className="object-contain"
-              />
-            </div>
-            <div className="mt-4 flex justify-between">
-              <button
-                type="button"
-                onClick={() => move(-1)}
-                className="rounded-full bg-white/10 p-3 text-white"
-                aria-label={t("a11y.prevPhoto")}
+      {IMAGES.map((img, i) => {
+        const prev = ((i - 1 + n) % n) + 1;
+        const next = ((i + 1) % n) + 1;
+        return (
+          <div
+            key={img.src}
+            id={`photo-${i + 1}`}
+            className="tkh-lightbox fixed inset-0 z-modal hidden place-items-center bg-navy/85 p-4 target:grid"
+            role="dialog"
+            aria-modal="true"
+            aria-label={tr(locale, img.alt)}
+          >
+            <a href="#gallery-closed" className="absolute inset-0" aria-label={t(locale, "a11y.closeGallery")} />
+            <div className="relative z-10 w-full max-w-4xl">
+              <a
+                href="#gallery-closed"
+                className="absolute -top-12 right-0 text-white"
+                aria-label={t(locale, "a11y.closeGallery")}
               >
-                <ChevronLeft />
-              </button>
-              <button
-                type="button"
-                onClick={() => move(1)}
-                className="rounded-full bg-white/10 p-3 text-white"
-                aria-label={t("a11y.nextPhoto")}
-              >
-                <ChevronRight />
-              </button>
+                <X className="h-7 w-7" aria-hidden />
+              </a>
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-black">
+                <Image
+                  src={img.src}
+                  alt={tr(locale, img.alt)}
+                  fill
+                  quality={80}
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 896px"
+                  className="object-contain"
+                />
+              </div>
+              <div className="mt-4 flex justify-between">
+                <a
+                  href={`#photo-${prev}`}
+                  className="rounded-full bg-white/10 p-3 text-white"
+                  aria-label={t(locale, "a11y.prevPhoto")}
+                >
+                  <ChevronLeft aria-hidden />
+                </a>
+                <a
+                  href={`#photo-${next}`}
+                  className="rounded-full bg-white/10 p-3 text-white"
+                  aria-label={t(locale, "a11y.nextPhoto")}
+                >
+                  <ChevronRight aria-hidden />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      ) : null}
+        );
+      })}
     </>
   );
 }

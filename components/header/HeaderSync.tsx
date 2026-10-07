@@ -106,6 +106,8 @@ export function HeaderSync() {
       closeMenus();
       const active = document.activeElement as HTMLElement | null;
       if (active?.closest("[data-menu-panel]")) active.blur();
+      // A :target lightbox (the gallery) closes on Escape too.
+      if (/^#photo-\d+$/.test(window.location.hash)) window.location.hash = "gallery-closed";
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

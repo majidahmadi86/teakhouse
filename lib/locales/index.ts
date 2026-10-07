@@ -71,3 +71,15 @@ export function messagesFor(lang: Lang, prefixes?: readonly string[]): Record<st
   cache.set(key, out);
   return out;
 }
+
+/** The strings the concierge chat needs (it loads on click with these). */
+export const CONCIERGE_KEYS = ["cg.", "a11y.conciergeChat", "a11y.send", "mobile.close"] as const;
+
+/** The strings the /book flow needs (BookPageClient and components/booking). */
+export const BOOK_KEYS = [
+  "a11y.", "acc.", "avail.", "bk.", "chip.", "col.", "cur.", "drp.", "mobile.",
+  "nav.", "room.", "rooms.", "sec.", "trust.", "urg.", "g1", "g2", "g3", "g4", "g5", "g6",
+] as const;
+
+/** The strings /account, sign-in and sign-up need. */
+export const ACCOUNT_KEYS = ["a11y.", "acc.", "bk.", "hero.", "mobile.", "nav."] as const;

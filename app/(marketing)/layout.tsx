@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ConciergeFabStatic } from "@/components/ConciergeFabStatic";
-import { ConciergeMount } from "@/components/ConciergeLauncher";
+import { ConciergeLazy } from "@/components/ConciergeLazy";
 import { FabHeroClearance } from "@/components/home/FabHeroClearance";
 import { DemoModal } from "@/components/DemoModal";
 import { DemoModeBar } from "@/components/DemoModeBar";
@@ -10,7 +10,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { HomeLate } from "@/components/home/HomeLate";
 import { getDemoStrings } from "@/lib/demoStrings";
 import { getServerLocale, t } from "@/lib/serverLocale";
-import { messagesFor } from "@/lib/locales";
+import { CONCIERGE_KEYS, messagesFor } from "@/lib/locales";
 import { RouteProgress } from "@/components/RouteProgress";
 
 export const metadata: Metadata = {
@@ -48,7 +48,11 @@ export default function MarketingLayout({
           phone. FabHeroClearance expands it once the widget scrolls away. */}
       <ConciergeFabStatic label={t(locale, "cg.fab")} compact />
       <FabHeroClearance />
-      <ConciergeMount lang={locale} messages={messagesFor(locale, ["cg.", "a11y."])} />
+      <ConciergeLazy
+        lang={locale}
+        messages={messagesFor(locale, CONCIERGE_KEYS)}
+        loadingLabel={t(locale, "cg.name")}
+      />
       <RouteProgress label={t(locale, "a11y.loadingPage")} />
     </>
   );
