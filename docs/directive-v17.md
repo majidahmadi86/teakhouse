@@ -213,3 +213,76 @@ Repo tags: (T) teakhouse, (S) sovra, (both).
 - [ ] B2 Solenne travel trade, proposals, packages, estate operations, intelligence, demo data
 - [ ] B3 guided demo tour (both)
 - [ ] B gates green, previews measured, report, GO-LIST
+
+
+---
+
+## Amendment 1 (2026-10-07) · security hotfix first, then Milestone A as planned
+
+Saved verbatim from Mike's amendment. It changes the order of work and supersedes the "Measurement" bullet of A1.
+
+### ORDER ON RESUME
+1. Finish the preview-safety work already running (read-only preview mode, fingerprint gate, adversarial review). It stays a prerequisite for every preview.
+2. HF-1 below, end to end, including its production deploy.
+3. Rebase v17-a in both repos onto the hotfix, then continue imagery and Milestone A as planned.
+
+### HF-1 · PRODUCTION SECURITY + TEAK HOUSE SPEED HOTFIX
+- GO: Mike has given his go for HF-1's production changes, for exactly this scope. Nothing else ships.
+- Base: cut hotfix/hf-1 from the exact commit serving production now (read it from Vercel), never from local main or a v17 branch.
+- One concern per commit. No schema changes. If one turns out necessary, stop and report instead.
+
+TEAK HOUSE
+a. Deployment URLs: enable Vercel Deployment Protection so every generated deployment URL (previews and old production deployments) requires Vercel auth, and only teakhouse.mikaro.studio stays public. Old deployments remain as rollback targets. If the API cannot set this, delete the two public v15 deployments and put the one-toggle instruction in the report.
+b. CRON_SECRET: generate a strong secret and set it for Production. The cron route fails closed: without a valid "Authorization: Bearer <CRON_SECRET>" it returns 401, including when the variable is missing.
+c. POST /api/data/reset: same-origin only, an active demo or owner session required, and a global limit of one reset per 10 minutes via the existing DemoMeta marker. Unauthenticated returns 401.
+d. Reseed leaves the guest request path. /book never reseeds. The hourly reseed runs only from the authenticated cron.
+e. Every reseed becomes one all-or-nothing transaction (bulk createMany, cloning a valid row as template where needed), so a failure can never leave a half-empty site.
+f. Function region to Tokyo (hnd1), next to the Tokyo database. Confirm that crons and every route run there.
+
+SOLENNE
+- Audit the same classes: open cron, unauthenticated reset, reseed on request paths, public old deployments carrying production env, non-atomic reseed. Fix anything found under the same scope, on a hotfix branch cut from Solenne's production commit (not 47f366b).
+- The v17-a reseed that deletes v15 tables and fails partway gets fixed in code (atomic and schema-correct), not only blocked on previews, because the same code would run in production after go.
+
+HF-1 GATES (local, dev DB)
+- v14 suites green.
+- New security gate: fire every write and reset path unauthenticated, prove each is refused, and prove the DB fingerprint is unchanged.
+- Cron with and without the secret.
+- Atomicity: a forced mid-reseed failure leaves the data exactly as before.
+
+HF-1 DEPLOY + VERIFY
+- Deploy to production.
+- Production smoke: home, /rooms, /book quote, owner dashboard, unauthenticated reset (401), cron without secret (401). Confirm the next scheduled cron run succeeds in the logs.
+- Measure Teak House owner TTFB and per-query time, before and after.
+- If any smoke check fails, roll back to the previous production deployment immediately and report.
+
+### SPEED TARGET CORRECTION (supersedes "Measurement" in A1)
+- PageSpeed Insights is the authority. Target: PSI mobile median of 3 runs ≥96 on every guest route.
+- The local floor of 97 is withdrawn. PSI runs about 6 points above local here, so the local proxy target is 92. Re-calibrate if the offset moves.
+- Never trim visuals to chase local points PSI already grants.
+- If PSI_API_KEY exists in .env.local, use it for every PSI run.
+- Previews stay protected. Measure them through the bypass path (the header with local Lighthouse, or the bypass query parameter with the cookie flag for PSI). Production is confirmed with PSI after each go.
+- Owner panels: authenticated local Lighthouse against the same proxy target.
+
+### IMAGERY
+- If GEMINI_API_KEY or OPENAI_API_KEY now exists, switch Solenne to generation exactly as A2 describes: the estate bible, a master reference image, 3 variants per slot, and vision QA on every image.
+- Teak House stays on curated stock. Without a key, both stay on curated stock.
+- Never merge wip/v16-imagery; mine it only for single photos that pass the briefs.
+
+### HF-1 REPORT (max 10 lines)
+- What was closed on each site, smoke results, owner TTFB before and after, rollback status.
+- Then continue straight into imagery and Milestone A.
+
+### Amendment 1 checklist
+- [ ] Preview safety committed on v17-a (both repos) and adversarially reviewed; escapes closed
+- [ ] HF-1 Teak House: hotfix/hf-1 cut from the production commit
+- [ ] HF-1 Teak House a: Deployment Protection on every generated URL (custom domain stays public)
+- [ ] HF-1 Teak House b: CRON_SECRET set for Production; cron route 401 without a valid bearer, also when unset
+- [ ] HF-1 Teak House c: reset same-origin, session required, one per 10 minutes, 401 unauthenticated
+- [ ] HF-1 Teak House d: no reseed on any guest or request path; reseed only from the authenticated cron
+- [ ] HF-1 Teak House e: every reseed one all-or-nothing transaction
+- [ ] HF-1 Teak House f: functions in hnd1, crons and routes confirmed there
+- [ ] HF-1 Solenne: audit of the same classes, fixes on hotfix/hf-1 cut from its production commit
+- [ ] HF-1 Solenne: v17-a reseed atomic and schema-correct
+- [ ] HF-1 gates: v14 suites, security gate (every write and reset path refused unauthenticated, fingerprint unchanged), cron with and without secret, forced mid-reseed failure leaves data unchanged
+- [ ] HF-1 deployed, production smoke passed, owner TTFB before and after recorded, next scheduled cron confirmed in logs
+- [ ] v17-a rebased onto hf-1 in both repos
