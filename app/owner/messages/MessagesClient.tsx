@@ -11,6 +11,7 @@ import {
   type ContactPurpose,
 } from "@/lib/contactMessages";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 
@@ -77,7 +78,7 @@ export default function OwnerMessagesPage() {
           )
         : prev
     );
-    const res = await fetch(`/api/contact/${row.id}`, {
+    const res = await ownerFetch(`/api/contact/${row.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),

@@ -5,6 +5,7 @@ import {
   reservationToClient,
   type ReservationStatus,
 } from "@/lib/reservations";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,8 @@ type Ctx = { params: { id: string } };
 
 /** Owner edits · status is the field that moves; the rest is the guest's word. */
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as {
       status?: string;
@@ -52,7 +55,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     await prisma.tableReservation.delete({ where: { id: params.id } });
     return NextResponse.json({ ok: true });

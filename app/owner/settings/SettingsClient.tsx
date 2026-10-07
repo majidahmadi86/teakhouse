@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import type { EmailTemplateDto, HotelDto } from "@/lib/ownerTypes";
 
 const PLACEHOLDERS = [
@@ -55,7 +56,7 @@ export default function OwnerSettingsPage() {
     setHotelSaving(true);
     setHotelMsg("");
     try {
-      const res = await fetch("/api/hotel", {
+      const res = await ownerFetch("/api/hotel", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(hotel),
@@ -76,7 +77,7 @@ export default function OwnerSettingsPage() {
     setEmailSaving(true);
     setEmailMsg("");
     try {
-      const res = await fetch("/api/email-template", {
+      const res = await ownerFetch("/api/email-template", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

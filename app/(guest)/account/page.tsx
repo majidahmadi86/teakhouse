@@ -32,7 +32,7 @@ export default function AccountPage() {
   const { t, tr, lang } = useI18n();
   const { format } = useCurrency();
   const { user, hydrated, signOut, updateUser } = useGuestAuth();
-  const { data, updateBooking } = useOwner();
+  const { data, cancelGuestBooking } = useOwner();
   const router = useRouter();
 
   const [tab, setTab] = useState<"bookings" | "profile">("bookings");
@@ -82,7 +82,7 @@ export default function AccountPage() {
   }
 
   function handleCancel(id: string) {
-    updateBooking(id, { status: "cancelled" });
+    if (user) cancelGuestBooking(id, user.id);
     setConfirmId(null);
   }
 

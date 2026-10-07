@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { contactMessageToClient } from "@/lib/contactMessages";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,8 @@ type Ctx = { params: { id: string } };
 const STATUSES = ["new", "read", "done"];
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as { status?: string };
     if (patch.status !== undefined && !STATUSES.includes(patch.status)) {
@@ -31,7 +34,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     await prisma.contactMessage.delete({ where: { id: params.id } });
     return NextResponse.json({ ok: true });

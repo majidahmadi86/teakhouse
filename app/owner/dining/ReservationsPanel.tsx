@@ -15,6 +15,7 @@ import {
 import { cn, isoDate } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 
 const STATUS_STYLE: Record<ReservationStatus, string> = {
   pending: "bg-gold/20 text-gold",
@@ -39,8 +40,9 @@ const TIME_CHOICES = (() => {
   return out;
 })();
 
+// HF-1 · owner writes carry the owner session (lib/ownerSessionClient).
 async function jsonFetch(url: string, init?: RequestInit) {
-  const res = await fetch(url, {
+  const res = await ownerFetch(url, {
     headers: { "Content-Type": "application/json" },
     ...init,
   });
@@ -114,7 +116,7 @@ export function ReservationsPanel() {
     const next = { ...hotel, ...patch };
     setHotel(next);
     try {
-      const res = await fetch("/api/hotel", {
+      const res = await ownerFetch("/api/hotel", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),

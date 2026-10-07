@@ -9,6 +9,7 @@ import { OwnerSkeleton } from "@/components/owner/OwnerSkeleton";
 import { SafeImage } from "@/components/SafeImage";
 import type { HotelEvent } from "@/lib/events";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn, isoDate } from "@/lib/utils";
 import { ModalActions, OwnerModal } from "../dining/DiningClient";
 import { RequestsPanel } from "./RequestsPanel";
@@ -33,8 +34,9 @@ function emptyEvent(): EventForm {
   };
 }
 
+// HF-1 · owner writes carry the owner session (lib/ownerSessionClient).
 async function jsonFetch(url: string, init?: RequestInit): Promise<boolean> {
-  const res = await fetch(url, {
+  const res = await ownerFetch(url, {
     headers: { "Content-Type": "application/json" },
     ...init,
   });

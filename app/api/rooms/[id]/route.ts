@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { roomToClient, roomToDb } from "@/lib/mappers";
 import type { Room } from "@/lib/rooms";
 import { revalidateRooms } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ export async function GET(_req: Request, { params }: Ctx) {
 }
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as Partial<Room>;
     const existing = await prisma.room.findUnique({ where: { id: params.id } });
@@ -51,7 +54,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const room = await prisma.room.findUnique({ where: { id: params.id } });
     if (!room) {

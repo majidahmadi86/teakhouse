@@ -6,6 +6,7 @@ import {
   type HotelEvent,
 } from "@/lib/events";
 import { revalidateEvents } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const body = (await req.json()) as HotelEvent;
     const created = await prisma.hotelEvent.create({

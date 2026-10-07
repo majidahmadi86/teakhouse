@@ -7,6 +7,7 @@ import {
   storageHost,
   uploadMedia,
 } from "@/lib/storage";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   if (!storageConfigured()) {
     return NextResponse.json(
       { error: "storage-not-configured" },

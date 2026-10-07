@@ -2,12 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { diningItemToClient, type DiningItem } from "@/lib/dining";
 import { revalidateDining } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: { id: string } };
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as Partial<DiningItem>;
     const existing = await prisma.diningItem.findUnique({
@@ -38,7 +41,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     await prisma.diningItem.delete({ where: { id: params.id } });
     revalidateDining();

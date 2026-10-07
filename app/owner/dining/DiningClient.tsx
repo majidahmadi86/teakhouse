@@ -14,6 +14,7 @@ import { OwnerListbox } from "@/components/owner/OwnerField";
 import { OwnerSkeleton } from "@/components/owner/OwnerSkeleton";
 import type { DiningCategory, DiningItem } from "@/lib/dining";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn, formatBaht } from "@/lib/utils";
 import { ReservationsPanel } from "./ReservationsPanel";
 import { invalidateCached, readCached } from "@/lib/ownerCache";
@@ -47,8 +48,9 @@ function emptyDish(categoryId: string): DishForm {
   };
 }
 
+// HF-1 · owner writes carry the owner session (lib/ownerSessionClient).
 async function jsonFetch(url: string, init?: RequestInit): Promise<boolean> {
-  const res = await fetch(url, {
+  const res = await ownerFetch(url, {
     headers: { "Content-Type": "application/json" },
     ...init,
   });

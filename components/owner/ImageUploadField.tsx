@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImageUp, Loader2, Trash2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn } from "@/lib/utils";
 
 const MAX_EDGE = 2000;
@@ -107,7 +108,7 @@ export function ImageUploadField({
       const body = new FormData();
       body.append("file", prepared);
       body.append("folder", folder);
-      const res = await fetch("/api/media", { method: "POST", body });
+      const res = await ownerFetch("/api/media", { method: "POST", body });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         setError(

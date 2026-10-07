@@ -6,10 +6,13 @@ import {
   type DiningItem,
 } from "@/lib/dining";
 import { revalidateDining } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const body = (await req.json()) as DiningItem;
     const created = await prisma.diningItem.create({

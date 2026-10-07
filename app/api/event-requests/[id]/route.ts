@@ -5,12 +5,15 @@ import {
   eventRequestToClient,
   type EventRequestStatus,
 } from "@/lib/eventRequests";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: { id: string } };
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as { status?: string; notes?: string };
     if (
@@ -40,7 +43,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     await prisma.eventRequest.delete({ where: { id: params.id } });
     return NextResponse.json({ ok: true });

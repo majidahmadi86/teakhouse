@@ -5,12 +5,15 @@ import {
   type DiningCategory,
 } from "@/lib/dining";
 import { revalidateDining } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: { id: string } };
 
 export async function PATCH(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const patch = (await req.json()) as Partial<Omit<DiningCategory, "items">>;
     const existing = await prisma.diningCategory.findUnique({
@@ -38,7 +41,9 @@ export async function PATCH(req: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_req: Request, { params }: Ctx) {
+export async function DELETE(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     // Dishes cascade at the DB level (onDelete: Cascade).
     await prisma.diningCategory.delete({ where: { id: params.id } });

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { EmailTemplateDto } from "@/lib/ownerTypes";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -11,10 +12,15 @@ const DEFAULT_SUBJECT = "Your stay at {{hotelName}} · {{code}}";
 const DEFAULT_BODY =
   "Dear {{guestName}},\n\nThank you for booking {{roomName}} from {{checkIn}} to {{checkOut}}.\nTotal: {{amount}}\nDeposit received: {{deposit}}\n\nSee you by the river.\n{{hotelName}}";
 
-async function ensureTemplate() {
-  const existing = await prisma.emailTemplate.findUnique({
+async function findTemplate() {
+  return prisma.emailTemplate.findUnique({
     where: { hotelId_key: { hotelId: HOTEL_ID, key: TEMPLATE_KEY } },
   });
+}
+
+/** Owner writes only · creates the row when it is missing. */
+async function ensureTemplate() {
+  const existing = await findTemplate();
   if (existing) return existing;
   return prisma.emailTemplate.create({
     data: {
@@ -42,10 +48,25 @@ function toDto(row: {
   };
 }
 
+/**
+ * Read-only. A missing row is answered with the default template (id "")
+ * instead of being created: a GET must never write. The first owner save
+ * creates it.
+ */
 export async function GET() {
   try {
-    const row = await ensureTemplate();
-    return NextResponse.json(toDto(row));
+    const row = await findTemplate();
+    return NextResponse.json(
+      toDto(
+        row ?? {
+          id: "",
+          hotelId: HOTEL_ID,
+          key: TEMPLATE_KEY,
+          subject: DEFAULT_SUBJECT,
+          body: DEFAULT_BODY,
+        }
+      )
+    );
   } catch (e) {
     console.error("[api/email-template GET]", e);
     return NextResponse.json({ error: "Load failed" }, { status: 500 });
@@ -53,6 +74,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const body = (await req.json()) as { subject?: string; body?: string };
     const existing = await ensureTemplate();
@@ -71,5 +94,7 @@ export async function PATCH(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   return PATCH(req);
 }

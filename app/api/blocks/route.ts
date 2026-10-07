@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { blocksToRecord } from "@/lib/mappers";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,8 @@ export async function GET() {
 
 /** Toggle block for roomSlug + dateIso */
 export async function POST(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const body = (await req.json()) as { roomSlug: string; dateIso: string };
     const room = await prisma.room.findUnique({

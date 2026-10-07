@@ -139,6 +139,7 @@ type OwnerCtx = {
   resetDemo: () => Promise<"ok" | "rate-limited" | "failed">;
   addBooking: (booking: BookingInput) => void;
   updateBooking: (id: string, patch: Partial<Booking>) => void;
+  cancelGuestBooking: (id: string, guestUserId: string) => void;
   deleteBooking: (id: string) => void;
   addRoom: (room: RoomData) => void;
   updateRoom: (id: string, patch: Partial<RoomData>) => void;
@@ -277,10 +278,35 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         ),
       }));
       void (async () => {
-        const res = await fetch(`/api/bookings/${id}`, {
+        const res = await ownerFetch(`/api/bookings/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(patch),
+        });
+        if (!res.ok) await refresh();
+      })();
+    },
+    [refresh]
+  );
+
+  /**
+   * HF-1 · A guest cancelling a booking on their own account (/account). Not
+   * an owner write: the server accepts exactly this change, without an owner
+   * session, when the guest account is linked to the booking.
+   */
+  const cancelGuestBooking = useCallback(
+    (id: string, guestUserId: string) => {
+      setData((prev) => ({
+        ...prev,
+        bookings: prev.bookings.map((b) =>
+          b.id === id ? { ...b, status: "cancelled" } : b
+        ),
+      }));
+      void (async () => {
+        const res = await fetch(`/api/bookings/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "cancelled", guestUserId }),
         });
         if (!res.ok) await refresh();
       })();
@@ -295,7 +321,9 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         bookings: prev.bookings.filter((b) => b.id !== id),
       }));
       void (async () => {
-        const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
+        const res = await ownerFetch(`/api/bookings/${id}`, {
+          method: "DELETE",
+        });
         if (!res.ok) await refresh();
       })();
     },
@@ -309,7 +337,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         rooms: [...prev.rooms, room],
       }));
       void (async () => {
-        const res = await fetch("/api/rooms", {
+        const res = await ownerFetch("/api/rooms", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(room),
@@ -327,7 +355,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         rooms: prev.rooms.map((r) => (r.id === id ? { ...r, ...patch } : r)),
       }));
       void (async () => {
-        const res = await fetch(`/api/rooms/${id}`, {
+        const res = await ownerFetch(`/api/rooms/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(patch),
@@ -350,7 +378,9 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         };
       });
       void (async () => {
-        const res = await fetch(`/api/rooms/${id}`, { method: "DELETE" });
+        const res = await ownerFetch(`/api/rooms/${id}`, {
+          method: "DELETE",
+        });
         if (!res.ok) await refresh();
       })();
     },
@@ -367,7 +397,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         return { ...prev, blocks };
       });
       void (async () => {
-        const res = await fetch("/api/blocks", {
+        const res = await ownerFetch("/api/blocks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ roomSlug, dateIso }),
@@ -385,7 +415,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
    */
   const addPriceRule = useCallback(
     async (rule: Omit<PriceRule, "id">) => {
-      const res = await fetch(`/api/rooms/${rule.roomId}/pricing`, {
+      const res = await ownerFetch(`/api/rooms/${rule.roomId}/pricing`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(rule),
@@ -410,7 +440,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
           r.id === id ? { ...r, ...patch } : r
         ),
       }));
-      const res = await fetch(`/api/rooms/${rule.roomId}/pricing`, {
+      const res = await ownerFetch(`/api/rooms/${rule.roomId}/pricing`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...patch, id }),
@@ -428,7 +458,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         ...prev,
         priceRules: prev.priceRules.filter((r) => r.id !== id),
       }));
-      const res = await fetch(
+      const res = await ownerFetch(
         `/api/rooms/${rule.roomId}/pricing?id=${encodeURIComponent(id)}`,
         { method: "DELETE" }
       );
@@ -469,6 +499,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       resetDemo,
       addBooking,
       updateBooking,
+      cancelGuestBooking,
       deleteBooking,
       addRoom,
       updateRoom,
@@ -492,6 +523,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       resetDemo,
       addBooking,
       updateBooking,
+      cancelGuestBooking,
       deleteBooking,
       addRoom,
       updateRoom,

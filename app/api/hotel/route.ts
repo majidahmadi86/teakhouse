@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { HotelDto } from "@/lib/ownerTypes";
 import { revalidateHotel } from "@/lib/revalidate";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const body = (await req.json()) as Partial<HotelDto>;
     const existing = await prisma.hotel.findUnique({ where: { id: HOTEL_ID } });

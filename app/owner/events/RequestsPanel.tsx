@@ -10,6 +10,7 @@ import {
   type EventRequestStatus,
 } from "@/lib/eventRequests";
 import { useI18n } from "@/lib/i18n";
+import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 
@@ -52,7 +53,7 @@ export function RequestsPanel() {
     setRows((prev) =>
       prev ? prev.map((r) => (r.id === row.id ? { ...r, status } : r)) : prev
     );
-    const res = await fetch(`/api/event-requests/${row.id}`, {
+    const res = await ownerFetch(`/api/event-requests/${row.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
