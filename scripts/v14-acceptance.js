@@ -18,6 +18,7 @@
 
 const { chromium } = require("playwright");
 const { qa, withQaCleanup } = require("./lib/qa");
+const { ownerHeaders } = require("./lib/ownerSession");
 const fs = require("fs");
 const path = require("path");
 
@@ -76,9 +77,10 @@ async function mainText(page) {
       .join("\n");
   });
 }
+// HF-1 · owner writes need the owner session cookie; guest routes ignore it.
 async function fetchJson(url, init) {
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await ownerHeaders(BASE)) },
     ...init,
   });
   return { ok: res.ok, status: res.status, body: await res.json().catch(() => null) };

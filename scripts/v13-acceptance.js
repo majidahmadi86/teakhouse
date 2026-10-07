@@ -18,6 +18,7 @@
 
 const { chromium } = require("playwright");
 const { qa, withQaCleanup } = require("./lib/qa");
+const { ownerHeaders } = require("./lib/ownerSession");
 const fs = require("fs");
 const path = require("path");
 
@@ -92,9 +93,10 @@ async function mainText(page) {
       .join("\n");
   });
 }
+// HF-1 · owner writes need the owner session cookie; guest routes ignore it.
 async function fetchJson(url, init) {
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await ownerHeaders(BASE)) },
     ...init,
   });
   return {
@@ -613,7 +615,11 @@ async function run() {
       "t.jpg"
     );
     form.append("folder", "qa");
-    const res = await fetch(`${BASE}/api/media`, { method: "POST", body: form });
+    const res = await fetch(`${BASE}/api/media`, {
+      method: "POST",
+      body: form,
+      headers: await ownerHeaders(BASE),
+    });
     const expected = probe.body?.configured ? [201, 502] : [503];
     check(
       "upload POST answers predictably for the current env",
@@ -625,7 +631,11 @@ async function run() {
     if (probe.body?.configured) {
       const bad = new FormData();
       bad.append("file", new Blob(["nope"], { type: "text/plain" }), "t.txt");
-      const badRes = await fetch(`${BASE}/api/media`, { method: "POST", body: bad });
+      const badRes = await fetch(`${BASE}/api/media`, {
+        method: "POST",
+        body: bad,
+        headers: await ownerHeaders(BASE),
+      });
       check("a non-image upload is refused", badRes.status === 415, `${badRes.status}`);
     }
   }

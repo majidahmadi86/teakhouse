@@ -35,6 +35,7 @@
 
 const { chromium } = require("playwright");
 const { qa, purgeQaData } = require("./lib/qa");
+const { ownerHeaders } = require("./lib/ownerSession");
 
 const BASE = process.env.BASE || "http://localhost:3000";
 
@@ -58,10 +59,11 @@ async function getHtml(path, lang) {
   return res.text();
 }
 
+// HF-1 · PATCH /api/hotel is an owner write and needs the owner session.
 async function setSettings(patch) {
   const res = await fetch(`${BASE}/api/hotel`, {
     method: "PATCH",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...(await ownerHeaders(BASE)) },
     body: JSON.stringify(patch),
   });
   return res.ok;
