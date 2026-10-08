@@ -14,20 +14,6 @@ export default function HomePage({ params }: { params: LangParams }) {
 
   return (
     <>
-      <link
-        rel="preload"
-        as="image"
-        href="/hero-lcp-640.avif"
-        type="image/avif"
-        {...{ fetchPriority: "high" }}
-      />
-      <link
-        rel="preload"
-        as="image"
-        href="/hero-lcp-1920.avif"
-        type="image/avif"
-        media="(min-width: 769px)"
-      />
       <HomeHero locale={locale} searchSlot={<StaySearch locale={locale} variant="hero" />} />
       <HomeBelowFold locale={locale} />
     </>

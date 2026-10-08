@@ -1,3 +1,5 @@
+import { Picture } from "@/components/Picture";
+import { imageIdFor } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 type LocalPictureProps = {
@@ -13,13 +15,14 @@ type LocalPictureProps = {
 };
 
 /**
- * Locally hosted AVIF with a WebP fallback · a pure server component with no
- * client JS and no image optimizer in the request path. The files are encoded
- * ahead of time at 640 and 1280 by scripts/build-facility-images.js, so the
- * browser picks a width from `sizes` and downloads exactly one of them.
+ * A house photo by its legacy base path · now served through the image
+ * registry (lib/images.ts): content-hashed AVIF + WebP at every registered
+ * width, the dominant-colour ground, and, below the fold, the decode-gated
+ * unveil (components/Picture). A path the registry does not know (an owner
+ * upload, say) falls back to the files beside it, exactly as before.
  *
- * width/height are always set so the box is reserved before the bytes land ·
- * these images sit below the fold and must not move anything when they arrive.
+ * The box is always reserved (intrinsic width and height on the <img>), so
+ * nothing moves when the bytes arrive.
  */
 export function LocalPicture({
   base,
@@ -30,6 +33,20 @@ export function LocalPicture({
   className,
   priority = false,
 }: LocalPictureProps) {
+  const id = imageIdFor(base);
+  if (id) {
+    return (
+      <Picture
+        id={id}
+        alt={alt}
+        sizes={sizes}
+        priority={priority}
+        unveil={!priority}
+        pictureClassName="h-full w-full"
+        className={cn("h-full w-full object-cover", className)}
+      />
+    );
+  }
   return (
     <picture>
       <source

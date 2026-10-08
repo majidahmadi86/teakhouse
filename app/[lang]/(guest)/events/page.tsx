@@ -3,6 +3,7 @@ import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { getHotelSettingsForPage, getUpcomingEvents } from "@/lib/cachedData";
 import { formatDay } from "@/lib/i18n-core";
+import { imageIdFor } from "@/lib/images";
 import { t, tr } from "@/lib/serverLocale";
 import { pageLang, type LangParams } from "@/lib/pageLocale";
 import { hotelTodayIso } from "@/lib/utils";
@@ -47,9 +48,8 @@ export default async function EventsPage({ params }: { params: LangParams }) {
   return (
     <>
       <PageHero
-        image={settings.eventsHeroImage || "/images/events/hero-1280.webp"}
-        imageAvif={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.avif"}
-        imageWebp={settings.eventsHeroImage ? undefined : "/images/events/hero-1280.webp"}
+        imageId={settings.eventsHeroImage ? undefined : "events/hero"}
+        image={settings.eventsHeroImage || undefined}
         unoptimized={Boolean(settings.eventsHeroImage)}
         alt={tr(locale, {
           en: "A table set for dinner in the riverside pavilion under string lights",
@@ -137,16 +137,28 @@ export default async function EventsPage({ params }: { params: LangParams }) {
                 >
                   {ev.image ? (
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={ev.image}
-                        alt={tr(locale, ev.title)}
-                        width={640}
-                        height={480}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover"
-                      />
+                      {imageIdFor(ev.image) ? (
+                        // A house photo the seed (or the owner) picked · served
+                        // through the registry: AVIF at the card's width.
+                        <LocalPicture
+                          base={ev.image}
+                          alt={tr(locale, ev.title)}
+                          width={640}
+                          height={480}
+                          sizes="(min-width: 1024px) 360px, (min-width: 768px) 50vw, 100vw"
+                        />
+                      ) : (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={ev.image}
+                          alt={tr(locale, ev.title)}
+                          width={640}
+                          height={480}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
                     </div>
                   ) : null}
                   <div className="p-6">

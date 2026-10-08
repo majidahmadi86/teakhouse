@@ -1,5 +1,6 @@
 import type { AmenityId } from "./amenities";
 import { formatBaht } from "./utils";
+import { liveRemote } from "./remoteImages";
 
 export type RoomShortKey = "loft" | "suite" | "garden" | "twin";
 
@@ -41,7 +42,7 @@ export const SLUG_TO_SHORT_KEY: Record<string, RoomShortKey> = {
 };
 
 /** Base Unsplash URL — width/quality applied by SafeImage loader + sizes. */
-const unsplash = (id: string) => `https://images.unsplash.com/${id}`;
+const unsplash = (id: string) => liveRemote(`https://images.unsplash.com/${id}`);
 
 export const SEED_ROOMS: Room[] = [
   {

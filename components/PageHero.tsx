@@ -1,8 +1,17 @@
+import { Picture } from "@/components/Picture";
 import { SafeImage } from "@/components/SafeImage";
+import type { ImageId } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 type PageHeroProps = {
-  image: string;
+  /**
+   * A registered image (lib/images.ts) · the preferred source: AVIF + WebP
+   * at every width, its dominant-colour ground, and an LCP preload with the
+   * hero's exact sizes.
+   */
+  imageId?: ImageId;
+  /** A remote or uploaded image, when there is no registered one. */
+  image?: string;
   /** Optional AVIF · preferred when present (contact hero). */
   imageAvif?: string;
   imageWebp?: string;
@@ -33,7 +42,8 @@ type PageHeroProps = {
  * every text node is painted at first server render.
  */
 export function PageHero({
-  image,
+  imageId,
+  image = "",
   imageAvif,
   imageWebp,
   alt,
@@ -55,7 +65,17 @@ export function PageHero({
       )}
     >
       <div className="absolute inset-0 -z-10">
-        {usePicture ? (
+        {imageId && !unoptimized ? (
+          <Picture
+            id={imageId}
+            alt={alt}
+            sizes="100vw"
+            priority
+            fill
+            className="scale-[1.02]"
+            objectPosition={objectPosition}
+          />
+        ) : usePicture ? (
           <picture>
             {imageAvif ? (
               <source srcSet={imageAvif} type="image/avif" />

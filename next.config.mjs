@@ -54,11 +54,15 @@ const nextConfig = {
   /**
    * Content-hashed static files (their names change when their bytes do) are
    * cached for a year and never revalidated (A1). Only hashed files live under
-   * these paths: scripts/fonts/build-fonts.mjs writes /fonts.
+   * these paths: scripts/fonts/build-fonts.mjs writes /fonts and
+   * scripts/images/build-images.mjs writes /img.
    */
   async headers() {
     const immutable = [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }];
-    return [{ source: "/fonts/:path*", headers: immutable }];
+    return [
+      { source: "/fonts/:path*", headers: immutable },
+      { source: "/img/:path*", headers: immutable },
+    ];
   },
   async redirects() {
     return [

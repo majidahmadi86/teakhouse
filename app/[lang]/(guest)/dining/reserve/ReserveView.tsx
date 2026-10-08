@@ -65,9 +65,7 @@ export async function ReserveView({
 
   const hero = (
     <PageHero
-      image="/images/dining/reserve-1280.webp"
-      imageAvif="/images/dining/reserve-1280.avif"
-      imageWebp="/images/dining/reserve-1280.webp"
+      imageId="dining/reserve"
       alt={tr(locale, {
           en: "A table laid for dinner beside the river",
           th: "โต๊ะที่จัดไว้สำหรับมื้อค่ำริมแม่น้ำ",

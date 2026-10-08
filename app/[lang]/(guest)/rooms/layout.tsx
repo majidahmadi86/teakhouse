@@ -15,13 +15,6 @@ export default function RoomsLayout({
   return (
     <>
       <NavMark section="rooms" />
-      <link
-        rel="preload"
-        as="image"
-        href="/hero-lcp-640.avif"
-        type="image/avif"
-        {...{ fetchPriority: "high" }}
-      />
       {children}
     </>
   );

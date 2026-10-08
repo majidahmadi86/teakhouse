@@ -17,13 +17,11 @@ const IMAGES: { src: string; cat: Exclude<Cat, "all">; alt: DictEntry }[] = [
   { src: unsplashSrc("photo-1578683010236-d716f9a3f461"), cat: "rooms", alt: { en: "Garden Room looking onto greenery", th: "ห้อง Garden Room มองเห็นสวนเขียว" } },
   { src: unsplashSrc("photo-1560448204-e02f11c3d0e2"), cat: "rooms", alt: { en: "Courtyard Twin room", th: "ห้อง Courtyard Twin" } },
   { src: unsplashSrc("photo-1584132967334-10e028bd69f7"), cat: "pool", alt: { en: "Courtyard pool at The Teak House", th: "สระว่ายน้ำในคอร์ตยาร์ดของ The Teak House" } },
-  { src: unsplashSrc("photo-1571008887538-b36bb74556e6"), cat: "pool", alt: { en: "Pool deck loungers", th: "เตียงอาบแดดริมสระ" } },
   { src: unsplashSrc("photo-1544161515-4ab6ce6db874"), cat: "pool", alt: { en: "Spa terrace morning light", th: "แสงเช้าที่ระเบียงสปา" } },
   { src: unsplashSrc("photo-1552465011-b4e21bf6e79a"), cat: "river", alt: { en: "Long-tail boats on the Chao Phraya", th: "เรือหางยาวในแม่น้ำเจ้าพระยา" } },
   { src: unsplashSrc("photo-1508009603885-50cf7c579365"), cat: "river", alt: { en: "River dusk skyline", th: "เส้นขอบฟ้าริมแม่น้ำตอนพลบค่ำ" } },
   { src: unsplashSrc("photo-1582719478250-c89cae4dc85b"), cat: "river", alt: { en: "Riverside balcony view", th: "วิวจากระเบียงริมแม่น้ำ" } },
   { src: unsplashSrc("photo-1414235077428-338989a2e8c0"), cat: "food", alt: { en: "Breakfast spread at the house", th: "สำรับอาหารเช้าของที่พัก" } },
-  { src: unsplashSrc("photo-1591087917153-872378c177a2"), cat: "food", alt: { en: "Dining table by the window", th: "โต๊ะอาหารริมหน้าต่าง" } },
   { src: unsplashSrc("photo-1600585154340-be6161a56a0c"), cat: "rooms", alt: { en: "Teak house exterior", th: "ตัวอาคารบ้านไม้สัก" } },
 ];
 

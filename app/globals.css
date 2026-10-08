@@ -1260,3 +1260,23 @@ html[data-script="kr"] [class*="tracking-"],
 html[data-script="devanagari"] [class*="tracking-"] {
   letter-spacing: 0 !important;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · Decode-gated unveil (components/Picture `unveil`, lib/unveilScript).
+   Only when the script has armed <html>: the image is clipped away over its
+   dominant-colour ground and revealed top to bottom once it has DECODED.
+   Transform-free and layout-free: the box never moves (CLS 0). Without the
+   script, or under reduced motion, nothing is ever hidden.
+   ───────────────────────────────────────────────────────────────────────── */
+html[data-unveil-ready] .tkh-unveil > img {
+  transition: clip-path 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html[data-unveil-ready] .tkh-unveil:not([data-shown]) > img {
+  clip-path: inset(0 0 100% 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-unveil-ready] .tkh-unveil > img {
+    transition: none;
+    clip-path: none;
+  }
+}

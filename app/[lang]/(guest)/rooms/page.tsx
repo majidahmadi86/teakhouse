@@ -27,8 +27,7 @@ export default function RoomsPage({ params }: { params: LangParams }) {
   return (
     <>
       <PageHero
-        image="/hero-lcp-640.avif"
-        imageAvif="/hero-lcp-640.avif"
+        imageId="hero/home"
         alt={t(locale, "rp.heroAlt")}
         eyebrow={t(locale, "rooms.eyebrow")}
         title={t(locale, "rp.h1")}

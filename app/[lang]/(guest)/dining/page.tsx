@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { ReserveCard } from "@/components/dining/ReserveCard";
 import { getHotelSettingsForPage, getPublishedMenu } from "@/lib/cachedData";
@@ -55,9 +56,8 @@ export default async function DiningPage({ params }: { params: LangParams }) {
   return (
     <>
       <PageHero
-        image={settings.diningHeroImage || "/images/dining/hero-1280.webp"}
-        imageAvif={settings.diningHeroImage ? undefined : "/images/dining/hero-1280.avif"}
-        imageWebp={settings.diningHeroImage ? undefined : "/images/dining/hero-1280.webp"}
+        imageId={settings.diningHeroImage ? undefined : "dining/hero"}
+        image={settings.diningHeroImage || undefined}
         unoptimized={Boolean(settings.diningHeroImage)}
         alt={tr(locale, {
           en: "Thai dishes served on a dark table, close crop",
@@ -116,20 +116,13 @@ export default async function DiningPage({ params }: { params: LangParams }) {
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <picture>
-                            <source srcSet={`${art.base}-1280.avif`} type="image/avif" />
-                            <source srcSet={`${art.base}-1280.webp`} type="image/webp" />
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={`${art.base}-1280.webp`}
-                              alt={tr(locale, art.alt)}
-                              width={1280}
-                              height={560}
-                              loading="lazy"
-                              decoding="async"
-                              className="h-full w-full object-cover"
-                            />
-                          </picture>
+                          <LocalPicture
+                            base={art.base}
+                            alt={tr(locale, art.alt)}
+                            width={1280}
+                            height={560}
+                            sizes="(min-width: 1024px) 760px, calc(100vw - 48px)"
+                          />
                         )}
                       </div>
                     ) : null}

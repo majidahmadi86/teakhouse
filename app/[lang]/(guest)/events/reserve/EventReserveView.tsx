@@ -41,9 +41,7 @@ export async function EventReserveView({
 
   const hero = (
     <PageHero
-      image="/images/events/pavilion-dinner-1280.webp"
-      imageAvif="/images/events/pavilion-dinner-1280.avif"
-      imageWebp="/images/events/pavilion-dinner-1280.webp"
+      imageId="events/pavilion-dinner"
       alt={tr(locale, {
           en: "A long table laid for dinner under string lights",
           th: "โต๊ะยาวจัดสำหรับมื้อค่ำใต้สายไฟระย้อย",

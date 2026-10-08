@@ -1,9 +1,13 @@
-import { translateEntry as tr, type Lang } from "@/lib/translate";
+import { Picture } from "@/components/Picture";
+import { translateEntry as tr } from "@/lib/i18n-core";
+import type { Lang } from "@/lib/locales/meta";
 import { cn } from "@/lib/utils";
 
 /**
- * Server LCP hero · zero client JS.
- * Ken Burns is CSS-only and disabled on mobile (LH style/layout debt).
+ * Server LCP hero · zero client JS. The registered "hero/home" image: AVIF
+ * (WebP fallback) at 640, 828 and 1920 with sizes 100vw, so a phone takes the
+ * width its screen actually needs, preloaded in <head> with fetchpriority
+ * high (components/Picture priority). Ken Burns is CSS-only and off on phones.
  */
 export function HeroLCP({
   className,
@@ -14,42 +18,18 @@ export function HeroLCP({
   locale: Lang;
 }) {
   return (
-    <div
-      className={cn(
-        "absolute inset-0 origin-center tkh-ken-burns-live",
-        className
-      )}
-    >
-      <picture>
-        <source
-          media="(max-width: 640px)"
-          srcSet="/hero-lcp-640.avif"
-          type="image/avif"
-        />
-        <source
-          media="(max-width: 768px)"
-          srcSet="/hero-lcp-828.avif"
-          type="image/avif"
-        />
-        <source
-          media="(min-width: 769px)"
-          srcSet="/hero-lcp-1920.avif"
-          type="image/avif"
-        />
-        <img
-          src="/hero-lcp-640.avif"
-          alt={tr(locale, {
-            en: "Resort pool at dusk overlooking the Chao Phraya",
-            th: "สระว่ายน้ำยามเย็นมองเห็นแม่น้ำเจ้าพระยา",
-          })}
-          width={640}
-          height={853}
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, 1920px"
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-[center_32%] md:object-[center_42%]"
-        />
-      </picture>
+    <div className={cn("absolute inset-0 origin-center tkh-ken-burns-live", className)}>
+      <Picture
+        id="hero/home"
+        alt={tr(locale, {
+          en: "Resort pool at dusk overlooking the Chao Phraya",
+          th: "สระว่ายน้ำยามเย็นมองเห็นแม่น้ำเจ้าพระยา",
+        })}
+        sizes="100vw"
+        priority
+        fill
+        className="object-[center_32%] md:object-[center_42%]"
+      />
     </div>
   );
 }

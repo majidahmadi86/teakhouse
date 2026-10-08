@@ -5,6 +5,7 @@ import { translateEntry } from "@/lib/i18n-core";
 import { langMeta } from "@/lib/locales/meta";
 import { langStaticParams, pageLang, type LangParams } from "@/lib/pageLocale";
 import { STAY_CORE_JS, STAY_NOSCRIPT_CSS } from "@/lib/staySearchScript";
+import { UNVEIL_JS } from "@/lib/unveilScript";
 import { ROUTE_META } from "@/lib/routeMeta";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
@@ -96,6 +97,8 @@ export default function GuestRootLayout({
         {/* The booking bar's behaviour (lib/staySearchScript.ts) and its
             no-script fallback: the native date inputs show themselves. */}
         <script dangerouslySetInnerHTML={{ __html: STAY_CORE_JS }} />
+        {/* The decode-gated unveil for images below the fold (lib/unveilScript). */}
+        <script dangerouslySetInnerHTML={{ __html: UNVEIL_JS }} />
         <noscript>
           <style dangerouslySetInnerHTML={{ __html: STAY_NOSCRIPT_CSS }} />
         </noscript>

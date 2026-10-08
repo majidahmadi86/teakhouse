@@ -16,9 +16,7 @@ export default function FacilitiesPage({ params }: { params: LangParams }) {
   return (
     <>
       <PageHero
-        image="/images/facilities/lobby-lounge-1280.webp"
-        imageAvif="/images/facilities/lobby-lounge-1280.avif"
-        imageWebp="/images/facilities/lobby-lounge-1280.webp"
+        imageId="facilities/lobby-lounge"
         alt={tr(locale, {
           en: "Teak lobby lounge with armchairs",
           th: "เลานจ์ไม้สักพร้อมเก้าอี้นวม",

@@ -49,9 +49,7 @@ export function ContactView({
   return (
     <>
       <PageHero
-        image="/images/contact-hero.jpg"
-        imageAvif="/images/contact-hero.avif"
-        imageWebp="/images/contact-hero.webp"
+        imageId="contact/hero"
         alt={tr(locale, {
           en: "Contact the house",
           th: "ติดต่อที่พัก",

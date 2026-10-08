@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useState, type CSSProperties } from "react";
+import { liveRemote } from "@/lib/remoteImages";
 import { cn } from "@/lib/utils";
 
 type SafeImageProps = {
@@ -38,7 +39,9 @@ export function SafeImage({
   onLoadingComplete,
   fallbackSrcs = [],
 }: SafeImageProps) {
-  const sources = [src, ...fallbackSrcs];
+  // Retired remote photos map to a live stand-in (lib/images liveRemote) · a
+  // 404 is a console error on every page that shows it.
+  const sources = [src, ...fallbackSrcs].map(liveRemote);
   const [index, setIndex] = useState(0);
   const current = sources[index];
   const exhausted = index >= sources.length;
