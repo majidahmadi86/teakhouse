@@ -1,5 +1,5 @@
-import { cookies, headers } from "next/headers";
-import { isLang, LOCALE_COOKIE, negotiateLang, type Lang } from "./locales/meta";
+import { cookies } from "next/headers";
+import { LOCALE_COOKIE, type Lang } from "./locales/meta";
 import { translate, translateEntry } from "./translate";
 import type { DictEntry } from "./i18n-dict";
 
@@ -7,23 +7,12 @@ export type { Lang };
 export { LOCALE_COOKIE };
 
 /**
- * Request-resolved locale · the cookie when set, otherwise the browser's
- * Accept-Language (the middleware pins that first choice as the cookie, so
- * the next request is deterministic).
+ * The owner panel's language · EN or TH (its two languages), from the cookie.
+ * The panel renders per request, so it may read the cookie; guest pages may
+ * not (they take their language from the route, lib/pageLocale.ts).
  */
-export function getServerLocale(): Lang {
-  const value = cookies().get(LOCALE_COOKIE)?.value;
-  if (isLang(value)) return value;
-  return negotiateLang(headers().get("accept-language"));
-}
-
-/**
- * Server-resolved request pathname (set by middleware as `x-pathname`).
- * Lets server components (e.g. HeaderShell) know the active route so the
- * zero-JS shell can highlight the active nav item like the hydrated Header.
- */
-export function getServerPathname(): string {
-  return headers().get("x-pathname") ?? "/";
+export function getOwnerLocale(): Lang {
+  return cookies().get(LOCALE_COOKIE)?.value === "th" ? "th" : "en";
 }
 
 /** Server-side translate · mirrors the client t(). */

@@ -156,3 +156,17 @@ export async function getHotelSettings(): Promise<CachedHotelSettings> {
     return SETTINGS_FALLBACK;
   }
 }
+
+/**
+ * The house settings for a STATIC (ISR) guest page · no fallback, it throws.
+ *
+ * getHotelSettings() above serves an uncached fallback when the read fails,
+ * which is right for a page rendered per request (a bad read costs one
+ * request). A static page is different: whatever it renders is kept until the
+ * next revalidation, so a fallback rendered into it would be the same durable
+ * "reservations are closed" poisoning, one level up. Throwing instead makes
+ * Next keep serving the previous good page (and fails a build loudly).
+ */
+export async function getHotelSettingsForPage(): Promise<CachedHotelSettings> {
+  return readHotelSettings();
+}

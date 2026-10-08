@@ -206,3 +206,9 @@ export function formatTime(locale: Lang, hhmm: string): string {
     return hhmm;
   }
 }
+
+/** "Thursday 9 October 2026" · a confirmation's date, in full. */
+export function formatLongDate(locale: Lang, d: Date | string): string {
+  const s = dtf(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(civil(d));
+  return locale === "en" ? s.replace(/,/g, "") : s;
+}

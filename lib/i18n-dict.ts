@@ -798,6 +798,10 @@ export const DICT: Record<string, DictEntry> = {
   "acc.newHere": { en: "New here?", th: "เพิ่งมาครั้งแรก?" },
   "acc.welcome": { en: "Welcome back", th: "ยินดีต้อนรับกลับ" },
   "acc.myBookings": { en: "My bookings", th: "การจองของฉัน" },
+  "acc.gate": {
+    en: "Your bookings live in your guest account. Sign in to see every stay you booked direct with us, and cancel one while it is still free to cancel.",
+    th: "การจองทั้งหมดของคุณอยู่ในบัญชีผู้เข้าพัก เข้าสู่ระบบเพื่อดูการเข้าพักทุกครั้งที่จองตรงกับเรา และยกเลิกได้ในช่วงที่ยังยกเลิกฟรี",
+  },
   "acc.profile": { en: "Profile", th: "โปรไฟล์" },
   "acc.signout": { en: "Sign out", th: "ออกจากระบบ" },
   "acc.noBookings": { en: "No bookings yet", th: "ยังไม่มีการจอง" },

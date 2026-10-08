@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { hotelConfig } from "@/config/hotel.config";
-import { getServerLocale } from "@/lib/serverLocale";
 import type { DictEntry } from "@/lib/i18n-dict";
 import { translateEntry } from "@/lib/i18n-core";
-import { langMeta, type Lang } from "@/lib/locales/meta";
+import { LANG_CODES, langMeta, type Lang } from "@/lib/locales/meta";
 
 /**
  * Per-route title and description, in both languages.
@@ -125,19 +124,28 @@ export const ROOM_META_FALLBACK: DictEntry = {
 };
 
 /**
- * Build a Next Metadata object for a route in the request's language.
+ * Build a Next Metadata object for a route in the page's language.
  *
- * Reads the locale from the cookie, which middleware also sets from a ?lang=
- * query so a share-preview crawler (which carries no cookies) still gets Thai
- * for a Thai link. `openGraph.locale` is stamped so the preview declares which
- * language it is in.
+ * The language comes from the route (app/[lang]), never the request, so every
+ * page stays static. One URL serves every language (the middleware picks it),
+ * so the alternates are that URL with ?lang=xx for each of the sixteen, which
+ * the middleware promotes into the cookie · a crawler or a share preview
+ * following a Thai alternate gets Thai. `openGraph.locale` is stamped so the
+ * preview declares which language it is in.
  */
 export function routeMetadata(
+  locale: Lang,
   route: keyof typeof ROUTE_META | string,
   overrides: Metadata = {}
 ): Metadata {
-  const locale = getServerLocale();
   return buildMetadata(locale, route, overrides);
+}
+
+/** hreflang alternates for a public route · one URL, ?lang= per language. */
+export function languageAlternates(route: string): Record<string, string> {
+  const out: Record<string, string> = { "x-default": route };
+  for (const code of LANG_CODES) out[langMeta(code).tag] = `${route}?lang=${code}`;
+  return out;
 }
 
 export function buildMetadata(
@@ -165,7 +173,7 @@ export function buildMetadata(
   return {
     ...(title ? { title } : {}),
     ...(description ? { description } : {}),
-    alternates: { canonical: route },
+    alternates: { canonical: route, languages: languageAlternates(route) },
     openGraph: {
       // type and siteName are repeated from the root layout on purpose · Next
       // REPLACES a parent's openGraph object rather than merging into it, so
