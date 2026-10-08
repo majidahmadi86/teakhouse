@@ -246,7 +246,8 @@ async function run() {
     await trigger.click();
     await page.waitForTimeout(600);
 
-    const panel = page.locator("[role='dialog'], .rdp").first();
+    // :visible · the closed phone menu is a dialog too, and it comes first.
+    const panel = page.locator("[role='dialog']:visible, .rdp:visible").first();
     const panelBox = await panel.boundingBox();
     if (box && panelBox) {
       const openedAbove = panelBox.y + panelBox.height <= box.y + 8;
