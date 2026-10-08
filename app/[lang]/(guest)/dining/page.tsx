@@ -153,20 +153,16 @@ export default async function DiningPage({ params }: { params: LangParams }) {
                                     className="h-full w-full object-cover"
                                   />
                                 ) : (
-                                  <picture>
-                                    <source srcSet={`${art.base}-256.avif`} type="image/avif" />
-                                    <source srcSet={`${art.base}-256.webp`} type="image/webp" />
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                      src={`${art.base}-256.webp`}
-                                      alt=""
-                                      width={128}
-                                      height={128}
-                                      loading="lazy"
-                                      decoding="async"
-                                      className="h-full w-full object-cover"
-                                    />
-                                  </picture>
+                                  // A 64 px box: 128 px files for screens up to
+                                  // 2x, 256 px only at 3x (it was 256 px for
+                                  // everyone, 2.3x to 4x the width needed).
+                                  <LocalPicture
+                                    base={art.base}
+                                    alt=""
+                                    width={128}
+                                    height={128}
+                                    sizes="64px"
+                                  />
                                 )}
                               </div>
                             ) : null}
