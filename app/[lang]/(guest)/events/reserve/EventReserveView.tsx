@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { getUpcomingEvents } from "@/lib/cachedData";
+import { getContentMapForPage, localizeEvents } from "@/lib/content/localize";
 import { formatLongDate, formatShortDay } from "@/lib/i18n-core";
 import { MAX_EVENT_GUESTS } from "@/lib/eventRequests";
 import { t, tr } from "@/lib/serverLocale";
@@ -37,7 +38,11 @@ export async function EventReserveView({
   locale: Lang;
   searchParams: SearchParams;
 }) {
-  const events = await getUpcomingEvents(hotelTodayIso());
+  const [list, content] = await Promise.all([
+    getUpcomingEvents(hotelTodayIso()),
+    getContentMapForPage(locale),
+  ]);
+  const events = localizeEvents(list, locale, content);
 
   const hero = (
     <PageHero

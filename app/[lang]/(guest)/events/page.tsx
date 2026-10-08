@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { getHotelSettingsForPage, getUpcomingEvents } from "@/lib/cachedData";
+import { getContentMapForPage, localizeEvents } from "@/lib/content/localize";
 import { formatDay } from "@/lib/i18n-core";
 import { imageIdFor } from "@/lib/images";
 import { t, tr } from "@/lib/serverLocale";
@@ -40,10 +41,12 @@ export default async function EventsPage({ params }: { params: LangParams }) {
   const todayIso = hotelTodayIso();
 
   // One cached read each, in parallel · both are tag-invalidated by owner saves.
-  const [events, settings] = await Promise.all([
+  const [list, settings, content] = await Promise.all([
     getUpcomingEvents(todayIso),
     getHotelSettingsForPage(),
+    getContentMapForPage(locale),
   ]);
+  const events = localizeEvents(list, locale, content);
 
   return (
     <>

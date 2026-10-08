@@ -3,6 +3,7 @@ import { LocalPicture } from "@/components/LocalPicture";
 import { PageHero } from "@/components/PageHero";
 import { ReserveCard } from "@/components/dining/ReserveCard";
 import { getHotelSettingsForPage, getPublishedMenu } from "@/lib/cachedData";
+import { getContentMapForPage, localizeMenu } from "@/lib/content/localize";
 import { dishArt } from "@/lib/dishArt";
 import { formatServiceWindow } from "@/lib/reservations";
 import { t, tr } from "@/lib/serverLocale";
@@ -42,10 +43,13 @@ const CATEGORY_ART: Record<string, { base: string; alt: DictEntry }> = {
  */
 export default async function DiningPage({ params }: { params: LangParams }) {
   const locale = pageLang(params);
-  const [categories, settings] = await Promise.all([
+  const [menu, settings, content] = await Promise.all([
     getPublishedMenu(),
     getHotelSettingsForPage(),
+    getContentMapForPage(locale),
   ]);
+  // The menu in the page language (EntityTranslation rows beyond EN/TH).
+  const categories = localizeMenu(menu, locale, content);
 
   const reserveCta = settings.reservationsEnabled ? (
     <Link href="/dining/reserve" className="btn-primary inline-flex">

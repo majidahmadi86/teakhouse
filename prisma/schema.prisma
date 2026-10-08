@@ -312,3 +312,24 @@ model HotelEvent {
 
   @@index([date])
 }
+
+/// v16 · Database copy in the fourteen languages beyond EN/TH (lib/content).
+/// ADDITIVE: a new table, nothing else changes. The migration folder
+/// prisma/migrations/20260928090000_v16_entity_translation is byte-identical
+/// to the one the production database already recorded as applied in v16
+/// (same name, same LF content, same checksum), so production sees it as done
+/// and the table it holds (1,764 rows on 2026-10-07) is simply read.
+model EntityTranslation {
+  id         String   @id @default(cuid())
+  entityType String
+  entityId   String
+  field      String
+  locale     String
+  text       String
+  sourceHash String
+  status     String   @default("machine")
+  updatedAt  DateTime @updatedAt
+
+  @@unique([entityType, entityId, field, locale])
+  @@index([locale, entityType])
+}
