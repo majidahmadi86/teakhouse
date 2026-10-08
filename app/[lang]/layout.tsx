@@ -84,6 +84,7 @@ export default function GuestRootLayout({
       dir={meta.dir}
       data-demo={DEMO_MODE ? "true" : undefined}
       data-script={fontSetName(lang)}
+      data-surface="guest"
     >
       <head>
         <FontHead lang={lang} />

@@ -525,13 +525,13 @@ input.auth-input:-webkit-autofill {
 .tkh-pop {
   animation: tkh-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+/* Transform only, like every entrance here: no opacity, so nothing is ever
+   invisible if the animation does not run. */
 @keyframes tkh-scale {
   from {
-    opacity: 0;
     transform: scale(0.96);
   }
   to {
-    opacity: 1;
     transform: scale(1);
   }
 }
@@ -1279,4 +1279,58 @@ html[data-unveil-ready] .tkh-unveil:not([data-shown]) > img {
     transition: none;
     clip-path: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · Motion (ported from the five-star branch's mechanics, not its look)
+   Every entrance is transform-only with no hidden resting state. Where the
+   browser drives animations from scroll, sections rise as they ENTER the
+   viewport instead of all at once on load (no script, no observer); phones
+   get a still page below the hero (no per-section layers or timelines to
+   resolve before first paint); reduced motion gets none of it.
+   ───────────────────────────────────────────────────────────────────────── */
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) {
+    .tkh-reveal,
+    .tkh-reveal-stagger > * {
+      animation: tkh-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+      animation-delay: 0s;
+    }
+  }
+}
+@media (max-width: 767px) {
+  .tkh-reveal,
+  .tkh-reveal-stagger > *,
+  .tkh-scale {
+    animation: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tkh-reveal,
+  .tkh-reveal-stagger > *,
+  .tkh-pop,
+  .tkh-scale,
+  .tkh-curtain {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · Thai on guest pages (ported from the five-star branch)
+   Tracking is a Latin device: letter-spacing pulls Thai vowels and tone
+   marks away from their consonants, so it is off for Thai everywhere on the
+   guest site (Latin-only marks opt out with .keep-tracking; the owner panel
+   keeps its own rules). Small uppercase labels are a Latin idiom too: a Thai
+   eyebrow needs more size than Latin capitals to read.
+   ───────────────────────────────────────────────────────────────────────── */
+html[lang="th"][data-surface="guest"] [class*="tracking-"]:not(.keep-tracking),
+html[lang="th"][data-surface="guest"] .eyebrow,
+html[lang="th"][data-surface="guest"] .logo-tagline,
+html[lang="th"][data-surface="guest"] .btn-primary {
+  letter-spacing: 0 !important;
+}
+html[lang="th"][data-surface="guest"] .eyebrow {
+  font-size: 13px;
 }
