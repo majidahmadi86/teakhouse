@@ -111,7 +111,7 @@ export function StaySearch({
             <div className="flex min-w-0 flex-1 items-center gap-2 md:gap-2.5 md:px-5">
               <CalendarDays className="h-5 w-5 shrink-0 text-blue" aria-hidden />
               {dateField("in", inLabel, "text-[14px] font-semibold text-ink md:text-[15px]", "sr-only")}
-              <span className="shrink-0 text-sub" aria-hidden>
+              <span className="stay-arrow inline-block shrink-0 text-sub" aria-hidden>
                 →
               </span>
               {dateField("out", outLabel, "text-[14px] font-semibold text-ink md:text-[15px]", "sr-only")}
@@ -188,7 +188,7 @@ export function StaySearch({
           <div className={cn(box, "flex-1")}>
             {dateField("in", inLabel, "text-[14px] font-semibold text-ink md:text-[15px]", cap)}
           </div>
-          <span className="hidden shrink-0 text-sub sm:inline" aria-hidden>
+          <span className="stay-arrow hidden shrink-0 text-sub sm:inline-block" aria-hidden>
             →
           </span>
           <div className={cn(box, "flex-1")}>

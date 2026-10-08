@@ -1334,3 +1334,9 @@ html[lang="th"][data-surface="guest"] .btn-primary {
 html[lang="th"][data-surface="guest"] .eyebrow {
   font-size: 13px;
 }
+
+/* Right to left (ar): the booking bar's "from → to" arrow points the way the
+   page reads. */
+html[dir="rtl"] .stay-arrow {
+  transform: scaleX(-1);
+}
