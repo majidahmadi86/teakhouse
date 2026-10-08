@@ -217,7 +217,8 @@ async function run() {
             const n = await nav.locator(`a[href='${href}']`).count();
             check(`[${label}] center nav has ${href}`, n >= 1, `${n}`);
           }
-          const fac = await nav.locator("a[href='/facilities']").count();
+          // v17 · CSS dropdowns live in the nav, hidden at rest: count what shows.
+          const fac = await nav.locator("a[href='/facilities']").evaluateAll((els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; }).length);
           check(
             `[${label}] facilities stays inside the dropdown`,
             fac === 0,
@@ -225,7 +226,10 @@ async function run() {
           );
           // Nav items must not overlap each other.
           const boxes = await nav.locator("a").evaluateAll((els) =>
-            els.map((e) => {
+            els.filter((e) => {
+              const r = e.getBoundingClientRect();
+              return r.width > 0 && r.height > 0;
+            }).map((e) => {
               const r = e.getBoundingClientRect();
               return { l: r.left, r: r.right, t: r.top, b: r.bottom };
             })
@@ -263,10 +267,11 @@ async function run() {
     await page.hover("header nav a[href='/experience']");
     await page.waitForTimeout(400);
     for (const href of ["/experience", "/facilities", "/gallery"]) {
-      const n = await page.locator(`[role='menu'] a[href='${href}']`).count();
-      check(`experience dropdown has ${href}`, n >= 1, `${n}`);
+      // v17 · a CSS dropdown (data-menu-panel), so it must be VISIBLE on hover.
+      const n = await page.locator(`[data-menu-panel] a[href='${href}']`).evaluateAll((els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; }).length);
+      check(`experience dropdown has ${href}`, n >= 1, `${n} visible`);
     }
-    const evInMenu = await page.locator("[role='menu'] a[href='/events']").count();
+    const evInMenu = await page.locator("[data-menu-panel] a[href='/events']").count();
     check("events is no longer inside the dropdown", evInMenu === 0, `${evInMenu}`);
     await page.screenshot({ path: path.join(OUT, "dropdown-1366.png") });
     await ctx.close();
@@ -310,7 +315,8 @@ async function run() {
       .evaluateAll((els) => els.map((e) => e.getAttribute("srcset") || ""));
     check(
       "dining hero + categories use the /images/dining set",
-      diningAvif.filter((s) => s.includes("/images/dining/")).length >= 4,
+      // v17 · the image registry serves content-hashed copies under /img/.
+      diningAvif.filter((s) => s.includes("/img/dining/")).length >= 4,
       diningAvif.slice(0, 4).join(" ")
     );
     const oldHero = diningAvif.some((s) => s.includes("pier-breakfast"));
@@ -330,7 +336,8 @@ async function run() {
       .evaluateAll((els) => els.map((e) => e.getAttribute("srcset") || ""));
     check(
       "events uses the /images/events set",
-      srcs.filter((s) => s.includes("/images/events/")).length >= 4,
+      // v17 · the image registry serves content-hashed copies under /img/.
+      srcs.filter((s) => s.includes("/img/events/")).length >= 4,
       `${srcs.length} avif sources`
     );
     await ctx.close();

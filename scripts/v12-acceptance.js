@@ -185,8 +185,10 @@ async function run() {
       const n = await nav.locator(`a[href='${href}']`).count();
       check(`[1366/${tagJs}] center nav has ${href}`, n >= 1, `${n}`);
     }
-    const facTop = await nav.locator("a[href='/facilities']").count();
-    check(`[1366/${tagJs}] facilities lives in the dropdown, not top level`, facTop === 0, `${facTop}`);
+    // v17 · the header is server HTML: the dropdown panels sit in the nav as
+    // CSS menus, hidden at rest. Top level is what a guest SEES at rest.
+    const facTop = await nav.locator("a[href='/facilities']").evaluateAll((els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; }).length);
+    check(`[1366/${tagJs}] facilities lives in the dropdown, not top level`, facTop === 0, `${facTop} visible`);
     const burger = await page
       .locator("header button[aria-controls='mobile-nav-drawer'], header button[aria-label*='menu' i]")
       .evaluateAll((els) => els.filter((e) => getComputedStyle(e).display !== "none").length);
@@ -200,8 +202,9 @@ async function run() {
       // so the group is now Experience · Facilities · Gallery. /events is
       // asserted at the top level by the width sweep in v13-acceptance.
       for (const href of ["/experience", "/facilities", "/gallery"]) {
-        const n = await page.locator(`[role='menu'] a[href='${href}']`).count();
-        check(`[1366] experience dropdown has ${href}`, n >= 1, `${n}`);
+        // v17 · a CSS dropdown (data-menu-panel), so it must be VISIBLE on hover.
+        const n = await page.locator(`[data-menu-panel] a[href='${href}']`).evaluateAll((els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== "hidden"; }).length);
+        check(`[1366] experience dropdown has ${href}`, n >= 1, `${n} visible`);
       }
       await page.screenshot({ path: path.join(OUT, "header-1366-dropdown.png") });
     }

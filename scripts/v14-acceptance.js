@@ -225,7 +225,8 @@ async function run() {
     const ctx = await contextFor(browser, { js: false });
     const page = await ctx.newPage();
     await page.goto(BASE + "/dining", { waitUntil: "load" });
-    const thumbs = await page.locator("main ul li source[srcset*='/images/dishes/']").count();
+    // v17 · the image registry serves content-hashed copies under /img/.
+    const thumbs = await page.locator("main ul li source[srcset*='/img/dishes/']").count();
     check("every seeded dish has a thumbnail", thumbs >= 18, `${thumbs} thumbnail sources`);
     const box = await page
       .locator("main ul li picture img")
