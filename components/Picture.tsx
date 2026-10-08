@@ -1,5 +1,4 @@
-/// <reference types="react-dom/canary" />
-import { preload } from "react-dom";
+import { ImagePreload } from "@/components/ImagePreload";
 import { fallbackSrc, image, srcSet, type ImageId } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
@@ -47,17 +46,10 @@ export function Picture({
   const entry = image(id);
   const avif = srcSet(entry.avif, maxWidth);
   const webp = srcSet(entry.webp, maxWidth);
-  if (priority) {
-    preload(fallbackSrc(entry), {
-      as: "image",
-      type: "image/avif",
-      imageSrcSet: avif,
-      imageSizes: sizes,
-      fetchPriority: "high",
-    });
-  }
   const ground = { backgroundColor: entry.color };
   return (
+    <>
+    {priority ? <ImagePreload id={id} sizes={sizes} /> : null}
     <picture
       className={cn(
         unveil && "tkh-unveil",
@@ -81,5 +73,6 @@ export function Picture({
         style={{ ...ground, ...(objectPosition ? { objectPosition } : {}) }}
       />
     </picture>
+    </>
   );
 }
