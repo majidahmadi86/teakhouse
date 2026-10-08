@@ -1193,3 +1193,45 @@ html:has(.tkh-lightbox:target) {
     }
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · StaySearch, the booking bar (components/stay/StaySearch.tsx)
+   The native date input covers its field, invisible, so a tap opens the
+   picker; the drawn label shows its value in the page language (written by
+   lib/staySearchScript.ts). With scripting off the root layout's <noscript>
+   style shows the inputs themselves instead.
+   ───────────────────────────────────────────────────────────────────────── */
+form[data-stay-search] input.stay-date {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0;
+  cursor: pointer;
+}
+form[data-stay-search] input.stay-date:focus {
+  box-shadow: none;
+}
+[data-stay-search] label:has(.stay-date:focus-visible) {
+  outline: 2px solid rgb(var(--color-sky-rgb, 233 242 254));
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+.stay-text::before {
+  content: attr(data-empty);
+  color: rgb(var(--color-sub-rgb, 94 107 126));
+}
+.stay-text[data-v]::before {
+  content: attr(data-v);
+  color: inherit;
+}
+/* Pages that carry their own booking UI turn the strip off (ChromeMark). */
+body:has([data-chrome~="no-staybar"]) [data-stay-bar] {
+  display: none;
+}

@@ -1,13 +1,11 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-// Same formatter the hydrated picker uses · the shell must not word its dates
-// differently from the control that replaces it.
-import { format as dfFormat } from "date-fns";
-import { useSearchParams } from "next/navigation";
 import {
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -55,7 +53,8 @@ import {
   otaEquivalent,
   quoteStay,
 } from "@/lib/pricing";
-import { dfLocale } from "@/lib/dateLocale";
+import { formatDay, formatStayRange, nightsLabel } from "@/lib/i18n-core";
+import type { Stay } from "@/lib/stayDate";
 import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
 import {
   addDays,
@@ -69,33 +68,31 @@ type PayMethod = "promptpay" | "card";
 
 const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
 
+/** The dates the shell shows · next/dynamic's loading component takes no props. */
+const ShellDates = createContext<{ from: Date; to?: Date } | null>(null);
+
 /**
  * The DateRangePicker's loading / SSR state.
  *
  * It is the picker's own trigger, rendered as static markup: same box, same
- * icon, same label, same default stay dates, formatted exactly the way the
- * hydrated control formats them. So the shell and the hydrated picker read
- * identically and occupy identical space · nothing moves and nothing changes
- * wording when react-day-picker arrives.
+ * icon, same label, the same stay, formatted by the same function the
+ * hydrated control uses (formatStayRange, lib/i18n-core: "Wed 8 Oct → Thu
+ * 9 Oct", the one stay-date format of the whole site). So the shell and the
+ * hydrated picker read identically and occupy identical space · nothing moves
+ * and nothing changes wording when react-day-picker arrives.
  *
- * It used to render two labelled fields over a mock month grid. That was 560px
- * of placeholder collapsing to an 80px control on hydration, and its labels
- * were hard-coded English, which a Thai guest with JS off would have seen.
+ * The stay comes from the server (the URL's in/out, or tomorrow on the hotel's
+ * clock), never from this render's own clock, so a prerendered page and the
+ * browser can never disagree about the day.
  */
 function DateRangeShell() {
-  // Month names follow the UI language too · a Thai page showing
-  // "14 Aug - 15 Aug" is still English where the guest actually looks.
   const { lang } = useI18n();
-  // Hotel time on both sides · see hotelToday(). Rendering the server's day
-  // here and the browser's day after hydration made this label jump a day for
-  // a Bangkok guest between midnight and 07:00.
-  const inDate = addDays(hotelToday(), 1);
-  const outDate = addDays(hotelToday(), 2);
-  const label = `${dfFormat(inDate, "d MMM", dfLocale(lang))} - ${dfFormat(
-    outDate,
-    "d MMM yyyy",
-    dfLocale(lang)
-  )}`;
+  const dates = useContext(ShellDates);
+  const label = dates
+    ? dates.to
+      ? formatStayRange(lang, dates.from, dates.to)
+      : formatDay(lang, dates.from)
+    : "";
 
   return (
     <div
@@ -118,11 +115,15 @@ function DateRangeShell() {
   );
 }
 
-export default function BookPageClient() {
-  const { t } = useI18n();
+/** "2026-10-08" → a local Date at noon, the way the picker holds days. */
+function dayOf(iso: string): Date {
+  return new Date(iso + "T12:00:00");
+}
+
+export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
+  const { t, lang } = useI18n();
   const { format } = useCurrency();
   const { user, attachBooking } = useGuestAuth();
-  const searchParams = useSearchParams();
   const rooms = useGuestRooms();
   const rulesByRoom = useGuestPriceRulesByRoom();
   const { addBooking, hydrated: rulesLoaded } = useOwner();
@@ -131,16 +132,18 @@ export default function BookPageClient() {
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
 
-  const [step, setStep] = useState(1);
-  const [checkIn, setCheckIn] = useState<Date>(() => addDays(hotelToday(), 1));
-  const [checkOut, setCheckOut] = useState<Date | undefined>(() =>
-    addDays(hotelToday(), 2)
-  );
-  const [guests, setGuests] = useState("2");
+  // The stay arrives from the server (lib/stayDate · the URL's in/out/g/room,
+  // read by the /book page), so the first render here is the server's render:
+  // no useEffect applies URL params after hydration any more.
+  const initialRoom = initialStay.room ? findRoomByParam(initialStay.room) : undefined;
+  const [step, setStep] = useState(initialRoom ? 2 : 1);
+  const [checkIn, setCheckIn] = useState<Date>(() => dayOf(initialStay.in));
+  const [checkOut, setCheckOut] = useState<Date | undefined>(() => dayOf(initialStay.out));
+  const [guests, setGuests] = useState(String(initialStay.guests));
   // Keyed by slug, not shortKey · several seeded rooms share a shortKey, so a
   // shortKey lookup can resolve to a different room than the guest picked and
   // price the stay off the wrong rate and rate rules.
-  const [roomSlug, setRoomSlug] = useState<string | null>(null);
+  const [roomSlug, setRoomSlug] = useState<string | null>(initialRoom?.slug ?? null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -164,25 +167,6 @@ export default function BookPageClient() {
     );
   }
 
-  useEffect(() => {
-    const inParam = searchParams.get("in");
-    const outParam = searchParams.get("out");
-    const gParam = searchParams.get("g");
-    const roomParam = searchParams.get("room");
-
-    if (inParam) setCheckIn(new Date(inParam + "T12:00:00"));
-    if (outParam) setCheckOut(new Date(outParam + "T12:00:00"));
-    if (gParam) setGuests(gParam);
-
-    if (roomParam) {
-      const room = findRoomByParam(roomParam);
-      if (room) {
-        setRoomSlug(room.slug);
-        setStep(2);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, rooms]);
 
   useEffect(() => {
     if (user) {
@@ -431,15 +415,17 @@ export default function BookPageClient() {
                   <h2 className="mb-6 text-2xl text-ink">{t("bk.when")}</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2" data-date-field>
-                      <DateRangePicker
-                        from={checkIn}
-                        to={checkOut}
-                        onChange={handleDates}
-                        placeholder={t("avail.selectDates")}
-                        numberOfMonths={1}
-                        priceFor={priceForDate}
-                        formatPrice={format}
-                      />
+                      <ShellDates.Provider value={{ from: checkIn, to: checkOut }}>
+                        <DateRangePicker
+                          from={checkIn}
+                          to={checkOut}
+                          onChange={handleDates}
+                          placeholder={t("avail.selectDates")}
+                          numberOfMonths={1}
+                          priceFor={priceForDate}
+                          formatPrice={format}
+                        />
+                      </ShellDates.Provider>
                       <p className="mt-2 text-[0.78rem] font-semibold text-sub">
                         {t("bk.helperDates")}
                       </p>
@@ -483,8 +469,8 @@ export default function BookPageClient() {
                   <h2 className="mb-1 text-2xl text-ink">{t("bk.choose")}</h2>
                   {datesValid ? (
                     <p className="mb-5 text-[0.85rem] font-semibold text-sub">
-                      {isoDate(checkIn)} → {isoDate(checkOut!)} ·{" "}
-                      {t("bk.nightsCount", { n: nights })}
+                      {formatStayRange(lang, checkIn, checkOut!)} ·{" "}
+                      {nightsLabel(lang, nights)}
                     </p>
                   ) : null}
                   <div className="space-y-4">
@@ -705,7 +691,7 @@ export default function BookPageClient() {
               ) : (
                 <div className="text-[0.85rem] font-semibold text-sub">
                   {datesValid
-                    ? t("bk.nightsCount", { n: nights })
+                    ? nightsLabel(lang, nights)
                     : t("avail.selectDates")}
                 </div>
               )}

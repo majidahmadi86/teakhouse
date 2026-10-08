@@ -4,7 +4,7 @@ import { ChromeMark } from "@/components/site/PageMarks";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ChromeMark noBookBar flushMain noFooter />
+      <ChromeMark noBookBar noStayBar flushMain noFooter />
       {children}
     </>
   );

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { routeMetadata } from "@/lib/routeMeta";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 import { Providers } from "@/components/providers";
+import { ChromeMark } from "@/components/site/PageMarks";
 import { ACCOUNT_KEYS, messagesFor } from "@/lib/locales";
 import { getServerLocale } from "@/lib/serverLocale";
 
@@ -18,7 +19,10 @@ export default function AccountLayout({
   const locale = getServerLocale();
   return (
     <Providers initialLang={locale} messages={messagesFor(locale, ACCOUNT_KEYS)}>
-      <OwnerStoreProvider>{children}</OwnerStoreProvider>
+      <OwnerStoreProvider>
+        <ChromeMark noStayBar />
+        {children}
+      </OwnerStoreProvider>
     </Providers>
   );
 }

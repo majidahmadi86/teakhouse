@@ -40,7 +40,7 @@ export default function RoomSlugLayout({
 }) {
   return (
     <>
-      <ChromeMark noBookBar flushMain whiteMain />
+      <ChromeMark noBookBar noStayBar flushMain whiteMain />
       {children}
     </>
   );

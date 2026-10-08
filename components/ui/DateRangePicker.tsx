@@ -18,9 +18,14 @@ import {
 } from "date-fns";
 import { CalendarDays, X } from "lucide-react";
 import type { DateRange } from "react-day-picker";
-import { dfLocale } from "@/lib/dateLocale";
+import {
+  formatDay,
+  formatMonthCaption,
+  formatStayRange,
+  formatWeekdayShort,
+  nightsLabel as pluralNights,
+} from "@/lib/i18n-core";
 import { useI18n } from "@/lib/i18n";
-import type { Locale } from "date-fns";
 import { useIsMobile } from "@/lib/useMediaQuery";
 import { cn } from "@/lib/utils";
 import "react-day-picker/dist/style.css";
@@ -65,17 +70,6 @@ function startOfToday(): Date {
 
 function isoOf(d: Date): string {
   return format(d, "yyyy-MM-dd");
-}
-
-function formatRange(
-  from?: Date,
-  to?: Date,
-  dfl?: { locale: Locale }
-): string | null {
-  if (!from) return null;
-  if (!to) return format(from, "d MMM yyyy", dfl);
-  if (isSameDay(from, to)) return format(from, "d MMM yyyy", dfl);
-  return `${format(from, "d MMM", dfl)} - ${format(to, "d MMM yyyy", dfl)}`;
 }
 
 function nightsCount(from?: Date, to?: Date): number {
@@ -215,21 +209,21 @@ export function DateRangePicker({
         : "1st click: check-in · 2nd: check-out";
 
   const nights = nightsCount(draftFrom, draftTo);
-  const nightsLabel =
-    nights > 0
-      ? t("drp.nights") !== "drp.nights"
-        ? t("drp.nights", { n: nights })
-        : lang === "th"
-          ? `${nights} คืน`
-          : `${nights} nights`
-      : null;
+  // Intl plurals in every language ("1 night", "2 ночи", "5 ночей").
+  const nightsLabel = nights > 0 ? pluralNights(lang, nights) : null;
 
   const selected = useMemo<DateRange | undefined>(() => {
     if (!draftFrom) return undefined;
     return { from: draftFrom, to: draftTo ?? draftFrom };
   }, [draftFrom, draftTo]);
 
-  const label = formatRange(draftFrom, draftTo, dfLocale(lang)) ?? placeholder;
+  // The site's one stay-date format (lib/i18n-core) · the /book shell, the
+  // booking bar and the summary word dates exactly like this trigger.
+  const label = draftFrom
+    ? draftTo && !isSameDay(draftFrom, draftTo)
+      ? formatStayRange(lang, draftFrom, draftTo)
+      : formatDay(lang, draftFrom)
+    : placeholder;
   const doneLabel = t("drp.done");
   const showPrices = Boolean(priceFor && formatPrice);
 
@@ -303,7 +297,10 @@ export function DateRangePicker({
         mode="range"
         /* Month and weekday names follow the UI language · an otherwise Thai
            calendar reading "August / Mo Tu We" is still an English control. */
-        locale={dfLocale(lang)?.locale}
+        formatters={{
+          formatCaption: (d: Date) => formatMonthCaption(lang, d),
+          formatWeekdayName: (d: Date) => formatWeekdayShort(lang, d),
+        }}
         selected={selected}
         onSelect={(range) => handleSelect(range, close)}
         numberOfMonths={isMobile ? 1 : numberOfMonths}

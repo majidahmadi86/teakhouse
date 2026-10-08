@@ -3,6 +3,7 @@ import { paletteStyleString } from "@/lib/paletteCss";
 import { getServerLocale } from "@/lib/serverLocale";
 import { translateEntry } from "@/lib/i18n-core";
 import { langMeta } from "@/lib/locales/meta";
+import { STAY_CORE_JS, STAY_NOSCRIPT_CSS } from "@/lib/staySearchScript";
 import { ROUTE_META } from "@/lib/routeMeta";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -113,6 +114,12 @@ export default function RootLayout({
             __html: `:root{${paletteStyle}}`,
           }}
         />
+        {/* The booking bar's behaviour (lib/staySearchScript.ts) and its
+            no-script fallback: the native date inputs show themselves. */}
+        <script dangerouslySetInnerHTML={{ __html: STAY_CORE_JS }} />
+        <noscript>
+          <style dangerouslySetInnerHTML={{ __html: STAY_NOSCRIPT_CSS }} />
+        </noscript>
       </head>
       <body className="font-sans antialiased">{children}</body>
     </html>

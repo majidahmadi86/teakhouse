@@ -7,7 +7,7 @@ import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
 import type { RateLine } from "@/lib/pricing";
 import type { Room } from "@/lib/rooms";
-import { isoDate } from "@/lib/utils";
+import { formatDay, formatStayRange } from "@/lib/i18n-core";
 import { cn } from "@/lib/utils";
 
 export type BookingSummaryProps = {
@@ -47,7 +47,7 @@ export function BookingSummary({
   onToggle,
   className,
 }: BookingSummaryProps) {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
   const { format } = useCurrency();
   const datesComplete = Boolean(checkOut);
 
@@ -60,11 +60,11 @@ export function BookingSummary({
         <div className="mt-1 font-semibold text-ink">
           {datesComplete ? (
             <>
-              {isoDate(checkIn)} → {isoDate(checkOut!)}
+              {formatStayRange(lang, checkIn, checkOut!)}
             </>
           ) : (
             <>
-              {isoDate(checkIn)} · {t("avail.selectDates")}
+              {formatDay(lang, checkIn)} · {t("avail.selectDates")}
             </>
           )}
         </div>

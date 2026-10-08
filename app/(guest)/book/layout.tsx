@@ -25,7 +25,7 @@ export default function BookLayout({
     <Providers initialLang={locale} messages={messagesFor(locale, BOOK_KEYS)}>
       <OwnerStoreProvider>
         {/* /book is the booking flow · no second Book bar under it. */}
-        <ChromeMark noBookBar flushMain />
+        <ChromeMark noBookBar noStayBar flushMain />
         {children}
       </OwnerStoreProvider>
     </Providers>

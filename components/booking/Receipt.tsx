@@ -9,7 +9,8 @@ import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import type { RateLine } from "@/lib/pricing";
 import type { Room } from "@/lib/rooms";
-import { formatBaht, isoDate } from "@/lib/utils";
+import { formatBaht } from "@/lib/utils";
+import { formatDay, formatTime } from "@/lib/i18n-core";
 
 export type ReceiptProps = {
   code: string;
@@ -49,7 +50,7 @@ export function Receipt({
   rateLines = [],
   issuedAt = new Date(),
 }: ReceiptProps) {
-  const { t, tr } = useI18n();
+  const { t, tr, lang } = useI18n();
   const { format, currency } = useCurrency();
   const { user } = useGuestAuth();
 
@@ -98,7 +99,7 @@ export function Receipt({
                 {t("avail.in")}
               </div>
               <div className="mt-1 font-semibold text-ink">
-                {isoDate(checkIn)} · 14:00
+                {formatDay(lang, checkIn, { year: true })} · {formatTime(lang, "14:00")}
               </div>
             </div>
             <div>
@@ -106,7 +107,7 @@ export function Receipt({
                 {t("avail.out")}
               </div>
               <div className="mt-1 font-semibold text-ink">
-                {isoDate(checkOut)} · 12:00
+                {formatDay(lang, checkOut, { year: true })} · {formatTime(lang, "12:00")}
               </div>
             </div>
             <div className="sm:col-span-2">
@@ -169,7 +170,7 @@ export function Receipt({
                 {t("bk.receipt")}
               </div>
               <div className="mt-1 text-[0.82rem] font-semibold text-sub">
-                {isoDate(issuedAt)}
+                {formatDay(lang, issuedAt, { year: true })}
               </div>
               <p className="mt-2 max-w-xs text-[0.85rem] font-semibold text-ink">
                 {t("bk.showCheckin")}

@@ -18,12 +18,15 @@ export function NavMark({ section }: { section: NavSection }) {
 
 export function ChromeMark({
   noBookBar,
+  noStayBar,
   noFooter,
   flushMain,
   whiteMain,
 }: {
   /** The page has its own booking bar (or is a booking flow). */
   noBookBar?: boolean;
+  /** The page has its own date search (the booking flow, a room's rail). */
+  noStayBar?: boolean;
   /** Sign-in and sign-up are a focused task with no footer. */
   noFooter?: boolean;
   /** No bottom padding reserved for the phone Book bar. */
@@ -33,6 +36,7 @@ export function ChromeMark({
 }) {
   const tokens = [
     noBookBar && "no-bookbar",
+    noStayBar && "no-staybar",
     noFooter && "no-footer",
     flushMain && "flush-main",
     whiteMain && "white-main",

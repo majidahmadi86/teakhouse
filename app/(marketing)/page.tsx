@@ -1,14 +1,16 @@
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomeBelowFold } from "@/components/home/HomeBelowFold";
-import { DeferredHeroSearch } from "@/components/hero/DeferredHeroSearch";
-import { defaultSearchDateLabel } from "@/components/hero/HeroSearchPillShell";
-import { getServerLocale, t } from "@/lib/serverLocale";
-import { messagesFor } from "@/lib/locales";
+import { StaySearch } from "@/components/stay/StaySearch";
+import { getServerLocale } from "@/lib/serverLocale";
 
-/** Server page · locale + hero + below-fold all render server-side in one paint. */
+/**
+ * Server page · locale + hero + below-fold all render server-side in one paint.
+ * The hero's booking pill is the same StaySearch form as every page's booking
+ * bar: server HTML with no hydration (it used to mount a client widget with
+ * framer-motion and a day picker 300 ms after load).
+ */
 export default function HomePage() {
   const locale = getServerLocale();
-  const dateLabel = defaultSearchDateLabel(locale);
 
   return (
     <>
@@ -26,19 +28,7 @@ export default function HomePage() {
         type="image/avif"
         media="(min-width: 769px)"
       />
-      <HomeHero
-        locale={locale}
-        searchSlot={
-          <DeferredHeroSearch
-            lang={locale}
-            messages={messagesFor(locale, ["avail.", "drp.", "g1", "g2", "g3", "g4", "hero.tonight", "mobile.close"])}
-            checkInLabel={dateLabel}
-            guestLabel={t(locale, "g2")}
-            checkRatesLabel={t(locale, "avail.go")}
-            tonightLabel={t(locale, "hero.tonight", { z: "฿2,100" })}
-          />
-        }
-      />
+      <HomeHero locale={locale} searchSlot={<StaySearch locale={locale} variant="hero" />} />
       <HomeBelowFold locale={locale} />
     </>
   );

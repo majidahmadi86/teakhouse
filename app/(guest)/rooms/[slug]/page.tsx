@@ -3,13 +3,13 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Price } from "@/components/Price";
 import { PriceChip } from "@/components/PriceChip";
-import { RoomBooking } from "@/components/room/RoomBooking";
+import { StaySearch } from "@/components/stay/StaySearch";
+import { StayTotals } from "@/components/stay/StayTotals";
 import { RoomGallery } from "@/components/room/RoomGallery";
 import { AmenityIcon } from "@/components/ui/AmenityIcon";
 import { AMENITIES, type AmenityGroup, type AmenityId } from "@/lib/amenities";
 import { CONDITIONS, CONDITIONS_TITLE } from "@/lib/conditions";
 import { getSeedGuestRooms } from "@/lib/guestRooms";
-import { BOOK_KEYS, messagesFor } from "@/lib/locales";
 import { getRoomByKey, getRoomBySlug, SEED_ROOMS } from "@/lib/rooms";
 import { getServerLocale, t, tr } from "@/lib/serverLocale";
 
@@ -31,9 +31,10 @@ export function generateStaticParams() {
 
 /**
  * A room · server HTML (it was one 360-line client component). What stays
- * interactive is two islands: the photo gallery with its lightbox, and the
- * booking rail (dates, guests, the stay total, Book this room). Every price on
- * the page is a <Price>, so the currency select converts all of them.
+ * interactive is the photo gallery with its lightbox (an island) and the
+ * booking rail, a StaySearch form (GET /book with this room) whose only island
+ * is its running total. Every price on the page is a <Price>, so the currency
+ * select converts all of them.
  */
 export default function RoomDetailPage({ params }: Props) {
   const locale = getServerLocale();
@@ -45,6 +46,26 @@ export default function RoomDetailPage({ params }: Props) {
   const name = tr(locale, room.name);
   const photos = room.photos.slice(0, 6);
   const otherRooms = getSeedGuestRooms().filter((r) => r.slug !== room.slug);
+
+  const rail = (key: "desk" | "phone") => (
+    <div key={key} className={key === "phone" ? "" : "rounded-[14px] bg-white p-6 shadow-panel"}>
+      <StaySearch
+        locale={locale}
+        variant="rail"
+        compact={key === "phone"}
+        room={room.shortKey}
+        submitLabel={t(locale, "rooms.bookThis")}
+      >
+        <StayTotals
+          rate={room.rate}
+          ota={room.ota}
+          nightLabel={t(locale, "bk.night")}
+          nightsLabel={t(locale, "bk.nights")}
+          saveLabel={t(locale, "bk.save")}
+        />
+      </StaySearch>
+    </div>
+  );
 
   return (
     <>
@@ -135,13 +156,12 @@ export default function RoomDetailPage({ params }: Props) {
               </div>
             </div>
 
-            <RoomBooking
-              lang={locale}
-              messages={messagesFor(locale, BOOK_KEYS)}
-              shortKey={room.shortKey}
-              rate={room.rate}
-              ota={room.ota}
-            />
+            {/* The booking rail · a StaySearch form (GET /book with this room),
+                sticky on desktop, a bottom card on phones. */}
+            <div className="hidden lg:sticky lg:top-24 lg:block">{rail("desk")}</div>
+            <div className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-4 pb-safe backdrop-blur-md lg:hidden">
+              {rail("phone")}
+            </div>
           </div>
         </div>
       </section>

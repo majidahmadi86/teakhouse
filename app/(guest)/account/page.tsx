@@ -10,6 +10,7 @@ import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
 import { useOwner, type Booking } from "@/lib/ownerStore";
 import { cn, isoDate } from "@/lib/utils";
+import { formatStayRange } from "@/lib/i18n-core";
 
 function canCancelFree(booking: Booking): boolean {
   if (booking.status === "cancelled") return false;
@@ -184,7 +185,7 @@ export default function AccountPage() {
                         </span>
                       </div>
                       <p className="mt-1 text-sm font-semibold text-sub">
-                        {b.checkIn} → {b.checkOut}
+                        {formatStayRange(lang, b.checkIn, b.checkOut)}
                       </p>
                       <p className="mt-0.5 text-sm text-sub">
                         {b.code} · {format(b.amount)}
