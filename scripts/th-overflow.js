@@ -92,8 +92,16 @@ async function run() {
 
         const header = document.querySelector("header");
         const headerH = header ? header.getBoundingClientRect().height : 0;
+        // The band the header DECLARES (--header-h, which every sticky offset
+        // uses). Read from the page rather than hard-coded, so a redesign that
+        // changes the band keeps this check honest: wrapping is still caught.
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        const declared =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--header-h")
+          ) * rem;
 
-        return { over, clipped: clipped.slice(0, 5), headerH };
+        return { over, clipped: clipped.slice(0, 5), headerH, declared };
       });
 
       const label = `[${width}] ${route}`;
@@ -105,7 +113,11 @@ async function run() {
           .map((c) => `${c.tag}.${c.cls} "${c.text}" +${c.dx}x${c.dy}`)
           .join(" | ")
       );
-      const maxHeader = width >= 768 ? 66 : 58;
+      // Declared band + 2px of rounding. Falls back to the v14 numbers if the
+      // page does not declare one.
+      const maxHeader = info.declared > 0
+        ? Math.round(info.declared) + 2
+        : width >= 768 ? 66 : 58;
       check(
         `${label} header did not wrap`,
         info.headerH <= maxHeader,
