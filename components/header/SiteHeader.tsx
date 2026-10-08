@@ -277,9 +277,12 @@ export function SiteHeader({ locale }: { locale: Lang }) {
       </header>
 
       {/* Phone and tablet menu · a full-screen solid sheet. Outside <header> on
-          purpose: the header's own <nav> is the centre nav. */}
-      <aside
+          purpose: the header's own <nav> is the centre nav. A dialog, not an
+          <aside>: it is always in the document now (a popover), and a page's
+          own complementary content (the dining reserve card) is its aside. */}
+      <div
         id="mobile-nav-drawer"
+        role="dialog"
         aria-label={menuLabel}
         className="tkh-drawer text-ink"
         {...attrs({ popover: "auto" })}
@@ -394,7 +397,7 @@ export function SiteHeader({ locale }: { locale: Lang }) {
             {t(locale, "nav.book")}
           </Link>
         </div>
-      </aside>
+      </div>
       <HeaderSync />
     </>
   );
