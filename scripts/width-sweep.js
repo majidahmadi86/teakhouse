@@ -129,7 +129,11 @@ async function run() {
   if (failed.length) process.exitCode = 1;
 }
 
-run().catch((e) => {
-  console.error(e);
-  process.exitCode = 1;
-});
+// This suite writes nothing, so it may end the process outright: a thrown
+// navigation must not leave the browser holding the process open.
+run()
+  .catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  })
+  .finally(() => process.exit(process.exitCode || 0));
