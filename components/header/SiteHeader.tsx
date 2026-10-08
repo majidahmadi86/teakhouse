@@ -71,7 +71,7 @@ export function SiteHeader({ locale }: { locale: Lang }) {
         data-site-header
         className="tkh-header sticky top-[var(--demo-bar-h)] z-header h-14 border-b border-line bg-white transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16"
       >
-        <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 min-[760px]:px-5 xl:px-6">
+        <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 max-[359px]:gap-2 max-[359px]:px-3 min-[760px]:px-5 xl:px-6">
           {/* LEFT · logo */}
           <Link
             href="/"
@@ -200,7 +200,9 @@ export function SiteHeader({ locale }: { locale: Lang }) {
           </nav>
 
           {/* RIGHT utility cluster */}
-          <div className="ms-auto flex shrink-0 items-center gap-[18px]">
+          {/* Below 360px the gaps tighten: the logo, the Book icon and the menu
+              must fit a 320px screen without scrolling sideways. */}
+          <div className="ms-auto flex shrink-0 items-center gap-[18px] max-[359px]:gap-2">
             {/* wide utils · >=760 */}
             <div className="hidden items-center gap-[18px] min-[760px]:flex">
               <span className="group relative inline-flex">
