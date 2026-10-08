@@ -36,8 +36,10 @@ const config: Config = {
         "surface-2": "#F4F7FB",
       },
       fontFamily: {
-        display: ["var(--font-marcellus)", "serif"],
-        sans: ["var(--font-jakarta)", "sans-serif"],
+        // One pair per language, set by lib/fonts.tsx on <html> (the
+        // variables below all point at the active pair).
+        display: ["var(--font-display)", "serif"],
+        sans: ["var(--font-text)", "sans-serif"],
         "th-display": ["var(--font-kanit)", "sans-serif"],
         "th-body": ["var(--font-sarabun)", "sans-serif"],
       },

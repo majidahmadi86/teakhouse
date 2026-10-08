@@ -1,6 +1,6 @@
 import { hotelConfig } from "@/config/hotel.config";
 import { paletteStyleString } from "@/lib/paletteCss";
-import { fontVariables } from "@/lib/fonts";
+import { FontHead, fontSetName } from "@/lib/fonts";
 import { translateEntry } from "@/lib/i18n-core";
 import { langMeta } from "@/lib/locales/meta";
 import { langStaticParams, pageLang, type LangParams } from "@/lib/pageLocale";
@@ -74,16 +74,18 @@ export default function GuestRootLayout({
   params: LangParams;
 }>) {
   const paletteStyle = paletteStyleString(hotelConfig.palette);
-  const meta = langMeta(pageLang(params));
+  const lang = pageLang(params);
+  const meta = langMeta(lang);
 
   return (
     <html
       lang={meta.tag}
       dir={meta.dir}
       data-demo={DEMO_MODE ? "true" : undefined}
-      className={fontVariables}
+      data-script={fontSetName(lang)}
     >
       <head>
+        <FontHead lang={lang} />
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <style

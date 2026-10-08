@@ -5,7 +5,7 @@ import { DemoModeBar } from "@/components/DemoModeBar";
 import { OwnerStoreProvider } from "@/components/OwnerStoreProvider";
 import { OwnerProviders } from "@/components/OwnerProviders";
 import { getDemoStrings } from "@/lib/demoStrings";
-import { fontVariables } from "@/lib/fonts";
+import { FontHead, fontSetName } from "@/lib/fonts";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { getOwnerLocale, t } from "@/lib/serverLocale";
 import { SITE_URL } from "@/lib/site";
@@ -43,8 +43,9 @@ export default function OwnerLayout({
   const locale = getOwnerLocale();
   const paletteStyle = paletteStyleString(hotelConfig.palette);
   return (
-    <html lang={locale} data-demo={DEMO_MODE ? "true" : undefined} className={fontVariables}>
+    <html lang={locale} data-demo={DEMO_MODE ? "true" : undefined} data-script={fontSetName(locale)}>
       <head>
+        <FontHead lang={locale} />
         <style dangerouslySetInnerHTML={{ __html: `:root{${paletteStyle}}` }} />
       </head>
       <body className="font-sans antialiased">

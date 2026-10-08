@@ -1235,3 +1235,28 @@ form[data-stay-search] input.stay-date:focus {
 body:has([data-chrome~="no-staybar"]) [data-stay-bar] {
   display: none;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · Non-Latin scripts (lib/fonts.tsx sets data-script on <html>).
+   Tracking is a Latin device: it breaks Arabic joining and spaces CJK and
+   Devanagari apart, so it is off; headings get the line height their marks
+   and stacked glyphs need.
+   ───────────────────────────────────────────────────────────────────────── */
+html[data-script="sc"] :is(h1, h2, h3, h4, .font-display),
+html[data-script="jp"] :is(h1, h2, h3, h4, .font-display),
+html[data-script="kr"] :is(h1, h2, h3, h4, .font-display),
+html[data-script="devanagari"] :is(h1, h2, h3, h4, .font-display) {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+html[data-script="arabic"] :is(h1, h2, h3, h4, .font-display) {
+  letter-spacing: 0;
+  line-height: 1.45;
+}
+html[data-script="arabic"] [class*="tracking-"],
+html[data-script="sc"] [class*="tracking-"],
+html[data-script="jp"] [class*="tracking-"],
+html[data-script="kr"] [class*="tracking-"],
+html[data-script="devanagari"] [class*="tracking-"] {
+  letter-spacing: 0 !important;
+}
