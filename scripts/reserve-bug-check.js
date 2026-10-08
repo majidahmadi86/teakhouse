@@ -223,7 +223,7 @@ async function main() {
           // force · the reveal animations mean this button is never "stable"
           // by Playwright's definition, and waiting for that is what times out.
           page
-            .locator('button[type="submit"]')
+            .locator('main button[type="submit"]')
             .first()
             .click({ force: true, timeout: 30000 }),
         ]);

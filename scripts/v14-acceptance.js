@@ -89,7 +89,7 @@ async function submitForm(page, re = /[?&](ref|sent|error)=/) {
   await Promise.all([
     page.waitForURL(re, { timeout: 90000 }),
     page
-      .locator("button[type='submit']")
+      .locator("main button[type='submit']")
       .click({ noWaitAfter: true, force: true, timeout: 15000 }),
   ]);
   await page.waitForLoadState("load");
