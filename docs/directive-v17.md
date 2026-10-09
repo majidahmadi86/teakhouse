@@ -194,19 +194,37 @@ Repo tags: (T) teakhouse, (S) sovra, (both).
 
 ### Milestone A · first glance (branch v17-a)
 - [ ] Preview safety proven (no migrate/seed in preview builds, previews cannot write production)
-- [ ] A1 speed contract, guest (T) (S)
+- [~] A1 speed contract, guest (T) (S) · (T) phase 1 architecture landed on v17-a (static/ISR guest routes, server chrome, providers off the guest layout, fonts, image registry; see "Milestone A · phase 1" below). Not yet measured with PSI on a preview; the visual phases still to come must hold it
 - [ ] A1 speed contract, owner (T) (S)
 - [ ] A2 visual bible, briefs, curation, vision QA, ledger, contact sheet (T) (S)
-- [ ] A2 no blur anywhere; decode-gated unveil below the fold (T) (S)
+- [~] A2 no blur anywhere; decode-gated unveil below the fold (T) (S) · (T) the mechanics landed in phase 1 (no blur placeholder anywhere, dominant-colour ground, clip-path unveil after img.decode(), LCP preloads); the imagery itself is phase 4
 - [ ] A3 cursor (S)
 - [ ] A3 estate map, scrollytelling, diptychs, day rail (S)
 - [ ] A3 no dark or smoky treatment left (S)
 - [ ] A4 five-star evolution, copy and meta (T)
 - [ ] A4 five-star room catalogue, translated (T)
-- [ ] A4 booking bar everywhere, mobile Book bar, /book dock (T)
+- [~] A4 booking bar everywhere, mobile Book bar, /book dock (T) · the booking bar (StaySearch, a GET form to /book) on every guest page and the static phone Book bar landed in phase 1; the /book dock is phase 2
 - [ ] A4 booking-ease timing gate under 60 s at 1366x768 and 390x844 (T)
 - [ ] A4 /book bug-class audit clean (T)
 - [ ] A gates green, previews measured, screenshots, report, GO-LIST
+
+### Milestone A · phase 1 · architecture (T), branch v17-a
+Phase 1 is architecture only: the five-star branch's mechanics without its look, the sixteen-language engine, static guest pages, fonts and the image registry. The visual redesign, the room catalogue and copy (phase 2), translations (phase 3) and imagery (phase 4) are not started.
+- [x] 1a Server header, footer and static phone Book bar with no hydrated twin; HeaderSync (scroll state, active page) is the only header island. The phone menu is a native popover with a :target fallback, so it opens without the Popover API and without JavaScript. Currency switching works for every price, room pages included (Price islands on one shared store)
+- [x] 1b Providers off the guest layout; /book and /account mount their own; the concierge loads on click (ConciergeLazy)
+- [x] 1c StaySearch (a real GET form to /book) on every guest page: the home hero pill, a strip under the header, the room rail. Its labels track the inputs with JavaScript off (the native inputs show); default dates are filled on the client from the guest's own today; one stay-date format everywhere ("Sat 10 Oct → Sun 11 Oct", Intl per language); /book reads in/out/g/room on the server
+- [x] 1d Image registry (lib/images.ts, components/Picture.tsx, components/ImagePreload.tsx, build: scripts/images/build-images.mjs): AVIF first, WebP fallback, intrinsic width and height, the LCP preload with exact sizes and fetchpriority high, content-hashed /img and /fonts files with an immutable one-year cache, a dominant-colour ground, the clip-path unveil below the fold that starts only after img.decode(); no blur placeholder anywhere
+- [x] 1e Transform-only, scroll-driven motion (still on phones, off under reduced motion); Thai keeps no letter-spacing and Kanit's 1.5 line height; th-overflow reads the header band from --header-h
+- [x] 2 Sixteen languages (server-only dictionaries, html lang and dir with Arabic right to left, language menu, per-language fonts) and thirteen currencies at live ECB rates. The fourteen new languages fall back to English strings until phase 3. EntityTranslation added (additive; the v16 migration folder is byte-identical) with lib/content/localize.ts on the menu and events; a stored translation is used only while its source hash matches the current English
+- [x] 3 Every guest route static or ISR behind an internal locale segment: middleware rewrites /x to /<lang>/x (language from ?lang, then the tkh-lang cookie, then Accept-Language); the visible URL never changes. Query pages encode their query as a path segment (/book/<in>/<out>/<g>/<room>, /contact/q/..). No cookies() or headers() in a guest render path; canonical URLs kept and hreflang alternates added; owner edits revalidate by tag in every language. scripts/static-routes.js holds it on every build
+- [x] 4 Fonts (scripts/fonts/build-fonts.mjs, lib/fonts.tsx): one self-hosted pair per script, and a page links only its own language's pair: Latin Marcellus + Plus Jakarta Sans; Vietnamese Spectral + Plus Jakarta Sans; Cyrillic Forum + Manrope; Thai Kanit + Sarabun (Thai pages only); Arabic Noto Kufi Arabic + Noto Sans Arabic; Devanagari Noto Serif + Noto Sans Devanagari; Chinese, Japanese and Korean Noto Serif + Noto Sans SC/JP/KR as unicode-range slices from a stylesheet that does not block the first paint. Two preloads per page (none for CJK), fallback metrics computed from the font files (CLS 0)
+- [x] 5 /dining dish thumbnails at their rendered size (128 px for the 64 px box, 111 KB to 41 KB)
+
+Gates on the final phase 1 commit: tsc clean; static-routes 43/43 (23 guest routes: 3 static, 20 ISR, 0 dynamic); v11 36/36, v12 110/110, v13 263/263, v14 153/153 (also on the final build), reserve-bug-check 33/33 (one run hit an ISR revalidation race on the service-hours check, the rerun passed), th-leakage 0 English lines on 13 routes, th-overflow 156/156, th-missing 0, width sweep 320 to 1920 incl. 1093 and 1366 plus JS-off readability 1768/1768 (EN, TH); hf1-security 141/141; preview-safety --no-runtime 143/143 (the runtime part was not run this phase).
+
+Local Lighthouse, mobile, median of 5 interleaved runs per route (before = d9d21f4, after = phase 1 head, same machine, same database): indicative only, the run was stopped by a priority change and the machine was not idle (benchmark index 600 to 970): /rooms 80 → 83 (LCP 3.76 → 3.15 s), /dining 75 → 76 (LCP 4.50 → 3.18 s), /book 73 → 71 (TBT 645 → 730 ms), CLS 0.001-0.002 → 0 everywhere; home not measured. That run predates 4ac494a, which removed 250 to 800 ms of main-thread work per page (head scripts watching the parser). Server chrome costs HTML weight: about +100 KB raw (+15 KB gzip) and twice the DOM per page, part of it repeated in the RSC payload; worth trimming when phase 2 rebuilds the header. A clean before/after table (PSI with the bypass) is still owed.
+
+Deferred by the orchestrator's priority change: the full Lighthouse before/after and preview-safety's runtime part. Left for later phases: translations of the fourteen new languages (phase 3; 702 of the 741 keys already have a sovra translation of the identical English source to start from); the /book dock, the five-star room catalogue, copy and meta (phase 2); the content pipeline that fills EntityTranslation (phase 3); the Unsplash+ frames and the stand-ins for the eleven retired Unsplash photos (phase 4). The concierge button overlaps the totals on the phone room rail; English fallback text inside an Arabic page flips its punctuation until the strings are translated.
 
 ### Milestone B · engines (branch v17-b, stacked on v17-a)
 - [ ] B1 Teak House engine (ported modules)
