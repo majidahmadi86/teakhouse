@@ -731,8 +731,10 @@ export async function seedDatabase(options: SeedOptions = {}) {
       date: nextOccurrence(today, 11, 24),
       description:
         "Float a krathong from our pier, then sit down to a five-course Thai dinner under the full moon. One seating, 28 guests.",
-      // Registry ids (lib/images.ts): each event shows its own subject.
-      image: "events-loy-krathong",
+      // Each event shows its own subject: the registry's 768 px WebP (a real
+      // URL the owner panel can show; the guest page maps it back to the
+      // registry entry for AVIF at the card's width).
+      image: imageUrl("events-loy-krathong"),
     },
     {
       id: "ev-jazz-brunch",
@@ -749,7 +751,7 @@ export async function seedDatabase(options: SeedOptions = {}) {
       date: nextOccurrence(today, 4, 13),
       description:
         "Songkran the old way: water for blessing, not soaking. A khan tok lunch under the mango tree with the whole house.",
-      image: "events-songkran-lunch",
+      image: imageUrl("events-songkran-lunch"),
     },
   ];
   const eventRows = EVENTS.map((ev) => ({

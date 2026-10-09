@@ -45,6 +45,8 @@ const EVENT_ART: Record<string, ImageId> = {
 
 function eventImage(ev: { id: string; image: string }): { id?: ImageId; src?: string } {
   if (ev.image && isImageId(ev.image)) return { id: ev.image };
+  const registered = /^\/img\/([a-z0-9-]+)\//.exec(ev.image ?? "")?.[1];
+  if (registered && isImageId(registered)) return { id: registered };
   if (ev.image && !ev.image.startsWith("/images/")) return { src: ev.image };
   const art = EVENT_ART[ev.id];
   return art ? { id: art } : {};

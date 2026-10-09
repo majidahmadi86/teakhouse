@@ -66,6 +66,13 @@ async function main() {
     }
   }
   await browser.close();
+  // JPEG keeps the folder light (full-page PNGs run to megabytes each).
+  const sharp = require("sharp");
+  for (const f of fs.readdirSync(OUT).filter((f) => f.endsWith(".png"))) {
+    const src = path.join(OUT, f);
+    await sharp(fs.readFileSync(src)).jpeg({ quality: 80, mozjpeg: true }).toFile(src.replace(/\.png$/, ".jpg"));
+    fs.unlinkSync(src);
+  }
   console.log(`screenshots in ${path.relative(process.cwd(), OUT)}`);
 }
 
