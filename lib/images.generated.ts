@@ -1024,5 +1024,4363 @@ export const IMAGE_DATA = {
         "/img/dishes/beer/256.34efa92c2c.webp"
       ]
     ]
+  },
+  "hero-home": {
+    "width": 2560,
+    "height": 1708,
+    "color": "#9c9a98",
+    "focal": [
+      0.4,
+      0.5
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-home/640.6c69a57e09.avif"
+      ],
+      [
+        960,
+        "/img/hero-home/960.f59a3a690f.avif"
+      ],
+      [
+        1280,
+        "/img/hero-home/1280.404444fc79.avif"
+      ],
+      [
+        1920,
+        "/img/hero-home/1920.494c673307.avif"
+      ],
+      [
+        2560,
+        "/img/hero-home/2560.bb48c41dfc.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-home/640.5855fe6575.webp"
+      ],
+      [
+        960,
+        "/img/hero-home/960.21df730521.webp"
+      ],
+      [
+        1280,
+        "/img/hero-home/1280.753a64051b.webp"
+      ],
+      [
+        1920,
+        "/img/hero-home/1920.9b476edff0.webp"
+      ],
+      [
+        2560,
+        "/img/hero-home/2560.bb0812be58.webp"
+      ]
+    ]
+  },
+  "hero-home-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#9c9a98",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-home-m/480.bf29e02c52.avif"
+      ],
+      [
+        720,
+        "/img/hero-home-m/720.1b8f0e8b07.avif"
+      ],
+      [
+        960,
+        "/img/hero-home-m/960.d11ae5cd38.avif"
+      ],
+      [
+        1200,
+        "/img/hero-home-m/1200.ec55c2fbf4.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-home-m/480.0562d0c531.webp"
+      ],
+      [
+        720,
+        "/img/hero-home-m/720.d76130792c.webp"
+      ],
+      [
+        960,
+        "/img/hero-home-m/960.ffcbf3e3d2.webp"
+      ],
+      [
+        1200,
+        "/img/hero-home-m/1200.bb20ac5710.webp"
+      ]
+    ]
+  },
+  "hero-rooms": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#c1beb4",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-rooms/640.c774a16d1d.avif"
+      ],
+      [
+        960,
+        "/img/hero-rooms/960.eff9499f02.avif"
+      ],
+      [
+        1280,
+        "/img/hero-rooms/1280.87719ca59a.avif"
+      ],
+      [
+        1920,
+        "/img/hero-rooms/1920.41aed86f2b.avif"
+      ],
+      [
+        2560,
+        "/img/hero-rooms/2560.ccd3387baf.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-rooms/640.c36148ff2e.webp"
+      ],
+      [
+        960,
+        "/img/hero-rooms/960.f3ce6339fa.webp"
+      ],
+      [
+        1280,
+        "/img/hero-rooms/1280.8bee287887.webp"
+      ],
+      [
+        1920,
+        "/img/hero-rooms/1920.8c58c35e3f.webp"
+      ],
+      [
+        2560,
+        "/img/hero-rooms/2560.67c22184bc.webp"
+      ]
+    ]
+  },
+  "hero-rooms-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#c1beb4",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-rooms-m/480.ccbfb09114.avif"
+      ],
+      [
+        720,
+        "/img/hero-rooms-m/720.585db0c2fc.avif"
+      ],
+      [
+        960,
+        "/img/hero-rooms-m/960.7eec10abd7.avif"
+      ],
+      [
+        1200,
+        "/img/hero-rooms-m/1200.01333a72f6.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-rooms-m/480.11d422f6a9.webp"
+      ],
+      [
+        720,
+        "/img/hero-rooms-m/720.561ad8f928.webp"
+      ],
+      [
+        960,
+        "/img/hero-rooms-m/960.2e6f469942.webp"
+      ],
+      [
+        1200,
+        "/img/hero-rooms-m/1200.41fe423490.webp"
+      ]
+    ]
+  },
+  "hero-dining": {
+    "width": 2560,
+    "height": 1659,
+    "color": "#af9f8e",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-dining/640.378499918d.avif"
+      ],
+      [
+        960,
+        "/img/hero-dining/960.1e94c11713.avif"
+      ],
+      [
+        1280,
+        "/img/hero-dining/1280.2a3c2ee0a4.avif"
+      ],
+      [
+        1920,
+        "/img/hero-dining/1920.4fadac8293.avif"
+      ],
+      [
+        2560,
+        "/img/hero-dining/2560.b390f13822.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-dining/640.b3c95ec733.webp"
+      ],
+      [
+        960,
+        "/img/hero-dining/960.e5e423c012.webp"
+      ],
+      [
+        1280,
+        "/img/hero-dining/1280.58be8129c4.webp"
+      ],
+      [
+        1920,
+        "/img/hero-dining/1920.c82bf13c6a.webp"
+      ],
+      [
+        2560,
+        "/img/hero-dining/2560.8338024957.webp"
+      ]
+    ]
+  },
+  "hero-dining-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#af9f8e",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-dining-m/480.fcb83c0cbe.avif"
+      ],
+      [
+        720,
+        "/img/hero-dining-m/720.5a755d6c3b.avif"
+      ],
+      [
+        960,
+        "/img/hero-dining-m/960.8ef22b6fd2.avif"
+      ],
+      [
+        1200,
+        "/img/hero-dining-m/1200.21b90f48ac.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-dining-m/480.e8742e77a6.webp"
+      ],
+      [
+        720,
+        "/img/hero-dining-m/720.e0087f7ead.webp"
+      ],
+      [
+        960,
+        "/img/hero-dining-m/960.4aafa461fc.webp"
+      ],
+      [
+        1200,
+        "/img/hero-dining-m/1200.caf1197b49.webp"
+      ]
+    ]
+  },
+  "hero-dining-reserve": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#bbb7b3",
+    "focal": [
+      0.45,
+      0.45
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-dining-reserve/640.8f84910871.avif"
+      ],
+      [
+        960,
+        "/img/hero-dining-reserve/960.5bf0d27c71.avif"
+      ],
+      [
+        1280,
+        "/img/hero-dining-reserve/1280.60d01dbae9.avif"
+      ],
+      [
+        1920,
+        "/img/hero-dining-reserve/1920.82c07ddc90.avif"
+      ],
+      [
+        2560,
+        "/img/hero-dining-reserve/2560.efa76126b5.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-dining-reserve/640.a523807694.webp"
+      ],
+      [
+        960,
+        "/img/hero-dining-reserve/960.0d27f59cb5.webp"
+      ],
+      [
+        1280,
+        "/img/hero-dining-reserve/1280.abff7d5175.webp"
+      ],
+      [
+        1920,
+        "/img/hero-dining-reserve/1920.8744b4476e.webp"
+      ],
+      [
+        2560,
+        "/img/hero-dining-reserve/2560.45733a5161.webp"
+      ]
+    ]
+  },
+  "hero-dining-reserve-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#bbb7b3",
+    "focal": [
+      0.5,
+      0.45
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-dining-reserve-m/480.fb8b3992f7.avif"
+      ],
+      [
+        720,
+        "/img/hero-dining-reserve-m/720.391dd0bf45.avif"
+      ],
+      [
+        960,
+        "/img/hero-dining-reserve-m/960.fd9d8523be.avif"
+      ],
+      [
+        1200,
+        "/img/hero-dining-reserve-m/1200.2bf6171ffe.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-dining-reserve-m/480.fddc34cb3e.webp"
+      ],
+      [
+        720,
+        "/img/hero-dining-reserve-m/720.ce5cc43ea6.webp"
+      ],
+      [
+        960,
+        "/img/hero-dining-reserve-m/960.d8d6687106.webp"
+      ],
+      [
+        1200,
+        "/img/hero-dining-reserve-m/1200.4a99a38133.webp"
+      ]
+    ]
+  },
+  "hero-events": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#9f9f94",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-events/640.95a8b7c7a5.avif"
+      ],
+      [
+        960,
+        "/img/hero-events/960.a6ef51d093.avif"
+      ],
+      [
+        1280,
+        "/img/hero-events/1280.2438716bd7.avif"
+      ],
+      [
+        1920,
+        "/img/hero-events/1920.1d7705ecfd.avif"
+      ],
+      [
+        2560,
+        "/img/hero-events/2560.b4143ce97d.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-events/640.02a5d628fa.webp"
+      ],
+      [
+        960,
+        "/img/hero-events/960.d4d500c11f.webp"
+      ],
+      [
+        1280,
+        "/img/hero-events/1280.1a3e0f1d9b.webp"
+      ],
+      [
+        1920,
+        "/img/hero-events/1920.7ee09caf3a.webp"
+      ],
+      [
+        2560,
+        "/img/hero-events/2560.57fe1c0eef.webp"
+      ]
+    ]
+  },
+  "hero-events-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#9f9f94",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-events-m/480.98ac829343.avif"
+      ],
+      [
+        720,
+        "/img/hero-events-m/720.083958d8d7.avif"
+      ],
+      [
+        960,
+        "/img/hero-events-m/960.fab84155e8.avif"
+      ],
+      [
+        1200,
+        "/img/hero-events-m/1200.8a9aba41ec.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-events-m/480.27c5471bf9.webp"
+      ],
+      [
+        720,
+        "/img/hero-events-m/720.f63350b995.webp"
+      ],
+      [
+        960,
+        "/img/hero-events-m/960.b63144d0af.webp"
+      ],
+      [
+        1200,
+        "/img/hero-events-m/1200.6cec2476f6.webp"
+      ]
+    ]
+  },
+  "hero-events-reserve": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#b4b2ac",
+    "focal": [
+      0.45,
+      0.5
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-events-reserve/640.2aedfcb621.avif"
+      ],
+      [
+        960,
+        "/img/hero-events-reserve/960.d45e31294d.avif"
+      ],
+      [
+        1280,
+        "/img/hero-events-reserve/1280.b8cea5bae0.avif"
+      ],
+      [
+        1920,
+        "/img/hero-events-reserve/1920.6df8ee1dc3.avif"
+      ],
+      [
+        2560,
+        "/img/hero-events-reserve/2560.82602e4253.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-events-reserve/640.82b0412902.webp"
+      ],
+      [
+        960,
+        "/img/hero-events-reserve/960.fc597e6706.webp"
+      ],
+      [
+        1280,
+        "/img/hero-events-reserve/1280.9323d6ed15.webp"
+      ],
+      [
+        1920,
+        "/img/hero-events-reserve/1920.375b5d4d11.webp"
+      ],
+      [
+        2560,
+        "/img/hero-events-reserve/2560.0b8744eda9.webp"
+      ]
+    ]
+  },
+  "hero-events-reserve-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#b4b2ac",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-events-reserve-m/480.aba68faef8.avif"
+      ],
+      [
+        720,
+        "/img/hero-events-reserve-m/720.77e364d49f.avif"
+      ],
+      [
+        960,
+        "/img/hero-events-reserve-m/960.f014038800.avif"
+      ],
+      [
+        1200,
+        "/img/hero-events-reserve-m/1200.1afc145b63.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-events-reserve-m/480.ce31ecf1c5.webp"
+      ],
+      [
+        720,
+        "/img/hero-events-reserve-m/720.cfc6d108e8.webp"
+      ],
+      [
+        960,
+        "/img/hero-events-reserve-m/960.24e4579e5c.webp"
+      ],
+      [
+        1200,
+        "/img/hero-events-reserve-m/1200.7393f7d810.webp"
+      ]
+    ]
+  },
+  "hero-gallery": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#aca796",
+    "focal": [
+      0.42,
+      0.55
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-gallery/640.3381b9e129.avif"
+      ],
+      [
+        960,
+        "/img/hero-gallery/960.4b772b6b56.avif"
+      ],
+      [
+        1280,
+        "/img/hero-gallery/1280.50463daa11.avif"
+      ],
+      [
+        1920,
+        "/img/hero-gallery/1920.5c3517413f.avif"
+      ],
+      [
+        2560,
+        "/img/hero-gallery/2560.fdf1338201.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-gallery/640.ae9428b30b.webp"
+      ],
+      [
+        960,
+        "/img/hero-gallery/960.c77e507e6f.webp"
+      ],
+      [
+        1280,
+        "/img/hero-gallery/1280.a897fbbf4f.webp"
+      ],
+      [
+        1920,
+        "/img/hero-gallery/1920.0b9b82cfd3.webp"
+      ],
+      [
+        2560,
+        "/img/hero-gallery/2560.2470b57e03.webp"
+      ]
+    ]
+  },
+  "hero-gallery-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#aca796",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-gallery-m/480.3df4a8e135.avif"
+      ],
+      [
+        720,
+        "/img/hero-gallery-m/720.56e40ec5f6.avif"
+      ],
+      [
+        960,
+        "/img/hero-gallery-m/960.02e5919d1a.avif"
+      ],
+      [
+        1200,
+        "/img/hero-gallery-m/1200.4852ba4d96.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-gallery-m/480.7df4fc159e.webp"
+      ],
+      [
+        720,
+        "/img/hero-gallery-m/720.647045f9c2.webp"
+      ],
+      [
+        960,
+        "/img/hero-gallery-m/960.d24e1a5ebf.webp"
+      ],
+      [
+        1200,
+        "/img/hero-gallery-m/1200.ca2ad14186.webp"
+      ]
+    ]
+  },
+  "hero-contact": {
+    "width": 2560,
+    "height": 1707,
+    "color": "#9b998d",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        640,
+        "/img/hero-contact/640.8c083d95ed.avif"
+      ],
+      [
+        960,
+        "/img/hero-contact/960.272ab90d0d.avif"
+      ],
+      [
+        1280,
+        "/img/hero-contact/1280.ebbfd026e9.avif"
+      ],
+      [
+        1920,
+        "/img/hero-contact/1920.fef00c4f1a.avif"
+      ],
+      [
+        2560,
+        "/img/hero-contact/2560.21d7d7c9b2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        640,
+        "/img/hero-contact/640.db4e8fb9bc.webp"
+      ],
+      [
+        960,
+        "/img/hero-contact/960.47a393306f.webp"
+      ],
+      [
+        1280,
+        "/img/hero-contact/1280.98eb8d7933.webp"
+      ],
+      [
+        1920,
+        "/img/hero-contact/1920.23408264d7.webp"
+      ],
+      [
+        2560,
+        "/img/hero-contact/2560.a207a9a0ec.webp"
+      ]
+    ]
+  },
+  "hero-contact-m": {
+    "width": 1200,
+    "height": 1500,
+    "color": "#9b998d",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-contact-m/480.5774156b3e.avif"
+      ],
+      [
+        720,
+        "/img/hero-contact-m/720.3a44434048.avif"
+      ],
+      [
+        960,
+        "/img/hero-contact-m/960.b7c3f7b72c.avif"
+      ],
+      [
+        1200,
+        "/img/hero-contact-m/1200.99261acadf.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-contact-m/480.9ae1b73768.webp"
+      ],
+      [
+        720,
+        "/img/hero-contact-m/720.6a393a7535.webp"
+      ],
+      [
+        960,
+        "/img/hero-contact-m/960.2a45bdc8aa.webp"
+      ],
+      [
+        1200,
+        "/img/hero-contact-m/1200.cd9d4bb494.webp"
+      ]
+    ]
+  },
+  "hero-account": {
+    "width": 1600,
+    "height": 2133,
+    "color": "#a4a997",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-account/480.882df14bae.avif"
+      ],
+      [
+        720,
+        "/img/hero-account/720.bd67c8e802.avif"
+      ],
+      [
+        960,
+        "/img/hero-account/960.112d5ec1b8.avif"
+      ],
+      [
+        1200,
+        "/img/hero-account/1200.5e0c8f87e4.avif"
+      ],
+      [
+        1600,
+        "/img/hero-account/1600.f0a8bd2fd4.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-account/480.164841f3f2.webp"
+      ],
+      [
+        720,
+        "/img/hero-account/720.2c6c0af936.webp"
+      ],
+      [
+        960,
+        "/img/hero-account/960.a82576d9f0.webp"
+      ],
+      [
+        1200,
+        "/img/hero-account/1200.6e81af82db.webp"
+      ],
+      [
+        1600,
+        "/img/hero-account/1600.ccb8f30a33.webp"
+      ]
+    ]
+  },
+  "room-deluxe-king": {
+    "width": 2048,
+    "height": 1366,
+    "color": "#bba890",
+    "focal": [
+      0.4,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-king/480.72144188e6.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king/768.025df0a022.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king/1080.dac95817a1.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king/1600.024116334f.avif"
+      ],
+      [
+        2048,
+        "/img/room-deluxe-king/2048.8707bcc1d2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-king/480.21f44e80e3.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king/768.a5505a8f32.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king/1080.4fd2507bf5.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king/1600.f09a4b65f9.webp"
+      ],
+      [
+        2048,
+        "/img/room-deluxe-king/2048.cdb2031955.webp"
+      ]
+    ]
+  },
+  "room-deluxe-twin": {
+    "width": 2048,
+    "height": 1366,
+    "color": "#aba294",
+    "focal": [
+      0.4,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-twin/480.840ad583e2.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin/768.3dbe9f45a7.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin/1080.bb0c9b69d9.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin/1600.595fd53567.avif"
+      ],
+      [
+        2048,
+        "/img/room-deluxe-twin/2048.847b030131.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-twin/480.55bbe55da1.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin/768.350e6e6e78.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin/1080.a02cf75cd5.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin/1600.171fac3874.webp"
+      ],
+      [
+        2048,
+        "/img/room-deluxe-twin/2048.37fe296f87.webp"
+      ]
+    ]
+  },
+  "room-premier-river": {
+    "width": 2048,
+    "height": 1365,
+    "color": "#c8bfb0",
+    "focal": [
+      0.45,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-premier-river/480.d93534ab46.avif"
+      ],
+      [
+        768,
+        "/img/room-premier-river/768.63fbf1230c.avif"
+      ],
+      [
+        1080,
+        "/img/room-premier-river/1080.3c897a6441.avif"
+      ],
+      [
+        1600,
+        "/img/room-premier-river/1600.42a7bc83d2.avif"
+      ],
+      [
+        2048,
+        "/img/room-premier-river/2048.8c8578295d.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-premier-river/480.3a4cd9c032.webp"
+      ],
+      [
+        768,
+        "/img/room-premier-river/768.30340fa880.webp"
+      ],
+      [
+        1080,
+        "/img/room-premier-river/1080.0630cb6d30.webp"
+      ],
+      [
+        1600,
+        "/img/room-premier-river/1600.cb7ee4a837.webp"
+      ],
+      [
+        2048,
+        "/img/room-premier-river/2048.48da7c3774.webp"
+      ]
+    ]
+  },
+  "room-junior-suite": {
+    "width": 2048,
+    "height": 1367,
+    "color": "#c7b4a6",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-junior-suite/480.24d5aa3f4d.avif"
+      ],
+      [
+        768,
+        "/img/room-junior-suite/768.d4f2707d25.avif"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite/1080.fd35bef0cf.avif"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite/1600.2b6d600dec.avif"
+      ],
+      [
+        2048,
+        "/img/room-junior-suite/2048.3002b489a8.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-junior-suite/480.759767a301.webp"
+      ],
+      [
+        768,
+        "/img/room-junior-suite/768.56d5c40bcb.webp"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite/1080.a139afcb7a.webp"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite/1600.53130d9e33.webp"
+      ],
+      [
+        2048,
+        "/img/room-junior-suite/2048.2397a53d03.webp"
+      ]
+    ]
+  },
+  "room-teak-suite": {
+    "width": 2048,
+    "height": 1365,
+    "color": "#9c917e",
+    "focal": [
+      0.45,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-teak-suite/480.3839f54875.avif"
+      ],
+      [
+        768,
+        "/img/room-teak-suite/768.4473f70dec.avif"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite/1080.9858ed4410.avif"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite/1600.e449ca0886.avif"
+      ],
+      [
+        2048,
+        "/img/room-teak-suite/2048.450c062e90.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-teak-suite/480.c3e0831255.webp"
+      ],
+      [
+        768,
+        "/img/room-teak-suite/768.ecae8e8414.webp"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite/1080.13923ab0f8.webp"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite/1600.30f10c5411.webp"
+      ],
+      [
+        2048,
+        "/img/room-teak-suite/2048.33df5d6df9.webp"
+      ]
+    ]
+  },
+  "room-royal-teak-suite": {
+    "width": 2048,
+    "height": 1365,
+    "color": "#9e9e9b",
+    "focal": [
+      0.45,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-royal-teak-suite/480.20de8b092d.avif"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite/768.00b72ac09c.avif"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite/1080.6255808163.avif"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite/1600.85d05845f6.avif"
+      ],
+      [
+        2048,
+        "/img/room-royal-teak-suite/2048.490b7a37c2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-royal-teak-suite/480.2ddf3eaad8.webp"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite/768.380bc09f3f.webp"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite/1080.cdace477aa.webp"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite/1600.a4091d861b.webp"
+      ],
+      [
+        2048,
+        "/img/room-royal-teak-suite/2048.7b46fe147d.webp"
+      ]
+    ]
+  },
+  "room-deluxe-king-bath": {
+    "width": 1600,
+    "height": 1037,
+    "color": "#c1baa6",
+    "focal": [
+      0.45,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-king-bath/480.7669c9ace8.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-bath/768.8ac0003683.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-bath/1080.1d873a10b7.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-bath/1600.f16be3614d.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-king-bath/480.f97e0e98e0.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-bath/768.b667238304.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-bath/1080.cc244eba3b.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-bath/1600.87304aff3c.webp"
+      ]
+    ]
+  },
+  "room-deluxe-king-view": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#9b9a91",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-king-view/480.dfd47d06da.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-view/768.fd1dd01b09.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-view/1080.62d5a25dd3.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-view/1600.ee607e5846.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-king-view/480.03a0002116.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-view/768.61f97d49c6.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-view/1080.aeb4ae8579.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-view/1600.e77f4e501c.webp"
+      ]
+    ]
+  },
+  "room-deluxe-king-detail": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#d8c9ba",
+    "focal": [
+      0.4,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-king-detail/480.1a64a6e013.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-detail/768.4ca135b2c7.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-detail/1080.30efe7f8c6.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-detail/1600.2661ef70ce.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-king-detail/480.aa242959db.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-king-detail/768.1276007737.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-king-detail/1080.59586dba42.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-king-detail/1600.5214faea5e.webp"
+      ]
+    ]
+  },
+  "room-deluxe-twin-bath": {
+    "width": 1600,
+    "height": 2000,
+    "color": "#c6c1b8",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-twin-bath/480.7d6aec8f62.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-bath/768.106f9c992b.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-bath/1080.6d9f1fa093.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-bath/1600.428187eaf2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-twin-bath/480.1c9bc08f90.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-bath/768.b3fbeeaa70.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-bath/1080.17d5e33461.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-bath/1600.1cfc64d6ba.webp"
+      ]
+    ]
+  },
+  "room-deluxe-twin-view": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#a9a69a",
+    "focal": [
+      0.62,
+      0.65
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-twin-view/480.9535eb94f8.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-view/768.bde37eb256.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-view/1080.cac04cb863.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-view/1600.55a10ad0ba.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-twin-view/480.c025b2058e.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-view/768.88e6ce6507.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-view/1080.6ec7cc74f0.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-view/1600.9fb2b0b02d.webp"
+      ]
+    ]
+  },
+  "room-deluxe-twin-detail": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#a09d94",
+    "focal": [
+      0.35,
+      0.65
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-deluxe-twin-detail/480.de419d57f0.avif"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-detail/768.419dee707d.avif"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-detail/1080.4122c5d9d5.avif"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-detail/1600.f4df4b30f4.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-deluxe-twin-detail/480.9e39c8b624.webp"
+      ],
+      [
+        768,
+        "/img/room-deluxe-twin-detail/768.9f21f0ca56.webp"
+      ],
+      [
+        1080,
+        "/img/room-deluxe-twin-detail/1080.aadce46116.webp"
+      ],
+      [
+        1600,
+        "/img/room-deluxe-twin-detail/1600.27193d7706.webp"
+      ]
+    ]
+  },
+  "room-premier-river-bath": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#c0c1ba",
+    "focal": [
+      0.5,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-premier-river-bath/480.86e74bfb90.avif"
+      ],
+      [
+        768,
+        "/img/room-premier-river-bath/768.1e753a58cb.avif"
+      ],
+      [
+        1080,
+        "/img/room-premier-river-bath/1080.e67aa8b8f4.avif"
+      ],
+      [
+        1600,
+        "/img/room-premier-river-bath/1600.f9a8ecedc4.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-premier-river-bath/480.9478ce16db.webp"
+      ],
+      [
+        768,
+        "/img/room-premier-river-bath/768.bc98e6a048.webp"
+      ],
+      [
+        1080,
+        "/img/room-premier-river-bath/1080.f679c0427f.webp"
+      ],
+      [
+        1600,
+        "/img/room-premier-river-bath/1600.21fa83fd2e.webp"
+      ]
+    ]
+  },
+  "room-junior-suite-bath": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#bbb0a7",
+    "focal": [
+      0.45,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-junior-suite-bath/480.309be7236c.avif"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-bath/768.81084ba723.avif"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-bath/1080.6ef44a58ab.avif"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-bath/1600.053d5e03aa.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-junior-suite-bath/480.a258fd8a8f.webp"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-bath/768.b5758c0b33.webp"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-bath/1080.5aea154f7f.webp"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-bath/1600.1f657c516e.webp"
+      ]
+    ]
+  },
+  "room-junior-suite-view": {
+    "width": 1600,
+    "height": 1068,
+    "color": "#a8b4b8",
+    "focal": [
+      0.42,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-junior-suite-view/480.c366b6f6b0.avif"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-view/768.e5feda2d5a.avif"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-view/1080.6dd27d5f0a.avif"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-view/1600.b33b842cf9.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-junior-suite-view/480.37207b495b.webp"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-view/768.72724d7fa3.webp"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-view/1080.63be1239c9.webp"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-view/1600.654b42d54f.webp"
+      ]
+    ]
+  },
+  "room-junior-suite-detail": {
+    "width": 1600,
+    "height": 1068,
+    "color": "#c0b0a1",
+    "focal": [
+      0.62,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-junior-suite-detail/480.5f0b23d7f2.avif"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-detail/768.950ca057e6.avif"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-detail/1080.d877ad1168.avif"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-detail/1600.128c0756e8.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-junior-suite-detail/480.9a7c67e7e8.webp"
+      ],
+      [
+        768,
+        "/img/room-junior-suite-detail/768.261d6c1855.webp"
+      ],
+      [
+        1080,
+        "/img/room-junior-suite-detail/1080.73849be41d.webp"
+      ],
+      [
+        1600,
+        "/img/room-junior-suite-detail/1600.00ab7ecbe2.webp"
+      ]
+    ]
+  },
+  "room-teak-suite-bath": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#99998f",
+    "focal": [
+      0.45,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-teak-suite-bath/480.18f14b41d1.avif"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-bath/768.c3e3ddd8a4.avif"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-bath/1080.f5c4c630a4.avif"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-bath/1600.f85d4470dd.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-teak-suite-bath/480.6f2fbac8aa.webp"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-bath/768.022d6c48fa.webp"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-bath/1080.0621277900.webp"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-bath/1600.b36dc566c7.webp"
+      ]
+    ]
+  },
+  "room-teak-suite-view": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#969c83",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-teak-suite-view/480.5867a11e2d.avif"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-view/768.72599d0ff8.avif"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-view/1080.c8f2839fe4.avif"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-view/1600.12f7b46561.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-teak-suite-view/480.b223209928.webp"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-view/768.0221a7cc91.webp"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-view/1080.4bbef23875.webp"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-view/1600.019be6d86c.webp"
+      ]
+    ]
+  },
+  "room-teak-suite-detail": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#bfb3a9",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-teak-suite-detail/480.2d0e93ade6.avif"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-detail/768.61490e38c3.avif"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-detail/1080.196856a8d7.avif"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-detail/1600.2f4070e52c.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-teak-suite-detail/480.97af2ef604.webp"
+      ],
+      [
+        768,
+        "/img/room-teak-suite-detail/768.e37e5cb691.webp"
+      ],
+      [
+        1080,
+        "/img/room-teak-suite-detail/1080.787d84bff7.webp"
+      ],
+      [
+        1600,
+        "/img/room-teak-suite-detail/1600.c49592bdb3.webp"
+      ]
+    ]
+  },
+  "room-royal-teak-suite-bath": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#b9bbb8",
+    "focal": [
+      0.5,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-royal-teak-suite-bath/480.76470df5a0.avif"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-bath/768.0af9063d40.avif"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-bath/1080.f21fc80597.avif"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-bath/1600.c70bc364b5.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-royal-teak-suite-bath/480.b433fc77d0.webp"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-bath/768.5047b3b28b.webp"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-bath/1080.6a4aef09e4.webp"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-bath/1600.05f632eb0e.webp"
+      ]
+    ]
+  },
+  "room-royal-teak-suite-view": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#909b80",
+    "focal": [
+      0.45,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-royal-teak-suite-view/480.c3adddaebb.avif"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-view/768.b91d8dd863.avif"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-view/1080.77f4347983.avif"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-view/1600.7040d0598b.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-royal-teak-suite-view/480.10f3a71024.webp"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-view/768.dd7f0e5f52.webp"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-view/1080.4b67f50e55.webp"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-view/1600.79286f9a81.webp"
+      ]
+    ]
+  },
+  "room-royal-teak-suite-detail": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#aba590",
+    "focal": [
+      0.5,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/room-royal-teak-suite-detail/480.9fb94b4d73.avif"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-detail/768.228a4beef6.avif"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-detail/1080.9baac5a8ae.avif"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-detail/1600.aca9029a83.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/room-royal-teak-suite-detail/480.e03ba4dbc6.webp"
+      ],
+      [
+        768,
+        "/img/room-royal-teak-suite-detail/768.2d0860c0f9.webp"
+      ],
+      [
+        1080,
+        "/img/room-royal-teak-suite-detail/1080.edf0e26547.webp"
+      ],
+      [
+        1600,
+        "/img/room-royal-teak-suite-detail/1600.eb4c658fab.webp"
+      ]
+    ]
+  },
+  "dish-rice-soup": {
+    "width": 768,
+    "height": 768,
+    "color": "#a69e90",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-rice-soup/128.b82d5ab8d7.avif"
+      ],
+      [
+        256,
+        "/img/dish-rice-soup/256.99604aa6be.avif"
+      ],
+      [
+        512,
+        "/img/dish-rice-soup/512.dbb7abed68.avif"
+      ],
+      [
+        768,
+        "/img/dish-rice-soup/768.dca0d163a4.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-rice-soup/128.b17855edf1.webp"
+      ],
+      [
+        256,
+        "/img/dish-rice-soup/256.7c1f7c79c9.webp"
+      ],
+      [
+        512,
+        "/img/dish-rice-soup/512.43d97d7191.webp"
+      ],
+      [
+        768,
+        "/img/dish-rice-soup/768.024d1709a0.webp"
+      ]
+    ]
+  },
+  "dish-crab-omelette": {
+    "width": 768,
+    "height": 768,
+    "color": "#c4b09a",
+    "focal": [
+      0.45,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-crab-omelette/128.30ed99d9c0.avif"
+      ],
+      [
+        256,
+        "/img/dish-crab-omelette/256.a1034d08a7.avif"
+      ],
+      [
+        512,
+        "/img/dish-crab-omelette/512.93a4cf5991.avif"
+      ],
+      [
+        768,
+        "/img/dish-crab-omelette/768.73ae353c83.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-crab-omelette/128.8da9f690b1.webp"
+      ],
+      [
+        256,
+        "/img/dish-crab-omelette/256.22437af8c5.webp"
+      ],
+      [
+        512,
+        "/img/dish-crab-omelette/512.002639f42b.webp"
+      ],
+      [
+        768,
+        "/img/dish-crab-omelette/768.3c059179ee.webp"
+      ]
+    ]
+  },
+  "dish-fruit-tray": {
+    "width": 768,
+    "height": 768,
+    "color": "#bca991",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-fruit-tray/128.ce3b429bdb.avif"
+      ],
+      [
+        256,
+        "/img/dish-fruit-tray/256.38ff2a2706.avif"
+      ],
+      [
+        512,
+        "/img/dish-fruit-tray/512.056f9e65b6.avif"
+      ],
+      [
+        768,
+        "/img/dish-fruit-tray/768.be4a04d47a.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-fruit-tray/128.e1784422bc.webp"
+      ],
+      [
+        256,
+        "/img/dish-fruit-tray/256.7ff7bbf4d4.webp"
+      ],
+      [
+        512,
+        "/img/dish-fruit-tray/512.bc4626229e.webp"
+      ],
+      [
+        768,
+        "/img/dish-fruit-tray/768.7ded28825b.webp"
+      ]
+    ]
+  },
+  "dish-eggs": {
+    "width": 768,
+    "height": 768,
+    "color": "#b8b1a1",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-eggs/128.1c50676dab.avif"
+      ],
+      [
+        256,
+        "/img/dish-eggs/256.7734862fdf.avif"
+      ],
+      [
+        512,
+        "/img/dish-eggs/512.b5a394e4b7.avif"
+      ],
+      [
+        768,
+        "/img/dish-eggs/768.25fa4d77fd.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-eggs/128.058260843a.webp"
+      ],
+      [
+        256,
+        "/img/dish-eggs/256.cb82227be8.webp"
+      ],
+      [
+        512,
+        "/img/dish-eggs/512.eb492b3644.webp"
+      ],
+      [
+        768,
+        "/img/dish-eggs/768.946de1e464.webp"
+      ]
+    ]
+  },
+  "dish-coffee": {
+    "width": 768,
+    "height": 768,
+    "color": "#d0c9c0",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-coffee/128.90212bbc2f.avif"
+      ],
+      [
+        256,
+        "/img/dish-coffee/256.1277d7ff23.avif"
+      ],
+      [
+        512,
+        "/img/dish-coffee/512.8873408aba.avif"
+      ],
+      [
+        768,
+        "/img/dish-coffee/768.509e466a6f.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-coffee/128.4a28024af1.webp"
+      ],
+      [
+        256,
+        "/img/dish-coffee/256.167f6b865e.webp"
+      ],
+      [
+        512,
+        "/img/dish-coffee/512.55be5f8670.webp"
+      ],
+      [
+        768,
+        "/img/dish-coffee/768.6291a9a68e.webp"
+      ]
+    ]
+  },
+  "dish-pad-thai": {
+    "width": 768,
+    "height": 768,
+    "color": "#d5c2ad",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-pad-thai/128.9d0c5d3cbf.avif"
+      ],
+      [
+        256,
+        "/img/dish-pad-thai/256.00a29016f2.avif"
+      ],
+      [
+        512,
+        "/img/dish-pad-thai/512.fedbff8c08.avif"
+      ],
+      [
+        768,
+        "/img/dish-pad-thai/768.923792f6bf.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-pad-thai/128.2e329261e3.webp"
+      ],
+      [
+        256,
+        "/img/dish-pad-thai/256.f607637c80.webp"
+      ],
+      [
+        512,
+        "/img/dish-pad-thai/512.a52c1416a5.webp"
+      ],
+      [
+        768,
+        "/img/dish-pad-thai/768.0b15e4c028.webp"
+      ]
+    ]
+  },
+  "dish-massaman": {
+    "width": 768,
+    "height": 768,
+    "color": "#b6a993",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-massaman/128.8a5ce4f5da.avif"
+      ],
+      [
+        256,
+        "/img/dish-massaman/256.e4ced358e8.avif"
+      ],
+      [
+        512,
+        "/img/dish-massaman/512.9ba859595e.avif"
+      ],
+      [
+        768,
+        "/img/dish-massaman/768.49be0802df.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-massaman/128.6df6c0e0d3.webp"
+      ],
+      [
+        256,
+        "/img/dish-massaman/256.7f084c6505.webp"
+      ],
+      [
+        512,
+        "/img/dish-massaman/512.1661001967.webp"
+      ],
+      [
+        768,
+        "/img/dish-massaman/768.fe275b9d7f.webp"
+      ]
+    ]
+  },
+  "dish-grilled-fish": {
+    "width": 768,
+    "height": 768,
+    "color": "#ecebe8",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-grilled-fish/128.324c602995.avif"
+      ],
+      [
+        256,
+        "/img/dish-grilled-fish/256.fb68c151d0.avif"
+      ],
+      [
+        512,
+        "/img/dish-grilled-fish/512.978b8330c3.avif"
+      ],
+      [
+        768,
+        "/img/dish-grilled-fish/768.78b86ba9b2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-grilled-fish/128.8309dee57a.webp"
+      ],
+      [
+        256,
+        "/img/dish-grilled-fish/256.1113c3a42a.webp"
+      ],
+      [
+        512,
+        "/img/dish-grilled-fish/512.5163896179.webp"
+      ],
+      [
+        768,
+        "/img/dish-grilled-fish/768.73604a211e.webp"
+      ]
+    ]
+  },
+  "dish-green-curry": {
+    "width": 768,
+    "height": 768,
+    "color": "#a6a493",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-green-curry/128.388eef489c.avif"
+      ],
+      [
+        256,
+        "/img/dish-green-curry/256.8317323794.avif"
+      ],
+      [
+        512,
+        "/img/dish-green-curry/512.a4da14c457.avif"
+      ],
+      [
+        768,
+        "/img/dish-green-curry/768.c8bcb4d703.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-green-curry/128.5657a62b8f.webp"
+      ],
+      [
+        256,
+        "/img/dish-green-curry/256.941c2bcc06.webp"
+      ],
+      [
+        512,
+        "/img/dish-green-curry/512.329ca72e84.webp"
+      ],
+      [
+        768,
+        "/img/dish-green-curry/768.d2a1a833a7.webp"
+      ]
+    ]
+  },
+  "dish-pomelo-salad": {
+    "width": 768,
+    "height": 768,
+    "color": "#b6adab",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-pomelo-salad/128.e94c17b499.avif"
+      ],
+      [
+        256,
+        "/img/dish-pomelo-salad/256.4bbd2cf228.avif"
+      ],
+      [
+        512,
+        "/img/dish-pomelo-salad/512.bfa55800db.avif"
+      ],
+      [
+        768,
+        "/img/dish-pomelo-salad/768.5f6e9d09dd.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-pomelo-salad/128.b134f89e1c.webp"
+      ],
+      [
+        256,
+        "/img/dish-pomelo-salad/256.cd3c241ab5.webp"
+      ],
+      [
+        512,
+        "/img/dish-pomelo-salad/512.83f32e5699.webp"
+      ],
+      [
+        768,
+        "/img/dish-pomelo-salad/768.3b3904fa72.webp"
+      ]
+    ]
+  },
+  "dish-morning-glory": {
+    "width": 768,
+    "height": 768,
+    "color": "#a6a094",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-morning-glory/128.63157a123e.avif"
+      ],
+      [
+        256,
+        "/img/dish-morning-glory/256.e82ef9e321.avif"
+      ],
+      [
+        512,
+        "/img/dish-morning-glory/512.026cb2a7a9.avif"
+      ],
+      [
+        768,
+        "/img/dish-morning-glory/768.a2e144d874.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-morning-glory/128.c5a38ec6bb.webp"
+      ],
+      [
+        256,
+        "/img/dish-morning-glory/256.65c0fae814.webp"
+      ],
+      [
+        512,
+        "/img/dish-morning-glory/512.812d30cd18.webp"
+      ],
+      [
+        768,
+        "/img/dish-morning-glory/768.9188bdb913.webp"
+      ]
+    ]
+  },
+  "dish-tom-yum": {
+    "width": 768,
+    "height": 768,
+    "color": "#d9ddd7",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-tom-yum/128.48d30b23fc.avif"
+      ],
+      [
+        256,
+        "/img/dish-tom-yum/256.b4bb89e1bb.avif"
+      ],
+      [
+        512,
+        "/img/dish-tom-yum/512.8c27118920.avif"
+      ],
+      [
+        768,
+        "/img/dish-tom-yum/768.e39cab5561.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-tom-yum/128.68864af410.webp"
+      ],
+      [
+        256,
+        "/img/dish-tom-yum/256.e16415fcce.webp"
+      ],
+      [
+        512,
+        "/img/dish-tom-yum/512.2fbc501786.webp"
+      ],
+      [
+        768,
+        "/img/dish-tom-yum/768.4a373840e7.webp"
+      ]
+    ]
+  },
+  "dish-mango-sticky-rice": {
+    "width": 768,
+    "height": 768,
+    "color": "#a5a192",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-mango-sticky-rice/128.8a9158b355.avif"
+      ],
+      [
+        256,
+        "/img/dish-mango-sticky-rice/256.81ca944885.avif"
+      ],
+      [
+        512,
+        "/img/dish-mango-sticky-rice/512.faf76f1814.avif"
+      ],
+      [
+        768,
+        "/img/dish-mango-sticky-rice/768.550aaeae76.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-mango-sticky-rice/128.302272a62f.webp"
+      ],
+      [
+        256,
+        "/img/dish-mango-sticky-rice/256.8cf911405b.webp"
+      ],
+      [
+        512,
+        "/img/dish-mango-sticky-rice/512.d0a7382afb.webp"
+      ],
+      [
+        768,
+        "/img/dish-mango-sticky-rice/768.98842fd7ab.webp"
+      ]
+    ]
+  },
+  "dish-sundowner": {
+    "width": 768,
+    "height": 768,
+    "color": "#cbb695",
+    "focal": [
+      0.45,
+      0.55
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-sundowner/128.54340be5df.avif"
+      ],
+      [
+        256,
+        "/img/dish-sundowner/256.d636d74167.avif"
+      ],
+      [
+        512,
+        "/img/dish-sundowner/512.7008a94f4c.avif"
+      ],
+      [
+        768,
+        "/img/dish-sundowner/768.8d0b29df0e.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-sundowner/128.9b887cdd88.webp"
+      ],
+      [
+        256,
+        "/img/dish-sundowner/256.e4e596a4de.webp"
+      ],
+      [
+        512,
+        "/img/dish-sundowner/512.e8bec81415.webp"
+      ],
+      [
+        768,
+        "/img/dish-sundowner/768.96cdef6e02.webp"
+      ]
+    ]
+  },
+  "dish-lemongrass-cooler": {
+    "width": 768,
+    "height": 768,
+    "color": "#9ba99a",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-lemongrass-cooler/128.addf35b7fd.avif"
+      ],
+      [
+        256,
+        "/img/dish-lemongrass-cooler/256.e88c86dea3.avif"
+      ],
+      [
+        512,
+        "/img/dish-lemongrass-cooler/512.5f1a8c4ff6.avif"
+      ],
+      [
+        768,
+        "/img/dish-lemongrass-cooler/768.8634dfde1d.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-lemongrass-cooler/128.826c1fa4f7.webp"
+      ],
+      [
+        256,
+        "/img/dish-lemongrass-cooler/256.598cc6ec91.webp"
+      ],
+      [
+        512,
+        "/img/dish-lemongrass-cooler/512.b874ed65a5.webp"
+      ],
+      [
+        768,
+        "/img/dish-lemongrass-cooler/768.1bcf87f413.webp"
+      ]
+    ]
+  },
+  "dish-iced-tea": {
+    "width": 768,
+    "height": 768,
+    "color": "#e3e0dd",
+    "focal": [
+      0.45,
+      0.551
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-iced-tea/128.911207329a.avif"
+      ],
+      [
+        256,
+        "/img/dish-iced-tea/256.f1fc732e14.avif"
+      ],
+      [
+        512,
+        "/img/dish-iced-tea/512.cfcc16f1bd.avif"
+      ],
+      [
+        768,
+        "/img/dish-iced-tea/768.4975d0b503.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-iced-tea/128.503fa6c2b7.webp"
+      ],
+      [
+        256,
+        "/img/dish-iced-tea/256.38d516e2fc.webp"
+      ],
+      [
+        512,
+        "/img/dish-iced-tea/512.61cbd2a4eb.webp"
+      ],
+      [
+        768,
+        "/img/dish-iced-tea/768.232d2dac78.webp"
+      ]
+    ]
+  },
+  "dish-beer": {
+    "width": 768,
+    "height": 768,
+    "color": "#d0b89a",
+    "focal": [
+      0.55,
+      0.45
+    ],
+    "avif": [
+      [
+        128,
+        "/img/dish-beer/128.c8eb3b5c21.avif"
+      ],
+      [
+        256,
+        "/img/dish-beer/256.be3e276d2c.avif"
+      ],
+      [
+        512,
+        "/img/dish-beer/512.7aa453d084.avif"
+      ],
+      [
+        768,
+        "/img/dish-beer/768.fadb000abb.avif"
+      ]
+    ],
+    "webp": [
+      [
+        128,
+        "/img/dish-beer/128.721753d39c.webp"
+      ],
+      [
+        256,
+        "/img/dish-beer/256.5e597981b3.webp"
+      ],
+      [
+        512,
+        "/img/dish-beer/512.cd948ad0e4.webp"
+      ],
+      [
+        768,
+        "/img/dish-beer/768.aac5c2f02b.webp"
+      ]
+    ]
+  },
+  "exp-house": {
+    "width": 1600,
+    "height": 2133,
+    "color": "#9aaea7",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-house/480.43d5500503.avif"
+      ],
+      [
+        768,
+        "/img/exp-house/768.50921cc702.avif"
+      ],
+      [
+        1080,
+        "/img/exp-house/1080.19bc0cd528.avif"
+      ],
+      [
+        1600,
+        "/img/exp-house/1600.0589b8be36.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-house/480.9780d1f292.webp"
+      ],
+      [
+        768,
+        "/img/exp-house/768.0f28782cfc.webp"
+      ],
+      [
+        1080,
+        "/img/exp-house/1080.dac023ae00.webp"
+      ],
+      [
+        1600,
+        "/img/exp-house/1600.27ce57a315.webp"
+      ]
+    ]
+  },
+  "exp-about-house": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#94927f",
+    "focal": [
+      0.4,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-about-house/480.7f2f7c30bb.avif"
+      ],
+      [
+        768,
+        "/img/exp-about-house/768.1411b3f605.avif"
+      ],
+      [
+        1080,
+        "/img/exp-about-house/1080.00cab67b89.avif"
+      ],
+      [
+        1600,
+        "/img/exp-about-house/1600.309114b6a1.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-about-house/480.512ef10a6e.webp"
+      ],
+      [
+        768,
+        "/img/exp-about-house/768.92571d6f98.webp"
+      ],
+      [
+        1080,
+        "/img/exp-about-house/1080.198976f77d.webp"
+      ],
+      [
+        1600,
+        "/img/exp-about-house/1600.cf7e2cea0e.webp"
+      ]
+    ]
+  },
+  "exp-pool": {
+    "width": 1600,
+    "height": 2000,
+    "color": "#bcbdb2",
+    "focal": [
+      0.5,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-pool/480.9043aa2c2c.avif"
+      ],
+      [
+        768,
+        "/img/exp-pool/768.3b293e26d2.avif"
+      ],
+      [
+        1080,
+        "/img/exp-pool/1080.44476ec82e.avif"
+      ],
+      [
+        1600,
+        "/img/exp-pool/1600.7a5a44eb3b.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-pool/480.a5d6e49420.webp"
+      ],
+      [
+        768,
+        "/img/exp-pool/768.c3753ffe5f.webp"
+      ],
+      [
+        1080,
+        "/img/exp-pool/1080.35bd07bc1a.webp"
+      ],
+      [
+        1600,
+        "/img/exp-pool/1600.893367982b.webp"
+      ]
+    ]
+  },
+  "exp-massage": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#d3b8a2",
+    "focal": [
+      0.5,
+      0.4
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-massage/480.41b9a0bd79.avif"
+      ],
+      [
+        768,
+        "/img/exp-massage/768.f5c91ad359.avif"
+      ],
+      [
+        1080,
+        "/img/exp-massage/1080.6f219a2567.avif"
+      ],
+      [
+        1600,
+        "/img/exp-massage/1600.76535e7d9b.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-massage/480.d36fa49d96.webp"
+      ],
+      [
+        768,
+        "/img/exp-massage/768.ca8ceb3777.webp"
+      ],
+      [
+        1080,
+        "/img/exp-massage/1080.4489fe951d.webp"
+      ],
+      [
+        1600,
+        "/img/exp-massage/1600.607cd869ef.webp"
+      ]
+    ]
+  },
+  "exp-breakfast": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#cfcfd0",
+    "focal": [
+      0.45,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-breakfast/480.5e816d95e0.avif"
+      ],
+      [
+        768,
+        "/img/exp-breakfast/768.6e552cd45b.avif"
+      ],
+      [
+        1080,
+        "/img/exp-breakfast/1080.5fe81fa10c.avif"
+      ],
+      [
+        1600,
+        "/img/exp-breakfast/1600.c8538ce852.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-breakfast/480.d56dbd3867.webp"
+      ],
+      [
+        768,
+        "/img/exp-breakfast/768.41bd46d677.webp"
+      ],
+      [
+        1080,
+        "/img/exp-breakfast/1080.fdaad885fe.webp"
+      ],
+      [
+        1600,
+        "/img/exp-breakfast/1600.292fd5cca3.webp"
+      ]
+    ]
+  },
+  "exp-team-housekeeping": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#aeaead",
+    "focal": [
+      0.5,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-team-housekeeping/480.68e9a8bf35.avif"
+      ],
+      [
+        768,
+        "/img/exp-team-housekeeping/768.3349d68a37.avif"
+      ],
+      [
+        1080,
+        "/img/exp-team-housekeeping/1080.6e6c0af1e2.avif"
+      ],
+      [
+        1600,
+        "/img/exp-team-housekeeping/1600.f59752f91b.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-team-housekeeping/480.41cbeeca67.webp"
+      ],
+      [
+        768,
+        "/img/exp-team-housekeeping/768.1811949786.webp"
+      ],
+      [
+        1080,
+        "/img/exp-team-housekeeping/1080.e086935e4c.webp"
+      ],
+      [
+        1600,
+        "/img/exp-team-housekeeping/1600.ff7c79f4ff.webp"
+      ]
+    ]
+  },
+  "exp-team-concierge": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#c3bebb",
+    "focal": [
+      0.18,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-team-concierge/480.f7bf8f8229.avif"
+      ],
+      [
+        768,
+        "/img/exp-team-concierge/768.982907d2b9.avif"
+      ],
+      [
+        1080,
+        "/img/exp-team-concierge/1080.7839af24f6.avif"
+      ],
+      [
+        1600,
+        "/img/exp-team-concierge/1600.01b9127cb2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-team-concierge/480.be493ed207.webp"
+      ],
+      [
+        768,
+        "/img/exp-team-concierge/768.801fed0c4e.webp"
+      ],
+      [
+        1080,
+        "/img/exp-team-concierge/1080.ef30f9368f.webp"
+      ],
+      [
+        1600,
+        "/img/exp-team-concierge/1600.43b693292f.webp"
+      ]
+    ]
+  },
+  "exp-team-kitchen": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#a4999b",
+    "focal": [
+      0.4,
+      0.45
+    ],
+    "avif": [
+      [
+        480,
+        "/img/exp-team-kitchen/480.c2707a7596.avif"
+      ],
+      [
+        768,
+        "/img/exp-team-kitchen/768.54f77af810.avif"
+      ],
+      [
+        1080,
+        "/img/exp-team-kitchen/1080.2999cb3b55.avif"
+      ],
+      [
+        1600,
+        "/img/exp-team-kitchen/1600.f583dbec67.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/exp-team-kitchen/480.3fa6903a16.webp"
+      ],
+      [
+        768,
+        "/img/exp-team-kitchen/768.76e9000d12.webp"
+      ],
+      [
+        1080,
+        "/img/exp-team-kitchen/1080.e2c590f6db.webp"
+      ],
+      [
+        1600,
+        "/img/exp-team-kitchen/1600.a97bfd4490.webp"
+      ]
+    ]
+  },
+  "fac-lounge": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#9a9987",
+    "focal": [
+      0.45,
+      0.65
+    ],
+    "avif": [
+      [
+        480,
+        "/img/fac-lounge/480.7ba6c0a56e.avif"
+      ],
+      [
+        768,
+        "/img/fac-lounge/768.1cac551c16.avif"
+      ],
+      [
+        1080,
+        "/img/fac-lounge/1080.6c208664da.avif"
+      ],
+      [
+        1600,
+        "/img/fac-lounge/1600.d8c6bb9cf0.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/fac-lounge/480.8038c2170d.webp"
+      ],
+      [
+        768,
+        "/img/fac-lounge/768.fd81deb813.webp"
+      ],
+      [
+        1080,
+        "/img/fac-lounge/1080.769855767f.webp"
+      ],
+      [
+        1600,
+        "/img/fac-lounge/1600.0e79e5c6ee.webp"
+      ]
+    ]
+  },
+  "fac-pool": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#939b8e",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/fac-pool/480.1b13f69a3e.avif"
+      ],
+      [
+        768,
+        "/img/fac-pool/768.c84b8d01a5.avif"
+      ],
+      [
+        1080,
+        "/img/fac-pool/1080.a618e99cfa.avif"
+      ],
+      [
+        1600,
+        "/img/fac-pool/1600.a1918b0f4e.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/fac-pool/480.e357ef4240.webp"
+      ],
+      [
+        768,
+        "/img/fac-pool/768.ddc60eb300.webp"
+      ],
+      [
+        1080,
+        "/img/fac-pool/1080.7befbfa1a0.webp"
+      ],
+      [
+        1600,
+        "/img/fac-pool/1600.4d6463bb11.webp"
+      ]
+    ]
+  },
+  "fac-garden": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#a5ad9f",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/fac-garden/480.bc0d8a404c.avif"
+      ],
+      [
+        768,
+        "/img/fac-garden/768.a0fe969fb3.avif"
+      ],
+      [
+        1080,
+        "/img/fac-garden/1080.92ffdfda10.avif"
+      ],
+      [
+        1600,
+        "/img/fac-garden/1600.950674d8f3.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/fac-garden/480.486b92acc8.webp"
+      ],
+      [
+        768,
+        "/img/fac-garden/768.6efd165874.webp"
+      ],
+      [
+        1080,
+        "/img/fac-garden/1080.a0fb4bf906.webp"
+      ],
+      [
+        1600,
+        "/img/fac-garden/1600.3f68a1ecbe.webp"
+      ]
+    ]
+  },
+  "fac-housekeeping": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#989ea1",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/fac-housekeeping/480.0fed88b2b7.avif"
+      ],
+      [
+        768,
+        "/img/fac-housekeeping/768.5f59449a7c.avif"
+      ],
+      [
+        1080,
+        "/img/fac-housekeeping/1080.618f998c58.avif"
+      ],
+      [
+        1600,
+        "/img/fac-housekeeping/1600.d2415eb68d.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/fac-housekeeping/480.29beee95e0.webp"
+      ],
+      [
+        768,
+        "/img/fac-housekeeping/768.a0dc507f78.webp"
+      ],
+      [
+        1080,
+        "/img/fac-housekeeping/1080.ec70741bd1.webp"
+      ],
+      [
+        1600,
+        "/img/fac-housekeeping/1600.2c4ef0374e.webp"
+      ]
+    ]
+  },
+  "fac-transfer": {
+    "width": 1600,
+    "height": 1065,
+    "color": "#8d9196",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/fac-transfer/480.2613bc33d0.avif"
+      ],
+      [
+        768,
+        "/img/fac-transfer/768.15428e06a0.avif"
+      ],
+      [
+        1080,
+        "/img/fac-transfer/1080.dae05dab0e.avif"
+      ],
+      [
+        1600,
+        "/img/fac-transfer/1600.08f166ff1a.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/fac-transfer/480.3533279274.webp"
+      ],
+      [
+        768,
+        "/img/fac-transfer/768.d69fe6704a.webp"
+      ],
+      [
+        1080,
+        "/img/fac-transfer/1080.4583d5b57b.webp"
+      ],
+      [
+        1600,
+        "/img/fac-transfer/1600.b2eaa093dc.webp"
+      ]
+    ]
+  },
+  "gallery-palm-shadows": {
+    "width": 1600,
+    "height": 2259,
+    "color": "#d0c6b6",
+    "focal": [
+      0.6,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-palm-shadows/480.3bf5d9369f.avif"
+      ],
+      [
+        768,
+        "/img/gallery-palm-shadows/768.be0930969a.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-palm-shadows/1080.76d05ca3ac.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-palm-shadows/1600.b7eb36d293.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-palm-shadows/480.6bb25357e4.webp"
+      ],
+      [
+        768,
+        "/img/gallery-palm-shadows/768.ba89695340.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-palm-shadows/1080.1349830b02.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-palm-shadows/1600.7e502b9ebf.webp"
+      ]
+    ]
+  },
+  "gallery-orchid-console": {
+    "width": 1600,
+    "height": 2405,
+    "color": "#aaaba6",
+    "focal": [
+      0.45,
+      0.35
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-orchid-console/480.f0de2b5d8f.avif"
+      ],
+      [
+        768,
+        "/img/gallery-orchid-console/768.7ae561a14b.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-orchid-console/1080.9d53b553e4.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-orchid-console/1600.6af82e5501.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-orchid-console/480.f8f1f20b7e.webp"
+      ],
+      [
+        768,
+        "/img/gallery-orchid-console/768.b23960a22e.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-orchid-console/1080.9073a7dd31.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-orchid-console/1600.76efcff7fb.webp"
+      ]
+    ]
+  },
+  "gallery-teak-corridor": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#a29e91",
+    "focal": [
+      0.55,
+      0.45
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-teak-corridor/480.fa40e06887.avif"
+      ],
+      [
+        768,
+        "/img/gallery-teak-corridor/768.71510199a9.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-teak-corridor/1080.d4cbf7f12c.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-teak-corridor/1600.ee433afdfc.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-teak-corridor/480.dc5ffb19d3.webp"
+      ],
+      [
+        768,
+        "/img/gallery-teak-corridor/768.b7cac0b043.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-teak-corridor/1080.e35eb8a421.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-teak-corridor/1600.53d029d0c2.webp"
+      ]
+    ]
+  },
+  "gallery-pool-cabana": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#a1bcb0",
+    "focal": [
+      0.45,
+      0.45
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-pool-cabana/480.3536585791.avif"
+      ],
+      [
+        768,
+        "/img/gallery-pool-cabana/768.bf82fa90b2.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-pool-cabana/1080.f5cef66243.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-pool-cabana/1600.81120c103e.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-pool-cabana/480.8574ce7cd6.webp"
+      ],
+      [
+        768,
+        "/img/gallery-pool-cabana/768.655235376f.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-pool-cabana/1080.119138eff6.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-pool-cabana/1600.e69c175042.webp"
+      ]
+    ]
+  },
+  "gallery-lotus-basin": {
+    "width": 1600,
+    "height": 2397,
+    "color": "#aac3bd",
+    "focal": [
+      0.45,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-lotus-basin/480.c13fd36973.avif"
+      ],
+      [
+        768,
+        "/img/gallery-lotus-basin/768.08180f0b9e.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-lotus-basin/1080.31c5107e79.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-lotus-basin/1600.3c1dfead7f.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-lotus-basin/480.f0ee41df7a.webp"
+      ],
+      [
+        768,
+        "/img/gallery-lotus-basin/768.b82c6c3268.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-lotus-basin/1080.616f03ce5a.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-lotus-basin/1600.6ae2bdb204.webp"
+      ]
+    ]
+  },
+  "gallery-spa-still-life": {
+    "width": 1600,
+    "height": 1200,
+    "color": "#aaa599",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-spa-still-life/480.b76de0927e.avif"
+      ],
+      [
+        768,
+        "/img/gallery-spa-still-life/768.43cdbd57fc.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-spa-still-life/1080.91e3fbd862.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-spa-still-life/1600.1b53ef2ca7.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-spa-still-life/480.aebe060dd6.webp"
+      ],
+      [
+        768,
+        "/img/gallery-spa-still-life/768.b91a5c1651.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-spa-still-life/1080.dce7e82600.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-spa-still-life/1600.479b9aeee7.webp"
+      ]
+    ]
+  },
+  "gallery-wardrobe-robes": {
+    "width": 1600,
+    "height": 2397,
+    "color": "#b4afa8",
+    "focal": [
+      0.62,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-wardrobe-robes/480.9e1e430a37.avif"
+      ],
+      [
+        768,
+        "/img/gallery-wardrobe-robes/768.e9920f57b0.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-wardrobe-robes/1080.f150c22301.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-wardrobe-robes/1600.966de57ba8.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-wardrobe-robes/480.16df034bf0.webp"
+      ],
+      [
+        768,
+        "/img/gallery-wardrobe-robes/768.7f2fa1744c.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-wardrobe-robes/1080.78c82e2af0.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-wardrobe-robes/1600.ddba834a5d.webp"
+      ]
+    ]
+  },
+  "gallery-chef-hands": {
+    "width": 1600,
+    "height": 2133,
+    "color": "#9a908d",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-chef-hands/480.3ee79978f5.avif"
+      ],
+      [
+        768,
+        "/img/gallery-chef-hands/768.101c207138.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-chef-hands/1080.b36baffd4a.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-chef-hands/1600.85d385829e.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-chef-hands/480.9c2e5f5e56.webp"
+      ],
+      [
+        768,
+        "/img/gallery-chef-hands/768.aa92d3ecc2.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-chef-hands/1080.a121628da7.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-chef-hands/1600.d184762179.webp"
+      ]
+    ]
+  },
+  "gallery-fruit-basket": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#bca87d",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-fruit-basket/480.3b40b00ef5.avif"
+      ],
+      [
+        768,
+        "/img/gallery-fruit-basket/768.38a6b5ad5a.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-fruit-basket/1080.0c270f918d.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-fruit-basket/1600.ca37cf66b6.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-fruit-basket/480.d12fc69c3e.webp"
+      ],
+      [
+        768,
+        "/img/gallery-fruit-basket/768.f9cc836fdc.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-fruit-basket/1080.3dbe61a973.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-fruit-basket/1600.562345962a.webp"
+      ]
+    ]
+  },
+  "gallery-river-rail-cocktails": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#a4b2b9",
+    "focal": [
+      0.48,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-river-rail-cocktails/480.e789c6b9c5.avif"
+      ],
+      [
+        768,
+        "/img/gallery-river-rail-cocktails/768.a16937988a.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-river-rail-cocktails/1080.dea9a7d5fb.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-river-rail-cocktails/1600.38ef765cf2.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-river-rail-cocktails/480.61c8a2fe90.webp"
+      ],
+      [
+        768,
+        "/img/gallery-river-rail-cocktails/768.934bd27ce8.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-river-rail-cocktails/1080.81e432397e.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-river-rail-cocktails/1600.9d3b09a30a.webp"
+      ]
+    ]
+  },
+  "gallery-tea-set": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#cebfa8",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-tea-set/480.bb8a226b49.avif"
+      ],
+      [
+        768,
+        "/img/gallery-tea-set/768.d43545a9c3.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-tea-set/1080.493dc7a309.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-tea-set/1600.217a1e0d74.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-tea-set/480.3e2f459c6b.webp"
+      ],
+      [
+        768,
+        "/img/gallery-tea-set/768.de0774db27.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-tea-set/1080.c2209654b6.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-tea-set/1600.64b691e1f4.webp"
+      ]
+    ]
+  },
+  "gallery-window-seat": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#c5c4c5",
+    "focal": [
+      0.35,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/gallery-window-seat/480.07456b2840.avif"
+      ],
+      [
+        768,
+        "/img/gallery-window-seat/768.2496947923.avif"
+      ],
+      [
+        1080,
+        "/img/gallery-window-seat/1080.590a400f3c.avif"
+      ],
+      [
+        1600,
+        "/img/gallery-window-seat/1600.b3bb7fbe03.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/gallery-window-seat/480.af93fe10ac.webp"
+      ],
+      [
+        768,
+        "/img/gallery-window-seat/768.e9ecdef015.webp"
+      ],
+      [
+        1080,
+        "/img/gallery-window-seat/1080.4800f2cf18.webp"
+      ],
+      [
+        1600,
+        "/img/gallery-window-seat/1600.d27df5687a.webp"
+      ]
+    ]
+  },
+  "events-beyond": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#bec1c3",
+    "focal": [
+      0.55,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/events-beyond/480.5098bfd8e1.avif"
+      ],
+      [
+        768,
+        "/img/events-beyond/768.2f4ee09cdb.avif"
+      ],
+      [
+        1080,
+        "/img/events-beyond/1080.85afba52ed.avif"
+      ],
+      [
+        1600,
+        "/img/events-beyond/1600.4401afbcfe.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/events-beyond/480.74ccfe1965.webp"
+      ],
+      [
+        768,
+        "/img/events-beyond/768.41a01ab024.webp"
+      ],
+      [
+        1080,
+        "/img/events-beyond/1080.1fc9e54597.webp"
+      ],
+      [
+        1600,
+        "/img/events-beyond/1600.cea0008ed5.webp"
+      ]
+    ]
+  },
+  "events-strip-wedding": {
+    "width": 1600,
+    "height": 1157,
+    "color": "#a2a89d",
+    "focal": [
+      0.55,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/events-strip-wedding/480.34e5d3e64a.avif"
+      ],
+      [
+        768,
+        "/img/events-strip-wedding/768.9c57032027.avif"
+      ],
+      [
+        1080,
+        "/img/events-strip-wedding/1080.ccc917899f.avif"
+      ],
+      [
+        1600,
+        "/img/events-strip-wedding/1600.97bacd9637.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/events-strip-wedding/480.4fa5f094a4.webp"
+      ],
+      [
+        768,
+        "/img/events-strip-wedding/768.45da317dc5.webp"
+      ],
+      [
+        1080,
+        "/img/events-strip-wedding/1080.3bdef1d3ef.webp"
+      ],
+      [
+        1600,
+        "/img/events-strip-wedding/1600.d428522048.webp"
+      ]
+    ]
+  },
+  "events-strip-dinner": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#bab5a9",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/events-strip-dinner/480.b01884c5a6.avif"
+      ],
+      [
+        768,
+        "/img/events-strip-dinner/768.0904c530fc.avif"
+      ],
+      [
+        1080,
+        "/img/events-strip-dinner/1080.1caa1bbcfd.avif"
+      ],
+      [
+        1600,
+        "/img/events-strip-dinner/1600.22016e806f.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/events-strip-dinner/480.6db116e670.webp"
+      ],
+      [
+        768,
+        "/img/events-strip-dinner/768.255a72b777.webp"
+      ],
+      [
+        1080,
+        "/img/events-strip-dinner/1080.746e2bdad5.webp"
+      ],
+      [
+        1600,
+        "/img/events-strip-dinner/1600.2827b56ea9.webp"
+      ]
+    ]
+  },
+  "events-loy-krathong": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#a0907a",
+    "focal": [
+      0.45,
+      0.35
+    ],
+    "avif": [
+      [
+        480,
+        "/img/events-loy-krathong/480.93a8f9086a.avif"
+      ],
+      [
+        768,
+        "/img/events-loy-krathong/768.4bd020b10e.avif"
+      ],
+      [
+        1080,
+        "/img/events-loy-krathong/1080.d3adf487bc.avif"
+      ],
+      [
+        1600,
+        "/img/events-loy-krathong/1600.b4a05e9071.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/events-loy-krathong/480.9da8dadab2.webp"
+      ],
+      [
+        768,
+        "/img/events-loy-krathong/768.d46e2d4538.webp"
+      ],
+      [
+        1080,
+        "/img/events-loy-krathong/1080.7881d2f761.webp"
+      ],
+      [
+        1600,
+        "/img/events-loy-krathong/1600.d0227c4654.webp"
+      ]
+    ]
+  },
+  "events-songkran-lunch": {
+    "width": 1600,
+    "height": 2133,
+    "color": "#a8966e",
+    "focal": [
+      0.5,
+      0.55
+    ],
+    "avif": [
+      [
+        480,
+        "/img/events-songkran-lunch/480.bfdb0f58ed.avif"
+      ],
+      [
+        768,
+        "/img/events-songkran-lunch/768.fae8e84dd1.avif"
+      ],
+      [
+        1080,
+        "/img/events-songkran-lunch/1080.5e38a2d724.avif"
+      ],
+      [
+        1600,
+        "/img/events-songkran-lunch/1600.a5f1c83e7e.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/events-songkran-lunch/480.04e949c9ed.webp"
+      ],
+      [
+        768,
+        "/img/events-songkran-lunch/768.33c2f45dc6.webp"
+      ],
+      [
+        1080,
+        "/img/events-songkran-lunch/1080.96055955a7.webp"
+      ],
+      [
+        1600,
+        "/img/events-songkran-lunch/1600.7c54aa8dbf.webp"
+      ]
+    ]
+  },
+  "offers-airport-pickup": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#9e9490",
+    "focal": [
+      0.45,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/offers-airport-pickup/480.84ee2277eb.avif"
+      ],
+      [
+        768,
+        "/img/offers-airport-pickup/768.b4bb807752.avif"
+      ],
+      [
+        1080,
+        "/img/offers-airport-pickup/1080.c78235bebd.avif"
+      ],
+      [
+        1600,
+        "/img/offers-airport-pickup/1600.1715bdbf5b.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/offers-airport-pickup/480.7e918b91e4.webp"
+      ],
+      [
+        768,
+        "/img/offers-airport-pickup/768.bf0ac678d2.webp"
+      ],
+      [
+        1080,
+        "/img/offers-airport-pickup/1080.8ab4e7015a.webp"
+      ],
+      [
+        1600,
+        "/img/offers-airport-pickup/1600.c6e9e1fb86.webp"
+      ]
+    ]
+  },
+  "offers-stay-longer": {
+    "width": 1600,
+    "height": 2400,
+    "color": "#b9b6a6",
+    "focal": [
+      0.55,
+      0.62
+    ],
+    "avif": [
+      [
+        480,
+        "/img/offers-stay-longer/480.e579263654.avif"
+      ],
+      [
+        768,
+        "/img/offers-stay-longer/768.3fab667702.avif"
+      ],
+      [
+        1080,
+        "/img/offers-stay-longer/1080.11e0deadb0.avif"
+      ],
+      [
+        1600,
+        "/img/offers-stay-longer/1600.43cc763bae.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/offers-stay-longer/480.d97fbb66ae.webp"
+      ],
+      [
+        768,
+        "/img/offers-stay-longer/768.b7bb9c8bc2.webp"
+      ],
+      [
+        1080,
+        "/img/offers-stay-longer/1080.b15580f627.webp"
+      ],
+      [
+        1600,
+        "/img/offers-stay-longer/1600.f703de726a.webp"
+      ]
+    ]
+  },
+  "dining-beyond": {
+    "width": 1600,
+    "height": 1200,
+    "color": "#aeb3b1",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/dining-beyond/480.3ed917eae3.avif"
+      ],
+      [
+        768,
+        "/img/dining-beyond/768.e315fb96a4.avif"
+      ],
+      [
+        1080,
+        "/img/dining-beyond/1080.4bb65b21f5.avif"
+      ],
+      [
+        1600,
+        "/img/dining-beyond/1600.2a6df73ba3.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/dining-beyond/480.6c315e0e9b.webp"
+      ],
+      [
+        768,
+        "/img/dining-beyond/768.4544a4b23c.webp"
+      ],
+      [
+        1080,
+        "/img/dining-beyond/1080.a7128704e4.webp"
+      ],
+      [
+        1600,
+        "/img/dining-beyond/1600.ebce3cefd2.webp"
+      ]
+    ]
+  },
+  "dining-breakfast": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#d5d5d4",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/dining-breakfast/480.2e746025b0.avif"
+      ],
+      [
+        768,
+        "/img/dining-breakfast/768.8d89071453.avif"
+      ],
+      [
+        1080,
+        "/img/dining-breakfast/1080.8fd338657c.avif"
+      ],
+      [
+        1600,
+        "/img/dining-breakfast/1600.7bdf38eaed.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/dining-breakfast/480.739ba524bd.webp"
+      ],
+      [
+        768,
+        "/img/dining-breakfast/768.06e72f6cf0.webp"
+      ],
+      [
+        1080,
+        "/img/dining-breakfast/1080.edbd862719.webp"
+      ],
+      [
+        1600,
+        "/img/dining-breakfast/1600.ea016baee0.webp"
+      ]
+    ]
+  },
+  "dining-thai-kitchen": {
+    "width": 1600,
+    "height": 1151,
+    "color": "#b29b86",
+    "focal": [
+      0.5,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/dining-thai-kitchen/480.1215397d2a.avif"
+      ],
+      [
+        768,
+        "/img/dining-thai-kitchen/768.a0cddfbaac.avif"
+      ],
+      [
+        1080,
+        "/img/dining-thai-kitchen/1080.ff693c298f.avif"
+      ],
+      [
+        1600,
+        "/img/dining-thai-kitchen/1600.afa4341026.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/dining-thai-kitchen/480.4936542a8d.webp"
+      ],
+      [
+        768,
+        "/img/dining-thai-kitchen/768.22f5bf78d1.webp"
+      ],
+      [
+        1080,
+        "/img/dining-thai-kitchen/1080.5376b5c8c8.webp"
+      ],
+      [
+        1600,
+        "/img/dining-thai-kitchen/1600.4528fafc9e.webp"
+      ]
+    ]
+  },
+  "dining-drinks": {
+    "width": 1600,
+    "height": 1067,
+    "color": "#abb1b2",
+    "focal": [
+      0.55,
+      0.6
+    ],
+    "avif": [
+      [
+        480,
+        "/img/dining-drinks/480.ca7f886108.avif"
+      ],
+      [
+        768,
+        "/img/dining-drinks/768.e9faaea965.avif"
+      ],
+      [
+        1080,
+        "/img/dining-drinks/1080.4774e66792.avif"
+      ],
+      [
+        1600,
+        "/img/dining-drinks/1600.c5f4109068.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/dining-drinks/480.ab6c429f56.webp"
+      ],
+      [
+        768,
+        "/img/dining-drinks/768.94eb8caac8.webp"
+      ],
+      [
+        1080,
+        "/img/dining-drinks/1080.dc95d62561.webp"
+      ],
+      [
+        1600,
+        "/img/dining-drinks/1600.66cf1bd4e2.webp"
+      ]
+    ]
   }
+} as const;
+
+export const OG_IMAGE = {"url":"/img/og-default/1200.13a1aac2df.jpg","width":1200,"height":630} as const;
+
+/* The builder's incremental keys (master bytes + options) · not used at runtime. */
+export const IMAGE_BUILD_KEYS = {
+  "hero-home": "73f4a65173",
+  "hero-home-m": "fafb746a63",
+  "hero-rooms": "b54001b268",
+  "hero-rooms-m": "8bbf69ca8d",
+  "hero-dining": "81aa97d987",
+  "hero-dining-m": "803bed4a63",
+  "hero-dining-reserve": "1270407280",
+  "hero-dining-reserve-m": "c160566a08",
+  "hero-events": "6c16713929",
+  "hero-events-m": "e432c1bfd6",
+  "hero-events-reserve": "5ee2137255",
+  "hero-events-reserve-m": "91f1ef4eba",
+  "hero-gallery": "b555677694",
+  "hero-gallery-m": "e257b511fa",
+  "hero-contact": "108387f426",
+  "hero-contact-m": "9ab6f1db67",
+  "hero-account": "184a764f2a",
+  "room-deluxe-king": "d2bd63fcc8",
+  "room-deluxe-twin": "8fd5a89a4e",
+  "room-premier-river": "2351ac0e65",
+  "room-junior-suite": "f55f701f0c",
+  "room-teak-suite": "a3e7daa7a8",
+  "room-royal-teak-suite": "ec673741ff",
+  "room-deluxe-king-bath": "dd4acd19f7",
+  "room-deluxe-king-view": "cb9aca47f8",
+  "room-deluxe-king-detail": "29675e0352",
+  "room-deluxe-twin-bath": "406673cb60",
+  "room-deluxe-twin-view": "6d538f89e4",
+  "room-deluxe-twin-detail": "aa4c4dbcfb",
+  "room-premier-river-bath": "be44d3c331",
+  "room-junior-suite-bath": "6ffef470d8",
+  "room-junior-suite-view": "b01c3a149f",
+  "room-junior-suite-detail": "714e6290eb",
+  "room-teak-suite-bath": "001bce214c",
+  "room-teak-suite-view": "1a059edf65",
+  "room-teak-suite-detail": "26adc3b85e",
+  "room-royal-teak-suite-bath": "a880141dac",
+  "room-royal-teak-suite-view": "4f9157ff30",
+  "room-royal-teak-suite-detail": "6a06edd6e8",
+  "dish-rice-soup": "dc2ab996c7",
+  "dish-crab-omelette": "d35a681a87",
+  "dish-fruit-tray": "0ec61b06d6",
+  "dish-eggs": "c88be99262",
+  "dish-coffee": "7d61dbc595",
+  "dish-pad-thai": "bc1bbef63a",
+  "dish-massaman": "dea5a446ee",
+  "dish-grilled-fish": "0fc99907e3",
+  "dish-green-curry": "77538887e4",
+  "dish-pomelo-salad": "75a90738a2",
+  "dish-morning-glory": "a34ee04dea",
+  "dish-tom-yum": "17a65cf24e",
+  "dish-mango-sticky-rice": "46cff09094",
+  "dish-sundowner": "1df89220cb",
+  "dish-lemongrass-cooler": "f2a3d8af34",
+  "dish-iced-tea": "2e55a91793",
+  "dish-beer": "706afcd144",
+  "exp-house": "9a4358f943",
+  "exp-about-house": "a872fa9fd9",
+  "exp-pool": "5d1faa9aff",
+  "exp-massage": "14fdf492b1",
+  "exp-breakfast": "1cb6be7766",
+  "exp-team-housekeeping": "1af872696c",
+  "exp-team-concierge": "4bf4ca113c",
+  "exp-team-kitchen": "837c5f001e",
+  "fac-lounge": "2db5a5b379",
+  "fac-pool": "3e74f9aac6",
+  "fac-garden": "cf70514df0",
+  "fac-housekeeping": "141997a51a",
+  "fac-transfer": "6e647f0de4",
+  "gallery-palm-shadows": "d7ed2a8fff",
+  "gallery-orchid-console": "e74564d098",
+  "gallery-teak-corridor": "cc97f32019",
+  "gallery-pool-cabana": "029e28cc3b",
+  "gallery-lotus-basin": "963ce5a9fb",
+  "gallery-spa-still-life": "1d48fecbe8",
+  "gallery-wardrobe-robes": "1b2440a014",
+  "gallery-chef-hands": "f333950c9e",
+  "gallery-fruit-basket": "76b864a12e",
+  "gallery-river-rail-cocktails": "064bd3e5f7",
+  "gallery-tea-set": "9491bc9e36",
+  "gallery-window-seat": "e9efbb96ad",
+  "events-beyond": "3ccf74111e",
+  "events-strip-wedding": "c23f0b3e4b",
+  "events-strip-dinner": "ceb24f86fa",
+  "events-loy-krathong": "d6fe71b7e2",
+  "events-songkran-lunch": "2015e517a2",
+  "offers-airport-pickup": "1af0566b00",
+  "offers-stay-longer": "845f914f30",
+  "dining-beyond": "9f470b7e9c",
+  "dining-breakfast": "8f2f58c8ef",
+  "dining-thai-kitchen": "99fd854400",
+  "dining-drinks": "8fa3e537b5"
 } as const;

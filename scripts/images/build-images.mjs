@@ -24,6 +24,7 @@
  *     crop?: { aspect: "4:5", focal: [x, y] },  // crop before resizing
  *     tone?: "#9c9a98",                          // the ground, instead of the mean colour
  *     focal?: [x, y],                            // emitted for object-position
+ *                                                // (re-expressed inside the crop)
  *     quality?: { avif, webp } }
  *
  * read their master from tools/image-masters/ (gitignored: the masters are
@@ -57,6 +58,7 @@ const FORCE = process.argv.includes("--force");
 const ENCODER = "v2";
 const AVIF_Q = 50;
 const WEBP_Q = 72;
+const CONCURRENCY = 3;
 
 const hash = (buf) => crypto.createHash("sha256").update(buf).digest("hex").slice(0, 10);
 const hex = (n) => n.toString(16).padStart(2, "0");
@@ -156,11 +158,14 @@ function readMaster(file) {
 
 const exists = (url) => fs.existsSync(path.join(ROOT, "public", url));
 
-for (const entry of IMAGES) {
+const built = {};
+
+async function build(entry) {
   const avif = [];
   const webp = [];
   let largest = null;
   let color = null;
+  let focal = entry.focal ?? null;
   if (entry.variants) {
     // Pre-encoded files that already exist: copied byte for byte under hashed names.
     for (const v of entry.variants) {
@@ -179,22 +184,27 @@ for (const entry of IMAGES) {
     const old = prevData[entry.id];
     if (!FORCE && old && prevKeys[entry.id] === key && [...old.avif, ...old.webp].every(([, url]) => exists(url))) {
       for (const [, url] of [...old.avif, ...old.webp]) referenced.add(url);
-      result[entry.id] = old;
+      built[entry.id] = old;
       reused += 1;
       console.log(`${entry.id}: unchanged`);
-      continue;
+      return;
     }
     const size = await orientedSize(buf);
     const box = entry.crop ? cropBox(size.width, size.height, parseAspect(entry.crop.aspect), entry.crop.focal) : null;
     const W = box ? box.width : size.width;
     const H = box ? box.height : size.height;
+    if (box && focal) {
+      // The focal point in the crop's own coordinates (what object-position needs).
+      const r = (v) => Math.round(Math.min(Math.max(v, 0), 1) * 1000) / 1000;
+      focal = [r((focal[0] * size.width - box.left) / box.width), r((focal[1] * size.height - box.top) / box.height)];
+    }
     const qa = entry.quality?.avif ?? AVIF_Q;
     const qw = entry.quality?.webp ?? WEBP_Q;
     let top = 0;
     for (const w of entry.widths) {
       if (w > W) continue; // never upscale
       const pipe = base(buf, box).resize({ width: w, withoutEnlargement: true });
-      avif.push([w, write(entry.id, w, "avif", await pipe.clone().avif({ quality: qa, effort: 6, chromaSubsampling: "4:2:0" }).toBuffer())]);
+      avif.push([w, write(entry.id, w, "avif", await pipe.clone().avif({ quality: qa, effort: 4, chromaSubsampling: "4:2:0" }).toBuffer())]);
       webp.push([w, write(entry.id, w, "webp", await pipe.clone().webp({ quality: qw, effort: 5 }).toBuffer())]);
       top = Math.max(top, w);
     }
@@ -216,16 +226,25 @@ for (const entry of IMAGES) {
   }
   avif.sort((a, b) => a[0] - b[0]);
   webp.sort((a, b) => a[0] - b[0]);
-  result[entry.id] = {
+  built[entry.id] = {
     width: largest.width,
     height: largest.height,
     color: color ?? entry.tone ?? (await dominant(largest.buf)),
-    ...(entry.focal ? { focal: entry.focal } : {}),
+    ...(focal ? { focal } : {}),
     avif,
     webp,
   };
-  console.log(`${entry.id}: ${avif.length} avif + ${webp.length} webp, ${largest.width}x${largest.height}, ground ${result[entry.id].color}`);
+  console.log(`${entry.id}: ${avif.length} avif + ${webp.length} webp, ${largest.width}x${largest.height}, ground ${built[entry.id].color}`);
 }
+
+// A small pool: AVIF encoding is the slow part and each encode is only partly parallel.
+const queue = [...IMAGES];
+await Promise.all(
+  Array.from({ length: CONCURRENCY }, async () => {
+    while (queue.length) await build(queue.shift());
+  })
+);
+for (const entry of IMAGES) result[entry.id] = built[entry.id];
 
 // The share card: one 1200x630 JPEG cropped around the focal point.
 let og = null;
