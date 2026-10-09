@@ -34,9 +34,16 @@ export function HomeHero({
         <div className="hero-scrim absolute inset-0 hidden md:block" />
       </div>
 
-      {/* Mobile */}
-      <div className="tkh-hero-copy absolute inset-0 flex flex-col md:hidden">
-        <div className="hero-chrome-pad relative z-10 px-5">
+      {/*
+        One copy block for every width, so the booking form (and its Price
+        island) is in the page once. Only the short text that really differs
+        between phone and desktop is twinned, each piece on its own element,
+        so no wrapper full of content sits hidden at either size.
+        Phone: brand, headline, rating at the top; lead and form at the foot.
+        Desktop: eyebrow, headline, lead, form and the trust line, bottom-aligned.
+      */}
+      <div className="tkh-hero-copy absolute inset-0 flex flex-col md:justify-end md:px-6 md:pb-10 md:pt-[calc(var(--demo-bar-h)+var(--header-h)+0.75rem)]">
+        <div className="hero-chrome-pad relative z-10 px-5 md:hidden">
           <p className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow">
             {brandName}
           </p>
@@ -55,44 +62,42 @@ export function HomeHero({
           </p>
         </div>
 
-        <div className="min-h-0 flex-1" aria-hidden />
+        <div className="min-h-0 flex-1 md:hidden" aria-hidden />
 
-        <div id="tkh-hero-actions" className="relative z-20 px-5 hero-actions-pb">
-          <div className="hero-copy-panel">
-            <p className="hero-lead-mobile text-white hero-text-shadow">
-              {t(locale, "hero.leadShort")}
-            </p>
-            <div className="relative z-20 mt-3 pt-1">{searchSlot}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop */}
-      <div className="tkh-hero-copy hero-chrome-pad absolute inset-0 hidden flex-col justify-end px-6 pb-10 md:flex">
-        <div className="mx-auto w-full max-w-[1180px]">
-          <p className="eyebrow mb-3 text-gold hero-text-shadow">
+        <div
+          id="tkh-hero-actions"
+          className="relative z-20 px-5 hero-actions-pb md:static md:z-auto md:mx-auto md:w-full md:max-w-[1180px] md:px-0 md:pb-0"
+        >
+          <p className="eyebrow mb-3 hidden text-gold hero-text-shadow md:block">
             {t(locale, "hero.eyebrow")}
           </p>
-          <h1 className="max-w-[16ch] font-display text-[clamp(2.7rem,5vw,4.3rem)] leading-[1.15] text-white hero-text-shadow">
+          <h1 className="hidden max-w-[16ch] font-display text-[clamp(2.7rem,5vw,4.3rem)] leading-[1.15] text-white hero-text-shadow md:block">
             <Headline text={h1} accent={locale === "en"} desktop />
           </h1>
-          <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-white hero-text-shadow hero-copy-panel">
+          <p className="mt-5 hidden max-w-[52ch] text-lg leading-relaxed text-white hero-text-shadow hero-copy-panel md:block">
             {t(locale, "hero.lead")}
           </p>
-          <div className="relative z-20 mt-7">
-            {searchSlot}
-            <p className="hero-copy-panel mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
-                <span className="tracking-[1px] text-gold" aria-hidden>
-                  ★★★★★
-                </span>
-                <span>{googleLabel}</span>
-              </span>
-              <span aria-hidden>·</span>
-              <span>{t(locale, "trust.1")}</span>
-              <span aria-hidden>·</span>
-              <span>{t(locale, "trust.freeShort")}</span>
+          {/* The phone's glass panel holds the lead and the form; on desktop
+              the panel steps aside (display: contents) and they stand alone. */}
+          <div className="hero-copy-panel md:contents">
+            <p className="hero-lead-mobile text-white hero-text-shadow md:hidden">
+              {t(locale, "hero.leadShort")}
             </p>
+            <div className="relative z-20 mt-3 pt-1 md:mt-7 md:pt-0">
+              {searchSlot}
+              <p className="hero-copy-panel mt-4 hidden flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white md:flex">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
+                  <span className="tracking-[1px] text-gold" aria-hidden>
+                    ★★★★★
+                  </span>
+                  <span>{googleLabel}</span>
+                </span>
+                <span aria-hidden>·</span>
+                <span>{t(locale, "trust.1")}</span>
+                <span aria-hidden>·</span>
+                <span>{t(locale, "trust.freeShort")}</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
