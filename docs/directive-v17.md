@@ -196,16 +196,16 @@ Repo tags: (T) teakhouse, (S) sovra, (both).
 - [ ] Preview safety proven (no migrate/seed in preview builds, previews cannot write production)
 - [~] A1 speed contract, guest (T) (S) · (T) phase 1 architecture landed on v17-a (static/ISR guest routes, server chrome, providers off the guest layout, fonts, image registry; see "Milestone A · phase 1" below). Not yet measured with PSI on a preview; the visual phases still to come must hold it
 - [ ] A1 speed contract, owner (T) (S)
-- [ ] A2 visual bible, briefs, curation, vision QA, ledger, contact sheet (T) (S)
+- [~] A2 visual bible, briefs, curation, vision QA, ledger, contact sheet (T) (S) · (T) 86 curated frames registered (92 ids incl. phone crops), docs/image-ledger.md and docs/contact-sheet.html; every guest image is its own subject, zero reuse; open slots are designed without a photo (see "phase 2" below). (S) not started
 - [~] A2 no blur anywhere; decode-gated unveil below the fold (T) (S) · (T) the mechanics landed in phase 1 (no blur placeholder anywhere, dominant-colour ground, clip-path unveil after img.decode(), LCP preloads); the imagery itself is phase 4
 - [ ] A3 cursor (S)
 - [ ] A3 estate map, scrollytelling, diptychs, day rail (S)
 - [ ] A3 no dark or smoky treatment left (S)
-- [ ] A4 five-star evolution, copy and meta (T)
-- [ ] A4 five-star room catalogue, translated (T)
-- [~] A4 booking bar everywhere, mobile Book bar, /book dock (T) · the booking bar (StaySearch, a GET form to /book) on every guest page and the static phone Book bar landed in phase 1; the /book dock is phase 2
-- [ ] A4 booking-ease timing gate under 60 s at 1366x768 and 390x844 (T)
-- [ ] A4 /book bug-class audit clean (T)
+- [x] A4 five-star evolution, copy and meta (T) · phase 2, see below
+- [x] A4 five-star room catalogue, translated (T) · EN and TH; the fourteen other languages fall back to English until phase 3
+- [x] A4 booking bar everywhere, mobile Book bar, /book dock (T) · range calendar on every booking bar, one dock on /book
+- [x] A4 booking-ease timing gate under 60 s at 1366x768 and 390x844 (T) · scripts/booking-ease.js 16/16 (2.2 to 3.0 s, at most one scroll)
+- [x] A4 /book bug-class audit clean (T) · one dock element, no stacked sticky layers, the concierge never covers dock or totals, Intl plurals, no ISO dates (date-range gate checks the page text)
 - [ ] A gates green, previews measured, screenshots, report, GO-LIST
 
 ### Milestone A · phase 1 · architecture (T), branch v17-a
@@ -225,6 +225,20 @@ Gates on the final phase 1 commit: tsc clean; static-routes 43/43 (23 guest rout
 Local Lighthouse, mobile, median of 5 interleaved runs per route (before = d9d21f4, after = phase 1 head, same machine, same database): indicative only, the run was stopped by a priority change and the machine was not idle (benchmark index 600 to 970): /rooms 80 → 83 (LCP 3.76 → 3.15 s), /dining 75 → 76 (LCP 4.50 → 3.18 s), /book 73 → 71 (TBT 645 → 730 ms), CLS 0.001-0.002 → 0 everywhere; home not measured. That run predates 4ac494a, which removed 250 to 800 ms of main-thread work per page (head scripts watching the parser). Server chrome costs HTML weight: about +100 KB raw (+15 KB gzip) and twice the DOM per page, part of it repeated in the RSC payload; worth trimming when phase 2 rebuilds the header. A clean before/after table (PSI with the bypass) is still owed.
 
 Deferred by the orchestrator's priority change: the full Lighthouse before/after and preview-safety's runtime part. Left for later phases: translations of the fourteen new languages (phase 3; 702 of the 741 keys already have a sovra translation of the identical English source to start from); the /book dock, the five-star room catalogue, copy and meta (phase 2); the content pipeline that fills EntityTranslation (phase 3); the Unsplash+ frames and the stand-ins for the eleven retired Unsplash photos (phase 4). The concierge button overlaps the totals on the phone room rail; English fallback text inside an Arabic page flips its punctuation until the strings are translated.
+
+### Milestone A · phase 2 · the five-star redesign (T), branch v17-a
+- [x] Design system: guest palette (white stone #FBF9F5, ivory #F4EFE6, teak ink #2A211B, forest #1E4A3D primary, teak #8A5A34 accent, river #4D6B74, sand line #E5DDD0), Marcellus display + Plus Jakarta Sans 17 px body, 6/8 px radii, soft shadows, transform/opacity motion; owner panel keeps its palette
+- [x] Header, footer (bright, no dark band), phone Book bar, concierge button that never covers the booking panel, room cards, totals or the dock
+- [x] Mike's date bug: lib/dateRange pickDay() is the one rule; range calendar (keyboard, touch, nightly from-prices via GET /api/rates) on every booking bar and on /book; scripts/date-range-gate.js 52/52
+- [x] Mike's "pick again" bug: Check rates lands on /book with dates, guests and room applied, rooms listed at once (no dates step)
+- [x] /book: Room, Details, Confirmed; one dock (sticky side card from 1024 px, fixed bar below); booking-ease 16/16
+- [x] Room catalogue in lib/rooms.ts (Deluxe King, Deluxe Twin, Premier River View, Junior Suite, Teak Suite, Royal Teak Suite), seeded from it; lib/liveRooms lays DB rate/OTA/active over it by slug, base rate when a DB lacks a slug
+- [x] Every guest page rebuilt; old photography retired (public/images, hero-lcp, phase 1 registry ids); old room URLs redirect
+- [x] Copy and meta: five-star riverside hotel in Bangkok, EN and TH, Demo by Mikaro Studio; OG card = hero
+- [x] Gates on the final build: tsc clean; static-routes 23 guest routes, 0 dynamic; hf1-security 141/141; preview-safety --no-runtime 143/143; v11 36/36, v12 110/110, v13 263/263, v14 153/153, reserve-bug-check 33/33; th-missing 0, th-leakage 0 lines on 13 routes, th-overflow 156/156; width sweep 320 to 1920 plus JS-off 1768/1768; date-range 52/52; booking-ease 16/16. Selector and content updates in the suites only where the redesign changed them (see commit 3aef143 and bbd4d99)
+- [~] Local Lighthouse mobile, median of 3 (indicative; another project's server was running on the machine): / 90, /rooms 89, /book 81; accessibility 100, best practices 100, SEO 100 on all three; CLS 0 to 0.002. Below the 92 proxy target; PSI on a preview not measured (no deploy in this phase)
+- [x] Screenshots: docs/v17-shots/teakhouse/ (home, /rooms, a room, every /book step; 1366 and 390; EN and TH)
+- [ ] Not done in phase 2: the fourteen other languages for the new strings (phase 3); PSI on a preview; perf to the 92 proxy (TBT is React hydration of the shared chunk, LCP 2.8 s on the hero)
 
 ### Milestone B · engines (branch v17-b, stacked on v17-a)
 - [ ] B1 Teak House engine (ported modules)
