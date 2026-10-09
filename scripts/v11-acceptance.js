@@ -229,20 +229,13 @@ async function run() {
   {
     const ctx = await contextFor(browser, { js: true });
     const page = await ctx.newPage();
-    await page.goto(BASE + "/book", { waitUntil: "load" });
-    await page.waitForTimeout(1500);
-
-    // The date field itself · not the sticky summary bar, which also reads
-    // "Select dates" and would open the wrong thing.
-    const trigger = page.locator('[data-date-trigger]').first();
-    await trigger.scrollIntoViewIfNeeded();
-
-    // Push the field low in the viewport so there is no room underneath.
-    await page.evaluate(() => {
-      const btn = document.querySelector('[data-date-trigger]');
-      if (btn) btn.scrollIntoView({ block: "end" });
-      window.scrollBy(0, -40);
-    });
+    // v17 · one picker serves every date field (components/stay/StayPicker).
+    // On /book the stay box sits near the top of the page, so nothing can push
+    // it low; the home hero's booking panel sits at the foot of the first
+    // screen, which is exactly the case: little room below, plenty above.
+    await page.goto(BASE + "/", { waitUntil: "load" });
+    await page.waitForFunction(() => document.documentElement.hasAttribute("data-cal-ready"), null, { timeout: 15000 });
+    const trigger = page.locator('#tkh-hero-actions [data-stay-field="in"]').first();
     await page.waitForTimeout(300);
 
     const box = await trigger.boundingBox();
