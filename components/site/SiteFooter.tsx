@@ -4,34 +4,27 @@ import { DemoFineButton } from "@/components/site/DemoFineButton";
 import { t } from "@/lib/serverLocale";
 import type { Lang } from "@/lib/locales/meta";
 
-/**
- * Footer dim-white steps use literal hex-alpha, not `text-white/NN`.
- * The theme `white` is `var(--color-white, #FFFFFF)` with no <alpha-value>
- * placeholder, so Tailwind cannot generate slash-opacity whites · they would
- * silently fall back to inherited ink and read as dark text on navy.
- * #FFFFFFBF ≈ 75% · #FFFFFFA6 ≈ 65% · #FFFFFF8C ≈ 55% · #FFFFFF66 ≈ 40%.
- */
 const linkClass =
-  "flex min-h-[44px] items-center text-[0.9rem] text-[#FFFFFFBF] transition hover:text-white hover:underline hover:underline-offset-2";
+  "flex min-h-[40px] items-center text-[15px] text-ink/75 transition hover:text-ink";
 
-const headingClass =
-  "mb-4 text-[0.78rem] font-semibold uppercase tracking-[0.18em] text-gold";
+const headingClass = "mb-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-teak";
 
 /**
- * Footer · a pure server component, the v14 look unchanged. It used to be a
- * client component that shipped the dictionary hook to render static links;
- * the only island left is the fine-print button that opens the demo panel.
+ * Footer · a pure server component. Bright and quiet: warm ivory, deep teak
+ * ink, four calm columns and the address, never a dark band. The only island
+ * is the fine-print button that opens the demo panel.
  */
 export function SiteFooter({ locale }: { locale: Lang }) {
   return (
-    <footer data-site-footer className="bg-navy px-6 py-[70px] pb-8 text-[#FFFFFFA6]">
-      <div className="mx-auto max-w-[1180px]">
-        <div className="mb-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <footer data-site-footer className="border-t border-line bg-ivory text-ink">
+      <div className="wrap pb-10 pt-16 md:pt-20">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.1fr] lg:gap-12">
           <div>
-            <Link href="/" prefetch={false} aria-label={t(locale, "brand.name")} className="mb-[18px] inline-block">
-              <LogoMark light showTag />
+            <Link href="/" prefetch={false} aria-label={t(locale, "brand.name")} className="inline-block">
+              <LogoMark showTag />
             </Link>
-            <p className="max-w-[34ch] text-[0.9rem] text-[#FFFFFFA6]">{t(locale, "ft.about")}</p>
+            <p className="mt-6 max-w-[36ch] text-[15px] leading-relaxed text-ink/75">{t(locale, "ft.about")}</p>
+            <p className="mt-5 text-[15px] leading-relaxed text-ink/75">{t(locale, "ct.address")}</p>
           </div>
           <div>
             <p className={headingClass}>{t(locale, "ft.stay")}</p>
@@ -44,12 +37,12 @@ export function SiteFooter({ locale }: { locale: Lang }) {
             <Link href="/book" prefetch={false} className={linkClass}>
               {t(locale, "ft.book")}
             </Link>
+            <Link href="/account" prefetch={false} className={linkClass}>
+              {t(locale, "acc.myBookings")}
+            </Link>
           </div>
           <div>
             <p className={headingClass}>{t(locale, "ft.visit")}</p>
-            <Link href="/experience" prefetch={false} className={linkClass}>
-              {t(locale, "ft.exp")}
-            </Link>
             {/* No reserve-a-table link here on purpose · the v13 rule is that
                 the CTA disappears everywhere when the owner switches
                 reservations off, and /dining is the page that knows. */}
@@ -58,6 +51,9 @@ export function SiteFooter({ locale }: { locale: Lang }) {
             </Link>
             <Link href="/events" prefetch={false} className={linkClass}>
               {t(locale, "nav.events")}
+            </Link>
+            <Link href="/experience" prefetch={false} className={linkClass}>
+              {t(locale, "ft.exp")}
             </Link>
             <Link href="/facilities" prefetch={false} className={linkClass}>
               {t(locale, "nav.facilities")}
@@ -68,14 +64,14 @@ export function SiteFooter({ locale }: { locale: Lang }) {
             <Link href="/gallery" prefetch={false} className={linkClass}>
               {t(locale, "nav.gallery")}
             </Link>
-            <Link href="/location" prefetch={false} className={linkClass}>
-              {t(locale, "ft.loc")}
-            </Link>
           </div>
           <div>
             <p className={headingClass}>{t(locale, "ft.talk")}</p>
             <Link href="/contact" prefetch={false} className={linkClass}>
               {t(locale, "nav.contact")}
+            </Link>
+            <Link href="/location" prefetch={false} className={linkClass}>
+              {t(locale, "ft.loc")}
             </Link>
             <a href="tel:+6620000000" className={linkClass}>
               {t(locale, "ct.phone")}
@@ -83,12 +79,10 @@ export function SiteFooter({ locale }: { locale: Lang }) {
             <a href="mailto:stay@teakhouse.demo" className={linkClass}>
               {t(locale, "ct.mail")}
             </a>
-            <span className="block py-1.5 text-[0.9rem] text-[#FFFFFFA6]">
-              {t(locale, "ct.line")}
-            </span>
+            <span className="flex min-h-[40px] items-center text-[15px] text-ink/75">{t(locale, "ct.line")}</span>
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-6 text-[0.78rem] text-[#FFFFFF8C] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+        <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6 text-[13.5px] text-ink/65">
           <span>{t(locale, "ft.copy")}</span>
           <DemoFineButton label={t(locale, "ft.fine")} />
         </div>

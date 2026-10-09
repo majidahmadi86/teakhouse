@@ -1,27 +1,12 @@
-import Image from "next/image";
 import Link from "next/link";
-import {
-  BadgePercent,
-  CalendarDays,
-  ChevronDown,
-  Menu,
-  MessageCircle,
-  Phone,
-  User,
-  X,
-} from "lucide-react";
+import { ChevronDown, Menu, MessageCircle, Phone, User, X } from "lucide-react";
 import { LogoMark } from "@/components/LogoMark";
 import { Price } from "@/components/Price";
 import { CurrencySelect } from "@/components/header/CurrencySelect";
 import { HeaderSync } from "@/components/header/HeaderSync";
 import { LanguageMenu } from "@/components/header/LanguageMenu";
-import {
-  DRAWER_NAV,
-  EXPERIENCE_GROUP,
-  NAV_LEAD,
-  NAV_TAIL,
-} from "@/components/header/nav";
-import { getSeedGuestRooms } from "@/lib/guestRooms";
+import { DRAWER_NAV, EXPERIENCE_GROUP, NAV_LEAD, NAV_TAIL } from "@/components/header/nav";
+import { ROOM_CATALOGUE } from "@/lib/rooms";
 import { t, tr } from "@/lib/serverLocale";
 import type { Lang } from "@/lib/locales/meta";
 
@@ -29,128 +14,92 @@ import type { Lang } from "@/lib/locales/meta";
 const attrs = (a: Record<string, string>) => a;
 
 const NAV_LINK =
-  "link-draw shrink-0 whitespace-nowrap text-[15px] font-semibold text-ink transition hover:text-blue";
-
-const MENU_TRIGGER =
-  "group relative inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[15px] font-semibold text-ink transition hover:text-blue";
-
-const MENU_RULE =
-  "absolute -bottom-1 left-0 h-0.5 w-0 bg-blue transition-all duration-300 group-hover:w-full";
+  "nav-link relative inline-flex h-full shrink-0 items-center whitespace-nowrap text-[15px] font-medium text-ink/80 transition hover:text-ink";
 
 /** The dropdown wrapper · the panel opens on hover and on keyboard focus, no script. */
-const MENU_WRAP = "group/menu relative shrink-0";
+const MENU_WRAP = "group/menu relative flex h-full shrink-0 items-center";
 const MENU_PANEL =
-  "absolute left-0 top-full z-modal hidden pt-3 group-hover/menu:block group-focus-within/menu:block";
+  "absolute start-1/2 top-full z-modal hidden -translate-x-1/2 pt-2 group-hover/menu:block group-focus-within/menu:block rtl:translate-x-1/2";
 
 /**
- * The guest header · ONE server component, zero hydration of its own.
+ * The guest header · ONE server component, zero hydration of its own (the
+ * five-star evolution of the v14 header, same mechanics):
  *
- * It keeps the v14 Teak House look exactly (logo, six-item centre nav from
- * 1200px, offers, currency, language, account, Book direct, phone menu) and
- * replaces the old pair of a static shell plus a hydrated twin (HeaderShell +
- * Header, held pixel-identical by hand under the VISUAL PARITY LAW). There is
- * nothing left to swap, so nothing can flash or drift:
- *
- * - The Rooms and Experience dropdowns open on hover and keyboard focus in CSS.
- * - The active item is lit by CSS from the page's own <NavMark>, so the static
- *   HTML is right for every route and every language without reading the
- *   request; HeaderSync adds aria-current once scripts run.
- * - The phone menu is a native popover (top layer, light dismiss, Escape, no
- *   JavaScript). Where the Popover API is missing, a #mobile-nav-drawer link
- *   opens the same drawer through :target, with or without JavaScript.
- * - Currency is a tiny native-select island on the shared store; languages are
- *   plain links (LanguageMenu).
+ * - logo (the house glyph and wordmark), the centre navigation from 1200 px,
+ *   language, currency, account and the "Book your stay" action on the right;
+ *   phones keep the logo, a Book action and the menu
+ * - the Rooms and Experiences menus open on hover and keyboard focus in CSS
+ * - the active item is lit by CSS from the page's own <NavMark>; HeaderSync
+ *   adds aria-current and the scrolled state once scripts run
+ * - the phone menu is a native popover with a :target fallback, so it opens
+ *   without the Popover API and without JavaScript
  */
 export function SiteHeader({ locale }: { locale: Lang }) {
-  const rooms = getSeedGuestRooms().slice(0, 4);
   const menuLabel = t(locale, "mobile.menu");
 
   return (
     <>
       <header
         data-site-header
-        className="tkh-header sticky top-[var(--demo-bar-h)] z-header h-14 border-b border-line bg-white transition-[background-color,box-shadow,backdrop-filter] duration-300 md:h-16"
+        className="tkh-header sticky top-[var(--demo-bar-h)] z-header h-[var(--header-h)] border-b border-line/80 bg-stone transition-[background-color,box-shadow] duration-300"
       >
-        <div className="mx-auto flex h-full max-w-[1400px] items-center gap-4 px-4 max-[359px]:gap-2 max-[359px]:px-3 min-[760px]:px-5 xl:px-6">
-          {/* LEFT · logo */}
-          <Link
-            href="/"
-            prefetch={false}
-            aria-label={t(locale, "brand.name")}
-            className="shrink-0 whitespace-nowrap"
-          >
+        <div className="mx-auto flex h-full max-w-[1440px] items-center gap-5 px-4 max-[359px]:gap-2 max-[359px]:px-3 sm:px-6 xl:px-10">
+          <Link href="/" prefetch={false} aria-label={t(locale, "brand.name")} className="shrink-0 whitespace-nowrap">
             <LogoMark
               showTag
-              className="[&_.logo-tagline]:hidden min-[1440px]:[&_.logo-tagline]:block"
+              className="[&_.logo-tagline]:hidden min-[480px]:[&_.logo-tagline]:block min-[1200px]:[&_.logo-tagline]:hidden min-[1440px]:[&_.logo-tagline]:block"
             />
           </Link>
 
-          {/* CENTRE nav · >=1200. The gap tightens in the 1200-1279 band: six
-              items at gap-7 push the utility cluster past the viewport at
-              exactly 1200. */}
           <nav
             aria-label={t(locale, "a11y.mainNav")}
-            className="mx-auto hidden items-center gap-5 min-[1200px]:flex min-[1280px]:gap-7"
+            className="mx-auto hidden h-full items-center gap-6 min-[1200px]:flex min-[1360px]:gap-8"
           >
             <div className={MENU_WRAP}>
-              <Link
-                href="/rooms"
-                prefetch={false}
-                data-nav="rooms"
-                aria-haspopup="true"
-                className={MENU_TRIGGER}
-              >
+              <Link href="/rooms" prefetch={false} data-nav="rooms" aria-haspopup="true" className={NAV_LINK}>
                 {t(locale, "nav.rooms")}
-                <ChevronDown className="h-3.5 w-3.5 transition group-hover/menu:rotate-180" aria-hidden />
-                <span data-nav-rule className={MENU_RULE} />
+                <ChevronDown className="ms-1 h-3.5 w-3.5 text-sub transition group-hover/menu:rotate-180" aria-hidden />
               </Link>
               <div data-menu-panel="rooms" className={MENU_PANEL}>
-                <div className="tkh-menu-pop w-[min(92vw,720px)] rounded-2xl bg-white p-5 shadow-2xl">
-                  <div className="grid gap-5 md:grid-cols-[1fr_180px]">
-                    <div className="grid grid-cols-2 gap-3">
-                      {rooms.map((room) => (
-                        <Link
-                          key={room.id}
-                          href={`/rooms/${room.slug}`}
-                          prefetch={false}
-                          className="flex gap-3 rounded-xl p-2 transition hover:bg-cloud"
-                        >
-                          <div className="relative h-[54px] w-[72px] shrink-0 overflow-hidden rounded-lg bg-cloud">
-                            <Image
-                              src={room.photos[0]}
-                              alt={tr(locale, room.name)}
-                              fill
-                              sizes="72px"
-                              loading="lazy"
-                              className="object-cover"
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="truncate text-sm font-bold text-ink">
-                              {tr(locale, room.name)}
-                            </div>
-                            <div className="mt-0.5 whitespace-nowrap text-xs font-semibold text-blue">
+                <div className="tkh-menu-pop w-[min(92vw,720px)] rounded-card border border-line/70 bg-white p-3 shadow-float">
+                  <div className="grid gap-1 md:grid-cols-[1fr_220px]">
+                    <ul className="grid grid-cols-2 gap-1">
+                      {ROOM_CATALOGUE.map((room) => (
+                        <li key={room.slug}>
+                          <Link
+                            href={`/rooms/${room.slug}`}
+                            prefetch={false}
+                            className="block rounded-soft px-4 py-3 transition hover:bg-stone"
+                          >
+                            <span className="block font-display text-[17px] text-ink">{tr(locale, room.name)}</span>
+                            <span className="mt-1 block text-[13px] text-sub">{tr(locale, room.summary)}</span>
+                            <span className="mt-1.5 block text-[13px] font-medium text-teak">
                               {t(locale, "room.from")} <Price thb={room.rate} />
-                            </div>
-                          </div>
-                        </Link>
+                            </span>
+                          </Link>
+                        </li>
                       ))}
-                    </div>
-                    <div className="flex flex-col gap-1 border-t border-line pt-3 md:border-l md:border-t-0 md:pl-5 md:pt-0">
-                      {[
-                        { href: "/rooms", key: "nav.megaAll" },
-                        { href: "/rooms#compare", key: "nav.megaCompare" },
-                        { href: "/offers", key: "nav.megaOffers" },
-                      ].map((l) => (
-                        <Link
-                          key={l.href}
-                          href={l.href}
-                          prefetch={false}
-                          className="rounded-lg px-3 py-2.5 text-sm font-bold text-ink hover:bg-sky hover:text-blue"
-                        >
-                          {t(locale, l.key)}
-                        </Link>
-                      ))}
+                    </ul>
+                    <div className="flex flex-col justify-between rounded-soft bg-ivory/70 p-4">
+                      <div className="flex flex-col gap-1">
+                        {[
+                          { href: "/rooms", key: "nav.megaAll" },
+                          { href: "/rooms#compare", key: "nav.megaCompare" },
+                          { href: "/offers", key: "nav.megaOffers" },
+                        ].map((l) => (
+                          <Link
+                            key={l.href}
+                            href={l.href}
+                            prefetch={false}
+                            className="rounded-soft px-2 py-2 text-[14.5px] font-medium text-ink transition hover:bg-white"
+                          >
+                            {t(locale, l.key)}
+                          </Link>
+                        ))}
+                      </div>
+                      <Link href="/book" prefetch={false} className="btn-primary mt-4 min-h-11 w-full text-[14px]">
+                        {t(locale, "nav.book")}
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -169,21 +118,20 @@ export function SiteHeader({ locale }: { locale: Lang }) {
                 prefetch={false}
                 data-nav-group="experience"
                 aria-haspopup="true"
-                className={MENU_TRIGGER}
+                className={NAV_LINK}
               >
-                {t(locale, "nav.experience")}
-                <ChevronDown className="h-3.5 w-3.5 transition group-hover/menu:rotate-180" aria-hidden />
-                <span data-nav-rule className={MENU_RULE} />
+                {t(locale, "nav.experiences")}
+                <ChevronDown className="ms-1 h-3.5 w-3.5 text-sub transition group-hover/menu:rotate-180" aria-hidden />
               </Link>
               <div data-menu-panel="experience" className={MENU_PANEL}>
-                <div className="tkh-menu-pop w-56 rounded-2xl bg-white p-2 shadow-2xl">
+                <div className="tkh-menu-pop w-64 rounded-card border border-line/70 bg-white p-2 shadow-float">
                   {EXPERIENCE_GROUP.map(({ href, id, key }) => (
                     <Link
                       key={href}
                       href={href}
                       prefetch={false}
                       data-nav={id}
-                      className="block rounded-lg px-3 py-2.5 text-sm font-bold text-ink hover:bg-sky hover:text-blue"
+                      className="block rounded-soft px-4 py-2.5 text-[15px] text-ink transition hover:bg-stone"
                     >
                       {t(locale, key)}
                     </Link>
@@ -199,87 +147,57 @@ export function SiteHeader({ locale }: { locale: Lang }) {
             ))}
           </nav>
 
-          {/* RIGHT utility cluster */}
-          {/* Below 360px the gaps tighten: the logo, the Book icon and the menu
-              must fit a 320px screen without scrolling sideways. */}
-          <div className="ms-auto flex shrink-0 items-center gap-[18px] max-[359px]:gap-2">
-            {/* wide utils · >=760 */}
-            <div className="hidden items-center gap-[18px] min-[760px]:flex">
-              <span className="group relative inline-flex">
-                <Link
-                  href="/offers"
-                  prefetch={false}
-                  data-nav="offers"
-                  aria-label={t(locale, "nav.offers")}
-                  title={t(locale, "nav.offers")}
-                  className="offers-hit relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition duration-150"
-                >
-                  <BadgePercent className="h-5 w-5 text-coral-deep" strokeWidth={2} aria-hidden />
-                  <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 animate-[pulse_2s_ease-in-out_infinite] rounded-full bg-coral-deep motion-reduce:hidden" />
-                </Link>
-              </span>
-
-              <CurrencySelect label={t(locale, "a11y.currency")} />
-
+          <div className="ms-auto flex shrink-0 items-center gap-1.5 max-[359px]:gap-1 min-[1200px]:ms-0">
+            <div className="hidden items-center gap-0.5 min-[760px]:flex">
               <LanguageMenu current={locale} label={t(locale, "a11y.language")} />
-
-              <span className="group relative inline-flex">
-                <Link
-                  href="/account"
-                  prefetch={false}
-                  aria-label={t(locale, "acc.myBookings")}
-                  title={t(locale, "acc.myBookings")}
-                  className="icon-hit inline-flex h-9 w-9 shrink-0 items-center justify-center text-ink"
-                >
-                  <User className="h-[22px] w-[22px]" strokeWidth={1.75} aria-hidden />
-                </Link>
-              </span>
+              <CurrencySelect label={t(locale, "a11y.currency")} />
+              <Link
+                href="/account"
+                prefetch={false}
+                aria-label={t(locale, "acc.myBookings")}
+                title={t(locale, "acc.myBookings")}
+                className="icon-hit inline-flex h-10 w-10 shrink-0 items-center justify-center text-ink"
+              >
+                <User className="h-[20px] w-[20px]" strokeWidth={1.6} aria-hidden />
+              </Link>
             </div>
 
-            {/* Book · text pill >=760 */}
             <Link
               href="/book"
               prefetch={false}
-              className="btn-shine btn-primary hidden whitespace-nowrap min-[760px]:inline-flex"
+              className="btn-primary ms-2 hidden min-h-11 whitespace-nowrap px-6 text-[14.5px] min-[760px]:inline-flex"
             >
               {t(locale, "nav.book")}
             </Link>
-            {/* Book · icon <760 */}
             <Link
               href="/book"
               prefetch={false}
-              aria-label={t(locale, "nav.book")}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue text-white shadow-cta min-[760px]:hidden"
+              className="btn-primary min-h-10 px-4 text-[14px] max-[359px]:px-3 min-[760px]:hidden"
             >
-              <CalendarDays className="h-5 w-5" aria-hidden />
+              {t(locale, "nav.bookShort")}
             </Link>
 
-            {/* Phone menu <1200 · a native popover, no script. */}
             <button
               type="button"
               aria-label={menuLabel}
               aria-controls="mobile-nav-drawer"
-              className="tkh-menu-btn flex h-10 w-10 items-center justify-center min-[1200px]:hidden"
+              className="tkh-menu-btn flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-ivory min-[1200px]:hidden"
               {...attrs({ popovertarget: "mobile-nav-drawer" })}
             >
-              <Menu className="h-6 w-6 text-ink" strokeWidth={2} aria-hidden />
+              <Menu className="h-6 w-6 text-ink" strokeWidth={1.6} aria-hidden />
             </button>
-            {/* Where the Popover API is missing: the same drawer via :target. */}
             <a
               href="#mobile-nav-drawer"
               aria-label={menuLabel}
               className="tkh-menu-fallback h-10 w-10 items-center justify-center min-[1200px]:!hidden"
             >
-              <Menu className="h-6 w-6 text-ink" strokeWidth={2} aria-hidden />
+              <Menu className="h-6 w-6 text-ink" strokeWidth={1.6} aria-hidden />
             </a>
           </div>
         </div>
       </header>
 
-      {/* Phone and tablet menu · a full-screen solid sheet. Outside <header> on
-          purpose: the header's own <nav> is the centre nav. A dialog, not an
-          <aside>: it is always in the document now (a popover), and a page's
-          own complementary content (the dining reserve card) is its aside. */}
+      {/* Phone and tablet menu · a full-screen solid sheet. */}
       <div
         id="mobile-nav-drawer"
         role="dialog"
@@ -287,66 +205,54 @@ export function SiteHeader({ locale }: { locale: Lang }) {
         className="tkh-drawer text-ink"
         {...attrs({ popover: "auto" })}
       >
-        <div className="flex h-12 shrink-0 items-center justify-between border-b border-line px-4">
-          <LogoMark showTag={false} size={20} className="[&_div]:text-[16px]" />
+        <div className="flex h-[var(--header-h)] shrink-0 items-center justify-between border-b border-line px-4 sm:px-6">
+          <LogoMark showTag={false} size={22} />
           <button
             type="button"
-            className="tkh-menu-btn flex h-10 w-10 items-center justify-center"
+            className="tkh-menu-btn flex h-10 w-10 items-center justify-center rounded-full hover:bg-ivory"
             aria-label={t(locale, "mobile.close")}
             {...attrs({ popovertarget: "mobile-nav-drawer", popovertargetaction: "hide" })}
           >
-            <X className="h-5 w-5 text-ink" strokeWidth={2} aria-hidden />
+            <X className="h-5 w-5 text-ink" strokeWidth={1.6} aria-hidden />
           </button>
           <a
             href="#menu-closed"
             className="tkh-menu-fallback h-10 w-10 items-center justify-center"
             aria-label={t(locale, "mobile.close")}
           >
-            <X className="h-5 w-5 text-ink" strokeWidth={2} aria-hidden />
+            <X className="h-5 w-5 text-ink" strokeWidth={1.6} aria-hidden />
           </a>
         </div>
 
-        <nav className="flex flex-1 flex-col overflow-y-auto px-1">
+        <nav className="flex flex-1 flex-col overflow-y-auto px-5 pb-2 pt-1 sm:px-8">
           {DRAWER_NAV.map((item) => (
-            <div key={item.href}>
-              <Link
-                href={item.href}
-                prefetch={false}
-                data-nav={item.id}
-                className="flex items-center gap-2 border-b border-line px-4 py-3.5 text-ink transition"
-              >
-                {"offers" in item && item.offers ? (
-                  <BadgePercent className="h-4 w-4 shrink-0 text-coral-deep" aria-hidden />
-                ) : null}
-                <span className="min-w-0">
-                  <span className="block whitespace-nowrap text-[17px] font-semibold">
-                    {t(locale, item.key)}
-                  </span>
-                  {"subtitle" in item ? (
-                    <span className="mt-0.5 block text-[12px] font-semibold text-sub">
-                      {t(locale, item.subtitle)}
-                    </span>
-                  ) : null}
-                </span>
-              </Link>
-            </div>
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch={false}
+              data-nav={item.id}
+              className="flex items-baseline justify-between gap-3 border-b border-line/80 py-3 text-ink"
+            >
+              <span className="font-display text-[22px] leading-tight">{t(locale, item.key)}</span>
+              {"subtitle" in item ? (
+                <span className="text-[13px] text-sub">{t(locale, item.subtitle)}</span>
+              ) : null}
+            </Link>
           ))}
 
-          {/* Experience group · one row that opens in place. <details> keeps
-              this working with no JavaScript and with no extra state. */}
-          <details data-nav-details className="group border-b border-line">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3.5 text-[17px] font-semibold text-ink [&::-webkit-details-marker]:hidden">
-              {t(locale, "nav.exploreGroup")}
+          <details data-nav-details className="group border-b border-line/80">
+            <summary className="flex cursor-pointer list-none items-center justify-between py-3 font-display text-[22px] leading-tight text-ink [&::-webkit-details-marker]:hidden">
+              {t(locale, "nav.experiences")}
               <ChevronDown className="h-4 w-4 shrink-0 text-sub transition group-open:rotate-180" aria-hidden />
             </summary>
-            <div className="pb-1">
+            <div className="pb-2">
               {EXPERIENCE_GROUP.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   prefetch={false}
                   data-nav={item.id}
-                  className="block py-2.5 pe-4 ps-8 text-[15px] font-semibold text-sub transition"
+                  className="block py-2 ps-4 text-[16px] text-ink/80 transition hover:text-ink"
                 >
                   {t(locale, item.key)}
                 </Link>
@@ -354,46 +260,33 @@ export function SiteHeader({ locale }: { locale: Lang }) {
             </div>
           </details>
 
-          <div className="border-b border-line px-4 py-3.5">
-            <div className="flex flex-wrap items-center gap-5">
-              <CurrencySelect label={t(locale, "a11y.currency")} size="lg" />
-              <LanguageMenu current={locale} label={t(locale, "a11y.language")} variant="drawer" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 border-b border-line px-4 py-3.5">
-            <a
-              href="tel:+6620000000"
-              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-blue bg-white text-[13px] font-bold text-blue"
-            >
-              <Phone className="h-3.5 w-3.5" aria-hidden />
-              {t(locale, "ct.call")}
-            </a>
-            <a
-              href="https://line.me/R/ti/p/@teakhouse"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-blue bg-white text-[13px] font-bold text-blue"
-            >
-              <MessageCircle className="h-3.5 w-3.5" aria-hidden />
-              {t(locale, "ct.lineBtn")}
-            </a>
-          </div>
-
-          <div className="border-b border-line px-4 py-3.5">
+          <div className="flex flex-wrap items-center gap-3 border-b border-line/80 py-3">
+            <LanguageMenu current={locale} label={t(locale, "a11y.language")} variant="drawer" />
+            <CurrencySelect label={t(locale, "a11y.currency")} size="lg" />
             <Link
               href="/account"
               prefetch={false}
-              className="inline-flex items-center gap-2 whitespace-nowrap text-[17px] font-semibold text-ink"
+              className="ms-auto inline-flex items-center gap-2 whitespace-nowrap text-[15px] font-medium text-ink"
             >
-              <User className="h-5 w-5 shrink-0" strokeWidth={1.75} aria-hidden />
+              <User className="h-5 w-5 shrink-0" strokeWidth={1.6} aria-hidden />
               {t(locale, "acc.myBookings")}
             </Link>
           </div>
+
+          <div className="grid grid-cols-2 gap-2 py-3">
+            <a href="tel:+6620000000" className="btn-secondary min-h-11 px-3 text-[14px]">
+              <Phone className="h-4 w-4" aria-hidden />
+              {t(locale, "ct.call")}
+            </a>
+            <a href="https://line.me/R/ti/p/@teakhouse" target="_blank" rel="noreferrer" className="btn-secondary min-h-11 px-3 text-[14px]">
+              <MessageCircle className="h-4 w-4" aria-hidden />
+              {t(locale, "ct.lineBtn")}
+            </a>
+          </div>
         </nav>
 
-        <div className="shrink-0 border-t border-line p-4 [padding-bottom:max(1rem,env(safe-area-inset-bottom))]">
-          <Link href="/book" prefetch={false} className="btn-shine btn-primary w-full whitespace-nowrap">
+        <div className="shrink-0 border-t border-line p-4 sm:px-8 [padding-bottom:max(1rem,env(safe-area-inset-bottom))]">
+          <Link href="/book" prefetch={false} className="btn-primary h-[52px] w-full whitespace-nowrap">
             {t(locale, "nav.book")}
           </Link>
         </div>

@@ -34,7 +34,7 @@ export function CurrencySelect({
         value={currency}
         onChange={(e) => setCurrency(e.target.value as Currency)}
         className={cn(
-          "cursor-pointer appearance-none bg-transparent py-1.5 pl-2 pr-6 font-bold text-ink outline-none [field-sizing:content]",
+          "cursor-pointer appearance-none bg-transparent py-1.5 pl-2.5 pr-6 font-semibold tracking-[0.04em] text-ink outline-none [field-sizing:content]",
           size === "lg" ? "text-[15px]" : "text-[13px]"
         )}
       >

@@ -30,7 +30,8 @@ export function DemoModeBar({
 
   return (
     <div
-      className="fixed inset-x-0 top-0 z-demo-bar h-10 border-b border-line/80 bg-navy text-white"
+      data-demo-bar
+      className="fixed inset-x-0 top-0 z-demo-bar h-10 bg-ink text-white"
       role="navigation"
       aria-label={translate(locale, "a11y.demoSwitcher")}
     >

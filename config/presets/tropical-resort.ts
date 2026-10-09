@@ -9,8 +9,8 @@ export const config: HotelConfig = {
   name: "The Teak House",
   nameDisplay: "THE TEAK HOUSE",
   tagline: {
-    en: "Riverside Boutique Hotel · Bangkok",
-    th: "โรงแรมบูทีคริมแม่น้ำ · กรุงเทพฯ",
+    en: "Riverside Hotel · Bangkok",
+    th: "โรงแรมริมแม่น้ำ · กรุงเทพฯ",
   },
   logoPath: "/favicon.svg",
   siteUrl: "https://teakhouse.mikaro.studio",

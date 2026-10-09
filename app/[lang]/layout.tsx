@@ -1,4 +1,5 @@
 import { hotelConfig } from "@/config/hotel.config";
+import { TEAK_GUEST_PALETTE } from "@/config/types";
 import { paletteStyleString } from "@/lib/paletteCss";
 import { FontHead, fontSetName } from "@/lib/fonts";
 import { translateEntry } from "@/lib/i18n-core";
@@ -74,7 +75,7 @@ export default function GuestRootLayout({
   children: React.ReactNode;
   params: LangParams;
 }>) {
-  const paletteStyle = paletteStyleString(hotelConfig.palette);
+  const paletteStyle = paletteStyleString(TEAK_GUEST_PALETTE);
   const lang = pageLang(params);
   const meta = langMeta(lang);
 
@@ -88,8 +89,6 @@ export default function GuestRootLayout({
     >
       <head>
         <FontHead lang={lang} />
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <style
           dangerouslySetInnerHTML={{
             __html: `:root{${paletteStyle}}`,

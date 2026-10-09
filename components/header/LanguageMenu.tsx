@@ -34,7 +34,7 @@ export function LanguageMenu({
     <details className={cn("tkh-lang group/lang shrink-0", drawer ? "open:w-full" : "relative")}>
       <summary
         className={cn(
-          "icon-hit inline-flex cursor-pointer list-none items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 font-bold uppercase text-ink [&::-webkit-details-marker]:hidden",
+          "icon-hit inline-flex cursor-pointer list-none items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 font-semibold uppercase tracking-[0.06em] text-ink [&::-webkit-details-marker]:hidden",
           drawer ? "text-[15px]" : "text-[13px]"
         )}
         aria-label={`${label}: ${meta.native}`}
@@ -51,7 +51,7 @@ export function LanguageMenu({
           "grid grid-cols-2 gap-0.5 bg-white",
           drawer
             ? "mt-2 w-full pb-1"
-            : "tkh-menu-pop absolute top-full z-modal mt-3 w-[min(92vw,420px)] rounded-2xl p-2 shadow-2xl end-0"
+            : "tkh-menu-pop absolute top-full z-modal mt-3 w-[min(92vw,420px)] rounded-card border border-line/70 p-2 shadow-float end-0"
         )}
       >
         {offered.map((l) => (
@@ -64,12 +64,12 @@ export function LanguageMenu({
               data-lang-link={l.code}
               aria-current={l.code === current ? "true" : undefined}
               className={cn(
-                "flex min-h-[40px] items-center justify-between gap-3 rounded-lg px-3 py-2 text-[13px] font-bold transition hover:bg-sky hover:text-blue",
-                l.code === current ? "bg-sky text-blue" : "text-ink"
+                "flex min-h-[40px] items-center justify-between gap-3 rounded-soft px-3 py-2 text-[14px] font-medium transition hover:bg-ivory",
+                l.code === current ? "bg-ivory text-ink" : "text-ink"
               )}
             >
               <span>{l.native}</span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-sub">
+              <span className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-sub">
                 {l.code}
               </span>
             </a>

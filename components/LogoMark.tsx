@@ -31,7 +31,7 @@ export function LogoMark({
         strokeWidth={4}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn("shrink-0", light ? "text-gold" : "text-navy")}
+        className={cn("shrink-0", light ? "text-white" : "text-teak")}
         width={size}
         height={size}
         aria-hidden
@@ -44,8 +44,8 @@ export function LogoMark({
       <div className="min-w-0">
         <div
           className={cn(
-            "font-display text-[20px] font-normal leading-none tracking-[.04em]",
-            light ? "text-white" : "text-navy"
+            "font-display text-[19px] font-normal leading-none tracking-[.08em]",
+            light ? "text-white" : "text-ink"
           )}
         >
           {hotelConfig.nameDisplay}
@@ -53,8 +53,8 @@ export function LogoMark({
         {showTag ? (
           <div
             className={cn(
-              "logo-tagline mt-1 text-[9px] font-bold uppercase tracking-[.22em]",
-              light ? "text-gold" : "text-sub"
+              "logo-tagline mt-1.5 text-[9.5px] font-semibold uppercase tracking-[.26em]",
+              light ? "text-white/80" : "text-sub"
             )}
           >
             {tag}

@@ -9,7 +9,7 @@ export function DemoFineButton({ label }: { label: string }) {
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event("tkh:demo-open"))}
-      className="cursor-pointer bg-transparent text-inherit underline decoration-[#FFFFFF66] underline-offset-2 transition hover:text-white hover:decoration-white"
+      className="cursor-pointer bg-transparent text-inherit underline decoration-ink/30 underline-offset-4 transition hover:text-ink hover:decoration-ink"
     >
       {label}
     </button>
