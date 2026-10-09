@@ -16,7 +16,11 @@
  * - check-out always stays after check-in; past dates are refused
  * - a click on a date opens the native picker
  * - forms added later by client-side navigation are picked up by a
- *   MutationObserver (React does not run inline scripts it inserts)
+ *   MutationObserver (React does not run inline scripts it inserts). It
+ *   starts at DOMContentLoaded, not during parsing: the HTML's own forms are
+ *   already handled inline, and watching the parser cost 250 to 800 ms of
+ *   main thread per page at Lighthouse's 4x CPU throttle. It only scans
+ *   when nodes were added
  * - it fires `tkh:stay` on the form, which the room page's totals listen to
  * - any date input marked data-min-today (the reservation and contact forms)
  *   gets today as its minimum, and data-default-today as its value when it is
@@ -57,7 +61,9 @@ document.addEventListener("change",function(e){var x=e.target;var f=x&&x.closest
 document.addEventListener("click",function(e){var x=e.target;if(x&&x.matches&&x.matches("[data-stay-search] input[type=date]")&&x.showPicker){try{x.showPicker()}catch(r){}}});
 function days(){var t=today();var d=document.querySelectorAll("input[data-min-today]");for(var k=0;k<d.length;k++){var x=d[k];if(!x.min||x.min<t)x.min=t;if(x.__tkhDay)continue;x.__tkhDay=1;if(x.hasAttribute("data-default-today")&&(!x.value||x.value<t))x.value=t}}
 function scan(){var l=document.querySelectorAll("[data-stay-search]:not([data-ready])");for(var k=0;k<l.length;k++)sync(l[k]);days()}
-try{new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
+function added(r){for(var k=0;k<r.length;k++){if(r[k].addedNodes.length){scan();return}}}
+function watch(){scan();try{new MutationObserver(added).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watch);else watch();
 })();`;
 
 /** Called right after each form in the HTML, so its dates exist at first paint. */

@@ -12,7 +12,10 @@
  * skipped it. A decode that fails, or takes longer than six seconds, reveals
  * anyway, so nothing can stay hidden. With scripting
  * off, or under reduced motion, the attribute is never set and every image
- * simply shows. Written as ES5: it runs before any bundle.
+ * simply shows. Written as ES5: it runs before any bundle. Pictures are
+ * collected at DOMContentLoaded and then by an observer that scans only when
+ * nodes were added (client navigations); watching the parser itself cost
+ * hundreds of milliseconds of main thread at Lighthouse's CPU throttle.
  */
 export const UNVEIL_JS = `(function(){try{
 if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
@@ -21,7 +24,9 @@ function reveal(p){var done=false;function go(){if(done)return;done=true;p.setAt
 function check(){raf=0;var h=window.innerHeight+200;for(var k=pending.length-1;k>=0;k--){var p=pending[k];if(p.getBoundingClientRect().top<h){pending.splice(k,1);reveal(p)}}}
 function soon(){if(!raf)raf=requestAnimationFrame(check)}
 function scan(){var l=document.querySelectorAll(".tkh-unveil:not([data-watch])");for(var k=0;k<l.length;k++){l[k].setAttribute("data-watch","");pending.push(l[k])}if(l.length)soon()}
-new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true});
+function added(r){for(var k=0;k<r.length;k++){if(r[k].addedNodes.length){scan();return}}}
+function watch(){scan();new MutationObserver(added).observe(document.documentElement,{childList:true,subtree:true})}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watch);else watch();
 window.addEventListener("scroll",soon,{passive:true});window.addEventListener("resize",soon);
 document.documentElement.setAttribute("data-unveil-ready","");
 }catch(e){document.documentElement.removeAttribute("data-unveil-ready")}})();`;
