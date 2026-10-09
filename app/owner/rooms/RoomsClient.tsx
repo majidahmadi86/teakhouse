@@ -40,7 +40,7 @@ function emptyRoom(): RoomForm {
   return {
     id: "",
     slug: "",
-    shortKey: "loft",
+    shortKey: "king",
     name: { en: "", th: "" },
     rate: 3000,
     ota: 3600,
