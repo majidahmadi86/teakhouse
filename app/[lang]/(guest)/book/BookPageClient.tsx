@@ -168,6 +168,22 @@ export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
   }
 
 
+  // The live room list can arrive after the first render (the provider loads
+  // it), so a ?room= the first render could not match yet is applied once,
+  // when its room appears, unless the guest has already picked one.
+  const pendingRoom = useRef(initialRoom ? null : initialStay.room ?? null);
+  useEffect(() => {
+    const param = pendingRoom.current;
+    if (!param) return;
+    const room = findRoomByParam(param);
+    if (!room) return;
+    pendingRoom.current = null;
+    if (roomSlug) return;
+    setRoomSlug(room.slug);
+    setStep((s) => (s === 1 ? 2 : s));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rooms]);
+
   useEffect(() => {
     if (user) {
       setName((prev) => prev || user.name);
