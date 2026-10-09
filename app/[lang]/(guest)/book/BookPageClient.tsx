@@ -309,7 +309,7 @@ export default function BookPageClient({
                     >
                       <CalendarDays className="hidden h-5 w-5 shrink-0 text-teak sm:block" aria-hidden />
                       <span className="min-w-0">
-                        <span className="block truncate text-[15px] font-medium text-ink sm:text-[15.5px]">{stayLabel}</span>
+                        <span className="block text-[15px] font-medium leading-snug text-ink sm:text-[15.5px]">{stayLabel}</span>
                         <span className="block text-[13px] text-sub">{nightsLabel(lang, nights)}</span>
                       </span>
                       <span className="ms-auto hidden text-[13.5px] font-medium text-forest underline decoration-forest/30 underline-offset-4 sm:inline">

@@ -132,11 +132,13 @@ async function run() {
     const cats = await page.locator("main [data-menu-category]").count();
     const dishes = await page.locator("main ul li").count();
     check("dining lists 3 categories with JS off", cats === 3, `${cats} categories`);
-    check("dining lists 18 dishes with JS off", dishes === 18, `${dishes} dishes`);
+    // v17 · the seed retired the coconut pancakes (no photograph passed): 17 dishes.
+    check("dining lists 17 dishes with JS off", dishes === 17, `${dishes} dishes`);
     const text = await mainText(page);
-    check("dining hours chip present", /07:00/.test(text) && /22:00/.test(text));
+    // v17 · breakfast now opens at 06:30.
+    check("dining hours present", /06:30/.test(text) && /22:00/.test(text));
     const prices = (text.match(/฿\d/g) || []).length;
-    check("dish prices render", prices >= 18, `${prices} prices`);
+    check("dish prices render", prices >= 17, `${prices} prices`);
     await ctx.close();
   }
 
@@ -148,7 +150,8 @@ async function run() {
     const cards = await page.locator("main article").count();
     check("events lists 3 special events with JS off", cards === 3, `${cards} cards`);
     const text = await mainText(page);
-    check("pavilion capacity present", /60/.test(text) && /90/.test(text));
+    // v17 · five-star spaces: 180 standing on the lawn, 120 seated in the pavilion.
+    check("events capacity present", /180/.test(text) && /120/.test(text));
     // v14 · the CTA now preselects the contact form's purpose (?about=event).
     const planCta = await page.locator('main a[href^="/contact"]').count();
     const lineCta = await page.locator("main a[href*='line.me']").count();

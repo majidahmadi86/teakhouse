@@ -1,6 +1,6 @@
 import { LogoMark } from "@/components/LogoMark";
 import { Picture } from "@/components/Picture";
-import { t, tr } from "@/lib/serverLocale";
+import { tr } from "@/lib/serverLocale";
 import type { Lang } from "@/lib/locales/meta";
 
 /**
@@ -24,9 +24,6 @@ export function AuthFrame({ locale, children }: { locale: Lang; children: React.
         <div className="hero-veil-bottom absolute inset-x-0 bottom-0 h-1/2" aria-hidden />
         <div className="absolute bottom-6 start-6 md:bottom-10 md:start-10">
           <LogoMark light showTag={false} size={22} />
-          <p className="hero-text-shadow mt-4 hidden max-w-[22ch] font-display text-[26px] leading-snug text-white md:block">
-            {t(locale, "home.h1")}
-          </p>
         </div>
       </div>
       {children}

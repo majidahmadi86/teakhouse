@@ -158,7 +158,7 @@ export function BookingDock({
                 <span className="min-w-0 flex-1">
                   {showTotal ? (
                     <>
-                      <span className="block truncate text-[12.5px] text-sub">
+                      <span className="block text-[12.5px] leading-snug text-sub">
                         {room ? tr(room.name) : ""} · {nightsText}
                       </span>
                       <span className="block whitespace-nowrap text-[18px] font-semibold leading-tight text-ink">
@@ -170,10 +170,10 @@ export function BookingDock({
                     </>
                   ) : (
                     <>
-                      <span className="block truncate text-[12.5px] text-sub">
+                      <span className="block text-[12.5px] leading-snug text-sub">
                         {stayLine} · {nightsText}
                       </span>
-                      <span className="block truncate text-[15px] font-medium leading-tight text-ink">
+                      <span className="block text-[15px] font-medium leading-snug text-ink">
                         {hint ?? (room ? tr(room.name) : t("bk.dockEmpty"))}
                       </span>
                     </>

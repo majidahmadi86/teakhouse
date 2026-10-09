@@ -1387,3 +1387,16 @@ html[dir="rtl"] .stay-arrow {
     display: none;
   }
 }
+
+/* The narrowest phones (320 to 359 px): the header's logo, Book and menu
+   must fit without a sideways scroll. */
+@media (max-width: 359px) {
+  .tkh-header .logo-word {
+    font-size: 15.5px;
+    letter-spacing: 0.05em;
+  }
+  .tkh-header .logo-glyph {
+    width: 20px;
+    height: 20px;
+  }
+}

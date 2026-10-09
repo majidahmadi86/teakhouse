@@ -31,7 +31,7 @@ export function LogoMark({
         strokeWidth={4}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn("shrink-0", light ? "text-white" : "text-teak")}
+        className={cn("logo-glyph shrink-0", light ? "text-white" : "text-teak")}
         width={size}
         height={size}
         aria-hidden
@@ -44,7 +44,7 @@ export function LogoMark({
       <div className="min-w-0">
         <div
           className={cn(
-            "font-display text-[19px] font-normal leading-none tracking-[.08em]",
+            "logo-word font-display text-[19px] font-normal leading-none tracking-[.08em]",
             light ? "text-white" : "text-ink"
           )}
         >

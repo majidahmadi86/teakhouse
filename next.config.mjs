@@ -68,6 +68,16 @@ const nextConfig = {
     return [
       { source: "/dashboard", destination: "/owner", permanent: false },
       { source: "/dashboard/", destination: "/owner", permanent: false },
+      // v17 · the boutique rooms became the five-star catalogue; old links
+      // land on their nearest room, or on the room list.
+      { source: "/rooms/river-loft", destination: "/rooms/premier-river", permanent: true },
+      { source: "/rooms/garden-room", destination: "/rooms/deluxe-twin", permanent: true },
+      { source: "/rooms/courtyard-twin", destination: "/rooms/deluxe-twin", permanent: true },
+      {
+        source: "/rooms/:old(pier-studio|mango-corner|captains-cabin|family-annex|attic-nook|poolside-hide)",
+        destination: "/rooms",
+        permanent: true,
+      },
     ];
   },
 };

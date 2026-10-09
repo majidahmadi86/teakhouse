@@ -73,7 +73,7 @@ async function main() {
     `${live.length}/${rules.length} still upcoming`
   );
 
-  const room = rooms.find((r) => r.slug === "river-loft") || rooms[0];
+  const room = rooms.find((r) => r.slug === "premier-river") || rooms[0];
   const roomRules = rules.filter((r) => r.roomId === room.id);
   const base = room.rate ?? room.priceNight;
 

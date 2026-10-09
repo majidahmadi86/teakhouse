@@ -24,7 +24,7 @@ const BASE = process.env.BASE || "http://localhost:3000";
 const WIDTHS = [320, 360, 375, 390, 414, 768, 1024, 1093, 1280, 1366, 1440, 1920];
 const ROUTES = (
   process.env.ROUTES ||
-  "/,/rooms,/rooms/river-loft,/book,/dining,/dining/reserve,/events,/events/reserve,/experience,/facilities,/gallery,/offers,/location,/contact,/account,/account/signin,/account/signup"
+  "/,/rooms,/rooms/teak-suite,/book,/dining,/dining/reserve,/events,/events/reserve,/experience,/facilities,/gallery,/offers,/location,/contact,/account,/account/signin,/account/signup"
 ).split(",");
 const LANGS = (process.env.LANGS || "en,th").split(",");
 const KEY_PREFIXES = /^(nav|hero|avail|drp|rooms?|bk|cg|a11y|ft|xp|gal|lc|off|ct|rsv|evr|ev|fac|dn|acc|mobile|db|do|dm|trust|house|sig|urg|sec|chip|cur|col|rp|beyond|rev|cta|brand)\./;
