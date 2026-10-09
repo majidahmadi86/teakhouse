@@ -421,13 +421,11 @@ input.auth-input:-webkit-autofill {
   display: none;
 }
 
-@media (max-width: 767px) {
-  /* v17 · on the home hero the booking panel owns the foot of a phone
-     screen, so the concierge waits off screen until the panel has scrolled
-     away (FabHeroClearance), and comes back above the phone Book bar. */
-  [data-fab-compact]:not([data-fab-expanded]) {
-    display: none;
-  }
+/* v17 · on the home hero the booking panel owns the foot of the screen, so
+   the concierge waits off screen until the panel has scrolled away
+   (FabHeroClearance), at every width, and never sits on the panel. */
+[data-fab-compact]:not([data-fab-expanded]) {
+  display: none;
 }
 
 /* v14 · Contact form · purpose chips and the one adaptive field.

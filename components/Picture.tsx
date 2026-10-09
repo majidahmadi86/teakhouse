@@ -54,6 +54,7 @@ export function Picture({
     <>
     {priority ? <ImagePreload id={id} sizes={sizes} /> : null}
     <picture
+      suppressHydrationWarning
       className={cn(
         unveil && "tkh-unveil",
         fill ? "absolute inset-0 block" : unveil && "block",
@@ -65,6 +66,7 @@ export function Picture({
       <source type="image/webp" srcSet={webp} sizes={sizes} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        suppressHydrationWarning
         src={fallbackSrc(entry)}
         alt={alt}
         width={entry.width}

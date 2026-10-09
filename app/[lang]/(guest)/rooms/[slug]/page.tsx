@@ -157,7 +157,7 @@ export default function RoomDetailPage({ params }: Props) {
                   if (items.length === 0) return null;
                   return (
                     <div key={group}>
-                      <h3 className="text-[12.5px] font-semibold uppercase tracking-[0.18em] text-teak">
+                      <h3 className="font-sans text-[12.5px] font-semibold uppercase tracking-[0.18em] text-teak">
                         {t(locale, SECTION_KEY[group])}
                       </h3>
                       <ul className="mt-3 divide-y divide-line border-t border-line">

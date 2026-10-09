@@ -13,7 +13,7 @@ import { t, type Lang } from "@/lib/serverLocale";
 export function HomeHero({ locale, searchSlot }: { locale: Lang; searchSlot: React.ReactNode }) {
   return (
     <section id="tkh-hero" className="relative">
-      <div className="relative h-[min(125vw,calc(100svh-var(--header-h)-var(--demo-bar-h)-170px))] min-h-[340px] overflow-hidden md:h-[min(calc(100svh-var(--header-h)-var(--demo-bar-h)),860px)] md:min-h-[560px]">
+      <div className="relative h-[min(125vw,calc(100svh-var(--header-h)-var(--demo-bar-h)-170px))] min-h-[340px] overflow-hidden md:h-[min(calc(100svh-var(--header-h)-var(--demo-bar-h)-52px),820px)] md:min-h-[520px]">
         <ArtPicture
           id="hero-home"
           phoneId="hero-home-m"
@@ -24,7 +24,7 @@ export function HomeHero({ locale, searchSlot }: { locale: Lang; searchSlot: Rea
         <div className="hero-veil-bottom absolute inset-x-0 bottom-0 h-3/4 md:hidden" aria-hidden />
         <div className="hero-veil absolute inset-0 hidden md:block" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 md:inset-0">
-          <div className="wrap flex h-full flex-col justify-end pb-6 md:justify-center md:pb-36">
+          <div className="wrap flex h-full flex-col justify-end pb-6 md:justify-center md:pb-28">
             <div className="max-w-[640px] text-white">
               <p className="hero-text-shadow text-[12px] font-semibold uppercase tracking-[0.22em] text-white/90 md:text-[13px]">
                 {t(locale, "home.eyebrow")}

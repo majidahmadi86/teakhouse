@@ -150,7 +150,7 @@ export function StaySearch({
           <div className={cn("grid gap-2", compact ? "grid-cols-3" : "grid-cols-2")}>
             <div data-stay-dates className={cn("grid grid-cols-2 gap-2", compact ? "col-span-2" : "col-span-2")}>
               {dateField("in", inLabel, { cap, value: valCls, box })}
-              {dateField("out", outLabel, { cap, value: valCls, box, nights: !compact })}
+              {dateField("out", outLabel, { cap, value: valCls, box })}
             </div>
             <label className={cn(box, "block", !compact && "col-span-2")}>
               <span className={cn("block", cap)}>{guestsLabel}</span>
