@@ -1380,11 +1380,29 @@ html[dir="rtl"] .stay-arrow {
   }
 }
 @media (max-width: 1023px) {
+  /* On phones and tablets /book is the guest's task: the room cards, their
+     totals and the dock own the screen, so the concierge steps aside here
+     (it is one tap away on every other page). */
   body:has([data-booking-dock]) .tkh-fab {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 6.25rem);
-  }
-  body:has([data-booking-dock] [aria-expanded="true"]) .tkh-fab {
     display: none;
+  }
+}
+/* Phones elsewhere: a small round button, so it covers as little as can be. */
+@media (max-width: 767px) {
+  .tkh-fab {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0;
+  }
+  .tkh-fab .tkh-fab-label,
+  .tkh-fab .tkh-fab-dot {
+    display: none;
+  }
+  .tkh-fab .tkh-fab-icon {
+    display: block;
   }
 }
 
