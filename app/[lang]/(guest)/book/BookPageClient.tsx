@@ -251,19 +251,19 @@ export default function BookPageClient({
                     <p className="eyebrow max-sm:hidden">{t("bk.eyebrow")}</p>
                     <h1 className="mt-2 text-[clamp(1.9rem,3vw,2.75rem)]">{t("bk.h1")}</h1>
                   </div>
-                  <ol className="flex items-center gap-2 text-[13.5px] sm:gap-3" aria-label={t("a11y.bookingSteps")}>
+                  <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12.5px] sm:gap-3 sm:text-[13.5px]" aria-label={t("a11y.bookingSteps")}>
                     {steps.map((label, i) => {
                       const n = (i + 1) as Step;
                       const done = n < step;
                       const current = n === step;
                       return (
-                        <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={current ? "step" : undefined}>
+                        <li key={label} className="flex items-center gap-1.5 sm:gap-3" aria-current={current ? "step" : undefined}>
                           <button
                             type="button"
                             disabled={!done || step === 3}
                             onClick={() => goStep(n)}
                             className={cn(
-                              "inline-flex items-center gap-2 whitespace-nowrap",
+                              "inline-flex items-center gap-1.5 whitespace-nowrap sm:gap-2",
                               current ? "font-semibold text-ink" : done ? "text-ink/80 hover:text-ink" : "text-sub"
                             )}
                           >
@@ -281,7 +281,7 @@ export default function BookPageClient({
                             </span>
                             {label}
                           </button>
-                          {i < steps.length - 1 ? <span className="h-px w-5 bg-line sm:w-8" aria-hidden /> : null}
+                          {i < steps.length - 1 ? <span className="h-px w-3 bg-line min-[400px]:w-5 sm:w-8" aria-hidden /> : null}
                         </li>
                       );
                     })}
