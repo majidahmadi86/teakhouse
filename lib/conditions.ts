@@ -26,8 +26,8 @@ export const CONDITIONS: Condition[] = [
     th: "ต้อนรับเด็ก",
   },
   {
-    en: "Pets only in Garden Rooms (฿500/stay)",
-    th: "สัตว์เลี้ยงได้เฉพาะ Garden Room (500.- ต่อการเข้าพัก)",
+    en: "No pets, except assistance animals",
+    th: "ไม่อนุญาตสัตว์เลี้ยง ยกเว้นสัตว์ช่วยเหลือผู้พิการ",
   },
   {
     en: "No smoking indoors",

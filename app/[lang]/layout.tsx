@@ -8,6 +8,7 @@ import { langStaticParams, pageLang, type LangParams } from "@/lib/pageLocale";
 import { STAY_CORE_JS, STAY_NOSCRIPT_CSS } from "@/lib/staySearchScript";
 import { UNVEIL_JS } from "@/lib/unveilScript";
 import { ROUTE_META } from "@/lib/routeMeta";
+import { OG_IMAGE } from "@/lib/images.generated";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 import type { Metadata } from "next";
@@ -58,7 +59,9 @@ export function generateMetadata({ params }: { params: LangParams }): Metadata {
       siteName: hotelConfig.name,
       title,
       description,
+      images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: hotelConfig.name }],
     },
+    twitter: { card: "summary_large_image", title, description, images: [OG_IMAGE.url] },
     icons: {
       icon: hotelConfig.logoPath,
       apple: "/apple-touch-icon.png",

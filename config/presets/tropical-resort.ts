@@ -58,8 +58,8 @@ export const config: HotelConfig = {
       th: "ยกเลิกฟรีก่อนเข้าพัก 3 วัน",
     },
     pets: {
-      en: "Small dogs welcome in select garden rooms (fee applies).",
-      th: "สุนัขตัวเล็กพักได้ในห้องสวนบางห้อง (มีค่าธรรมเนียม)",
+      en: "We regret that pets cannot stay, with the exception of assistance animals.",
+      th: "ขออภัย โรงแรมไม่อนุญาตให้นำสัตว์เลี้ยงเข้าพัก ยกเว้นสัตว์ช่วยเหลือผู้พิการ",
     },
     depositPct: 30,
   },
@@ -70,13 +70,13 @@ export const config: HotelConfig = {
       th: "สวัสดีค่ะ ยินดีต้อนรับสู่ The Teak House ค่ะ น้ำตอบทุกคำถามตลอด 24 ชั่วโมง ทั้งภาษาไทยและอังกฤษ ให้ช่วยอะไรดีคะ",
     },
     fallback: {
-      en: "I want to get that exactly right for you, so I have passed it to the family. They reply within the hour on LINE (@teakhouse). Meanwhile, may I help with rates, rooms or getting here?",
-      th: "เรื่องนี้น้ำขอส่งต่อให้เจ้าของบ้านตอบให้ชัวร์ที่สุดนะคะ ทีมจะตอบกลับใน 1 ชั่วโมงทาง LINE (@teakhouse) ค่ะ ระหว่างนี้ให้น้ำช่วยเรื่องราคา ห้องพัก หรือการเดินทางไหมคะ",
+      en: "I want to get that exactly right for you, so I have passed it to the front office. They reply within the hour on LINE (@teakhouse). Meanwhile, may I help with rates, rooms or getting here?",
+      th: "เรื่องนี้น้ำขอส่งต่อให้ทีมต้อนรับตอบให้ถูกต้องที่สุดนะคะ ทีมจะตอบกลับภายใน 1 ชั่วโมงทาง LINE (@teakhouse) ค่ะ ระหว่างนี้ให้น้ำช่วยเรื่องราคา ห้องพัก หรือการเดินทางไหมคะ",
     },
     facts: [
       {
-        en: "Twelve teak rooms above the Chao Phraya in Charoenkrung, Bang Rak.",
-        th: "สิบสองห้องไม้สักริมเจ้าพระยา เจริญกรุง บางรัก",
+        en: "A five-star riverside hotel on the Chao Phraya in Charoenkrung, Bang Rak: 151 rooms and suites in six types, from the Deluxe King (40 m², from 6,900 THB) to the Royal Teak Suite (210 m², private plunge pool).",
+        th: "โรงแรมห้าดาวริมแม่น้ำเจ้าพระยา เจริญกรุง บางรัก ห้องพักและสวีท 151 ห้องใน 6 ประเภท ตั้งแต่ดีลักซ์ คิง (40 ตร.ม. เริ่ม 6,900 บาท) ถึงรอยัล ทีคสวีท (210 ตร.ม. พร้อมสระว่ายน้ำส่วนตัว)",
       },
       {
         en: "Check-in from 14:00, check-out by 12:00. Desk staffed 24 hours.",
@@ -90,8 +90,8 @@ export const config: HotelConfig = {
   },
   metadata: {
     title:
-      "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
+      "The Teak House · Five-star Riverside Hotel in Bangkok · Demo by Mikaro Studio",
     description:
-      "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
+      "A five-star hotel on the Chao Phraya in Bangkok: river-view rooms and suites, a Thai kitchen on the river terrace and a garden pool. Book direct for the best rate. Demo by Mikaro Studio.",
   },
 };

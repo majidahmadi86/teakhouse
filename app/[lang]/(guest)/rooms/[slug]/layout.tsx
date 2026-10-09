@@ -9,10 +9,8 @@ type Props = { params: LangParams & { slug: string } };
 
 /**
  * Room pages take their title and description from the room itself, in the
- * request's language · the seeded rooms carry both. Room NAMES stay Latin on
- * purpose (they are the property's own names), so a Thai title reads
- * "River Loft" followed by Thai description copy, which is what a Thai hotel
- * site actually does.
+ * request's language · the catalogue (lib/rooms.ts) carries both, Thai room
+ * names included ("ดีลักซ์ คิง").
  */
 export function generateMetadata({ params }: Props): Metadata {
   const locale = pageLang(params);

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { hotelConfig } from "@/config/hotel.config";
+import { OG_IMAGE } from "@/lib/images.generated";
 import type { DictEntry } from "@/lib/i18n-dict";
 import { translateEntry } from "@/lib/i18n-core";
 import { LANG_CODES, langMeta, type Lang } from "@/lib/locales/meta";
@@ -20,96 +21,96 @@ type RouteMeta = { title: DictEntry; description?: DictEntry };
 export const ROUTE_META: Record<string, RouteMeta> = {
   "/": {
     title: {
-      en: "The Teak House · Riverside Boutique Hotel Bangkok · Demo by Mikaro Studio",
-      th: "The Teak House · โรงแรมบูทีคริมแม่น้ำ กรุงเทพ · เดโมโดย Mikaro Studio",
+      en: "The Teak House · Five-star Riverside Hotel in Bangkok · Demo by Mikaro Studio",
+      th: "The Teak House · โรงแรมห้าดาวริมแม่น้ำ กรุงเทพฯ · เดโมโดย Mikaro Studio",
     },
     description: {
-      en: "Direct-booking demo hotel: live availability with deposits, 24/7 bilingual AI concierge, and an owner dashboard. A showcase system by Mikaro Studio, Bangkok.",
-      th: "เดโมระบบจองตรง · ดูห้องว่างจริงพร้อมมัดจำ ผู้ช่วยตอบแชทสองภาษาตลอด 24 ชั่วโมง และระบบหลังบ้านสำหรับเจ้าของที่พัก โดย Mikaro Studio กรุงเทพ",
+      en: "A five-star hotel on the Chao Phraya in Bangkok's Charoenkrung quarter: river-view rooms and suites, a Thai kitchen on the river terrace, a garden pool. Book direct for the best rate, breakfast included.",
+      th: "โรงแรมห้าดาวริมแม่น้ำเจ้าพระยา ย่านเจริญกรุง กรุงเทพฯ ห้องพักและสวีทวิวแม่น้ำ ห้องอาหารไทยบนระเบียงริมน้ำ และสระว่ายน้ำในสวน จองตรงรับราคาดีที่สุด รวมอาหารเช้า",
     },
   },
   "/rooms": {
-    title: { en: "Rooms", th: "ห้องพัก" },
+    title: { en: "Rooms and Suites", th: "ห้องพักและสวีท" },
     description: {
-      en: "Ten teak rooms and suites on the Chao Phraya, from river lofts to a garden room · rates, photos and what every stay includes.",
-      th: "ห้องพักและสวีทไม้สักสิบห้องริมแม่น้ำเจ้าพระยา ตั้งแต่ห้องลอฟต์วิวแม่น้ำถึงห้องริมสวน ดูราคา ภาพถ่าย และสิ่งที่รวมอยู่ในทุกการเข้าพัก",
+      en: "Six ways to stay on the Chao Phraya, from the 40 m² Deluxe King to the Royal Teak Suite with its own plunge pool. Rates, photographs and what every direct stay includes.",
+      th: "หกรูปแบบของห้องพักริมแม่น้ำเจ้าพระยา ตั้งแต่ดีลักซ์ คิง 40 ตร.ม. ถึงรอยัล ทีคสวีทพร้อมสระว่ายน้ำส่วนตัว ดูราคา ภาพถ่าย และสิทธิพิเศษเมื่อจองตรง",
     },
   },
   "/book": {
-    title: { en: "Book Direct", th: "จองตรงกับเรา" },
+    title: { en: "Reserve Your Stay", th: "สำรองห้องพัก" },
     description: {
-      en: "Check live availability, pay a deposit, and confirm your teak room · direct booking demo by Mikaro Studio.",
-      th: "เช็คห้องว่างตามจริง วางมัดจำ และยืนยันห้องไม้สักของคุณได้ทันที · เดโมระบบจองตรงโดย Mikaro Studio",
+      en: "Choose your dates and room, see the full price with every night itemised, and confirm with a 30% deposit · direct booking at The Teak House, a demo by Mikaro Studio.",
+      th: "เลือกวันและห้องพัก ดูราคารวมแยกรายคืน และยืนยันด้วยมัดจำ 30% · ระบบจองตรงของ The Teak House เดโมโดย Mikaro Studio",
     },
   },
   "/dining": {
-    title: { en: "Dining", th: "ห้องอาหาร" },
+    title: { en: "Dining at the River Terrace", th: "ห้องอาหารริเวอร์เทอเรซ" },
     description: {
-      en: "Breakfast on the river pier, a Thai kitchen and drinks at sundown at The Teak House · a riverside boutique demo by Mikaro Studio.",
-      th: "อาหารเช้าริมท่าเรือ ครัวไทย และเครื่องดื่มยามพระอาทิตย์ตกที่ The Teak House · เดโมโรงแรมบูทีคริมแม่น้ำโดย Mikaro Studio",
+      en: "Breakfast under white parasols, a Thai kitchen that cooks from Bangkok's morning markets, and drinks at the rail at The Teak House.",
+      th: "อาหารเช้าใต้ร่มสีขาว ครัวไทยจากวัตถุดิบตลาดเช้าของกรุงเทพฯ และเครื่องดื่มริมราวระเบียงที่ The Teak House",
     },
   },
   "/dining/reserve": {
-    title: { en: "Reserve a table", th: "จองโต๊ะ" },
+    title: { en: "Reserve a Table", th: "จองโต๊ะอาหาร" },
     description: {
-      en: "Reserve a table at The Teak House riverside kitchen · pick a date, a time and a party size, no deposit required. A demo by Mikaro Studio.",
-      th: "จองโต๊ะที่ครัวริมแม่น้ำของ The Teak House · เลือกวัน เวลา และจำนวนท่าน ไม่ต้องวางมัดจำ · เดโมโดย Mikaro Studio",
+      en: "Reserve a table at the River Terrace: pick a date, a time and a party size, no deposit required. A demo by Mikaro Studio.",
+      th: "จองโต๊ะที่ริเวอร์เทอเรซ เลือกวัน เวลา และจำนวนท่าน ไม่ต้องวางมัดจำ · เดโมโดย Mikaro Studio",
     },
   },
   "/events": {
-    title: { en: "Events & Spaces", th: "งานอีเวนต์และสถานที่" },
+    title: { en: "Weddings and Events", th: "งานแต่งงานและงานเลี้ยง" },
     description: {
-      en: "A riverside teak pavilion for weddings, private dinners and parties, plus special evenings on the house calendar at The Teak House · a demo by Mikaro Studio.",
-      th: "ศาลาไม้สักริมแม่น้ำสำหรับงานแต่งงาน มื้อค่ำส่วนตัว และงานเลี้ยง พร้อมค่ำคืนพิเศษตามปฏิทินของ The Teak House · เดโมโดย Mikaro Studio",
+      en: "Garden ceremonies for up to 180 guests, long-table dinners and private celebrations on the Chao Phraya, plus the hotel's calendar of special evenings.",
+      th: "พิธีในสวนสำหรับแขกสูงสุด 180 ท่าน ดินเนอร์โต๊ะยาว และงานเฉลิมฉลองส่วนตัวริมแม่น้ำเจ้าพระยา พร้อมปฏิทินค่ำคืนพิเศษของโรงแรม",
     },
   },
   "/events/reserve": {
-    title: { en: "Reserve seats", th: "จองที่นั่ง" },
+    title: { en: "Reserve Seats", th: "สำรองที่นั่ง" },
     description: {
-      en: "Request seats at a special evening on the house calendar at The Teak House · no payment, the house confirms. A demo by Mikaro Studio.",
-      th: "ขอจองที่นั่งในค่ำคืนพิเศษตามปฏิทินของ The Teak House · ไม่ต้องชำระเงิน ทางโรงแรมจะยืนยันให้ · เดโมโดย Mikaro Studio",
+      en: "Request seats at a special evening at The Teak House · no payment, the hotel confirms. A demo by Mikaro Studio.",
+      th: "ขอสำรองที่นั่งในค่ำคืนพิเศษที่ The Teak House · ไม่ต้องชำระเงิน โรงแรมจะยืนยันให้ · เดโมโดย Mikaro Studio",
     },
   },
   "/facilities": {
     title: { en: "Facilities", th: "สิ่งอำนวยความสะดวก" },
     description: {
-      en: "Courtyard pool, breakfast on the river pier, garden, lounge, airport transfer, daily housekeeping and luggage storage at The Teak House · a riverside boutique demo by Mikaro Studio.",
-      th: "สระว่ายน้ำในคอร์ตยาร์ด อาหารเช้าริมท่าเรือ สวน เลานจ์ รถรับส่งสนามบิน ทำความสะอาดห้องทุกวัน และบริการรับฝากกระเป๋าที่ The Teak House · เดโมโรงแรมบูทีคริมแม่น้ำโดย Mikaro Studio",
+      en: "A garden pool, a private river pier, the lobby lounge, airport transfers and twice-daily housekeeping at The Teak House, Bangkok.",
+      th: "สระว่ายน้ำในสวน ท่าเรือส่วนตัวริมแม่น้ำ เลานจ์ล็อบบี้ บริการรับส่งสนามบิน และแม่บ้านดูแลวันละสองครั้งที่ The Teak House กรุงเทพฯ",
     },
   },
   "/experience": {
     title: { en: "Experience", th: "ประสบการณ์" },
     description: {
-      en: "River life, courtyard pool, spa mornings and Bangkok walks from The Teak House · a riverside boutique demo by Mikaro Studio.",
-      th: "ชีวิตริมแม่น้ำ สระในคอร์ตยาร์ด เช้าวันสบายที่สปา และเส้นทางเดินเที่ยวกรุงเทพจาก The Teak House · เดโมโรงแรมบูทีคริมแม่น้ำโดย Mikaro Studio",
+      en: "Breakfast at the river terrace, the garden pool, a spa in the Wat Pho tradition and evenings on the river, at a five-star hotel in old Bangkok.",
+      th: "อาหารเช้าที่ระเบียงริมแม่น้ำ สระว่ายน้ำในสวน สปาตามแบบแผนวัดโพธิ์ และค่ำคืนบนสายน้ำ ที่โรงแรมห้าดาวในย่านกรุงเทพฯ เก่า",
     },
   },
   "/gallery": {
     title: { en: "Gallery", th: "แกลเลอรี" },
     description: {
-      en: "Teak interiors, courtyard pool, Chao Phraya views and house dining · browse the Teak House photo gallery.",
-      th: "ภายในบ้านไม้สัก สระในคอร์ตยาร์ด วิวแม่น้ำเจ้าพระยา และห้องอาหารของโรงแรม · ชมภาพถ่ายทั้งหมดของ The Teak House",
+      en: "Light, teak and water: the spaces, the pool and spa, and the table at The Teak House.",
+      th: "แสง ไม้สัก และสายน้ำ ภาพพื้นที่ต่าง ๆ สระว่ายน้ำและสปา และโต๊ะอาหารของ The Teak House",
     },
   },
   "/location": {
-    title: { en: "Location", th: "ที่ตั้ง" },
+    title: { en: "Location", th: "ที่ตั้งและการเดินทาง" },
     description: {
-      en: "Charoen Krung riverside Bangkok · minutes to the ferries, the old town and the Chao Phraya. Find The Teak House demo hotel.",
-      th: "ริมแม่น้ำถนนเจริญกรุง กรุงเทพ · ห่างท่าเรือ เมืองเก่า และแม่น้ำเจ้าพระยาเพียงไม่กี่นาที ดูวิธีเดินทางมาที่ The Teak House",
+      en: "Charoenkrung 44, Bang Rak: on the river in old Bangkok, eight minutes on foot from BTS Saphan Taksin. Directions by skytrain, river and car.",
+      th: "เจริญกรุง 44 บางรัก ริมแม่น้ำในกรุงเทพฯ เก่า เดินแปดนาทีจากบีทีเอสสะพานตากสิน เส้นทางโดยรถไฟฟ้า ทางเรือ และรถยนต์",
     },
   },
   "/offers": {
     title: { en: "Offers", th: "ข้อเสนอพิเศษ" },
     description: {
-      en: "Direct-only stays: longer nights, breakfast bundles and seasonal river packages. Book at The Teak House demo hotel.",
-      th: "ข้อเสนอสำหรับการจองตรงเท่านั้น · พักยาวคุ้มกว่า แพ็กเกจรวมอาหารเช้า และแพ็กเกจริมแม่น้ำตามฤดูกาล จองกับ The Teak House",
+      en: "Direct-only offers at The Teak House: early booking, longer stays and a private airport arrival.",
+      th: "ข้อเสนอสำหรับการจองตรงที่ The Teak House จองล่วงหน้า พักนานขึ้น และบริการรับจากสนามบิน",
     },
   },
   "/contact": {
     title: { en: "Contact", th: "ติดต่อเรา" },
     description: {
-      en: "Write the house, call the desk, or message LINE · The Teak House riverside boutique hotel demo in Bangkok.",
-      th: "ส่งข้อความถึงเรา โทรหาแผนกต้อนรับ หรือคุยผ่าน LINE · The Teak House โรงแรมบูทีคริมแม่น้ำ กรุงเทพ",
+      en: "Write to the hotel, call the concierge or message us on LINE · The Teak House, a five-star riverside hotel in Bangkok.",
+      th: "ส่งข้อความถึงโรงแรม โทรหาคอนเซียร์จ หรือคุยกับเราทาง LINE · The Teak House โรงแรมห้าดาวริมแม่น้ำ กรุงเทพฯ",
     },
   },
   "/account": {
@@ -119,8 +120,8 @@ export const ROUTE_META: Record<string, RouteMeta> = {
 
 /** Room detail pages · the room's own name carries the title. */
 export const ROOM_META_FALLBACK: DictEntry = {
-  en: "Boutique teak room at The Teak House, Bangkok riverside demo hotel.",
-  th: "ห้องพักไม้สักสไตล์บูทีคที่ The Teak House โรงแรมริมแม่น้ำในกรุงเทพ",
+  en: "A room at The Teak House, a five-star riverside hotel in Bangkok.",
+  th: "ห้องพักที่ The Teak House โรงแรมห้าดาวริมแม่น้ำ กรุงเทพฯ",
 };
 
 /**
@@ -184,6 +185,7 @@ export function buildMetadata(
       ...(description ? { description } : {}),
       locale: langMeta(locale).og,
       url: route,
+      images: [{ url: OG_IMAGE.url, width: OG_IMAGE.width, height: OG_IMAGE.height, alt: hotelConfig.name }],
     },
     ...overrides,
   };
