@@ -6,7 +6,8 @@
  *       failed request from our own origin, and no raw dictionary key on
  *       screen
  *   2 · with JavaScript disabled, at 390 and 1366: the page is readable
- *       (<main> carries more than 200 characters) and nothing is stranded in
+ *       (<main> carries at least 80 characters and at least 80% of the text
+ *       the hydrated page shows there) and nothing is stranded in
  *       a hidden wrapper (the loading.tsx failure mode: React streams a
  *       Suspense boundary's content into <div hidden id="S:n"> and swaps it
  *       in with a script, so with scripting off it stays hidden forever).
@@ -29,6 +30,8 @@ const LANGS = (process.env.LANGS || "en,th").split(",");
 const KEY_PREFIXES = /^(nav|hero|avail|drp|rooms?|bk|cg|a11y|ft|xp|gal|lc|off|ct|rsv|evr|ev|fac|dn|acc|mobile|db|do|dm|trust|house|sig|urg|sec|chip|cur|col|rp|beyond|rev|cta|brand)\./;
 
 const results = [];
+/** <main> text length with JavaScript, per lang/width/route (the JS-off yardstick). */
+const hydrated = new Map();
 function check(name, pass, detail = "") {
   results.push({ name, pass: !!pass, detail });
   if (!pass) console.log(`FAIL · ${name}${detail ? " · " + detail : ""}`);
@@ -79,8 +82,11 @@ async function run() {
           const re = new RegExp(prefixes);
           const text = document.body.innerText || "";
           const keys = (text.match(/\b[a-z]{1,8}\.[a-zA-Z0-9]{1,16}(?:\.[a-zA-Z0-9]+)?\b/g) || []).filter((k) => re.test(k));
-          return { over: document.documentElement.scrollWidth - window.innerWidth, keys: [...new Set(keys)].slice(0, 4) };
-        }, KEY_PREFIXES.source).catch(() => ({ over: -1, keys: [] }));
+          const main = document.querySelector("main");
+          const mainChars = (main ? main.innerText : "").replace(/\s+/g, " ").trim().length;
+          return { over: document.documentElement.scrollWidth - window.innerWidth, keys: [...new Set(keys)].slice(0, 4), mainChars };
+        }, KEY_PREFIXES.source).catch(() => ({ over: -1, keys: [], mainChars: 0 }));
+        hydrated.set(`${lang}/${width}${route}`, info.mainChars);
         // The Google Maps embed on /location and /contact logs its own
         // third-party noise from inside its iframe; our own origin's errors
         // always count.
@@ -116,7 +122,16 @@ async function run() {
           return { chars: text.length, stranded };
         });
         const label = `[nojs ${lang}/${width}] ${route}`;
-        check(`${label} readable`, info.chars > 200, `${info.chars} chars`);
+        // Readable · real text in <main>, and nearly all of what the hydrated
+        // page shows there. A fixed floor failed pages that are short by
+        // design (the gallery is pictures, sign-in is a form) and would pass
+        // a long skeleton; the hydrated page is the honest yardstick.
+        const live = hydrated.get(`${lang}/${width}${route}`) || 0;
+        check(
+          `${label} readable`,
+          info.chars >= 80 && info.chars >= 0.8 * live,
+          `${info.chars} chars without JS, ${live} with`
+        );
         check(`${label} nothing stranded behind a hidden wrapper`, !info.stranded);
       }
       await ctx.close();
