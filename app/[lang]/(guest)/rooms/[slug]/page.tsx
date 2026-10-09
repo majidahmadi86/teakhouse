@@ -1,18 +1,18 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ArrowRight, Check } from "lucide-react";
+import { Picture } from "@/components/Picture";
 import { Price } from "@/components/Price";
-import { PriceChip } from "@/components/PriceChip";
+import { RoomCard } from "@/components/rooms/RoomCard";
 import { StaySearch } from "@/components/stay/StaySearch";
 import { StayTotals } from "@/components/stay/StayTotals";
-import { RoomGallery } from "@/components/room/RoomGallery";
-import { AmenityIcon } from "@/components/ui/AmenityIcon";
-import { AMENITIES, type AmenityGroup, type AmenityId } from "@/lib/amenities";
+import { AMENITIES, type AmenityGroup } from "@/lib/amenities";
 import { CONDITIONS, CONDITIONS_TITLE } from "@/lib/conditions";
-import { getSeedGuestRooms } from "@/lib/guestRooms";
-import { getRoomByKey, getRoomBySlug, SEED_ROOMS } from "@/lib/rooms";
+import { isImageId } from "@/lib/images";
+import { catalogueRoom, ROOM_CATALOGUE } from "@/lib/rooms";
 import { t, tr } from "@/lib/serverLocale";
 import { pageLang, type LangParams } from "@/lib/pageLocale";
+import { cn } from "@/lib/utils";
 
 type Props = {
   params: LangParams & { slug: string };
@@ -27,174 +27,222 @@ const SECTION_KEY: Record<AmenityGroup, string> = {
 };
 
 export function generateStaticParams() {
-  return SEED_ROOMS.map((room) => ({ slug: room.slug }));
+  return ROOM_CATALOGUE.map((room) => ({ slug: room.slug }));
 }
 
 /**
- * A room · server HTML (it was one 360-line client component). What stays
- * interactive is the photo gallery with its lightbox (an island) and the
- * booking rail, a StaySearch form (GET /book with this room) whose only island
- * is its running total. Every price on the page is a <Price>, so the currency
- * select converts all of them.
+ * A room · server HTML from the catalogue (lib/rooms.ts). Its own
+ * photographs only, a calm description, what a direct booking includes, the
+ * amenities as words, and the booking rail: a StaySearch form (GET /book with
+ * this room) whose only island is its running total. Every price is a
+ * <Price>, so the currency select converts all of them.
  */
 export default function RoomDetailPage({ params }: Props) {
   const locale = pageLang(params);
   const { slug } = params;
-  const room = getRoomBySlug(slug) ?? getRoomByKey(slug);
+  const room = catalogueRoom(slug);
   if (!room) notFound();
   if (room.slug !== slug) redirect(`/rooms/${room.slug}`);
 
   const name = tr(locale, room.name);
-  const photos = room.photos.slice(0, 6);
-  const otherRooms = getSeedGuestRooms().filter((r) => r.slug !== room.slug);
+  const photos = room.images.filter((p) => isImageId(p.id));
+  const [cover, ...rest] = photos;
+  const side = rest.slice(0, 3);
+  const more: typeof rest = [];
+  const others = ROOM_CATALOGUE.filter((r) => r.slug !== room.slug).slice(0, 3);
 
-  const rail = (key: "desk" | "phone") => (
-    <div key={key} className={key === "phone" ? "" : "rounded-[14px] bg-white p-6 shadow-panel"}>
-      <StaySearch
-        locale={locale}
-        variant="rail"
-        compact={key === "phone"}
-        room={room.shortKey}
-        submitLabel={t(locale, "rooms.bookThis")}
-      >
-        <StayTotals
-          rate={room.rate}
-          ota={room.ota}
-          nightLabel={t(locale, "bk.night")}
-          nightsLabel={t(locale, "bk.nights")}
-          saveLabel={t(locale, "bk.save")}
-        />
-      </StaySearch>
-    </div>
-  );
+  const facts = [
+    { k: "room.size", v: `${room.sizeM2} m²` },
+    { k: "room.beds", v: tr(locale, room.beds) },
+    { k: "room.view", v: tr(locale, room.view) },
+    { k: "room.sleeps", v: t(locale, "rooms.sleeps", { n: room.capacity }) },
+  ];
 
   return (
     <>
-      <section className="min-h-screen bg-white px-6 pb-8 pt-6 md:pt-8">
-        <div className="mx-auto max-w-[1180px]">
-          <nav className="mb-2 text-[13px] font-semibold text-sub">
-            <Link href="/rooms" className="link-draw text-blue">
+      <section className="bg-stone">
+        <div className="wrap pt-8 md:pt-12">
+          <nav className="text-[13.5px] text-sub" aria-label={t(locale, "a11y.breadcrumb")}>
+            <Link href="/rooms" prefetch={false} className="link-draw text-ink/80 hover:text-ink">
               {t(locale, "rooms.crumb")}
             </Link>
-            <span className="mx-2 text-line">/</span>
+            <span className="mx-2 text-line" aria-hidden>
+              /
+            </span>
             <span className="text-ink">{name}</span>
           </nav>
-          <h1 className="font-display text-[clamp(2rem,4vw,3.2rem)] leading-tight text-ink">
-            {name}
-          </h1>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {[room.meta, room.floor].map((chip) => (
-              <span
-                key={chip.en}
-                className="rounded-full border border-line bg-cloud px-3 py-1 text-xs font-bold text-ink/80"
-              >
-                {tr(locale, chip)}
-              </span>
-            ))}
+          <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-[760px]">
+              <p className="eyebrow">{tr(locale, room.floor)}</p>
+              <h1 className="mt-3">{name}</h1>
+              <p className="lead mt-4">{tr(locale, room.intro)}</p>
+            </div>
+            <p className="text-[15px] text-sub">
+              {t(locale, "room.from")}{" "}
+              <span className="font-display text-[30px] text-ink">
+                <Price thb={room.rate} />
+              </span>{" "}
+              {t(locale, "room.night")}
+            </p>
           </div>
+        </div>
 
-          <RoomGallery
-            photos={photos}
-            name={name}
-            photoLabels={photos.map((_, i) => `${name} photo ${i + 1}`)}
-            closeLabel={t(locale, "mobile.close")}
-            prevLabel={t(locale, "a11y.prev")}
-            nextLabel={t(locale, "a11y.next")}
-          />
-
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px] lg:items-start">
-            <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <PriceChip locale={locale} rate={room.rate} ota={room.ota} showSave />
+        {/* The room's own photographs · cover large, the rest beside it. */}
+        <div className="wrap mt-8 md:mt-10">
+          <div className={cn("grid gap-2 md:gap-3", side.length ? "md:grid-cols-[2fr_1fr]" : "")}>
+            {cover ? (
+              <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-ivory md:aspect-[3/2]">
+                <Picture
+                  id={cover.id as never}
+                  alt={tr(locale, cover.alt)}
+                  sizes="(max-width: 767px) calc(100vw - 40px), 800px"
+                  priority
+                  fill
+                />
               </div>
-              <p className="mt-6 max-w-prose text-[1.05rem] leading-relaxed text-ink/85">
-                {tr(locale, room.description)}
-              </p>
-
-              <div className="mt-12">
-                <h2 className="mb-6 text-2xl">{t(locale, "rooms.amenities")}</h2>
-                <div className="space-y-8">
-                  {GROUPS.map((group) => {
-                    const items = room.amenities.filter((id) => AMENITIES[id].group === group);
-                    if (items.length === 0) return null;
-                    return (
-                      <div key={group}>
-                        <h3 className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-blue">
-                          {t(locale, SECTION_KEY[group])}
-                        </h3>
-                        <ul className="grid gap-3 sm:grid-cols-2">
-                          {items.map((id) => {
-                            const amenity = AMENITIES[id as AmenityId];
-                            return (
-                              <li
-                                key={id}
-                                className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm"
-                              >
-                                <AmenityIcon name={amenity.icon} className="text-blue" />
-                                <span className="text-sm font-semibold">{tr(locale, amenity)}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    );
-                  })}
+            ) : null}
+            {side.length ? (
+              <div className={cn("grid gap-2 md:gap-3", side.length === 3 ? "grid-cols-3 md:grid-cols-1 md:grid-rows-3" : side.length === 2 ? "grid-cols-2 md:grid-cols-1 md:grid-rows-2" : "")}>
+                {side.map((p) => (
+                  <div key={p.id} className="relative aspect-[4/3] overflow-hidden rounded-card bg-ivory md:aspect-auto">
+                    <Picture id={p.id as never} alt={tr(locale, p.alt)} sizes="(max-width: 767px) 50vw, 400px" fill unveil />
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          {more.length ? (
+            <div className="mt-2 grid grid-cols-2 gap-2 md:mt-3 md:grid-cols-4 md:gap-3">
+              {more.map((p) => (
+                <div key={p.id} className="relative aspect-[4/3] overflow-hidden rounded-card bg-ivory">
+                  <Picture id={p.id as never} alt={tr(locale, p.alt)} sizes="(max-width: 767px) 50vw, 300px" fill unveil />
                 </div>
-              </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </section>
 
-              <div className="mt-12 rounded-[14px] bg-white p-6 shadow-panel">
-                <h2 className="mb-4 text-xl">{tr(locale, CONDITIONS_TITLE)}</h2>
-                <ul className="space-y-2">
-                  {CONDITIONS.map((item) => (
-                    <li
-                      key={item.en}
-                      className="flex gap-2 text-sm font-semibold text-ink/85 before:text-blue before:content-['·']"
-                    >
-                      {tr(locale, item)}
-                    </li>
-                  ))}
-                </ul>
+      <section className="bg-stone pb-32 pt-12 md:pt-16 lg:pb-24">
+        <div className="wrap grid gap-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-16">
+          <div className="min-w-0">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 sm:grid-cols-4">
+              {facts.map((f) => (
+                <div key={f.k}>
+                  <dt className="text-[12px] font-semibold uppercase tracking-[0.16em] text-sub">{t(locale, f.k)}</dt>
+                  <dd className="mt-1.5 text-[16px] text-ink">{f.v}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <p className="lead mt-10 max-w-[64ch]">{tr(locale, room.description)}</p>
+
+            <div className="mt-14">
+              <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t(locale, "room.included")}</h2>
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                {room.inclusions.map((inc) => (
+                  <li key={inc.en} className="flex gap-3 text-[16px] text-ink/85">
+                    <Check className="mt-1 h-4 w-4 shrink-0 text-forest" aria-hidden />
+                    {tr(locale, inc)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-14">
+              <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t(locale, "rooms.amenities")}</h2>
+              <div className="mt-6 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+                {GROUPS.map((group) => {
+                  const items = room.amenities.filter((id) => AMENITIES[id].group === group);
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={group}>
+                      <h3 className="text-[12.5px] font-semibold uppercase tracking-[0.18em] text-teak">
+                        {t(locale, SECTION_KEY[group])}
+                      </h3>
+                      <ul className="mt-3 divide-y divide-line border-t border-line">
+                        {items.map((id) => (
+                          <li key={id} className="py-2.5 text-[15.5px] text-ink/85">
+                            {tr(locale, AMENITIES[id])}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* The booking rail · a StaySearch form (GET /book with this room),
-                sticky on desktop, a bottom card on phones. */}
-            <div className="hidden lg:sticky lg:top-24 lg:block">{rail("desk")}</div>
-            <div className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-4 pb-safe backdrop-blur-md lg:hidden">
-              {rail("phone")}
+            <div className="mt-14 rounded-card border border-line/80 bg-white p-6 md:p-8">
+              <h2 className="text-[22px]">{tr(locale, CONDITIONS_TITLE)}</h2>
+              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                {CONDITIONS.map((item) => (
+                  <li key={item.en} className="flex gap-2.5 text-[15px] text-ink/80">
+                    <span className="mt-[0.7em] h-1 w-1 shrink-0 rounded-full bg-teak-light" aria-hidden />
+                    {tr(locale, item)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* The booking rail · a StaySearch form (GET /book with this room). */}
+          <div id="book-room" className="scroll-mt-28 lg:sticky lg:top-[calc(var(--demo-bar-h)+var(--header-h)+1.5rem)]">
+            <div className="rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-7">
+              <p className="font-display text-[22px] text-ink">{t(locale, "rooms.bookThis")}</p>
+              <p className="mt-1 text-[14px] text-sub">{t(locale, "room.bestRate")}</p>
+              <StaySearch
+                locale={locale}
+                variant="rail"
+                room={room.slug}
+                submitLabel={t(locale, "avail.go")}
+                className="mt-5"
+              >
+                <StayTotals
+                  rate={room.rate}
+                  ota={room.ota}
+                  nightLabel={t(locale, "bk.night")}
+                  nightsLabel={t(locale, "bk.nights")}
+                  saveLabel={t(locale, "bk.save")}
+                />
+              </StaySearch>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-surface px-6 py-24 pb-40 lg:pb-24">
-        <div className="mx-auto max-w-[1180px]">
-          <h2 className="mb-8">{t(locale, "rooms.other")}</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {otherRooms.map((other) => (
-              <Link
-                key={other.id}
-                href={`/rooms/${other.slug}`}
-                className="group overflow-hidden rounded-[14px] bg-white shadow-sm"
-              >
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={other.photos[0]}
-                    alt={tr(locale, other.name)}
-                    fill
-                    quality={70}
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-display text-lg">{tr(locale, other.name)}</h3>
-                  <p className="text-sm font-semibold text-strike">{tr(locale, other.meta)}</p>
-                  <p className="mt-1 font-display text-xl">
-                    <Price thb={other.rate} />
-                  </p>
-                </div>
-              </Link>
+      {/* Phones · the room's rate and a way to its rail, always at hand. */}
+      <div className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 px-4 pt-3 pb-safe shadow-dock backdrop-blur-md lg:hidden">
+        <div className="flex items-center justify-between gap-4">
+          <p className="min-w-0 leading-tight">
+            <span className="block truncate text-[13px] text-sub">{name}</span>
+            <span className="block whitespace-nowrap text-[17px] font-semibold text-ink">
+              <Price thb={room.rate} /> <span className="text-[13px] font-normal text-sub">{t(locale, "room.night")}</span>
+            </span>
+          </p>
+          <a href="#book-room" className="btn-primary h-12 shrink-0 px-6 text-[15px]">
+            {t(locale, "avail.go")}
+          </a>
+        </div>
+      </div>
+
+      <section className="border-t border-line bg-white px-5 pb-32 pt-20 sm:px-8 lg:pb-24">
+        <div className="mx-auto max-w-site">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2>{t(locale, "rooms.other")}</h2>
+            <Link href="/rooms" prefetch={false} className="link-quiet">
+              {t(locale, "rooms.all")}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+            </Link>
+          </div>
+          <div className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {others.map((other) => (
+              <RoomCard
+                key={other.slug}
+                room={other}
+                locale={locale}
+                sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 50vw, 400px"
+              />
             ))}
           </div>
         </div>

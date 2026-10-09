@@ -65,7 +65,7 @@ function SignInForm() {
       <SocialLoginButtons />
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block">
-          <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+          <span className="field-label">
             {t("acc.email")}
           </span>
           <input
@@ -78,7 +78,7 @@ function SignInForm() {
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+          <span className="field-label">
             {t("acc.password")}
           </span>
           <input

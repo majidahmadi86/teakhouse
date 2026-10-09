@@ -422,27 +422,11 @@ input.auth-input:-webkit-autofill {
 }
 
 @media (max-width: 767px) {
+  /* v17 · on the home hero the booking panel owns the foot of a phone
+     screen, so the concierge waits off screen until the panel has scrolled
+     away (FabHeroClearance), and comes back above the phone Book bar. */
   [data-fab-compact]:not([data-fab-expanded]) {
-    width: 52px;
-    padding-left: 0;
-    padding-right: 0;
-    gap: 0;
-    /* Docked above the hero's booking pill. Compacting alone was not enough:
-       measured at 360, 390 and 414 the 52px button still covered 32x40px of
-       the full-width search control, which sits about 132px off the bottom of
-       the viewport. Both are anchored to the viewport bottom, so one offset
-       clears it at every height. Returns to the standard offset the moment
-       the widget scrolls away and the button expands. */
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 11.5rem);
-  }
-
-  [data-fab-compact]:not([data-fab-expanded]) .tkh-fab-label,
-  [data-fab-compact]:not([data-fab-expanded]) .tkh-fab-dot {
     display: none;
-  }
-
-  [data-fab-compact]:not([data-fab-expanded]) .tkh-fab-icon {
-    display: block;
   }
 }
 
@@ -1183,9 +1167,8 @@ html:has(.tkh-drawer:popover-open) {
 
 /* Gallery · CSS-only filters (radio + :has) and :target lightbox
    (app/(guest)/gallery/page.tsx). Works with scripting off. */
-.tkh-gallery:has(#gal-rooms:checked) [data-cat]:not([data-cat="rooms"]),
+.tkh-gallery:has(#gal-spaces:checked) [data-cat]:not([data-cat="spaces"]),
 .tkh-gallery:has(#gal-pool:checked) [data-cat]:not([data-cat="pool"]),
-.tkh-gallery:has(#gal-river:checked) [data-cat]:not([data-cat="river"]),
 .tkh-gallery:has(#gal-food:checked) [data-cat]:not([data-cat="food"]) {
   display: none;
 }

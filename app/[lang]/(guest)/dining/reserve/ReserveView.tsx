@@ -65,10 +65,11 @@ export async function ReserveView({
 
   const hero = (
     <PageHero
-      imageId="dining/reserve"
+      imageId="hero-dining-reserve"
+      phoneImageId="hero-dining-reserve-m"
       alt={tr(locale, {
-          en: "A table laid for dinner beside the river",
-          th: "โต๊ะที่จัดไว้สำหรับมื้อค่ำริมแม่น้ำ",
+          en: "A white-linen table set with crystal glasses and botanical plates",
+          th: "โต๊ะปูผ้าลินินขาวจัดแก้วคริสตัลและจานลายพฤกษา",
         })}
       eyebrow={t(locale, "nav.dining")}
       title={t(locale, "rsv.h1")}
@@ -85,7 +86,7 @@ export async function ReserveView({
     return (
       <>
         {hero}
-        <section className="section-pad bg-white">
+        <section className="section-pad bg-stone">
           <div className="mx-auto max-w-[640px] text-center">
             <p className="eyebrow mb-3.5">{t(locale, "rsv.okEyebrow")}</p>
             <h2>{t(locale, "rsv.okH1")}</h2>
@@ -93,11 +94,11 @@ export async function ReserveView({
               {t(locale, "rsv.okLead")}
             </p>
 
-            <div className="mt-8 rounded-card border border-line bg-cloud p-6 md:p-8">
+            <div className="mt-8 rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-8">
               <p className="text-[0.78rem] font-bold uppercase tracking-[0.16em] text-sub">
                 {t(locale, "rsv.refLabel")}
               </p>
-              <p className="mt-2 font-display text-4xl text-blue">
+              <p className="mt-2 font-display text-4xl text-teak">
                 {searchParams.ref}
               </p>
               <dl className="mt-6 space-y-2 text-left text-[0.95rem]">
@@ -153,7 +154,7 @@ export async function ReserveView({
     return (
       <>
         {hero}
-        <section className="section-pad bg-white">
+        <section className="section-pad bg-stone">
           <div className="mx-auto max-w-[640px] text-center">
             <h2>{t(locale, "rsv.closedH1")}</h2>
             <p className="mt-4 text-[1.08rem] leading-relaxed text-ink/80">
@@ -181,9 +182,9 @@ export async function ReserveView({
   return (
     <>
       {hero}
-      <section className="section-pad bg-white">
+      <section className="section-pad bg-stone">
         <div className="mx-auto max-w-[640px]">
-          <p className="inline-flex items-center rounded-full bg-sky px-4 py-2.5 text-[0.85rem] font-bold text-blue">
+          <p className="inline-flex items-center rounded-soft border border-line bg-white px-4 py-2.5 text-[14.5px] font-medium text-ink">
             {t(locale, "rsv.window", { w: window })}
           </p>
 
@@ -198,11 +199,11 @@ export async function ReserveView({
 
           <form
             action={reserveTable}
-            className="mt-6 space-y-8 rounded-card border border-line bg-cloud p-6 md:p-8"
+            className="mt-6 space-y-8 rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-8"
           >
             <fieldset className="space-y-4">
               <legend className="mb-1 font-display text-xl text-ink">
-                <span className="mr-2 text-blue">1</span>
+                <span className="me-2 font-display text-teak">1</span>
                 {t(locale, "rsv.step1")}
               </legend>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -251,7 +252,7 @@ export async function ReserveView({
 
             <fieldset className="space-y-4">
               <legend className="mb-1 font-display text-xl text-ink">
-                <span className="mr-2 text-blue">2</span>
+                <span className="me-2 font-display text-teak">2</span>
                 {t(locale, "rsv.step2")}
               </legend>
               <div>
@@ -286,7 +287,7 @@ export async function ReserveView({
 
             <fieldset className="space-y-4">
               <legend className="mb-1 font-display text-xl text-ink">
-                <span className="mr-2 text-blue">3</span>
+                <span className="me-2 font-display text-teak">3</span>
                 {t(locale, "rsv.step3")}
               </legend>
               <div>

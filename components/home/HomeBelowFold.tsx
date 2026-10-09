@@ -1,140 +1,187 @@
 import Link from "next/link";
-import { Calendar, MessageCircle, User } from "lucide-react";
-import { LocalPicture } from "@/components/LocalPicture";
+import { ArrowRight } from "lucide-react";
 import { OfferCard } from "@/components/OfferCard";
-import { HomeRoomCard } from "@/components/home/HomeRoomCard";
-import {
-  CurtainReveal,
-  MotionCard,
-  Reveal,
-  RevealItem,
-  RevealStagger,
-} from "@/components/home/HomeReveal";
+import { Picture } from "@/components/Picture";
+import { RoomCard } from "@/components/rooms/RoomCard";
+import { RiverMap } from "@/components/site/RiverMap";
+import { Reveal, RevealItem, RevealStagger } from "@/components/home/HomeReveal";
 import { FACILITIES } from "@/lib/facilities";
-import { getSeedGuestRooms } from "@/lib/guestRooms";
-import {
-  translate as t,
-  translateEntry as tr,
-  type Lang,
-} from "@/lib/translate";
+import { ROOM_CATALOGUE } from "@/lib/rooms";
+import { translate as t, type Lang } from "@/lib/translate";
 
 const OFFERS = ["1", "2", "3"] as const;
 
+function SectionHead({
+  eyebrow,
+  title,
+  lead,
+  center = false,
+}: {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  center?: boolean;
+}) {
+  return (
+    <div className={center ? "mx-auto max-w-[720px] text-center" : "max-w-[640px]"}>
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="mt-4">{title}</h2>
+      {lead ? <p className="lead mt-5">{lead}</p> : null}
+    </div>
+  );
+}
+
+/** One photograph and one idea, side by side · dining, celebrations. */
+function Feature({
+  locale,
+  image,
+  alt,
+  eyebrow,
+  title,
+  body,
+  href,
+  cta,
+  flip = false,
+}: {
+  locale: Lang;
+  image: "dining-beyond" | "events-beyond";
+  alt: string;
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+  flip?: boolean;
+}) {
+  void locale;
+  return (
+    <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
+      <Reveal className={flip ? "md:order-2" : undefined}>
+        <div className="relative aspect-[4/3] overflow-hidden rounded-card bg-ivory md:aspect-[5/4]">
+          <Picture id={image} alt={alt} sizes="(max-width: 767px) calc(100vw - 40px), 50vw" fill unveil />
+        </div>
+      </Reveal>
+      <Reveal>
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 className="mt-4">{title}</h2>
+        <p className="lead mt-5">{body}</p>
+        <Link href={href} prefetch={false} className="link-quiet mt-8">
+          {cta}
+          <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+        </Link>
+      </Reveal>
+    </div>
+  );
+}
+
 /**
- * Below-fold home sections · server-rendered directly in the page (RSC) with the
- * resolved locale, so they are fully visible static HTML at first paint · no
- * skeleton, no interaction, no content JS. The JS-free CSS reveals (HomeReveal)
- * play on load and fail open (content is visible even if animation never runs).
- * content-visibility keeps off-screen render cost off the LCP path.
+ * Home below the fold · server HTML in the page's language, visible with no
+ * script. Bright and generous: a welcome, the six rooms, dining and
+ * celebrations with their own photographs, the hotel's services in words,
+ * the offers, and the neighbourhood as a drawn map. No dark bands, no icon
+ * rows, no stand-in photographs.
  */
 export function HomeBelowFold({ locale }: { locale: Lang }) {
-  const rooms = getSeedGuestRooms().slice(0, 3);
-
   return (
     <>
-      <section className="tkh-below-section section-pad bg-white">
-        <div className="mx-auto grid max-w-[1180px] items-center gap-8 md:gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <Reveal>
-            <p className="eyebrow mb-3.5">{t(locale, "about.eyebrow")}</p>
-            <h2>{t(locale, "about.h2")}</h2>
-            <p className="mt-5 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
-              {t(locale, "about.p")}
-            </p>
-            <Link href="/rooms" className="btn-navy btn-lift mt-8 inline-flex">
-              {t(locale, "about.cta")}
-            </Link>
-          </Reveal>
-          <CurtainReveal>
-            <div className="relative overflow-hidden rounded-[14px] shadow-panel">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1120&q=70&auto=format&fit=crop"
-                alt={tr(locale, {
-                  en: "Teak house interior",
-                  th: "บรรยากาศภายในบ้านไม้สัก",
-                })}
-                width={1120}
-                height={1400}
-                loading="lazy"
-                decoding="async"
-                className="aspect-[5/4] w-full object-cover transition duration-500 hover:scale-[1.06] md:aspect-[4/5]"
-              />
-            </div>
-          </CurtainReveal>
-        </div>
+      {/* Welcome */}
+      <section className="tkh-below-section section-pad bg-stone">
+        <Reveal className="mx-auto max-w-[820px] text-center">
+          <p className="eyebrow">{t(locale, "home.intro.eyebrow")}</p>
+          <h2 className="mt-4">{t(locale, "home.intro.h2")}</h2>
+          <p className="lead mx-auto mt-6 max-w-[62ch]">{t(locale, "home.intro.p")}</p>
+        </Reveal>
+        <RevealStagger className="mx-auto mt-14 grid max-w-[960px] gap-8 border-y border-line py-10 text-center sm:grid-cols-3">
+          {(["1", "2", "3"] as const).map((n) => (
+            <RevealItem key={n}>
+              <p className="font-display text-[34px] leading-none text-teak">{t(locale, `home.fact${n}.n`)}</p>
+              <p className="mt-3 text-[15px] text-ink/75">{t(locale, `home.fact${n}.p`)}</p>
+            </RevealItem>
+          ))}
+        </RevealStagger>
       </section>
 
-      <section className="tkh-below-section section-pad bg-cloud">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="max-w-[640px]">
-            <p className="eyebrow mb-3.5">{t(locale, "rooms.eyebrow")}</p>
-            <h2>{t(locale, "rooms.h2")}</h2>
-            <p className="mt-4 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
-              {t(locale, "rooms.p")}
-            </p>
-          </Reveal>
-          <RevealStagger className="mt-12 grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-            {rooms.map((room) => (
-              <RevealItem key={room.id}>
-                <MotionCard>
-                  <HomeRoomCard room={room} locale={locale} />
-                </MotionCard>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-          <p className="mt-10 text-center">
-            <Link href="/rooms" className="btn-secondary btn-lift">
+      {/* Rooms and suites */}
+      <section className="tkh-below-section section-pad bg-white">
+        <div className="wrap !px-0">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHead
+              eyebrow={t(locale, "home.rooms.eyebrow")}
+              title={t(locale, "home.rooms.h2")}
+              lead={t(locale, "home.rooms.p")}
+            />
+            <Link href="/rooms" prefetch={false} className="btn-secondary">
               {t(locale, "rooms.all")}
             </Link>
-          </p>
+          </div>
+          <RevealStagger className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {ROOM_CATALOGUE.map((room) => (
+              <RevealItem key={room.slug}>
+                <RoomCard
+                  room={room}
+                  locale={locale}
+                  sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 50vw, 400px"
+                />
+              </RevealItem>
+            ))}
+          </RevealStagger>
         </div>
       </section>
 
-      {/* Facilities strip · seven static cards, images lazy and size-reserved,
-          each one a link into the facilities page. */}
-      <section className="tkh-below-section section-pad bg-white">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="flex flex-wrap items-end justify-between gap-4">
-            <div className="max-w-[640px]">
-              <p className="eyebrow mb-3.5">{t(locale, "fac.strip.eyebrow")}</p>
-              <h2>{t(locale, "fac.strip.h2")}</h2>
-              <p className="mt-4 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
-                {t(locale, "fac.strip.p")}
-              </p>
-            </div>
-            <Link
-              href="/facilities"
-              className="link-draw inline-flex items-center gap-1 text-sm font-bold text-blue"
-            >
-              {t(locale, "fac.strip.cta")}
-              <span aria-hidden>→</span>
+      {/* Dining and celebrations */}
+      <section className="tkh-below-section section-pad bg-stone">
+        <div className="wrap !px-0 space-y-24 md:space-y-32">
+          <Feature
+            locale={locale}
+            image="dining-beyond"
+            alt={t(locale, "home.dining.alt")}
+            eyebrow={t(locale, "home.dining.eyebrow")}
+            title={t(locale, "home.dining.h2")}
+            body={t(locale, "home.dining.p")}
+            href="/dining"
+            cta={t(locale, "home.dining.cta")}
+          />
+          <Feature
+            locale={locale}
+            image="events-beyond"
+            alt={t(locale, "home.events.alt")}
+            eyebrow={t(locale, "home.events.eyebrow")}
+            title={t(locale, "home.events.h2")}
+            body={t(locale, "home.events.p")}
+            href="/events"
+            cta={t(locale, "home.events.cta")}
+            flip
+          />
+        </div>
+      </section>
+
+      {/* The hotel · services in words, each a door into /facilities */}
+      <section className="tkh-below-section section-pad bg-ivory">
+        <div className="wrap !px-0 grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <Reveal>
+            <SectionHead
+              eyebrow={t(locale, "fac.strip.eyebrow")}
+              title={t(locale, "fac.strip.h2")}
+              lead={t(locale, "fac.strip.p")}
+            />
+            <Link href="/experience" prefetch={false} className="link-quiet mt-8">
+              {t(locale, "home.exp.cta")}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
             </Link>
           </Reveal>
-          <RevealStagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FACILITIES.map((facility) => (
-              <RevealItem key={facility.key}>
+          <RevealStagger className="grid border-t border-line sm:grid-cols-2 sm:gap-x-10">
+            {FACILITIES.map((f) => (
+              <RevealItem key={f.key}>
                 <Link
                   href="/facilities"
-                  className="group block overflow-hidden rounded-[14px] bg-cloud shadow-card transition hover:shadow-card-hover"
+                  prefetch={false}
+                  className="group flex h-full flex-col border-b border-line py-6 transition"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <LocalPicture
-                      base={facility.base}
-                      alt={tr(locale, facility.alt)}
-                      width={640}
-                      height={480}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 280px"
-                      className="transition duration-500 group-hover:scale-[1.05]"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg text-ink">
-                      {t(locale, `${facility.key}.h`)}
-                    </h3>
-                    <p className="mt-2 text-[0.9rem] leading-relaxed text-ink/75">
-                      {t(locale, `${facility.key}.p`)}
-                    </p>
-                  </div>
+                  <span className="flex items-center justify-between gap-3 font-display text-[21px] text-ink">
+                    {t(locale, `${f.key}.h`)}
+                    <ArrowRight className="h-4 w-4 shrink-0 text-teak transition group-hover:translate-x-1 rtl:rotate-180" aria-hidden />
+                  </span>
+                  <span className="mt-2 text-[15px] leading-relaxed text-ink/70">{t(locale, `${f.key}.p`)}</span>
                 </Link>
               </RevealItem>
             ))}
@@ -142,90 +189,17 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
         </div>
       </section>
 
-      {/* v12 · Beyond the rooms · three doors into the rest of the house:
-          dining, events & spaces, facilities. Static server HTML like every
-          other below-fold section. */}
-      <section className="tkh-below-section section-pad bg-cloud">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="max-w-[640px]">
-            <p className="eyebrow mb-3.5">{t(locale, "beyond.eyebrow")}</p>
-            <h2>{t(locale, "beyond.h2")}</h2>
-            <p className="mt-4 max-w-prose text-[1.08rem] leading-relaxed text-ink/80">
-              {t(locale, "beyond.p")}
-            </p>
-          </Reveal>
-          <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
-            {(
-              [
-                {
-                  href: "/dining",
-                  base: "/images/facilities/pier-breakfast",
-                  alt: { en: "Breakfast tables on the river pier", th: "โต๊ะอาหารเช้าริมท่าเรือ" },
-                  h: "nav.dining",
-                  p: "beyond.dining.p",
-                },
-                {
-                  href: "/events",
-                  base: "/images/facilities/courtyard-garden",
-                  alt: { en: "Courtyard garden beside the riverside pavilion", th: "สวนในคอร์ตยาร์ดข้างศาลาริมแม่น้ำ" },
-                  h: "nav.events",
-                  p: "beyond.events.p",
-                },
-                {
-                  href: "/facilities",
-                  base: "/images/facilities/pool",
-                  alt: { en: "Saltwater pool in the courtyard", th: "สระน้ำเกลือในคอร์ตยาร์ด" },
-                  h: "nav.facilities",
-                  p: "beyond.fac.p",
-                },
-              ] as const
-            ).map((card) => (
-              <RevealItem key={card.href}>
-                <Link
-                  href={card.href}
-                  className="group block overflow-hidden rounded-[14px] bg-white shadow-card transition hover:shadow-card-hover"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <LocalPicture
-                      base={card.base}
-                      alt={tr(locale, card.alt)}
-                      width={640}
-                      height={480}
-                      sizes="(max-width: 768px) 100vw, 380px"
-                      className="transition duration-500 group-hover:scale-[1.05]"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-display text-xl text-ink">
-                      {t(locale, card.h)}
-                    </h3>
-                    <p className="mt-2 text-[0.92rem] leading-relaxed text-ink/75">
-                      {t(locale, card.p)}
-                    </p>
-                  </div>
-                </Link>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
-
-      <section className="tkh-below-section section-pad bg-coral-bg">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow mb-3.5 text-blue">{t(locale, "off.eyebrow")}</p>
-              <h2>{t(locale, "off.strip")}</h2>
-            </div>
-            <Link
-              href="/offers"
-              className="link-draw inline-flex items-center gap-1 text-sm font-bold text-blue"
-            >
+      {/* Offers */}
+      <section className="tkh-below-section section-pad bg-white">
+        <div className="wrap !px-0">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHead eyebrow={t(locale, "off.eyebrow")} title={t(locale, "off.strip")} lead={t(locale, "off.lead")} />
+            <Link href="/offers" prefetch={false} className="link-quiet">
               {t(locale, "off.seeAll")}
-              <span aria-hidden>→</span>
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
             </Link>
-          </Reveal>
-          <RevealStagger className="mt-10 grid gap-5 md:grid-cols-3">
+          </div>
+          <RevealStagger className="mt-12 grid gap-6 md:grid-cols-3">
             {OFFERS.map((n) => (
               <RevealItem key={n}>
                 <OfferCard n={n} locale={locale} />
@@ -235,68 +209,43 @@ export function HomeBelowFold({ locale }: { locale: Lang }) {
         </div>
       </section>
 
-      <section className="tkh-below-section section-pad bg-navy text-white">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="max-w-[620px]">
-            <p className="mb-3.5 text-xs font-bold uppercase tracking-[0.18em] text-gold">
-              {t(locale, "sys.eyebrow")}
-            </p>
-            <h2 className="text-white">{t(locale, "sys.h2")}</h2>
-            <p className="mt-4 text-[1.08rem] leading-relaxed text-white/80">
-              {t(locale, "sys.p")}
-            </p>
+      {/* The neighbourhood */}
+      <section className="tkh-below-section section-pad bg-stone">
+        <div className="wrap !px-0 grid items-center gap-12 md:grid-cols-2 md:gap-16">
+          <Reveal>
+            <SectionHead
+              eyebrow={t(locale, "home.loc.eyebrow")}
+              title={t(locale, "home.loc.h2")}
+              lead={t(locale, "home.loc.p")}
+            />
+            <Link href="/location" prefetch={false} className="link-quiet mt-8">
+              {t(locale, "home.loc.cta")}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+            </Link>
           </Reveal>
-          <RevealStagger className="mt-12 grid gap-7 md:grid-cols-3">
-            {[
-              { icon: MessageCircle, h: "sys.f1h", p: "sys.f1p" },
-              { icon: Calendar, h: "sys.f2h", p: "sys.f2p" },
-              { icon: User, h: "sys.f3h", p: "sys.f3p" },
-            ].map(({ icon: Icon, h, p }) => (
-              <RevealItem key={h}>
-                <article className="rounded-[14px] border border-white/15 bg-white/5 p-7">
-                  <div className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-blue">
-                    <Icon className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="mb-2 text-xl text-white">{t(locale, h)}</h3>
-                  <p className="text-[0.94rem] text-white/78">{t(locale, p)}</p>
-                </article>
-              </RevealItem>
-            ))}
-          </RevealStagger>
+          <Reveal>
+            <div className="overflow-hidden rounded-card border border-line/80 shadow-soft">
+              <RiverMap
+                labels={{
+                  hotel: t(locale, "brand.name"),
+                  river: t(locale, "map.river"),
+                  pier: t(locale, "map.pier"),
+                  bts: t(locale, "map.bts"),
+                  road: t(locale, "map.road"),
+                }}
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="tkh-below-section section-pad bg-white">
-        <div className="mx-auto max-w-[1180px]">
-          <Reveal className="max-w-[620px]">
-            <p className="eyebrow mb-3.5">{t(locale, "rev.eyebrow")}</p>
-            <h2>{t(locale, "rev.h2")}</h2>
-          </Reveal>
-          <RevealStagger className="mt-12 grid gap-7 md:grid-cols-3">
-            {(["1", "2", "3"] as const).map((n) => (
-              <RevealItem key={n}>
-                <MotionCard className="rounded-[14px] bg-cloud p-8">
-                  <div className="mb-3 tracking-[3px] text-coral" aria-hidden>
-                    ★★★★★
-                  </div>
-                  <p className="text-[0.95rem]">{t(locale, `rev.${n}`)}</p>
-                  <footer className="mt-4 text-[0.8rem] font-bold text-strike">
-                    {t(locale, `rev.${n}a`)}
-                  </footer>
-                </MotionCard>
-              </RevealItem>
-            ))}
-          </RevealStagger>
-        </div>
-      </section>
-
-      <section className="tkh-below-section bg-cloud px-6 py-16 text-center">
-        <Reveal>
-          <h2>{t(locale, "cta.h2")}</h2>
-          <p className="mx-auto mt-4 max-w-prose text-[1.08rem] text-ink/80">
-            {t(locale, "cta.p")}
-          </p>
-          <Link href="/book" className="btn-primary btn-shine btn-lift mt-8 inline-flex">
+      {/* Closing invitation */}
+      <section className="tkh-below-section border-t border-line bg-white px-5 py-24 text-center sm:px-8 md:py-28">
+        <Reveal className="mx-auto max-w-[720px]">
+          <span className="rule mx-auto" aria-hidden />
+          <h2 className="mt-8">{t(locale, "cta.h2")}</h2>
+          <p className="lead mx-auto mt-5 max-w-[56ch]">{t(locale, "cta.p")}</p>
+          <Link href="/book" prefetch={false} className="btn-primary mt-10 px-9">
             {t(locale, "cta.btn")}
           </Link>
         </Reveal>

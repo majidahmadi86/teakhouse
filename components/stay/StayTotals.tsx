@@ -49,16 +49,16 @@ export function StayTotals({
   }, []);
 
   return (
-    <div ref={ref} className="space-y-2 border-t border-line pt-4 text-sm">
-      <div className="flex justify-between">
+    <div ref={ref} className="space-y-1.5 border-y border-line py-4 text-[14.5px]">
+      <div className="flex justify-between gap-3 text-ink/80">
         <span>
-          {format(rate)} x {nights} {nights > 1 ? nightsLabel : nightLabel}
+          {format(rate)} × {nights} {nights === 1 ? nightLabel : nightsLabel}
         </span>
-        <span className="font-semibold">{format(rate * nights)}</span>
+        <span className="font-medium text-ink">{format(rate * nights)}</span>
       </div>
-      <div className="flex justify-between text-deal">
+      <div className="flex justify-between gap-3 text-deal">
         <span>{saveLabel}</span>
-        <span className="font-bold">-{format((ota - rate) * nights)}</span>
+        <span className="font-medium">-{format((ota - rate) * nights)}</span>
       </div>
     </div>
   );

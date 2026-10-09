@@ -1,155 +1,48 @@
-import { HeroLCP } from "@/components/hero/HeroLCP";
+import { ArtPicture } from "@/components/ArtPicture";
 import { t, type Lang } from "@/lib/serverLocale";
 
-const GRADIENT = "linear-gradient(105deg, #E8C87A 0%, #FF6B4A 100%)";
-
 /**
- * Server-rendered home hero · one complete paint in the resolved locale.
- * Zero client JS for the headline/eyebrow/subtitle/trust · the booking widget
- * ships as a styled SSR shell (searchSlot) and hydrates for interactivity only.
+ * The home hero · server HTML, zero client JS of its own.
+ *
+ * One bright, full-bleed photograph (the glass and teak lounge over the
+ * river; a 4:5 crop on phones) with only a light, local gradient where the
+ * words sit. The booking panel (StaySearch, a real GET form) floats over the
+ * foot of the photograph on desktop and sits just under it on phones, so the
+ * whole booking bar is above the fold at 1366x768 and 390x844.
  */
-export function HomeHero({
-  locale,
-  searchSlot,
-}: {
-  locale: Lang;
-  searchSlot: React.ReactNode;
-}) {
-  const h1 = t(locale, "hero.h1");
-  const brandName = t(locale, "brand.name");
-  const googleLabel = t(locale, "hero.google", { n: "5.0" });
-
+export function HomeHero({ locale, searchSlot }: { locale: Lang; searchSlot: React.ReactNode }) {
   return (
-    <section
-      id="tkh-hero"
-      className="relative z-[1] -mt-[calc(var(--demo-bar-h)+var(--header-h))] h-[100svh] overflow-hidden bg-navy md:h-[min(100svh,820px)]"
-    >
-      <div className="absolute inset-0">
-        <div className="absolute inset-0">
-          <HeroLCP locale={locale} />
-        </div>
-        <div id="tkh-hero-slideshow" className="absolute inset-0" />
-        <div className="hero-scrim-mobile absolute inset-0 md:hidden" />
-        <div className="hero-grade-mobile pointer-events-none absolute inset-0 md:hidden" />
-        <div className="hero-scrim absolute inset-0 hidden md:block" />
-      </div>
-
-      {/*
-        One copy block for every width, so the booking form (and its Price
-        island) is in the page once. Only the short text that really differs
-        between phone and desktop is twinned, each piece on its own element,
-        so no wrapper full of content sits hidden at either size.
-        Phone: brand, headline, rating at the top; lead and form at the foot.
-        Desktop: eyebrow, headline, lead, form and the trust line, bottom-aligned.
-      */}
-      <div className="tkh-hero-copy absolute inset-0 flex flex-col md:justify-end md:px-6 md:pb-10 md:pt-[calc(var(--demo-bar-h)+var(--header-h)+0.75rem)]">
-        <div className="hero-chrome-pad relative z-10 px-5 md:hidden">
-          <p className="font-display text-[11px] font-normal uppercase tracking-[0.28em] text-gold hero-brand-glow">
-            {brandName}
-          </p>
-          <div className="mt-2">
-            <h1 className="max-w-[15ch] font-display text-[2.35rem] leading-[1.12] text-white hero-text-shadow">
-              <Headline text={h1} accent={locale === "en"} />
-            </h1>
-          </div>
-          <p className="mt-3 flex flex-wrap items-center justify-start gap-x-2 gap-y-1 text-[13px] font-semibold text-white/90">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
-              <span className="tracking-[1px] text-gold" aria-hidden>
-                ★★★★★
-              </span>
-              <span>{googleLabel}</span>
-            </span>
-          </p>
-        </div>
-
-        <div className="min-h-0 flex-1 md:hidden" aria-hidden />
-
-        <div
-          id="tkh-hero-actions"
-          className="relative z-20 px-5 hero-actions-pb md:static md:z-auto md:mx-auto md:w-full md:max-w-[1180px] md:px-0 md:pb-0"
-        >
-          <p className="eyebrow mb-3 hidden text-gold hero-text-shadow md:block">
-            {t(locale, "hero.eyebrow")}
-          </p>
-          <h1 className="hidden max-w-[16ch] font-display text-[clamp(2.7rem,5vw,4.3rem)] leading-[1.15] text-white hero-text-shadow md:block">
-            <Headline text={h1} accent={locale === "en"} desktop />
-          </h1>
-          <p className="mt-5 hidden max-w-[52ch] text-lg leading-relaxed text-white hero-text-shadow hero-copy-panel md:block">
-            {t(locale, "hero.lead")}
-          </p>
-          {/* The phone's glass panel holds the lead and the form; on desktop
-              the panel steps aside (display: contents) and they stand alone. */}
-          <div className="hero-copy-panel md:contents">
-            <p className="hero-lead-mobile text-white hero-text-shadow md:hidden">
-              {t(locale, "hero.leadShort")}
-            </p>
-            <div className="relative z-20 mt-3 pt-1 md:mt-7 md:pt-0">
-              {searchSlot}
-              <p className="hero-copy-panel mt-4 hidden flex-wrap items-center gap-x-2 gap-y-1 text-[13px] font-semibold text-white md:flex">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/70 px-3 py-1.5 shadow-[0_8px_28px_rgba(0,0,0,.25)] backdrop-blur-md">
-                  <span className="tracking-[1px] text-gold" aria-hidden>
-                    ★★★★★
-                  </span>
-                  <span>{googleLabel}</span>
-                </span>
-                <span aria-hidden>·</span>
-                <span>{t(locale, "trust.1")}</span>
-                <span aria-hidden>·</span>
-                <span>{t(locale, "trust.freeShort")}</span>
+    <section id="tkh-hero" className="relative">
+      <div className="relative h-[min(125vw,calc(100svh-var(--header-h)-var(--demo-bar-h)-170px))] min-h-[340px] overflow-hidden md:h-[min(calc(100svh-var(--header-h)-var(--demo-bar-h)),860px)] md:min-h-[560px]">
+        <ArtPicture
+          id="hero-home"
+          phoneId="hero-home-m"
+          alt={t(locale, "home.heroAlt")}
+          priority
+          className="tkh-ken-burns-live"
+        />
+        <div className="hero-veil-bottom absolute inset-x-0 bottom-0 h-3/4 md:hidden" aria-hidden />
+        <div className="hero-veil absolute inset-0 hidden md:block" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 md:inset-0">
+          <div className="wrap flex h-full flex-col justify-end pb-6 md:justify-center md:pb-36">
+            <div className="max-w-[640px] text-white">
+              <p className="hero-text-shadow text-[12px] font-semibold uppercase tracking-[0.22em] text-white/90 md:text-[13px]">
+                {t(locale, "home.eyebrow")}
+              </p>
+              <h1 className="hero-text-shadow mt-3 text-[clamp(2.25rem,6.4vw,4.75rem)] !leading-[1.04] text-white md:mt-5">
+                {t(locale, "home.h1")}
+              </h1>
+              <p className="hero-text-shadow mt-5 hidden max-w-[52ch] text-[18px] leading-relaxed text-white/95 md:block">
+                {t(locale, "home.lead")}
               </p>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
-}
 
-/** Headline · gradient-italic accent on the word "river" for EN only. */
-function Headline({
-  text,
-  accent,
-  desktop,
-}: {
-  text: string;
-  accent: boolean;
-  desktop?: boolean;
-}) {
-  if (!accent) {
-    return <>{text}</>;
-  }
-  const words = text.split(" ");
-  return (
-    <>
-      {words.map((w, i) => {
-        const bare = w.replace(/[.,]/g, "");
-        const punct = w.slice(bare.length);
-        const isAccent = bare.toLowerCase() === "river";
-        return (
-          <span
-            key={`${desktop ? "d" : "m"}-${w}-${i}`}
-            className="mr-[0.28em] inline-block"
-          >
-            {isAccent ? (
-              <span
-                className="bg-clip-text italic text-transparent [text-shadow:none]"
-                style={{
-                  backgroundImage: GRADIENT,
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  color: "transparent",
-                }}
-              >
-                {bare}
-              </span>
-            ) : (
-              bare
-            )}
-            {punct}
-          </span>
-        );
-      })}
-    </>
+      <div id="tkh-hero-actions" className="relative z-10 px-4 sm:px-8 md:-mt-[88px]">
+        <div className="mx-auto -mt-3 max-w-[1080px] md:mt-0">{searchSlot}</div>
+      </div>
+    </section>
   );
 }

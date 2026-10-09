@@ -10,7 +10,7 @@ import { t, type Lang } from "@/lib/serverLocale";
  * A pure server component with no client JS: the date, time and party inputs
  * are a plain GET form that lands on /dining/reserve with those values
  * prefilled, so it works with JavaScript disabled like everything else here.
- * Brand navy ground with a gold rule and a soft glass edge · it should read as
+ * A white card with a hairline border and soft shadow · it should read as
  * part of the house, not a widget bolted on.
  */
 export function ReserveCard({
@@ -38,17 +38,16 @@ export function ReserveCard({
        which made this aside as tall as the whole menu and left sticky with
        nothing to stick inside. Shrinking it to its content is what lets it
        follow the scroll. */
-    <aside className="sticky top-24 hidden self-start lg:block">
-      <div className="overflow-hidden rounded-[18px] bg-navy text-white shadow-[0_24px_60px_rgba(10,27,46,.28),inset_0_1px_0_rgba(255,255,255,.10)]">
-        <div className="h-[3px] w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
-        <div className="p-6">
-          <p className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-gold">
+    <aside className="sticky top-[calc(var(--demo-bar-h)+var(--header-h)+1.5rem)] hidden self-start lg:block">
+      <div className="overflow-hidden rounded-card border border-line/80 bg-white text-ink shadow-soft">
+        <div className="p-6 md:p-7">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-teak">
             {t(locale, "rsv.cardEyebrow")}
           </p>
-          <h3 className="mt-2 font-display text-[1.45rem] leading-tight text-white">
+          <h3 className="mt-2 font-display text-[1.5rem] leading-tight text-ink">
             {t(locale, "rsv.cardH")}
           </h3>
-          <p className="mt-2.5 text-[0.9rem] leading-relaxed text-[#FFFFFFA6]">
+          <p className="mt-2.5 text-[14.5px] leading-relaxed text-ink/70">
             {t(locale, "rsv.cardP")}
           </p>
 
@@ -56,7 +55,7 @@ export function ReserveCard({
             <div>
               <label
                 htmlFor="card-date"
-                className="mb-1.5 block text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[#FFFFFF8C]"
+                className="field-label"
               >
                 {t(locale, "rsv.date")}
               </label>
@@ -66,7 +65,7 @@ export function ReserveCard({
                 type="date"
                 defaultValue={todayIso}
                 min={todayIso}
-                className="min-h-[44px] w-full rounded-[10px] border-0 bg-[#FFFFFF14] px-3.5 py-2.5 text-[0.95rem] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)] [color-scheme:dark]"
+                className="min-h-[44px] w-full rounded-soft border border-line bg-white px-3.5 py-2.5 text-[15px] text-ink"
               />
             </div>
 
@@ -74,7 +73,7 @@ export function ReserveCard({
               <div>
                 <label
                   htmlFor="card-time"
-                  className="mb-1.5 block text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[#FFFFFF8C]"
+                  className="field-label"
                 >
                   {t(locale, "rsv.time")}
                 </label>
@@ -82,7 +81,7 @@ export function ReserveCard({
                   id="card-time"
                   name="time"
                   defaultValue={preferred}
-                  className="min-h-[44px] w-full rounded-[10px] border-0 bg-[#FFFFFF14] px-3 py-2.5 text-[0.95rem] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)] [color-scheme:dark]"
+                  className="min-h-[44px] w-full rounded-soft border border-line bg-white px-3 py-2.5 text-[15px] text-ink"
                 >
                   {slots.map((slot) => (
                     <option key={slot} value={slot} className="text-ink">
@@ -94,7 +93,7 @@ export function ReserveCard({
               <div>
                 <label
                   htmlFor="card-party"
-                  className="mb-1.5 block text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[#FFFFFF8C]"
+                  className="field-label"
                 >
                   {t(locale, "rsv.party")}
                 </label>
@@ -102,7 +101,7 @@ export function ReserveCard({
                   id="card-party"
                   name="party"
                   defaultValue="2"
-                  className="min-h-[44px] w-full rounded-[10px] border-0 bg-[#FFFFFF14] px-3 py-2.5 text-[0.95rem] text-white shadow-[inset_0_1px_0_rgba(255,255,255,.06)] [color-scheme:dark]"
+                  className="min-h-[44px] w-full rounded-soft border border-line bg-white px-3 py-2.5 text-[15px] text-ink"
                 >
                   {Array.from({ length: maxPartySize }, (_, i) => i + 1).map((n) => (
                     <option key={n} value={n} className="text-ink">
@@ -115,19 +114,19 @@ export function ReserveCard({
 
             <button
               type="submit"
-              className="btn-shine mt-1 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-gold px-5 text-[0.95rem] font-extrabold text-navy transition hover:brightness-105"
+              className="btn-primary mt-1 w-full"
             >
               {t(locale, "rsv.cta")}
             </button>
           </form>
 
-          <p className="mt-3.5 text-center text-[0.78rem] text-[#FFFFFF8C]">
+          <p className="mt-3.5 text-center text-[13px] text-sub">
             {t(locale, "rsv.noDeposit")}
           </p>
         </div>
       </div>
 
-      <p className="mt-4 px-1 text-[0.82rem] leading-relaxed text-sub">
+      <p className="mt-4 px-1 text-[13.5px] leading-relaxed text-sub">
         {t(locale, "rsv.window", {
           w: formatServiceWindow(serviceStart, serviceEnd, locale),
         })}

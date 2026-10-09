@@ -46,10 +46,11 @@ export async function EventReserveView({
 
   const hero = (
     <PageHero
-      imageId="events/pavilion-dinner"
+      imageId="hero-events-reserve"
+      phoneImageId="hero-events-reserve-m"
       alt={tr(locale, {
-          en: "A long table laid for dinner under string lights",
-          th: "โต๊ะยาวจัดสำหรับมื้อค่ำใต้สายไฟระย้อย",
+          en: "A bright event room with tall windows and round tables in white linen",
+          th: "ห้องจัดงานที่สว่างพร้อมหน้าต่างบานสูงและโต๊ะกลมปูผ้าขาว",
         })}
       eyebrow={t(locale, "nav.events")}
       title={t(locale, "evr.h1")}
@@ -66,18 +67,18 @@ export async function EventReserveView({
     return (
       <>
         {hero}
-        <section className="section-pad bg-white">
+        <section className="section-pad bg-stone">
           <div className="mx-auto max-w-[640px] text-center">
             <p className="eyebrow mb-3.5">{t(locale, "evr.okEyebrow")}</p>
             <h2>{t(locale, "evr.okH1")}</h2>
             <p className="mt-4 text-[1.08rem] leading-relaxed text-ink/80">
               {t(locale, "evr.okLead")}
             </p>
-            <div className="mt-8 rounded-card border border-line bg-cloud p-6 md:p-8">
+            <div className="mt-8 rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-8">
               <p className="text-[0.78rem] font-bold uppercase tracking-[0.16em] text-sub">
                 {t(locale, "rsv.refLabel")}
               </p>
-              <p className="mt-2 font-display text-4xl text-blue">
+              <p className="mt-2 font-display text-4xl text-teak">
                 {searchParams.ref}
               </p>
               <dl className="mt-6 space-y-2 text-left text-[0.95rem]">
@@ -118,7 +119,7 @@ export async function EventReserveView({
     return (
       <>
         {hero}
-        <section className="section-pad bg-white">
+        <section className="section-pad bg-stone">
           <div className="mx-auto max-w-[640px] text-center">
             <h2>{t(locale, "ev.listH2")}</h2>
             <p className="mt-4 text-[1.08rem] leading-relaxed text-ink/80">
@@ -144,7 +145,7 @@ export async function EventReserveView({
   return (
     <>
       {hero}
-      <section className="section-pad bg-white">
+      <section className="section-pad bg-stone">
         <div className="mx-auto max-w-[640px]">
           {errorKey ? (
             <p
@@ -157,11 +158,11 @@ export async function EventReserveView({
 
           <form
             action={requestSeats}
-            className="space-y-8 rounded-card border border-line bg-cloud p-6 md:p-8"
+            className="space-y-8 rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-8"
           >
             <fieldset className="space-y-4">
               <legend className="mb-1 font-display text-xl text-ink">
-                <span className="mr-2 text-blue">1</span>
+                <span className="me-2 font-display text-teak">1</span>
                 {t(locale, "evr.step1")}
               </legend>
               <div>
@@ -215,7 +216,7 @@ export async function EventReserveView({
 
             <fieldset className="space-y-4">
               <legend className="mb-1 font-display text-xl text-ink">
-                <span className="mr-2 text-blue">2</span>
+                <span className="me-2 font-display text-teak">2</span>
                 {t(locale, "rsv.step3")}
               </legend>
               <div>

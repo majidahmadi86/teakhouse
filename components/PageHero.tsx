@@ -1,124 +1,80 @@
-import { Picture } from "@/components/Picture";
-import { SafeImage } from "@/components/SafeImage";
+import { ArtPicture } from "@/components/ArtPicture";
 import type { ImageId } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 type PageHeroProps = {
-  /**
-   * A registered image (lib/images.ts) · the preferred source: AVIF + WebP
-   * at every width, its dominant-colour ground, and an LCP preload with the
-   * hero's exact sizes.
-   */
+  /** A registered photograph (lib/images.ts) · the wide frame. */
   imageId?: ImageId;
-  /** A remote or uploaded image, when there is no registered one. */
+  /** Its 4:5 phone crop ("-m" registry entry), when there is one. */
+  phoneImageId?: ImageId;
+  /**
+   * An owner-uploaded photograph (dining and events heroes): a plain <img>,
+   * no optimizer, used instead of the registered one when the owner set it.
+   */
   image?: string;
-  /** Optional AVIF · preferred when present (contact hero). */
-  imageAvif?: string;
-  imageWebp?: string;
-  alt: string;
+  alt?: string;
   eyebrow: string;
   title: string;
-  lead: string;
+  lead?: string;
   className?: string;
-  /** CSS object-position for art direction under the title. */
-  objectPosition?: string;
-  /**
-   * v13 · render `image` as a plain <img>, no optimizer and no next/image.
-   * Set this for owner-uploaded heroes: the storage host is not in
-   * next.config remotePatterns, and an upload is already sized on the client.
-   * Existing remote heroes deliberately do NOT set it · they keep the
-   * optimizer they were certified with.
-   */
-  unoptimized?: boolean;
-  /** v13 · optional action under the lead (e.g. Reserve a table). */
+  /** An action under the lead (Reserve a table). */
   cta?: React.ReactNode;
 };
 
 /**
- * Page hero · pure server component (zero client JS). Eyebrow, title and lead
- * are static server HTML and fully visible without any hydration. The image is
- * a plain <picture>/<img> when an AVIF source is given; only the fallback path
- * (no AVIF) uses the client SafeImage. No opacity/visibility resting state:
- * every text node is painted at first server render.
+ * The page opening · server HTML, zero client JS, the same composition on
+ * every guest page: the eyebrow, a large calm title and the lead on the
+ * white-stone ground, then the page's photograph full bleed beneath it (a
+ * 4:5 crop on phones). Text never sits on a photograph, so no veil is ever
+ * needed. A page whose subject no photograph passed the art direction for
+ * (offers, facilities, location) opens with the words alone, which is the
+ * same composition, not a gap.
  */
 export function PageHero({
   imageId,
-  image = "",
-  imageAvif,
-  imageWebp,
-  alt,
+  phoneImageId,
+  image,
+  alt = "",
   eyebrow,
   title,
   lead,
   className,
-  objectPosition = "center",
-  unoptimized,
   cta,
 }: PageHeroProps) {
-  const usePicture = Boolean(imageAvif || imageWebp || unoptimized);
-
+  const hasPhoto = Boolean(image || imageId);
   return (
-    <section
-      className={cn(
-        "relative flex min-h-[52svh] items-end overflow-hidden pb-[60px] pt-28 text-white",
-        className
-      )}
-    >
-      <div className="absolute inset-0 -z-10">
-        {imageId && !unoptimized ? (
-          <Picture
-            id={imageId}
-            alt={alt}
-            sizes="100vw"
-            priority
-            fill
-            className="scale-[1.02]"
-            objectPosition={objectPosition}
-          />
-        ) : usePicture ? (
-          <picture>
-            {imageAvif ? (
-              <source srcSet={imageAvif} type="image/avif" />
-            ) : null}
-            {imageWebp ? (
-              <source srcSet={imageWebp} type="image/webp" />
-            ) : null}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+    <section className={cn("bg-stone", className)}>
+      <div className={cn("wrap pt-12 md:pt-20", hasPhoto ? "pb-10 md:pb-14" : "pb-14 md:pb-24")}>
+        <div className="max-w-[860px]">
+          <p className="eyebrow">{eyebrow}</p>
+          <h1 className="mt-4 md:mt-5">{title}</h1>
+          {lead ? <p className="lead mt-5 max-w-[60ch] md:mt-6">{lead}</p> : null}
+          {cta ? <div className="mt-8">{cta}</div> : null}
+        </div>
+        {!hasPhoto ? <span className="rule mt-12 md:mt-16" aria-hidden /> : null}
+      </div>
+      {hasPhoto ? (
+        <div className="relative mx-auto aspect-[4/5] max-h-[72svh] w-full max-w-[1600px] overflow-hidden bg-ivory sm:aspect-[16/9] md:aspect-[21/9] md:max-h-[640px]">
+          {image ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={image}
               alt={alt}
-              width={1600}
-              height={900}
               fetchPriority="high"
               decoding="async"
-              className="absolute inset-0 h-full w-full scale-[1.02] object-cover"
-              style={{ objectPosition }}
+              className="absolute inset-0 h-full w-full object-cover"
             />
-          </picture>
-        ) : (
-          <SafeImage
-            src={image}
-            alt={alt}
-            fill
-            priority
-            quality={78}
-            sizes="(max-width: 768px) 100vw, 1600px"
-            className="scale-[1.02] object-cover"
-            style={{ objectPosition }}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-navy/50 to-navy/85" />
-      </div>
-      <div className="mx-auto w-full max-w-[1180px] px-6">
-        <p className="mb-3.5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-gold hero-text-shadow">
-          {eyebrow}
-        </p>
-        <h1 className="max-w-[16ch] text-balance text-white hero-text-shadow">{title}</h1>
-        <p className="mt-5 max-w-[56ch] text-[1.08rem] leading-relaxed text-white/90 hero-text-shadow">
-          {lead}
-        </p>
-        {cta ? <div className="mt-7">{cta}</div> : null}
-      </div>
+          ) : imageId ? (
+            <ArtPicture
+              id={imageId}
+              phoneId={phoneImageId}
+              alt={alt}
+              priority
+              sizes="(min-width: 1600px) 1600px, 100vw"
+            />
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

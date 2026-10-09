@@ -128,14 +128,14 @@ export function ConciergePanel({
       aria-label={t("a11y.conciergeChat")}
       aria-hidden={!isOpen}
     >
-      <div className="flex items-center gap-3 bg-navy px-5 py-4 text-white">
-        <div className="grid h-[38px] w-[38px] place-items-center rounded-full bg-blue font-display text-lg font-semibold">
+      <div className="flex items-center gap-3 border-b border-line bg-stone px-5 py-4 text-ink">
+        <div className="grid h-[38px] w-[38px] place-items-center rounded-full bg-forest font-display text-lg text-white">
           N
         </div>
         <div className="min-w-0 flex-1">
           <b className="block text-[0.95rem]">{t("cg.name")}</b>
           <span className="flex items-center gap-1.5 text-[0.72rem] opacity-75">
-            <i className="h-[7px] w-[7px] rounded-full bg-[#7FD79A]" aria-hidden />
+            <i className="h-[7px] w-[7px] rounded-full bg-forest" aria-hidden />
             {t("cg.online")}
           </span>
         </div>
@@ -157,7 +157,7 @@ export function ConciergePanel({
               "max-w-[82%] rounded-[15px] px-4 py-3 text-[0.9rem] leading-relaxed",
               msg.role === "ai"
                 ? "bg-white shadow-sm"
-                : "ml-auto bg-navy text-white"
+                : "ml-auto bg-forest text-white"
             )}
           >
             {msg.role === "ai" ? (

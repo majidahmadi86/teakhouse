@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { SafeImage } from "@/components/SafeImage";
+import { catalogueRoom } from "@/lib/rooms";
 import { useCurrency } from "@/lib/currency";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
@@ -144,7 +144,7 @@ export default function AccountPage() {
         {tab === "bookings" ? (
           <div className="mt-8 space-y-4">
             {bookings.length === 0 ? (
-              <div className="rounded-[14px] bg-white p-10 text-center shadow-panel">
+              <div className="rounded-card border border-line/80 bg-white p-10 text-center shadow-soft">
                 <p className="font-display text-xl text-ink">
                   {t("acc.noBookings")}
                 </p>
@@ -154,36 +154,23 @@ export default function AccountPage() {
               </div>
             ) : (
               bookings.map((b) => {
-                const room = data.rooms.find((r) => r.slug === b.roomSlug);
+                const room = catalogueRoom(b.roomSlug) ?? data.rooms.find((r) => r.slug === b.roomSlug);
                 const free = canCancelFree(b);
                 const cancelled = b.status === "cancelled";
 
                 return (
                   <article
                     key={b.id}
-                    className="flex flex-col gap-4 rounded-[14px] bg-white p-4 shadow-panel sm:flex-row sm:items-center"
+                    className="flex flex-col gap-4 rounded-card border border-line/80 bg-white p-5 shadow-soft sm:flex-row sm:items-center md:p-6"
                   >
-                    <div className="relative h-[90px] w-full shrink-0 overflow-hidden rounded-xl sm:h-[72px] sm:w-[96px]">
-                      {room ? (
-                        <SafeImage
-                          src={room.photos[0]}
-                          alt={tr(room.name)}
-                          fill
-                          sizes="96px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-cloud" />
-                      )}
-                    </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="font-display text-lg text-ink">
+                        <h2 className="font-display text-[21px] text-ink">
                           {room ? tr(room.name) : b.roomSlug}
                         </h2>
                         <span
                           className={cn(
-                            "rounded-full px-2.5 py-0.5 text-[0.68rem] font-bold",
+                            "rounded-soft px-2.5 py-0.5 text-[12px] font-semibold",
                             cancelled
                               ? "bg-line text-sub"
                               : "bg-deal-bg text-deal"
@@ -222,10 +209,10 @@ export default function AccountPage() {
         ) : (
           <form
             onSubmit={handleSaveProfile}
-            className="mt-8 space-y-4 rounded-[14px] bg-white p-8 shadow-panel"
+            className="mt-8 space-y-4 rounded-card border border-line/80 bg-white p-8 shadow-soft"
           >
             <label className="block">
-              <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+              <span className="field-label">
                 {t("acc.name")}
               </span>
               <input
@@ -236,7 +223,7 @@ export default function AccountPage() {
               />
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
+              <span className="field-label">
                 {t("acc.email")}
               </span>
               <input
@@ -269,7 +256,7 @@ export default function AccountPage() {
               <button
                 type="button"
                 onClick={() => handleCancel(confirmId)}
-                className="flex-1 rounded-full bg-coral-deep px-4 py-3 text-sm font-bold text-white"
+                className="flex-1 rounded-soft bg-coral-deep px-4 py-3 text-sm font-semibold text-white"
               >
                 {t("acc.cancelYes")}
               </button>

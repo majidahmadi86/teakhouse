@@ -1,4 +1,5 @@
 import { PageHero } from "@/components/PageHero";
+import { RiverMap } from "@/components/site/RiverMap";
 import { CONTACT_PURPOSES, type ContactPurpose } from "@/lib/contactMessages";
 import { t, tr } from "@/lib/serverLocale";
 import type { Lang } from "@/lib/locales/meta";
@@ -49,24 +50,24 @@ export function ContactView({
   return (
     <>
       <PageHero
-        imageId="contact/hero"
+        imageId="hero-contact"
+        phoneImageId="hero-contact-m"
         alt={tr(locale, {
-          en: "Contact the house",
-          th: "ติดต่อที่พัก",
+          en: "The hotel entrance: tall glass doors between white walls and timber",
+          th: "ทางเข้าโรงแรม ประตูกระจกบานสูงระหว่างผนังสีขาวและไม้",
         })}
         eyebrow={t(locale, "ct.page")}
-        title={t(locale, "ct.page")}
+        title={t(locale, "ct.h1")}
         lead={t(locale, "ct.lead")}
-        objectPosition="center 38%"
       />
 
-      <section className="section-pad bg-white">
-        <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-2">
+      <section className="bg-stone px-5 py-16 sm:px-8 md:py-24">
+        <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             {searchParams.sent ? (
               <div
                 role="status"
-                className="rounded-card border border-line bg-deal-bg p-6 md:p-8"
+                className="rounded-card border border-line bg-forest-soft p-6 md:p-8"
               >
                 <h2 className="font-display text-2xl text-ink">
                   {t(locale, "ct.sentH")}
@@ -91,10 +92,10 @@ export function ContactView({
 
                 <form
                   action={sendMessage}
-                  className="tkh-contact-form space-y-5 rounded-card border border-line bg-cloud p-6 md:p-8"
+                  className="tkh-contact-form space-y-5 rounded-card border border-line/80 bg-white p-6 shadow-soft md:p-8"
                 >
                   <fieldset>
-                    <legend className="mb-2.5 block text-sm font-semibold text-ink">
+                    <legend className="field-label">
                       {t(locale, "ct.about")}
                     </legend>
                     <div className="flex flex-wrap gap-2.5">
@@ -112,7 +113,7 @@ export function ContactView({
                             defaultChecked={about === purpose}
                             className="sr-only"
                           />
-                          <span className="tkh-chip-face inline-flex min-h-[44px] items-center rounded-full px-4 text-[0.9rem] font-bold">
+                          <span className="tkh-chip-face inline-flex min-h-[44px] items-center rounded-soft px-4 text-[14.5px] font-medium">
                             {t(locale, PURPOSE_LABEL[purpose])}
                           </span>
                         </label>
@@ -123,7 +124,7 @@ export function ContactView({
                   <div>
                     <label
                       htmlFor="ct-name"
-                      className="mb-2 block text-sm font-semibold text-ink"
+                      className="field-label"
                     >
                       {t(locale, "ct.name")}
                     </label>
@@ -140,7 +141,7 @@ export function ContactView({
                   <div>
                     <label
                       htmlFor="ct-contact"
-                      className="mb-2 block text-sm font-semibold text-ink"
+                      className="field-label"
                     >
                       {t(locale, "ct.contactField")}
                     </label>
@@ -158,7 +159,7 @@ export function ContactView({
                   {/* The one purpose-specific field · shown by CSS, so this
                       adapts with scripting off too. */}
                   <div className="ct-extra ct-extra-stay">
-                    <span className="mb-2 block text-sm font-semibold text-ink">
+                    <span className="field-label">
                       {t(locale, "ct.dates")}
                     </span>
                     <div className="grid grid-cols-2 gap-3">
@@ -182,7 +183,7 @@ export function ContactView({
                   </div>
 
                   <div className="ct-extra ct-extra-when">
-                    <span className="mb-2 block text-sm font-semibold text-ink">
+                    <span className="field-label">
                       {t(locale, "ct.when")}
                     </span>
                     <div className="grid grid-cols-2 gap-3">
@@ -209,7 +210,7 @@ export function ContactView({
                   <div>
                     <label
                       htmlFor="ct-message"
-                      className="mb-2 block text-sm font-semibold text-ink"
+                      className="field-label"
                     >
                       {t(locale, "ct.message")}
                     </label>
@@ -231,27 +232,39 @@ export function ContactView({
             )}
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-card border border-line bg-white p-6 shadow-card">
-              <p className="text-sm font-semibold text-ink">{t(locale, "ct.address")}</p>
-              <a href="tel:+6620000000" className="mt-3 block text-sm font-bold text-blue">
-                {t(locale, "ct.phone")}
-              </a>
-              <a
-                href="mailto:stay@teakhouse.demo"
-                className="mt-2 block text-sm font-bold text-blue"
-              >
-                {t(locale, "ct.mail")}
-              </a>
-              <p className="mt-2 text-sm font-semibold text-sub">{t(locale, "ct.line")}</p>
+          <div className="space-y-10">
+            <div>
+              <p className="eyebrow">{t(locale, "ct.reach")}</p>
+              <p className="mt-5 font-display text-[24px] leading-snug text-ink">{t(locale, "brand.name")}</p>
+              <p className="mt-2 text-[16px] leading-relaxed text-ink/75">{t(locale, "ct.address")}</p>
+              <dl className="mt-6 divide-y divide-line border-y border-line text-[16px]">
+                <div className="flex items-center justify-between gap-4 py-4">
+                  <dt className="text-sub">{t(locale, "ct.call")}</dt>
+                  <dd>
+                    <a href="tel:+6620000000" className="font-medium text-ink hover:text-forest">{t(locale, "ct.phone")}</a>
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 py-4">
+                  <dt className="text-sub">{t(locale, "ct.mailLabel")}</dt>
+                  <dd>
+                    <a href="mailto:stay@teakhouse.demo" className="font-medium text-ink hover:text-forest">{t(locale, "ct.mail")}</a>
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4 py-4">
+                  <dt className="text-sub">LINE</dt>
+                  <dd className="font-medium text-ink">{t(locale, "ct.line")}</dd>
+                </div>
+              </dl>
             </div>
-            <div className="overflow-hidden rounded-card border border-line shadow-card">
-              <iframe
-                title={t(locale, "a11y.map")}
-                src="https://maps.google.com/maps?q=Charoen%20Krung%2044%20Bangkok&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                className="h-72 w-full border-0"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+            <div className="overflow-hidden rounded-card border border-line/80 shadow-soft">
+              <RiverMap
+                labels={{
+                  hotel: t(locale, "brand.name"),
+                  river: t(locale, "map.river"),
+                  pier: t(locale, "map.pier"),
+                  bts: t(locale, "map.bts"),
+                  road: t(locale, "map.road"),
+                }}
               />
             </div>
           </div>
