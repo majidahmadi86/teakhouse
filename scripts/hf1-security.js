@@ -218,9 +218,9 @@ const same = (a, b) => fp.diff(a, b).length === 0;
 const showDiff = (a, b) => fp.diff(a, b).join(" ") || "identical";
 
 const SEED_COUNTS = {
-  Booking: 40, ContactMessage: 0, DemoMeta: 1, DiningCategory: 3, DiningItem: 18,
+  Booking: 40, ContactMessage: 0, DemoMeta: 1, DiningCategory: 3, DiningItem: 17,
   EmailTemplate: 1, EventRequest: 0, Guest: 15, GuestBooking: 2, Hotel: 1,
-  HotelEvent: 3, Room: 10, RoomBlock: 0, SeasonalPriceRule: 50,
+  HotelEvent: 3, Room: 6, RoomBlock: 0, SeasonalPriceRule: 30,
   TableReservation: 0, User: 1,
 };
 function seedCountsMatch(f) {
@@ -564,7 +564,7 @@ async function phaseG(ref) {
     await page.waitForTimeout(1500);
     await page.locator(`#room-${room.slug} button`, { hasText: "Select" }).first().click();
     await page.waitForTimeout(400);
-    await page.locator("button", { hasText: "Continue to deposit" }).first().click();
+    await page.locator("button[data-dock-action]", { hasText: "Continue" }).first().click();
     await page.waitForTimeout(800);
     await page.locator('input[placeholder*="passport"], input[placeholder*="ID"]').first().fill(guestName);
     await page.locator('input[type="email"]').first().fill(guestEmail);

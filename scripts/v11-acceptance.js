@@ -184,10 +184,13 @@ async function run() {
     await page.goto(BASE + "/facilities", { waitUntil: "load" });
     const cards = await page.locator("main article").count();
     check("facilities lists 7 items with JS off", cards === 7, `${cards} cards`);
-    const imgs = await page.locator("picture source[type='image/avif']").count();
+    // v17 · five facilities have their own photograph; the pier and luggage
+    // services are set in words (no frame passed the art direction).
+    const pictured = await page.locator("main article picture").count();
+    const imgs = await page.locator("main article picture source[type='image/avif']").count();
     const remote = await page.locator("main img[src*='images.unsplash.com']").count();
-    check("facilities images are local AVIF", imgs >= 7 && remote === 0,
-      `${imgs} avif sources, ${remote} remote imgs`);
+    check("facilities images are local AVIF", pictured >= 5 && imgs === pictured && remote === 0,
+      `${imgs} avif sources for ${pictured} pictures, ${remote} remote imgs`);
 
     await page.goto(BASE + "/experience", { waitUntil: "load" });
     const roles = await page.locator("#house ul li").count();
@@ -247,7 +250,7 @@ async function run() {
     await page.waitForTimeout(600);
 
     // :visible · the closed phone menu is a dialog too, and it comes first.
-    const panel = page.locator("[role='dialog']:visible, .rdp:visible").first();
+    const panel = page.locator("[data-stay-popover]:visible").first();
     const panelBox = await panel.boundingBox();
     if (box && panelBox) {
       const openedAbove = panelBox.y + panelBox.height <= box.y + 8;
@@ -284,7 +287,7 @@ async function run() {
         return (
           cs.position === "fixed" &&
           d.getBoundingClientRect().height > window.innerHeight * 0.85 &&
-          d.querySelector(".rdp")
+          d.querySelector("[data-calendar]")
         );
       });
       if (!el) return null;
@@ -302,9 +305,9 @@ async function run() {
       sheet ? `${Math.round(sheet.w)}x${Math.round(sheet.h)} bg=${sheet.bg}` : "sheet not found"
     );
 
-    // classNames.day replaces rdp-day, so measure the real day control.
+    // v17 · the range calendar (components/stay/RangeCalendar) · its day control.
     const tap = await page.evaluate(() => {
-      const d = document.querySelector(".rdp tbody td button");
+      const d = document.querySelector("[data-calendar] tbody td button");
       return d ? d.getBoundingClientRect().height : 0;
     });
     check("mobile day cells are 44px+ tap targets", tap >= 44, `${Math.round(tap)}px`);

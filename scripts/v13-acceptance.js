@@ -188,10 +188,14 @@ async function run() {
         if (js) await page.waitForTimeout(1200);
         const label = `${lang}/${tag}/${js ? "js" : "nojs"}`;
 
-        // The header must never be taller than its declared band (56/64px) ·
-        // a wrapped nav shows up here first.
+        // The header must never be taller than its declared band (--header-h,
+        // 64/76px since the v17 redesign) · a wrapped nav shows up here first.
         const box = await page.locator("header").first().boundingBox();
-        const maxH = w >= 768 ? 66 : 58;
+        const band = await page.evaluate(() => {
+          const v = getComputedStyle(document.documentElement).getPropertyValue("--header-h").trim();
+          return v.endsWith("rem") ? parseFloat(v) * 16 : parseFloat(v);
+        });
+        const maxH = Math.round(band) + 2;
         check(
           `[${label}] header does not grow (wrap check)`,
           box && box.height <= maxH,
@@ -314,9 +318,9 @@ async function run() {
       .locator("source[type='image/avif']")
       .evaluateAll((els) => els.map((e) => e.getAttribute("srcset") || ""));
     check(
-      "dining hero + categories use the /images/dining set",
-      // v17 · the image registry serves content-hashed copies under /img/.
-      diningAvif.filter((s) => s.includes("/img/dining/")).length >= 4,
+      "dining hero + categories use the dining photography",
+      // v17 · the registry's curated slots: /img/hero-dining/ and /img/dining-*/.
+      diningAvif.filter((s) => s.includes("/img/hero-dining") || s.includes("/img/dining-")).length >= 4,
       diningAvif.slice(0, 4).join(" ")
     );
     const oldHero = diningAvif.some((s) => s.includes("pier-breakfast"));
@@ -335,9 +339,9 @@ async function run() {
       .locator("source[type='image/avif']")
       .evaluateAll((els) => els.map((e) => e.getAttribute("srcset") || ""));
     check(
-      "events uses the /images/events set",
-      // v17 · the image registry serves content-hashed copies under /img/.
-      srcs.filter((s) => s.includes("/img/events/")).length >= 4,
+      "events uses the events photography",
+      // v17 · the registry's curated slots: /img/hero-events/ and /img/events-*/.
+      srcs.filter((s) => s.includes("/img/hero-events") || s.includes("/img/events-")).length >= 4,
       `${srcs.length} avif sources`
     );
     await ctx.close();

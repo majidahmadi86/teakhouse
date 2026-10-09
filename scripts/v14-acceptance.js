@@ -225,9 +225,11 @@ async function run() {
     const ctx = await contextFor(browser, { js: false });
     const page = await ctx.newPage();
     await page.goto(BASE + "/dining", { waitUntil: "load" });
-    // v17 · the image registry serves content-hashed copies under /img/.
-    const thumbs = await page.locator("main ul li source[srcset*='/img/dishes/']").count();
-    check("every seeded dish has a thumbnail", thumbs >= 18, `${thumbs} thumbnail sources`);
+    // v17 · the image registry serves content-hashed copies under /img/dish-*.
+    // Seventeen seeded dishes have their own photograph (the coconut pancakes
+    // were retired: none passed), each with an AVIF and a WebP source.
+    const thumbs = await page.locator("main ul li source[srcset*='/img/dish-']").count();
+    check("every seeded dish has a thumbnail", thumbs >= 17 * 2, `${thumbs} thumbnail sources`);
     const box = await page
       .locator("main ul li picture img")
       .first()
