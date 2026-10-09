@@ -36,6 +36,7 @@ export default function RoomsPage({ params }: { params: LangParams }) {
               key={room.slug}
               room={room}
               locale={locale}
+              headingLevel={2}
               sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 50vw, 400px"
             />
           ))}

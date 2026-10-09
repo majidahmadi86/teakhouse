@@ -20,7 +20,7 @@ export function SiteFooter({ locale }: { locale: Lang }) {
       <div className="wrap pb-10 pt-16 md:pt-20">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.1fr] lg:gap-12">
           <div>
-            <Link href="/" prefetch={false} aria-label={t(locale, "brand.name")} className="inline-block">
+            <Link href="/" prefetch={false} className="inline-block">
               <LogoMark showTag />
             </Link>
             <p className="mt-6 max-w-[36ch] text-[15px] leading-relaxed text-ink/75">{t(locale, "ft.about")}</p>

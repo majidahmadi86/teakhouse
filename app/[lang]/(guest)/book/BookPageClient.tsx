@@ -300,7 +300,6 @@ export default function BookPageClient({
                       data-date-shell
                       aria-haspopup="dialog"
                       aria-expanded={pickerOpen}
-                      aria-label={`${t("avail.selectDates")}: ${stayLabel}, ${nightsLabel(lang, nights)}`}
                       onClick={() => {
                         setDraft({ from: stay.from, to: stay.to });
                         setPickerOpen(true);

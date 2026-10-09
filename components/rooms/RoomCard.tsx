@@ -17,12 +17,16 @@ export function RoomCard({
   locale,
   sizes,
   large = false,
+  headingLevel = 3,
 }: {
   room: CatalogueRoom;
   locale: Lang;
   sizes: string;
   large?: boolean;
+  /** 2 where the cards are the page's first sections (/rooms). */
+  headingLevel?: 2 | 3;
 }) {
+  const H = headingLevel === 2 ? "h2" : "h3";
   const cover = room.images[0];
   return (
     <article className="group flex h-full flex-col">
@@ -47,11 +51,11 @@ export function RoomCard({
       </Link>
       <div className="flex flex-1 flex-col pt-5">
         <p className="text-[12.5px] font-semibold uppercase tracking-[0.18em] text-teak">{tr(locale, room.view)}</p>
-        <h3 className="mt-2 text-[26px] leading-tight">
+        <H className="mt-2 text-[26px] leading-tight">
           <Link href={`/rooms/${room.slug}`} prefetch={false} className="transition hover:text-forest">
             {tr(locale, room.name)}
           </Link>
-        </h3>
+        </H>
         <p className="mt-2 text-[15.5px] leading-relaxed text-ink/75">{tr(locale, room.intro)}</p>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-5">
           <p className="text-[14px] text-sub">

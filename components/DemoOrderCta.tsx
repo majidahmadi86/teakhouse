@@ -16,7 +16,7 @@ export function DemoOrderCta({
     <button
       type="button"
       onClick={openOrder}
-      className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-gold px-2.5 py-1 text-[11px] font-bold text-navy shadow-[0_1px_10px_rgba(232,169,61,.45)] transition hover:brightness-110 sm:px-3"
+      className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-ink transition hover:bg-ivory sm:px-3"
     >
       <svg
         className="h-3 w-3 shrink-0"

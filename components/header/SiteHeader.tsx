@@ -44,7 +44,7 @@ export function SiteHeader({ locale }: { locale: Lang }) {
         className="tkh-header sticky top-[var(--demo-bar-h)] z-header h-[var(--header-h)] border-b border-line/80 bg-stone transition-[background-color,box-shadow] duration-300"
       >
         <div className="mx-auto flex h-full max-w-[1440px] items-center gap-5 px-4 max-[359px]:gap-2 max-[359px]:px-3 sm:px-6 xl:px-10">
-          <Link href="/" prefetch={false} aria-label={t(locale, "brand.name")} className="shrink-0 whitespace-nowrap">
+          <Link href="/" prefetch={false} className="shrink-0 whitespace-nowrap">
             <LogoMark
               showTag
               className="[&_.logo-tagline]:hidden min-[480px]:[&_.logo-tagline]:block min-[1200px]:[&_.logo-tagline]:hidden min-[1440px]:[&_.logo-tagline]:block"
