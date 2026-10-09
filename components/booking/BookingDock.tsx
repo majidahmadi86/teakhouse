@@ -82,19 +82,19 @@ export function BookingDock({
     >
       <div
         className={cn(
-          "lg:overflow-hidden lg:rounded-card lg:border lg:border-line/80 lg:bg-white lg:shadow-soft",
+          "lg:flex lg:max-h-[calc(100vh-var(--demo-bar-h)-var(--header-h)-3rem)] lg:flex-col lg:overflow-hidden lg:rounded-card lg:border lg:border-line/80 lg:bg-white lg:shadow-soft",
           "max-lg:max-h-[70vh] max-lg:overflow-y-auto"
         )}
       >
         {/* The full summary · always on desktop, on demand on phones. */}
-        <div className={cn("px-5 pt-5 lg:px-7 lg:pt-7", open ? "max-lg:block max-lg:border-b max-lg:border-line max-lg:pb-4" : "max-lg:hidden")}>
+        <div className={cn("px-5 pt-5 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:px-7 lg:pb-4 lg:pt-6", open ? "max-lg:block max-lg:border-b max-lg:border-line max-lg:pb-4" : "max-lg:hidden")}>
           <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-teak">{t("bk.summary")}</p>
-          <p className="mt-3 font-display text-[22px] leading-snug text-ink" data-dock-room>
+          <p className="mt-2 font-display text-[22px] leading-snug text-ink" data-dock-room>
             {room ? tr(room.name) : t("bk.noRoomYet")}
           </p>
           {room ? <p className="mt-1 text-[14px] text-sub">{tr(room.summary)}</p> : null}
 
-          <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-line pt-4 text-[14.5px]">
+          <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-line pt-4 text-[14.5px]">
             <div>
               <dt className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">{t("avail.in")}</dt>
               <dd className="mt-1 font-medium text-ink">{formatDay(lang, checkIn)}</dd>
@@ -125,7 +125,7 @@ export function BookingDock({
         </div>
 
         {/* The total and the action · the part that is always on screen. */}
-        <div className="px-4 py-3 lg:px-7 lg:pb-7 lg:pt-0">
+        <div className="px-4 py-3 lg:shrink-0 lg:px-7 lg:pb-6 lg:pt-0">
           <div className={cn("lg:border-t lg:border-line lg:pt-4", !showTotal && "lg:pt-0")}>
             {showTotal ? (
               <div className="hidden lg:block">
@@ -147,7 +147,7 @@ export function BookingDock({
               </div>
             ) : null}
 
-            <div className="flex items-center gap-3 lg:mt-5 lg:block">
+            <div className="flex items-center gap-3 lg:mt-4 lg:block">
               {/* Phones: what the stay comes to, or what is still missing. */}
               <button
                 type="button"
@@ -197,7 +197,7 @@ export function BookingDock({
             {hint && !action.disabled ? null : hint ? (
               <p className="mt-3 hidden text-center text-[13.5px] text-sub lg:block">{hint}</p>
             ) : null}
-            <p className="mt-4 hidden items-center justify-center gap-2 text-[13px] text-sub lg:flex">
+            <p className="mt-3 hidden items-center justify-center gap-2 text-[13px] text-sub lg:flex">
               <ShieldCheck className="h-4 w-4 text-forest" aria-hidden />
               {t("bk.cancel")}
             </p>

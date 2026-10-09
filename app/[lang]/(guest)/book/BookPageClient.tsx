@@ -236,59 +236,59 @@ export default function BookPageClient({
 
   return (
     <>
-      <section className="px-4 pb-40 pt-6 sm:px-8 md:pt-12 lg:pb-24 print:pt-4">
+      <section className="px-4 pb-40 pt-6 sm:px-8 md:pt-8 lg:pb-24 print:pt-4">
         <div ref={topRef} className="mx-auto max-w-site scroll-mt-[calc(var(--demo-bar-h)+var(--header-h)+1rem)]">
-          <div className={cn("print:hidden", step === 3 && "max-lg:hidden")}>
-            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-              <div>
-                <p className="eyebrow max-sm:hidden">{t("bk.eyebrow")}</p>
-                <h1 className="mt-2 text-[clamp(1.9rem,3.6vw,3.25rem)] sm:mt-3">{t("bk.h1")}</h1>
-              </div>
-              <ol className="flex items-center gap-2 text-[13.5px] sm:gap-3" aria-label={t("a11y.bookingSteps")}>
-                {steps.map((label, i) => {
-                  const n = (i + 1) as Step;
-                  const done = n < step;
-                  const current = n === step;
-                  return (
-                    <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={current ? "step" : undefined}>
-                      <button
-                        type="button"
-                        disabled={!done || step === 3}
-                        onClick={() => goStep(n)}
-                        className={cn(
-                          "inline-flex items-center gap-2 whitespace-nowrap",
-                          current ? "font-semibold text-ink" : done ? "text-ink/80 hover:text-ink" : "text-sub"
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "grid h-6 w-6 place-items-center rounded-full border text-[12px]",
-                            current
-                              ? "border-forest bg-forest text-white"
-                              : done
-                                ? "border-forest text-forest"
-                                : "border-line text-sub"
-                          )}
-                        >
-                          {done ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}
-                        </span>
-                        {label}
-                      </button>
-                      {i < steps.length - 1 ? <span className="h-px w-5 bg-line sm:w-8" aria-hidden /> : null}
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
-          </div>
-
           <div
             className={cn(
-              "mt-8 grid gap-8 lg:mt-10 lg:items-start lg:gap-10",
+              "grid gap-8 lg:items-start lg:gap-10",
               step < 3 && "lg:grid-cols-[minmax(0,1fr)_380px]"
             )}
           >
             <div className="min-w-0">
+          <div className={cn("print:hidden", step === 3 && "max-lg:hidden")}>
+                <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+                  <div>
+                    <p className="eyebrow max-sm:hidden">{t("bk.eyebrow")}</p>
+                    <h1 className="mt-2 text-[clamp(1.9rem,3vw,2.75rem)]">{t("bk.h1")}</h1>
+                  </div>
+                  <ol className="flex items-center gap-2 text-[13.5px] sm:gap-3" aria-label={t("a11y.bookingSteps")}>
+                    {steps.map((label, i) => {
+                      const n = (i + 1) as Step;
+                      const done = n < step;
+                      const current = n === step;
+                      return (
+                        <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={current ? "step" : undefined}>
+                          <button
+                            type="button"
+                            disabled={!done || step === 3}
+                            onClick={() => goStep(n)}
+                            className={cn(
+                              "inline-flex items-center gap-2 whitespace-nowrap",
+                              current ? "font-semibold text-ink" : done ? "text-ink/80 hover:text-ink" : "text-sub"
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "grid h-6 w-6 place-items-center rounded-full border text-[12px]",
+                                current
+                                  ? "border-forest bg-forest text-white"
+                                  : done
+                                    ? "border-forest text-forest"
+                                    : "border-line text-sub"
+                              )}
+                            >
+                              {done ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}
+                            </span>
+                            {label}
+                          </button>
+                          {i < steps.length - 1 ? <span className="h-px w-5 bg-line sm:w-8" aria-hidden /> : null}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              </div>
+              <div className="mt-6 lg:mt-7" />
               {step === 1 ? (
                 <>
                   {/* The stay · always editable, never asked for twice. */}
@@ -335,8 +335,8 @@ export default function BookPageClient({
                     </label>
                   </div>
 
-                  <div className="mt-7 flex flex-wrap items-baseline justify-between gap-2 sm:mt-10">
-                    <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.choose")}</h2>
+                  <div className="mt-7 flex flex-wrap items-baseline justify-between gap-2 sm:mt-8">
+                    <h2 className="text-[clamp(1.6rem,2.2vw,1.9rem)]">{t("bk.choose")}</h2>
                     <p className="text-[14px] text-sub">{t("bk.chooseLead")}</p>
                   </div>
 
