@@ -320,6 +320,7 @@ export default function BookPageClient({
                       <Users className="hidden h-5 w-5 shrink-0 text-teak sm:block" aria-hidden />
                       <span className="sr-only">{t("avail.guests")}</span>
                       <select
+                        data-guests
                         value={guests}
                         onChange={(e) => setGuests(Number(e.target.value))}
                         className="h-full w-full cursor-pointer appearance-none bg-transparent pe-6 text-[15px] font-medium text-ink outline-none sm:text-[15.5px]"
