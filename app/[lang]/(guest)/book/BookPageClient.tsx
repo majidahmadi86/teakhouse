@@ -1,188 +1,85 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import { BookingSummary } from "@/components/booking/BookingSummary";
-import { RoomSelectCard } from "@/components/booking/RoomSelectCard";
-
-// Heavy / later-step pieces load on demand · keeps the /book initial JS light.
-// The loading state is a fully styled, readable date shell (not a blank
-// skeleton) · it renders in SSR and with JS disabled, showing the default
-// stay dates so the control is always present and legible. The interactive
-// react-day-picker calendar swaps in on hydration · behaviour only, no content.
-const DateRangePicker = dynamic(
-  () => import("@/components/ui/DateRangePicker").then((m) => m.DateRangePicker),
-  {
-    ssr: false,
-    loading: () => <DateRangeShell />,
-  }
-);
-const Receipt = dynamic(
-  () => import("@/components/booking/Receipt").then((m) => m.Receipt),
-  { ssr: false }
-);
-const RoomDetailsModal = dynamic(
-  () => import("@/components/booking/RoomDetailsModal").then((m) => m.RoomDetailsModal),
-  { ssr: false }
-);
-import { ListboxField } from "@/components/ui/ListboxField";
-import { RateBreakdown } from "@/components/booking/RateBreakdown";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { CalendarDays, Check, ChevronDown, Users } from "lucide-react";
+import { BookingDock } from "@/components/booking/BookingDock";
+import { MediaPicture } from "@/components/MediaPicture";
 import { generateBookingCode, qrMockSvg } from "@/lib/bookingUtils";
 import { useCurrency } from "@/lib/currency";
+import { isComplete, nightsOf, type DayIso, type StayRange } from "@/lib/dateRange";
 import { useGuestAuth } from "@/lib/guestAuth";
 import { useI18n } from "@/lib/i18n";
-import {
-  useGuestPriceRulesByRoom,
-  useGuestRooms,
-  useOwner,
-} from "@/lib/ownerStore";
-import {
-  groupNights,
-  lowestNightlyRate,
-  nightlyRate,
-  otaEquivalent,
-  quoteStay,
-} from "@/lib/pricing";
-import { formatDay, formatStayRange, nightsLabel } from "@/lib/i18n-core";
-import type { Stay } from "@/lib/stayDate";
-import { SHORT_KEY_TO_SLUG, type Room, type RoomShortKey } from "@/lib/rooms";
-import {
-  addDays,
-  hotelToday,
-  isoDate,
-  nightsBetween,
-} from "@/lib/utils";
+import { formatDay, nightsLabel } from "@/lib/i18n-core";
+import { bookableRooms, type BookableRoom } from "@/lib/liveRooms";
+import { useGuestPriceRulesByRoom, useGuestRooms, useOwner } from "@/lib/ownerStore";
+import { groupNights, otaEquivalent, quoteStay } from "@/lib/pricing";
+import type { MediaProps } from "@/lib/roomMedia";
+import { catalogueRoom, type Room } from "@/lib/rooms";
+import { hotelDayIso, MAX_GUESTS, type Stay } from "@/lib/stayDate";
 import { cn } from "@/lib/utils";
 
+const StayPicker = dynamic(() => import("@/components/stay/StayPicker").then((m) => m.StayPicker), {
+  ssr: false,
+});
+const Receipt = dynamic(() => import("@/components/booking/Receipt").then((m) => m.Receipt), { ssr: false });
+
 type PayMethod = "promptpay" | "card";
+type Step = 1 | 2 | 3;
 
-const TRUST_KEYS = ["trust.1", "trust.2", "trust.3", "trust.4"] as const;
-
-/** The dates the shell shows · next/dynamic's loading component takes no props. */
-const ShellDates = createContext<{ from: Date; to?: Date } | null>(null);
+const DEPOSIT_PCT = 30;
 
 /**
- * The DateRangePicker's loading / SSR state.
+ * /book · the booking flow (v17 A4): Room → Details → Confirmed.
  *
- * It is the picker's own trigger, rendered as static markup: same box, same
- * icon, same label, the same stay, formatted by the same function the
- * hydrated control uses (formatStayRange, lib/i18n-core: "Wed 8 Oct → Thu
- * 9 Oct", the one stay-date format of the whole site). So the shell and the
- * hydrated picker read identically and occupy identical space · nothing moves
- * and nothing changes wording when react-day-picker arrives.
+ * The stay arrives from the server (the URL's in/out/g/room, lib/stayDate),
+ * so a guest who pressed "Check rates" anywhere lands straight on the room
+ * list with their dates and guests applied · nothing to pick again. The
+ * dates stay editable at the top (the same range calendar as the booking
+ * bar), and one dock (components/booking/BookingDock) carries the room,
+ * dates, nights, total, deposit and the next action at every width, so the
+ * next step is never below the fold.
  *
- * The stay comes from the server (the URL's in/out, or tomorrow on the hotel's
- * clock), never from this render's own clock, so a prerendered page and the
- * browser can never disagree about the day.
+ * Room content comes from the catalogue (lib/rooms.ts); rates and rate rules
+ * from the live store laid over it by slug (lib/liveRooms.ts), so a database
+ * that does not know a room yet prices it at the catalogue's base rate.
  */
-function DateRangeShell() {
-  const { lang } = useI18n();
-  const dates = useContext(ShellDates);
-  const label = dates
-    ? dates.to
-      ? formatStayRange(lang, dates.from, dates.to)
-      : formatDay(lang, dates.from)
-    : "";
-
-  return (
-    <div
-      data-date-shell
-      className="flex w-full items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left text-base text-ink"
-    >
-      <svg
-        className="h-5 w-5 shrink-0 text-blue"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden
-      >
-        <rect x="3" y="4" width="18" height="18" rx="2" />
-        <path d="M16 2v4M8 2v4M3 10h18" />
-      </svg>
-      <span>{label}</span>
-    </div>
-  );
-}
-
-/** "2026-10-08" → a local Date at noon, the way the picker holds days. */
-function dayOf(iso: string): Date {
-  return new Date(iso + "T12:00:00");
-}
-
-export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
-  const { t, lang } = useI18n();
+export default function BookPageClient({
+  initialStay,
+  media,
+}: {
+  initialStay: Stay;
+  media: Record<string, MediaProps | null>;
+}) {
+  const { t, tr, lang } = useI18n();
   const { format } = useCurrency();
   const { user, attachBooking } = useGuestAuth();
-  const rooms = useGuestRooms();
+  const dbRooms = useGuestRooms();
   const rulesByRoom = useGuestPriceRulesByRoom();
   const { addBooking, hydrated: rulesLoaded } = useOwner();
-  const stepperRef = useRef<HTMLElement>(null);
+  const rooms = useMemo(() => bookableRooms(dbRooms), [dbRooms]);
+
+  const topRef = useRef<HTMLDivElement>(null);
+  const dateBtnRef = useRef<HTMLButtonElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
 
-  // The stay arrives from the server (lib/stayDate · the URL's in/out/g/room,
-  // read by the /book page), so the first render here is the server's render:
-  // no useEffect applies URL params after hydration any more.
-  const initialRoom = initialStay.room ? findRoomByParam(initialStay.room) : undefined;
-  const [step, setStep] = useState(initialRoom ? 2 : 1);
-  const [checkIn, setCheckIn] = useState<Date>(() => dayOf(initialStay.in));
-  const [checkOut, setCheckOut] = useState<Date | undefined>(() => dayOf(initialStay.out));
-  const [guests, setGuests] = useState(String(initialStay.guests));
-  // Keyed by slug, not shortKey · several seeded rooms share a shortKey, so a
-  // shortKey lookup can resolve to a different room than the guest picked and
-  // price the stay off the wrong rate and rate rules.
+  const initialRoom = catalogueRoom(initialStay.room);
+  const [step, setStep] = useState<Step>(1);
+  const [stay, setStay] = useState<{ from: DayIso; to: DayIso }>({ from: initialStay.in, to: initialStay.out });
+  const [draft, setDraft] = useState<StayRange>({ from: initialStay.in, to: initialStay.out });
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [guests, setGuests] = useState(initialStay.guests);
   const [roomSlug, setRoomSlug] = useState<string | null>(initialRoom?.slug ?? null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [requests, setRequests] = useState("");
   const [payMethod, setPayMethod] = useState<PayMethod>("promptpay");
   const [code, setCode] = useState("");
   const [bookingId, setBookingId] = useState("");
-  const [detailsRoom, setDetailsRoom] = useState<Room | null>(null);
-  const [summaryExpanded, setSummaryExpanded] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<{
-    name?: boolean;
-    email?: boolean;
-    phone?: boolean;
-  }>({});
-
-  function findRoomByParam(param: string): Room | undefined {
-    return (
-      rooms.find((r) => r.slug === param || r.shortKey === param) ??
-      rooms.find(
-        (r) => r.slug === (SHORT_KEY_TO_SLUG[param as RoomShortKey] ?? param)
-      )
-    );
-  }
-
-
-  // The live room list can arrive after the first render (the provider loads
-  // it), so a ?room= the first render could not match yet is applied once,
-  // when its room appears, unless the guest has already picked one.
-  const pendingRoom = useRef(initialRoom ? null : initialStay.room ?? null);
-  useEffect(() => {
-    const param = pendingRoom.current;
-    if (!param) return;
-    const room = findRoomByParam(param);
-    if (!room) return;
-    pendingRoom.current = null;
-    if (roomSlug) return;
-    setRoomSlug(room.slug);
-    setStep((s) => (s === 1 ? 2 : s));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rooms]);
+  const [errors, setErrors] = useState<{ name?: boolean; email?: boolean; phone?: boolean }>({});
 
   useEffect(() => {
     if (user) {
@@ -191,135 +88,88 @@ export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
     }
   }, [user]);
 
-  const nights =
-    checkOut && checkOut > checkIn
-      ? nightsBetween(isoDate(checkIn), isoDate(checkOut))
-      : 0;
-  const selectedRoom = roomSlug
-    ? rooms.find((r) => r.slug === roomSlug) ?? null
-    : null;
+  // A room chosen on a room page is shown selected, in view.
+  useEffect(() => {
+    if (!initialRoom) return;
+    const id = requestAnimationFrame(() => {
+      const el = document.getElementById(`room-${initialRoom.slug}`);
+      if (el && el.getBoundingClientRect().top > window.innerHeight * 0.6) {
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+      }
+    });
+    return () => cancelAnimationFrame(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // A stay is the SUM OF NIGHTLY RATES · never rate × nights. Seasons and
-  // date overrides can make any two nights of the same stay cost differently.
-  const quote = useMemo(() => {
-    if (!selectedRoom || !checkOut || nights <= 0) return null;
-    return quoteStay(
-      selectedRoom.rate,
-      isoDate(checkIn),
-      isoDate(checkOut),
-      rulesByRoom[selectedRoom.id] ?? []
-    );
-  }, [selectedRoom, checkIn, checkOut, nights, rulesByRoom]);
+  // The address bar follows the stay, so a reload or a shared link keeps it.
+  useEffect(() => {
+    const q = new URLSearchParams({ in: stay.from, out: stay.to, g: String(guests) });
+    if (roomSlug) q.set("room", roomSlug);
+    try {
+      window.history.replaceState(window.history.state, "", `/book?${q.toString()}`);
+    } catch {
+      /* ignore */
+    }
+  }, [stay, guests, roomSlug]);
 
-  const rateLines = useMemo(
-    () => (quote ? groupNights(quote.nights) : []),
-    [quote]
+  const nights = nightsOf(stay.from, stay.to);
+  const selected: BookableRoom | null = roomSlug ? rooms.find((r) => r.slug === roomSlug) ?? null : null;
+
+  const quoteFor = useCallback(
+    (room: BookableRoom) => quoteStay(room.rate, stay.from, stay.to, rulesByRoom[room.id] ?? []),
+    [stay, rulesByRoom]
   );
 
-  const rate = selectedRoom?.rate ?? 0;
+  const quote = useMemo(() => (selected ? quoteFor(selected) : null), [selected, quoteFor]);
+  const rateLines = useMemo(() => (quote ? groupNights(quote.nights) : []), [quote]);
   const subtotal = quote?.total ?? 0;
-  const savings =
-    selectedRoom && quote
-      ? otaEquivalent(quote.total, selectedRoom.rate, selectedRoom.ota) -
-        quote.total
-      : 0;
-  const deposit = Math.round(subtotal * 0.3);
+  const savings = selected && quote ? Math.max(0, otaEquivalent(quote.total, selected.rate, selected.ota) - quote.total) : 0;
+  const deposit = Math.round((subtotal * DEPOSIT_PCT) / 100);
   const balance = subtotal - deposit;
 
-  /**
-   * Day prices on the calendar · the selected room once one is chosen, the
-   * cheapest room otherwise. Null until the rate rules load, so the calendar
-   * never shows a price it has to correct.
-   */
-  /** Stay total for any room on the chosen dates · powers the step 2 cards. */
-  const stayTotalFor = useCallback(
-    (room: Room): number | null => {
-      if (!rulesLoaded || !checkOut || nights <= 0) return null;
-      return quoteStay(
-        room.rate,
-        isoDate(checkIn),
-        isoDate(checkOut),
-        rulesByRoom[room.id] ?? []
-      ).total;
-    },
-    [rulesLoaded, checkIn, checkOut, nights, rulesByRoom]
-  );
+  const fits = (room: BookableRoom) => guests <= room.capacity;
 
-  const priceForDate = useCallback(
-    (dateIso: string): number | null => {
-      if (!rulesLoaded) return null;
-      if (selectedRoom) {
-        return nightlyRate(
-          selectedRoom.rate,
-          dateIso,
-          rulesByRoom[selectedRoom.id] ?? []
-        ).price;
-      }
-      return lowestNightlyRate(rooms, dateIso, rulesByRoom);
-    },
-    [rulesLoaded, selectedRoom, rooms, rulesByRoom]
-  );
-
-  const guestOptions = useMemo(
-    () =>
-      ["1", "2", "3", "4"].map((n) => ({
-        value: n,
-        label: t(`g${n}` as "g1"),
-      })),
-    [t]
-  );
-
-  const steps = [t("bk.s1"), t("bk.s2"), t("bk.s3"), t("bk.s4")];
-
-  const datesValid = Boolean(checkOut && checkOut > checkIn);
-  const step1Valid = datesValid;
-  const step2Valid = step1Valid && Boolean(roomSlug);
-  const step3Valid =
-    step2Valid && name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
-
-  function scrollToStepper() {
-    stepperRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function goStep(next: number) {
+  function goStep(next: Step) {
     setStep(next);
-    setSummaryExpanded(false);
-    requestAnimationFrame(() => scrollToStepper());
+    requestAnimationFrame(() => {
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
-  function handleDates(from?: Date, to?: Date) {
-    setCheckIn(from ?? addDays(hotelToday(), 1));
-    setCheckOut(to);
+  function selectRoom(room: BookableRoom) {
+    setRoomSlug(room.slug);
   }
 
-  function handleStepClick(target: number) {
-    if (target <= step) goStep(target);
-  }
-
-  function scrollToFirstError() {
-    const errors = {
-      name: name.trim().length === 0,
-      email: email.trim().length === 0,
-      phone: phone.trim().length === 0,
-    };
-    setFieldErrors(errors);
-    const first = errors.name
-      ? nameRef.current
-      : errors.email
-        ? emailRef.current
-        : errors.phone
-          ? phoneRef.current
-          : null;
-    first?.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-
-  function handlePayDeposit() {
-    if (!selectedRoom || !checkOut) return;
-    if (!step3Valid) {
-      scrollToFirstError();
-      return;
+  function closePicker(final: StayRange) {
+    setPickerOpen(false);
+    if (isComplete(final)) {
+      setStay({ from: final.from, to: final.to });
+      setDraft(final);
+    } else {
+      setDraft({ from: stay.from, to: stay.to });
     }
+    dateBtnRef.current?.focus({ preventScroll: true });
+  }
 
+  function validate(): boolean {
+    const next = {
+      name: name.trim().length === 0,
+      email: !/^\S+@\S+\.\S+$/.test(email.trim()),
+      phone: phone.trim().length < 6,
+    };
+    setErrors(next);
+    const first = next.name ? nameRef.current : next.email ? emailRef.current : next.phone ? phoneRef.current : null;
+    if (first) {
+      first.focus({ preventScroll: true });
+      first.scrollIntoView({ behavior: "smooth", block: "center" });
+      return false;
+    }
+    return true;
+  }
+
+  function pay() {
+    if (!selected) return;
+    if (!validate()) return;
     const bookingCode = generateBookingCode();
     const id = `bk-${Date.now()}`;
     addBooking({
@@ -328,350 +178,392 @@ export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
       guest: name.trim(),
       phone: phone.trim(),
       email: email.trim(),
-      roomSlug: selectedRoom.slug,
-      checkIn: isoDate(checkIn),
-      checkOut: isoDate(checkOut),
+      roomSlug: selected.slug,
+      checkIn: stay.from,
+      checkOut: stay.to,
       source: "Direct",
       amount: subtotal,
       status: "ok",
-      notes: "",
+      notes: requests.trim(),
     });
     if (user) attachBooking(id);
     setBookingId(id);
     setCode(bookingCode);
-    goStep(4);
+    goStep(3);
   }
 
-  const summaryProps = {
-    checkIn,
-    checkOut,
-    guests,
-    room: selectedRoom,
-    nights,
-    rate,
-    subtotal,
-    savings,
-    deposit,
-    balance,
-    rateLines,
-  };
+  const steps = [t("bk.s1"), t("bk.s2"), t("bk.s3")];
+  const action =
+    step === 1
+      ? {
+          label: t("bk.continue"),
+          onClick: () => selected && goStep(2),
+          disabled: !selected || !fits(selected),
+        }
+      : {
+          label: `${t("bk.pay")} ${rulesLoaded ? format(deposit) : ""}`.trim(),
+          onClick: pay,
+          disabled: !selected,
+        };
+  const hint = step === 1 && !selected ? t("bk.dockEmpty") : undefined;
 
-  function handleSelectRoom(room: Room) {
-    setRoomSlug(room.slug);
-    requestAnimationFrame(() => {
-      document
-        .getElementById(`room-${room.slug}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  }
+  // The receipt needs the DB-shaped room.
+  const receiptRoom: Room | null = selected
+    ? {
+        id: selected.id,
+        slug: selected.slug,
+        shortKey: selected.shortKey,
+        name: selected.name,
+        rate: selected.rate,
+        ota: selected.ota,
+        meta: selected.summary,
+        description: selected.description,
+        photos: [],
+        amenities: selected.amenities,
+        capacity: selected.capacity,
+        bedType: selected.beds,
+        sizeM2: selected.sizeM2,
+        view: selected.view,
+        floor: selected.floor,
+        bathtub: selected.bathtub,
+        balcony: selected.balcony,
+        pets: false,
+        active: true,
+      }
+    : null;
+
+  const stayLabel = `${formatDay(lang, stay.from)} → ${formatDay(lang, stay.to)}`;
 
   return (
     <>
-      {step < 4 ? (
-        <BookingSummary
-          {...summaryProps}
-          mobile
-          expanded={summaryExpanded}
-          onToggle={() => setSummaryExpanded((v) => !v)}
-        />
-      ) : null}
-
-      <section className="px-4 pb-16 pt-28 sm:px-6 max-lg:pb-28 print:pt-4">
-        <div className="mx-auto max-w-[1180px]">
-          <div className={cn("print:hidden", step === 4 && "hidden lg:block")}>
-            <p className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-blue">
-              {t("nav.book")}
-            </p>
-            <h1 className="font-display text-4xl text-ink">{t("bk.h1")}</h1>
-            <p className="mt-3 max-w-prose text-ink/80">{t("bk.lead")}</p>
-
-            <nav
-              ref={stepperRef}
-              className="my-8 flex scroll-mt-24 flex-wrap gap-2"
-              aria-label={t("a11y.bookingSteps")}
-            >
-              {steps.map((label, index) => {
-                const n = index + 1;
-                const done = n < step;
-                const current = n === step;
-                const clickable = n <= step;
-
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    disabled={!clickable}
-                    onClick={() => handleStepClick(n)}
-                    className={cn(
-                      "inline-flex min-h-[44px] items-center rounded-full px-4 py-2 text-[0.76rem] font-extrabold tracking-wide transition",
-                      current
-                        ? "bg-blue text-white"
-                        : done
-                          ? "bg-sky text-blue hover:bg-sky/80"
-                          : "cursor-default bg-cloud text-strike",
-                      clickable && !current && "cursor-pointer"
-                    )}
-                  >
-                    {n} · {label}
-                  </button>
-                );
-              })}
-            </nav>
+      <section className="px-5 pb-36 pt-8 sm:px-8 md:pt-12 lg:pb-24 print:pt-4">
+        <div ref={topRef} className="mx-auto max-w-site scroll-mt-[calc(var(--demo-bar-h)+var(--header-h)+1rem)]">
+          <div className={cn("print:hidden", step === 3 && "max-lg:hidden")}>
+            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+              <div>
+                <p className="eyebrow">{t("bk.eyebrow")}</p>
+                <h1 className="mt-3 text-[clamp(2.1rem,3.6vw,3.25rem)]">{t("bk.h1")}</h1>
+              </div>
+              <ol className="flex items-center gap-2 text-[13.5px] sm:gap-3" aria-label={t("a11y.bookingSteps")}>
+                {steps.map((label, i) => {
+                  const n = (i + 1) as Step;
+                  const done = n < step;
+                  const current = n === step;
+                  return (
+                    <li key={label} className="flex items-center gap-2 sm:gap-3" aria-current={current ? "step" : undefined}>
+                      <button
+                        type="button"
+                        disabled={!done || step === 3}
+                        onClick={() => goStep(n)}
+                        className={cn(
+                          "inline-flex items-center gap-2 whitespace-nowrap",
+                          current ? "font-semibold text-ink" : done ? "text-ink/80 hover:text-ink" : "text-sub"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "grid h-6 w-6 place-items-center rounded-full border text-[12px]",
+                            current
+                              ? "border-forest bg-forest text-white"
+                              : done
+                                ? "border-forest text-forest"
+                                : "border-line text-sub"
+                          )}
+                        >
+                          {done ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}
+                        </span>
+                        {label}
+                      </button>
+                      {i < steps.length - 1 ? <span className="h-px w-5 bg-line sm:w-8" aria-hidden /> : null}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[1fr_320px] lg:items-start">
+          <div
+            className={cn(
+              "mt-8 grid gap-8 lg:mt-10 lg:items-start lg:gap-10",
+              step < 3 && "lg:grid-cols-[minmax(0,1fr)_380px]"
+            )}
+          >
             <div className="min-w-0">
               {step === 1 ? (
-                <div className="rounded-[14px] bg-white p-6 shadow-panel sm:p-9 print:hidden">
-                  <StepBack
-                    disabled
-                    label={t("bk.backStep")}
-                    homeHref="/"
-                  />
-                  <h2 className="mb-6 text-2xl text-ink">{t("bk.when")}</h2>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="sm:col-span-2" data-date-field>
-                      <ShellDates.Provider value={{ from: checkIn, to: checkOut }}>
-                        <DateRangePicker
-                          from={checkIn}
-                          to={checkOut}
-                          onChange={handleDates}
-                          placeholder={t("avail.selectDates")}
-                          numberOfMonths={1}
-                          priceFor={priceForDate}
-                          formatPrice={format}
-                        />
-                      </ShellDates.Provider>
-                      <p className="mt-2 text-[0.78rem] font-semibold text-sub">
-                        {t("bk.helperDates")}
-                      </p>
-                    </div>
-                    <ListboxField
-                      label={t("avail.guests")}
-                      value={guests}
-                      onChange={setGuests}
-                      options={guestOptions}
-                    />
-                  </div>
-
-                  <ul className="my-6 grid gap-2 sm:grid-cols-2">
-                    {TRUST_KEYS.map((key) => (
-                      <li
-                        key={key}
-                        className="flex items-center gap-2 text-[0.82rem] font-semibold text-deal before:font-bold before:text-deal before:content-['+']"
+                <>
+                  {/* The stay · always editable, never asked for twice. */}
+                  <div className="flex flex-col gap-2 rounded-card border border-line/80 bg-white p-2 shadow-soft sm:flex-row sm:items-stretch print:hidden">
+                    <button
+                      ref={dateBtnRef}
+                      type="button"
+                      data-date-trigger
+                      data-date-shell
+                      aria-haspopup="dialog"
+                      aria-expanded={pickerOpen}
+                      aria-label={`${t("avail.selectDates")}: ${stayLabel}, ${nightsLabel(lang, nights)}`}
+                      onClick={() => {
+                        setDraft({ from: stay.from, to: stay.to });
+                        setPickerOpen(true);
+                      }}
+                      className="flex min-h-[60px] flex-1 items-center gap-3 rounded-soft px-4 py-2 text-start transition hover:bg-stone"
+                    >
+                      <CalendarDays className="h-5 w-5 shrink-0 text-teak" aria-hidden />
+                      <span className="min-w-0">
+                        <span className="block text-[15.5px] font-medium text-ink">{stayLabel}</span>
+                        <span className="block text-[13px] text-sub">{nightsLabel(lang, nights)}</span>
+                      </span>
+                      <span className="ms-auto text-[13.5px] font-medium text-forest underline decoration-forest/30 underline-offset-4">
+                        {t("bk.change")}
+                      </span>
+                    </button>
+                    <label className="relative flex min-h-[60px] items-center gap-3 rounded-soft border-line px-4 transition hover:bg-stone sm:w-[210px] sm:border-s">
+                      <Users className="h-5 w-5 shrink-0 text-teak" aria-hidden />
+                      <span className="sr-only">{t("avail.guests")}</span>
+                      <select
+                        value={guests}
+                        onChange={(e) => setGuests(Number(e.target.value))}
+                        className="h-full w-full cursor-pointer appearance-none bg-transparent pe-6 text-[15.5px] font-medium text-ink outline-none"
                       >
-                        {t(key)}
-                      </li>
-                    ))}
+                        {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
+                          <option key={n} value={n}>
+                            {t(`g${n}` as "g1")}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute end-4 h-4 w-4 text-sub" aria-hidden />
+                    </label>
+                  </div>
+
+                  <div className="mt-10 flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.choose")}</h2>
+                    <p className="text-[14px] text-sub">{t("bk.chooseLead")}</p>
+                  </div>
+
+                  <ul className="mt-6 space-y-5">
+                    {rooms.map((room, i) => {
+                      const isSel = room.slug === roomSlug;
+                      const ok = fits(room);
+                      const total = rulesLoaded ? quoteFor(room).total : null;
+                      const m = media[room.slug];
+                      return (
+                        <li
+                          key={room.slug}
+                          id={`room-${room.slug}`}
+                          className={cn(
+                            "scroll-mt-32 overflow-hidden rounded-card border bg-white transition duration-300",
+                            isSel ? "border-forest shadow-lift ring-1 ring-forest" : "border-line/80 shadow-soft hover:shadow-lift"
+                          )}
+                        >
+                          <div className="grid sm:grid-cols-[minmax(0,260px)_1fr] md:grid-cols-[minmax(0,300px)_1fr]">
+                            <div className="relative aspect-[16/10] overflow-hidden bg-ivory sm:aspect-auto sm:min-h-[220px]">
+                              {m ? (
+                                <MediaPicture
+                                  media={m}
+                                  alt={tr(m.alt)}
+                                  sizes="(max-width: 639px) calc(100vw - 40px), 300px"
+                                  priority={i < 2}
+                                />
+                              ) : null}
+                            </div>
+                            <div className="flex min-w-0 flex-col p-5 md:p-6">
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="min-w-0">
+                                  <h3 className="font-display text-[22px] leading-snug text-ink">{tr(room.name)}</h3>
+                                  <p className="mt-1 text-[14px] text-sub">{tr(room.summary)}</p>
+                                </div>
+                                {isSel ? (
+                                  <span className="inline-flex shrink-0 items-center gap-1 rounded-soft bg-forest-soft px-2.5 py-1 text-[12.5px] font-semibold text-forest">
+                                    <Check className="h-3.5 w-3.5" aria-hidden />
+                                    {t("bk.selected")}
+                                  </span>
+                                ) : null}
+                              </div>
+                              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[14px] text-ink/80">
+                                {room.highlights.map((h) => (
+                                  <li key={h.en} className="flex items-center gap-1.5">
+                                    <span className="h-1 w-1 rounded-full bg-teak-light" aria-hidden />
+                                    {tr(h)}
+                                  </li>
+                                ))}
+                              </ul>
+                              <details className="group mt-2 text-[14px]">
+                                <summary className="inline-flex cursor-pointer list-none items-center gap-1 py-1 font-medium text-ink/80 underline decoration-line underline-offset-4 hover:text-ink [&::-webkit-details-marker]:hidden">
+                                  {t("bk.viewDetails")}
+                                  <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180" aria-hidden />
+                                </summary>
+                                <p className="mt-2 leading-relaxed text-ink/80">{tr(room.description)}</p>
+                                <ul className="mt-3 grid gap-1 text-ink/80 sm:grid-cols-2">
+                                  {room.inclusions.map((inc) => (
+                                    <li key={inc.en} className="flex gap-2">
+                                      <Check className="mt-1 h-3.5 w-3.5 shrink-0 text-forest" aria-hidden />
+                                      {tr(inc)}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </details>
+                              <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-4">
+                                <div className="min-h-[48px]">
+                                  <p className="text-[13px] text-sub">
+                                    {t("room.from")} <span className="font-medium text-ink">{format(room.rate)}</span>{" "}
+                                    {t("room.night")}
+                                  </p>
+                                  {total != null ? (
+                                    <p className="text-[18px] font-semibold text-ink">
+                                      {format(total)}{" "}
+                                      <span className="text-[13px] font-normal text-sub">
+                                        {t("bk.totalFor", { nights: nightsLabel(lang, nights) })}
+                                      </span>
+                                    </p>
+                                  ) : null}
+                                  {!ok ? (
+                                    <p className="text-[13px] text-coral-deep">{t("bk.tooMany", { n: room.capacity })}</p>
+                                  ) : null}
+                                </div>
+                                <button
+                                  type="button"
+                                  disabled={!ok}
+                                  onClick={() => selectRoom(room)}
+                                  aria-pressed={isSel}
+                                  className={cn(isSel ? "btn-secondary" : "btn-primary", "min-h-11 px-6")}
+                                >
+                                  {isSel ? t("bk.selected") : t("bk.select")}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
-
-                  <p className="mb-5 text-[0.82rem] font-semibold text-sub">
-                    {t("bk.cancel")}
-                  </p>
-                  <button
-                    type="button"
-                    disabled={!step1Valid}
-                    onClick={() => goStep(2)}
-                    className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40 max-lg:hidden"
-                  >
-                    {t("bk.seeRooms")} →
-                  </button>
-                </div>
+                </>
               ) : null}
 
-              {step === 2 ? (
-                <div className="rounded-[14px] bg-white p-6 shadow-panel sm:p-9 print:hidden">
-                  <StepBack onClick={() => goStep(1)} label={t("bk.backStep")} />
-                  <h2 className="mb-1 text-2xl text-ink">{t("bk.choose")}</h2>
-                  {datesValid ? (
-                    <p className="mb-5 text-[0.85rem] font-semibold text-sub">
-                      {formatStayRange(lang, checkIn, checkOut!)} ·{" "}
-                      {nightsLabel(lang, nights)}
-                    </p>
-                  ) : null}
-                  <div className="space-y-4">
-                    {rooms.map((room) => (
-                      <div key={room.id} id={`room-${room.slug}`} className="scroll-mt-24">
-                        <RoomSelectCard
-                          room={room}
-                          selected={roomSlug === room.slug}
-                          onSelect={() => handleSelectRoom(room)}
-                          onViewDetails={() => setDetailsRoom(room)}
-                          stayTotal={stayTotalFor(room)}
-                          stayNights={nights}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-6 max-lg:hidden">
-                    <button
-                      type="button"
-                      disabled={!step2Valid}
-                      onClick={() => goStep(3)}
-                      className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {t("bk.continue")} →
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              {step === 3 && selectedRoom && checkOut ? (
-                <div className="rounded-[14px] bg-white p-6 shadow-panel sm:p-9 print:hidden">
-                  <StepBack onClick={() => goStep(2)} label={t("bk.backStep")} />
-                  <h2 className="mb-5 text-2xl text-ink">{t("bk.secure")}</h2>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label={t("bk.name")}>
-                      <input
-                        ref={nameRef}
-                        value={name}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                          setFieldErrors((f) => ({ ...f, name: false }));
-                        }}
-                        placeholder={t("bk.nameph")}
-                        className={cn(inputClass, fieldErrors.name && "border-coral-deep")}
-                      />
-                    </Field>
-                    <Field label={t("bk.mail")}>
-                      <input
-                        ref={emailRef}
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setFieldErrors((f) => ({ ...f, email: false }));
-                        }}
-                        placeholder="you@email.com"
-                        className={cn(inputClass, fieldErrors.email && "border-coral-deep")}
-                      />
-                    </Field>
-                    <Field label={t("bk.phone")} className="sm:col-span-2 sm:max-w-sm">
-                      <input
-                        ref={phoneRef}
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => {
-                          setPhone(e.target.value);
-                          setFieldErrors((f) => ({ ...f, phone: false }));
-                        }}
-                        placeholder="+66 8x xxx xxxx"
-                        className={cn(inputClass, fieldErrors.phone && "border-coral-deep")}
-                      />
-                    </Field>
-                  </div>
-
-                  {rateLines.length > 0 ? (
-                    <div className="mt-6 rounded-xl border border-line bg-cloud/50 px-5 py-4">
-                      <h3 className="mb-3 text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
-                        {t("bk.perNight")}
-                      </h3>
-                      <RateBreakdown lines={rateLines} className="text-sm" />
-                      <div className="mt-3 flex justify-between border-t border-line pt-3 text-base font-bold text-ink">
-                        <span>{t("bk.stayTotal")}</span>
-                        <span>{format(subtotal)}</span>
-                      </div>
-                      {quote?.mixed ? (
-                        <p className="mt-2 text-[0.78rem] font-semibold text-sub">
-                          {t("bk.mixedNote")}
-                        </p>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  {savings > 0 ? (
-                    <div className="my-5 rounded-xl bg-deal-bg px-5 py-4 text-sm font-bold text-deal">
-                      {t("bk.save")}: -{format(savings)}
-                    </div>
-                  ) : null}
-
-                  <div className="mb-4 flex gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => setPayMethod("promptpay")}
-                      className={cn(
-                        "flex-1 rounded-[10px] border-2 py-3 text-sm font-extrabold",
-                        payMethod === "promptpay"
-                          ? "border-blue bg-sky/40 text-blue"
-                          : "border-line text-ink"
-                      )}
-                    >
-                      PromptPay
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPayMethod("card")}
-                      className={cn(
-                        "flex-1 rounded-[10px] border-2 py-3 text-sm font-extrabold",
-                        payMethod === "card"
-                          ? "border-blue bg-sky/40 text-blue"
-                          : "border-line text-ink"
-                      )}
-                    >
-                      {t("bk.card")}
-                    </button>
-                  </div>
-
-                  {payMethod === "promptpay" ? (
-                    <div className="grid place-items-center rounded-xl bg-cloud p-6">
-                      <svg
-                        width="150"
-                        height="150"
-                        viewBox="0 0 21 21"
-                        shapeRendering="crispEdges"
-                        aria-hidden
-                        dangerouslySetInnerHTML={{ __html: qrMockSvg() }}
-                      />
-                      <p className="mt-3 text-[0.78rem] font-bold text-sub">
-                        {t("bk.scan")}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label={t("bk.cardNum")} className="sm:col-span-2">
+              {step === 2 && selected ? (
+                <div className="space-y-10 print:hidden">
+                  <section>
+                    <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.details")}</h2>
+                    <p className="mt-2 text-[15px] text-sub">{t("bk.detailsLead")}</p>
+                    <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                      <Field label={t("bk.name")} error={errors.name ? t("bk.errName") : undefined} className="sm:col-span-2">
                         <input
-                          inputMode="numeric"
-                          placeholder="4242 4242 4242 4242"
+                          ref={nameRef}
+                          value={name}
+                          autoComplete="name"
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            setErrors((f) => ({ ...f, name: false }));
+                          }}
+                          placeholder={t("bk.nameph")}
+                          aria-invalid={errors.name || undefined}
                           className={inputClass}
                         />
                       </Field>
-                      <Field label={t("bk.expiry")}>
-                        <input placeholder="12/28" className={inputClass} />
+                      <Field label={t("bk.mail")} error={errors.email ? t("bk.errMail") : undefined}>
+                        <input
+                          ref={emailRef}
+                          type="email"
+                          value={email}
+                          autoComplete="email"
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setErrors((f) => ({ ...f, email: false }));
+                          }}
+                          placeholder="you@example.com"
+                          aria-invalid={errors.email || undefined}
+                          className={inputClass}
+                        />
                       </Field>
-                      <Field label="CVC">
-                        <input placeholder="123" className={inputClass} />
+                      <Field label={t("bk.phone")} error={errors.phone ? t("bk.errPhone") : undefined}>
+                        <input
+                          ref={phoneRef}
+                          type="tel"
+                          value={phone}
+                          autoComplete="tel"
+                          onChange={(e) => {
+                            setPhone(e.target.value);
+                            setErrors((f) => ({ ...f, phone: false }));
+                          }}
+                          placeholder="+66 81 234 5678"
+                          aria-invalid={errors.phone || undefined}
+                          className={inputClass}
+                        />
+                      </Field>
+                      <Field label={`${t("bk.requests")} · ${t("bk.optional")}`} className="sm:col-span-2">
+                        <textarea
+                          value={requests}
+                          onChange={(e) => setRequests(e.target.value)}
+                          rows={2}
+                          placeholder={t("bk.requestsPh")}
+                          className={cn(inputClass, "resize-y")}
+                        />
                       </Field>
                     </div>
-                  )}
+                  </section>
 
-                  <div className="mt-5 max-lg:hidden">
-                    <button
-                      type="button"
-                      onClick={handlePayDeposit}
-                      className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark"
-                    >
-                      {t("bk.pay")} {format(deposit)}
-                    </button>
-                  </div>
-                  <p className="mt-3.5 text-[0.72rem] font-semibold text-sub">
-                    {t("bk.demo")}
-                  </p>
+                  <section>
+                    <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.payment")}</h2>
+                    <p className="mt-2 text-[15px] text-sub">{t("bk.payLead")}</p>
+                    <div className="mt-6 grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("bk.payment")}>
+                      {(["promptpay", "card"] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          role="radio"
+                          aria-checked={payMethod === m}
+                          onClick={() => setPayMethod(m)}
+                          className={cn(
+                            "min-h-[56px] rounded-soft border px-4 text-[15px] font-medium transition",
+                            payMethod === m ? "border-forest bg-forest-soft text-ink ring-1 ring-forest" : "border-line bg-white text-ink/80 hover:border-ink/30"
+                          )}
+                        >
+                          {m === "promptpay" ? "PromptPay" : t("bk.card")}
+                        </button>
+                      ))}
+                    </div>
+                    {payMethod === "promptpay" ? (
+                      <div className="mt-5 flex items-center gap-5 rounded-card border border-line/80 bg-white p-5">
+                        <svg
+                          width="112"
+                          height="112"
+                          viewBox="0 0 21 21"
+                          shapeRendering="crispEdges"
+                          aria-hidden
+                          className="shrink-0"
+                          dangerouslySetInnerHTML={{ __html: qrMockSvg() }}
+                        />
+                        <p className="text-[14.5px] text-ink/80">{t("bk.scan")}</p>
+                      </div>
+                    ) : (
+                      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                        <Field label={t("bk.cardNum")} className="sm:col-span-2">
+                          <input inputMode="numeric" autoComplete="off" placeholder="4242 4242 4242 4242" className={inputClass} />
+                        </Field>
+                        <Field label={t("bk.expiry")}>
+                          <input autoComplete="off" placeholder="12/28" className={inputClass} />
+                        </Field>
+                        <Field label="CVC">
+                          <input autoComplete="off" placeholder="123" className={inputClass} />
+                        </Field>
+                      </div>
+                    )}
+                    <p className="mt-4 text-[13.5px] text-sub">{t("bk.demo")}</p>
+                  </section>
                 </div>
               ) : null}
 
-              {step === 4 && selectedRoom && checkOut ? (
+              {step === 3 && receiptRoom ? (
                 <Receipt
                   code={code}
                   bookingId={bookingId}
                   guestName={name}
                   guestEmail={email}
                   guestPhone={phone}
-                  guests={guests}
-                  checkIn={checkIn}
-                  checkOut={checkOut}
-                  room={selectedRoom}
+                  guests={String(guests)}
+                  checkIn={new Date(stay.from + "T12:00:00")}
+                  checkOut={new Date(stay.to + "T12:00:00")}
+                  room={receiptRoom}
                   nights={nights}
-                  rate={rate}
+                  rate={selected?.rate ?? 0}
                   subtotal={subtotal}
                   deposit={deposit}
                   balance={balance}
@@ -680,132 +572,90 @@ export default function BookPageClient({ initialStay }: { initialStay: Stay }) {
               ) : null}
             </div>
 
-            {step < 4 ? (
-              <BookingSummary {...summaryProps} className="print:hidden" />
+            {step < 3 ? (
+              <BookingDock
+                room={selected}
+                checkIn={stay.from}
+                checkOut={stay.to}
+                guests={guests}
+                nights={nights}
+                subtotal={subtotal}
+                deposit={deposit}
+                balance={balance}
+                savings={savings}
+                rateLines={rateLines}
+                priced={rulesLoaded}
+                action={action}
+                hint={hint}
+              />
             ) : null}
           </div>
         </div>
       </section>
 
-      {/* Mobile sticky action bar · a visible next action at every step */}
-      {step < 4 ? (
-        <div
-          className="z-sticky fixed inset-x-0 bottom-0 border-t border-line bg-white/95 p-3 backdrop-blur-md [padding-bottom:max(0.75rem,env(safe-area-inset-bottom))] lg:hidden print:hidden"
-          data-booking-action-bar
-        >
-          <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-3">
-            <div className="min-w-0">
-              {selectedRoom && nights > 0 ? (
-                <>
-                  <div className="truncate font-display text-lg font-bold leading-tight text-ink">
-                    {format(subtotal)}
-                  </div>
-                  <div className="text-[0.72rem] font-semibold text-sub">
-                    {t("bk.dep")} {format(deposit)}
-                  </div>
-                </>
-              ) : (
-                <div className="text-[0.85rem] font-semibold text-sub">
-                  {datesValid
-                    ? nightsLabel(lang, nights)
-                    : t("avail.selectDates")}
-                </div>
-              )}
-            </div>
-            {step === 1 ? (
-              <button
-                type="button"
-                disabled={!step1Valid}
-                onClick={() => goStep(2)}
-                className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {t("bk.seeRooms")} →
-              </button>
-            ) : step === 2 ? (
-              <button
-                type="button"
-                disabled={!step2Valid}
-                onClick={() => goStep(3)}
-                className="inline-flex min-h-[44px] shrink-0 items-center rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {t("bk.continue")} →
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handlePayDeposit}
-                className="inline-flex min-h-[44px] shrink-0 items-center whitespace-nowrap rounded-full bg-blue px-6 py-3 text-sm font-bold text-white transition hover:bg-blue-dark"
-              >
-                {t("bk.pay")} {format(deposit)}
-              </button>
-            )}
-          </div>
-        </div>
-      ) : null}
-
-      {detailsRoom ? (
-        <RoomDetailsModal
-          room={detailsRoom}
-          open={Boolean(detailsRoom)}
-          onClose={() => setDetailsRoom(null)}
+      {pickerOpen ? (
+        <StayPicker
+          lang={lang}
+          open
+          anchor={dateBtnRef.current}
+          value={draft}
+          focus="in"
+          today={hotelDayIso()}
+          onChange={setDraft}
+          onClose={closePicker}
+          labels={{
+            title: t("cal.title"),
+            done: t("cal.done"),
+            prev: t("cal.prev"),
+            next: t("cal.next"),
+            from: t("cal.from"),
+            close: t("cal.close"),
+            pickIn: t("cal.pickIn"),
+            pickOut: t("cal.pickOut"),
+          }}
+          priceFor={
+            rulesLoaded
+              ? (iso) => {
+                  const pool = selected ? [selected] : rooms;
+                  let min: number | null = null;
+                  for (const r of pool) {
+                    const p = quoteStay(r.rate, iso, nextDay(iso), rulesByRoom[r.id] ?? []).total;
+                    if (min == null || p < min) min = p;
+                  }
+                  return min;
+                }
+              : undefined
+          }
+          formatPrice={format}
         />
       ) : null}
     </>
   );
 }
 
-const inputClass =
-  "w-full rounded-[10px] border-[1.5px] border-line bg-white px-4 py-3 text-sm font-semibold text-ink placeholder:text-[#93A0B4] focus:border-blue focus:outline-none focus:ring-2 focus:ring-sky";
+function nextDay(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1, 12)).toISOString().slice(0, 10);
+}
+
+const inputClass = "w-full px-4 py-3.5 text-[16px] text-ink";
 
 function Field({
   label,
   children,
   className,
+  error,
 }: {
   label: string;
   children: ReactNode;
   className?: string;
+  error?: string;
 }) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-1.5 block text-[0.7rem] font-extrabold uppercase tracking-[0.14em] text-blue">
-        {label}
-      </span>
+      <span className="field-label">{label}</span>
       {children}
+      {error ? <span className="mt-1.5 block text-[13.5px] text-coral-deep">{error}</span> : null}
     </label>
-  );
-}
-
-function StepBack({
-  onClick,
-  label,
-  disabled,
-  homeHref,
-}: {
-  onClick?: () => void;
-  label: string;
-  disabled?: boolean;
-  homeHref?: string;
-}) {
-  if (disabled && homeHref) {
-    return (
-      <Link
-        href={homeHref}
-        className="mb-4 inline-flex min-h-[44px] items-center text-sm font-bold text-blue hover:text-blue-dark"
-      >
-        {label}
-      </Link>
-    );
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="mb-6 inline-flex text-sm font-bold text-blue hover:text-blue-dark disabled:cursor-not-allowed disabled:opacity-40"
-    >
-      {label}
-    </button>
   );
 }

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import BookPageClient from "../BookPageClient";
+import { roomCoverMedia } from "@/lib/roomMedia";
 import { stayFromSegments } from "@/lib/stayDate";
 import type { LangParams } from "@/lib/pageLocale";
 
@@ -21,5 +22,5 @@ export function generateStaticParams() {
 export default function BookPage({ params }: { params: LangParams & { stay: string[] } }) {
   const stay = stayFromSegments(params.stay);
   if (!stay) notFound();
-  return <BookPageClient initialStay={stay} />;
+  return <BookPageClient initialStay={stay} media={roomCoverMedia(1080)} />;
 }

@@ -66,55 +66,56 @@ export function Receipt({
     <div className="mx-auto w-full max-w-[640px]">
       <div
         id="tkh-receipt"
-        className="overflow-hidden rounded-[14px] bg-white shadow-panel print:shadow-none"
+        className="overflow-hidden rounded-card border border-line/80 bg-white shadow-soft print:shadow-none"
       >
-        <header className="bg-navy px-6 py-8 text-white">
-          <Logo light showTag={false} size={28} />
-          <p className="mt-4 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-white/70">
-            {t("bk.receipt")}
+        <header className="border-b border-line bg-ivory/60 px-6 py-8 sm:px-8">
+          <Logo showTag={false} size={26} />
+          <p className="mt-6 text-[12px] font-semibold uppercase tracking-[0.2em] text-teak">
+            {t("bk.done")}
           </p>
-          <div className="mt-2 font-display text-[1.75rem] font-semibold tracking-wide text-gold">
-            {code}
-          </div>
+          <h2 className="mt-2 text-[clamp(1.8rem,3vw,2.4rem)]">{t("bk.thanks")}</h2>
+          <p className="mt-3 text-[15px] text-ink/80">
+            {t("bk.receipt")} · <span className="font-semibold tracking-wide text-ink">{code}</span>
+          </p>
         </header>
 
-        <div className="space-y-6 px-6 py-8 text-sm">
+        <div className="space-y-6 px-6 py-8 text-[15px] sm:px-8">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("col.guest")}
               </div>
-              <div className="mt-1 font-semibold text-ink">{guestName}</div>
+              <div className="mt-1 font-medium text-ink">{guestName}</div>
               <div className="mt-0.5 text-sub">{guestEmail}</div>
               <div className="text-sub">{guestPhone}</div>
             </div>
             <div>
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("avail.guests")}
               </div>
-              <div className="mt-1 font-semibold text-ink">{t(`g${guests}` as "g1")}</div>
+              <div className="mt-1 font-medium text-ink">{t(`g${guests}` as "g1")}</div>
             </div>
             <div>
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("avail.in")}
               </div>
-              <div className="mt-1 font-semibold text-ink">
+              <div className="mt-1 font-medium text-ink">
                 {formatDay(lang, checkIn, { year: true })} · {formatTime(lang, "14:00")}
               </div>
             </div>
             <div>
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("avail.out")}
               </div>
-              <div className="mt-1 font-semibold text-ink">
+              <div className="mt-1 font-medium text-ink">
                 {formatDay(lang, checkOut, { year: true })} · {formatTime(lang, "12:00")}
               </div>
             </div>
             <div className="sm:col-span-2">
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("col.room")}
               </div>
-              <div className="mt-1 font-semibold text-ink">{tr(room.name)}</div>
+              <div className="mt-1 font-medium text-ink">{tr(room.name)}</div>
               <div className="text-sub">{tr(room.meta)}</div>
             </div>
           </div>
@@ -126,7 +127,7 @@ export function Receipt({
                   lines={rateLines}
                   showLabels={rateLines.length > 1}
                 />
-                <div className="flex justify-between border-t border-line pt-2 font-semibold text-ink">
+                <div className="flex justify-between border-t border-line pt-2 font-medium text-ink">
                   <span>{t("bk.stayTotal")}</span>
                   <span>{format(subtotal)}</span>
                 </div>
@@ -135,9 +136,9 @@ export function Receipt({
               <div className="flex justify-between">
                 <span className="text-sub">
                   {format(rate)} × {nights}{" "}
-                  {nights > 1 ? t("bk.nights") : t("bk.night")}
+                  {nights === 1 ? t("bk.night") : t("bk.nights")}
                 </span>
-                <span className="font-semibold text-ink">{format(subtotal)}</span>
+                <span className="font-medium text-ink">{format(subtotal)}</span>
               </div>
             )}
             <div className="flex justify-between font-bold text-ink">
@@ -160,19 +161,19 @@ export function Receipt({
             )}
           </div>
 
-          <div className="rounded-lg bg-deal-bg px-4 py-3 text-[0.82rem] font-semibold text-deal">
+          <div className="rounded-soft bg-forest-soft px-4 py-3 text-[14px] font-medium text-forest">
             {t("trust.2")}
           </div>
 
           <footer className="flex flex-col items-center gap-4 border-t border-line pt-6 text-center sm:flex-row sm:justify-between sm:text-left">
             <div>
-              <div className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-sub">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-sub">
                 {t("bk.receipt")}
               </div>
               <div className="mt-1 text-[0.82rem] font-semibold text-sub">
                 {formatDay(lang, issuedAt, { year: true })}
               </div>
-              <p className="mt-2 max-w-xs text-[0.85rem] font-semibold text-ink">
+              <p className="mt-2 max-w-xs text-[0.85rem] font-medium text-ink">
                 {t("bk.showCheckin")}
               </p>
             </div>
@@ -191,10 +192,10 @@ export function Receipt({
       </div>
 
       {!user ? (
-        <div className="mt-4 rounded-[14px] border border-blue/20 bg-sky/40 px-5 py-4 text-center print:hidden">
+        <div className="mt-4 rounded-card border border-line bg-white px-5 py-4 text-center print:hidden">
           <Link
             href={signupHref}
-            className="text-sm font-bold text-blue underline"
+            className="text-[15px] font-medium text-forest underline underline-offset-4"
           >
             {t("acc.createForBooking")}
           </Link>
@@ -205,13 +206,13 @@ export function Receipt({
         <button
           type="button"
           onClick={handlePrint}
-          className="rounded-full bg-blue px-7 py-3.5 text-sm font-bold text-white hover:bg-blue-dark"
+          className="btn-primary"
         >
           {t("bk.print")}
         </button>
         <Link
           href="/"
-          className="inline-flex rounded-full border border-ink/25 px-7 py-3.5 text-sm font-bold text-ink hover:bg-cloud"
+          className="btn-secondary"
         >
           {t("bk.back")}
         </Link>

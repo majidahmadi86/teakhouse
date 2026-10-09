@@ -2,6 +2,7 @@
 
 import { useCurrency } from "@/lib/currency";
 import { useI18n } from "@/lib/i18n";
+import { nightsLabel } from "@/lib/i18n-core";
 import type { RateLine } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ export function RateBreakdown({
   /** Show the rule name (High season, Songkran) next to a priced band. */
   showLabels?: boolean;
 }) {
-  const { t } = useI18n();
+  const { lang } = useI18n();
   const { format } = useCurrency();
 
   if (lines.length === 0) return null;
@@ -35,23 +36,20 @@ export function RateBreakdown({
               with the amount on the right. */}
           <span className="min-w-0 text-sub">
             <span className="block whitespace-nowrap">
-              {format(line.price)} × {line.nights}{" "}
-              {line.nights > 1 ? t("bk.nights") : t("bk.night")}
+              {format(line.price)} × {nightsLabel(lang, line.nights)}
             </span>
             {showLabels && line.label ? (
               <span
                 className={cn(
-                  "mt-1 inline-block rounded px-1.5 py-0.5 text-[0.68rem] font-bold",
-                  line.source === "override"
-                    ? "bg-coral-bg text-coral-deep"
-                    : "bg-sky text-blue"
+                  "mt-1 inline-block rounded-soft px-1.5 py-0.5 text-[11.5px] font-medium",
+                  line.source === "override" ? "bg-ivory text-teak" : "bg-forest-soft text-forest"
                 )}
               >
                 {line.label}
               </span>
             ) : null}
           </span>
-          <span className="shrink-0 font-semibold text-ink">
+          <span className="shrink-0 font-medium text-ink">
             {format(line.price * line.nights)}
           </span>
         </li>
