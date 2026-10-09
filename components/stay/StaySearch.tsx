@@ -64,11 +64,11 @@ export function StaySearch({
       <span className={cn("stay-cap flex items-center gap-1.5", opts.cap)}>
         <span>{label}</span>
         {opts.nights ? (
-          <span data-stay-nights data-forms={forms} className="stay-nights normal-case tracking-normal text-teak" />
+          <span suppressHydrationWarning data-stay-nights data-forms={forms} className="stay-nights normal-case tracking-normal text-teak" />
         ) : null}
       </span>
-      <span aria-hidden data-stay-text={name} data-empty={label} className={cn("stay-text block truncate", opts.value)} />
-      <input type="date" name={name} aria-label={label} className="stay-date" />
+      <span suppressHydrationWarning aria-hidden data-stay-text={name} data-empty={label} className={cn("stay-text block truncate", opts.value)} />
+      <input suppressHydrationWarning type="date" name={name} aria-label={label} className="stay-date" />
     </label>
   );
 
@@ -89,6 +89,7 @@ export function StaySearch({
 
   const hidden = room ? <input type="hidden" name="room" value={room} /> : null;
   const common = {
+    suppressHydrationWarning: true,
     action: "/book",
     method: "get" as const,
     "data-stay-search": variant,

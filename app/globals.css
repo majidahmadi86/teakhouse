@@ -1367,3 +1367,24 @@ html[lang="th"][data-surface="guest"] .eyebrow {
 html[dir="rtl"] .stay-arrow {
   transform: scaleX(-1);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   v17 · The concierge button never covers the booking dock: on /book it
+   moves to the start side on desktop (the dock is the end column), sits
+   above the dock bar on phones, and steps aside while the dock's details
+   are open.
+   ───────────────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  body:has([data-booking-dock]) .tkh-fab {
+    inset-inline-end: auto;
+    inset-inline-start: 1.5rem;
+  }
+}
+@media (max-width: 1023px) {
+  body:has([data-booking-dock]) .tkh-fab {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 6.25rem);
+  }
+  body:has([data-booking-dock] [aria-expanded="true"]) .tkh-fab {
+    display: none;
+  }
+}

@@ -81,6 +81,7 @@ export default function GuestRootLayout({
 
   return (
     <html
+      suppressHydrationWarning
       lang={meta.tag}
       dir={meta.dir}
       data-demo={DEMO_MODE ? "true" : undefined}

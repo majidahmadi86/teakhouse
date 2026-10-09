@@ -236,13 +236,13 @@ export default function BookPageClient({
 
   return (
     <>
-      <section className="px-5 pb-36 pt-8 sm:px-8 md:pt-12 lg:pb-24 print:pt-4">
+      <section className="px-4 pb-40 pt-6 sm:px-8 md:pt-12 lg:pb-24 print:pt-4">
         <div ref={topRef} className="mx-auto max-w-site scroll-mt-[calc(var(--demo-bar-h)+var(--header-h)+1rem)]">
           <div className={cn("print:hidden", step === 3 && "max-lg:hidden")}>
             <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
               <div>
-                <p className="eyebrow">{t("bk.eyebrow")}</p>
-                <h1 className="mt-3 text-[clamp(2.1rem,3.6vw,3.25rem)]">{t("bk.h1")}</h1>
+                <p className="eyebrow max-sm:hidden">{t("bk.eyebrow")}</p>
+                <h1 className="mt-2 text-[clamp(1.9rem,3.6vw,3.25rem)] sm:mt-3">{t("bk.h1")}</h1>
               </div>
               <ol className="flex items-center gap-2 text-[13.5px] sm:gap-3" aria-label={t("a11y.bookingSteps")}>
                 {steps.map((label, i) => {
@@ -292,7 +292,7 @@ export default function BookPageClient({
               {step === 1 ? (
                 <>
                   {/* The stay · always editable, never asked for twice. */}
-                  <div className="flex flex-col gap-2 rounded-card border border-line/80 bg-white p-2 shadow-soft sm:flex-row sm:items-stretch print:hidden">
+                  <div className="flex items-stretch gap-1 rounded-card border border-line/80 bg-white p-1.5 shadow-soft sm:gap-2 sm:p-2 print:hidden">
                     <button
                       ref={dateBtnRef}
                       type="button"
@@ -305,24 +305,24 @@ export default function BookPageClient({
                         setDraft({ from: stay.from, to: stay.to });
                         setPickerOpen(true);
                       }}
-                      className="flex min-h-[60px] flex-1 items-center gap-3 rounded-soft px-4 py-2 text-start transition hover:bg-stone"
+                      className="flex min-h-[60px] min-w-0 flex-1 items-center gap-3 rounded-soft px-3 py-2 text-start transition hover:bg-stone sm:px-4"
                     >
-                      <CalendarDays className="h-5 w-5 shrink-0 text-teak" aria-hidden />
+                      <CalendarDays className="hidden h-5 w-5 shrink-0 text-teak sm:block" aria-hidden />
                       <span className="min-w-0">
-                        <span className="block text-[15.5px] font-medium text-ink">{stayLabel}</span>
+                        <span className="block truncate text-[15px] font-medium text-ink sm:text-[15.5px]">{stayLabel}</span>
                         <span className="block text-[13px] text-sub">{nightsLabel(lang, nights)}</span>
                       </span>
-                      <span className="ms-auto text-[13.5px] font-medium text-forest underline decoration-forest/30 underline-offset-4">
+                      <span className="ms-auto hidden text-[13.5px] font-medium text-forest underline decoration-forest/30 underline-offset-4 sm:inline">
                         {t("bk.change")}
                       </span>
                     </button>
-                    <label className="relative flex min-h-[60px] items-center gap-3 rounded-soft border-line px-4 transition hover:bg-stone sm:w-[210px] sm:border-s">
-                      <Users className="h-5 w-5 shrink-0 text-teak" aria-hidden />
+                    <label className="relative flex min-h-[60px] w-[118px] shrink-0 items-center gap-2 rounded-soft border-s border-line px-3 transition hover:bg-stone sm:w-[210px] sm:gap-3 sm:px-4">
+                      <Users className="hidden h-5 w-5 shrink-0 text-teak sm:block" aria-hidden />
                       <span className="sr-only">{t("avail.guests")}</span>
                       <select
                         value={guests}
                         onChange={(e) => setGuests(Number(e.target.value))}
-                        className="h-full w-full cursor-pointer appearance-none bg-transparent pe-6 text-[15.5px] font-medium text-ink outline-none"
+                        className="h-full w-full cursor-pointer appearance-none bg-transparent pe-6 text-[15px] font-medium text-ink outline-none sm:text-[15.5px]"
                       >
                         {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                           <option key={n} value={n}>
@@ -330,16 +330,16 @@ export default function BookPageClient({
                           </option>
                         ))}
                       </select>
-                      <ChevronDown className="pointer-events-none absolute end-4 h-4 w-4 text-sub" aria-hidden />
+                      <ChevronDown className="pointer-events-none absolute end-3 h-4 w-4 text-sub sm:end-4" aria-hidden />
                     </label>
                   </div>
 
-                  <div className="mt-10 flex flex-wrap items-baseline justify-between gap-2">
+                  <div className="mt-7 flex flex-wrap items-baseline justify-between gap-2 sm:mt-10">
                     <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.choose")}</h2>
                     <p className="text-[14px] text-sub">{t("bk.chooseLead")}</p>
                   </div>
 
-                  <ul className="mt-6 space-y-5">
+                  <ul className="mt-4 space-y-4 sm:mt-6 sm:space-y-5">
                     {rooms.map((room, i) => {
                       const isSel = room.slug === roomSlug;
                       const ok = fits(room);
@@ -354,22 +354,22 @@ export default function BookPageClient({
                             isSel ? "border-forest shadow-lift ring-1 ring-forest" : "border-line/80 shadow-soft hover:shadow-lift"
                           )}
                         >
-                          <div className="grid sm:grid-cols-[minmax(0,260px)_1fr] md:grid-cols-[minmax(0,300px)_1fr]">
-                            <div className="relative aspect-[16/10] overflow-hidden bg-ivory sm:aspect-auto sm:min-h-[220px]">
+                          <div className="grid grid-cols-[108px_minmax(0,1fr)] sm:grid-cols-[minmax(0,260px)_1fr] md:grid-cols-[minmax(0,300px)_1fr]">
+                            <div className="relative ms-3 mt-3 aspect-[4/5] overflow-hidden rounded-soft bg-ivory sm:m-0 sm:aspect-auto sm:min-h-[220px] sm:rounded-none">
                               {m ? (
                                 <MediaPicture
                                   media={m}
                                   alt={tr(m.alt)}
-                                  sizes="(max-width: 639px) calc(100vw - 40px), 300px"
+                                  sizes="(max-width: 639px) 108px, 300px"
                                   priority={i < 2}
                                 />
                               ) : null}
                             </div>
-                            <div className="flex min-w-0 flex-col p-5 md:p-6">
+                            <div className="flex min-w-0 flex-col p-4 sm:p-5 md:p-6">
                               <div className="flex items-start justify-between gap-4">
                                 <div className="min-w-0">
-                                  <h3 className="font-display text-[22px] leading-snug text-ink">{tr(room.name)}</h3>
-                                  <p className="mt-1 text-[14px] text-sub">{tr(room.summary)}</p>
+                                  <h3 className="font-display text-[19px] leading-snug text-ink sm:text-[22px]">{tr(room.name)}</h3>
+                                  <p className="mt-1 text-[13px] text-sub sm:text-[14px]">{tr(room.summary)}</p>
                                 </div>
                                 {isSel ? (
                                   <span className="inline-flex shrink-0 items-center gap-1 rounded-soft bg-forest-soft px-2.5 py-1 text-[12.5px] font-semibold text-forest">
@@ -378,7 +378,7 @@ export default function BookPageClient({
                                   </span>
                                 ) : null}
                               </div>
-                              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[14px] text-ink/80">
+                              <ul className="mt-3 hidden flex-wrap gap-x-4 gap-y-1 text-[14px] text-ink/80 sm:flex">
                                 {room.highlights.map((h) => (
                                   <li key={h.en} className="flex items-center gap-1.5">
                                     <span className="h-1 w-1 rounded-full bg-teak-light" aria-hidden />
@@ -401,8 +401,8 @@ export default function BookPageClient({
                                   ))}
                                 </ul>
                               </details>
-                              <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-4">
-                                <div className="min-h-[48px]">
+                              <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-3 pt-3 sm:pt-4">
+                                <div className="min-h-[44px]">
                                   <p className="text-[13px] text-sub">
                                     {t("room.from")} <span className="font-medium text-ink">{format(room.rate)}</span>{" "}
                                     {t("room.night")}
@@ -424,7 +424,7 @@ export default function BookPageClient({
                                   disabled={!ok}
                                   onClick={() => selectRoom(room)}
                                   aria-pressed={isSel}
-                                  className={cn(isSel ? "btn-secondary" : "btn-primary", "min-h-11 px-6")}
+                                  className={cn(isSel ? "btn-secondary" : "btn-primary", "min-h-11 px-6 max-sm:w-full")}
                                 >
                                   {isSel ? t("bk.selected") : t("bk.select")}
                                 </button>
