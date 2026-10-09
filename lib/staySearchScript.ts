@@ -20,7 +20,10 @@
  * - it fires `tkh:stay` on the form, which the room page's totals listen to
  * - any date input marked data-min-today (the reservation and contact forms)
  *   gets today as its minimum, and data-default-today as its value when it is
- *   empty or past, so a static form never offers yesterday
+ *   empty or past, so a static form never offers yesterday. The default is
+ *   applied once per input: the observer runs on every DOM change, and a date
+ *   the guest typed must stay what they typed (the native min then refuses a
+ *   past one with the browser's own message)
  *
  * With scripting off the native inputs are shown instead of the labels (the
  * <noscript> style in app/layout), so the labels track the real inputs either
@@ -52,7 +55,7 @@ try{form.dispatchEvent(new CustomEvent("tkh:stay",{bubbles:true}))}catch(e){}
 window.__tkhStay=sync;
 document.addEventListener("change",function(e){var x=e.target;var f=x&&x.closest&&x.closest("[data-stay-search]");if(f)sync(f)});
 document.addEventListener("click",function(e){var x=e.target;if(x&&x.matches&&x.matches("[data-stay-search] input[type=date]")&&x.showPicker){try{x.showPicker()}catch(r){}}});
-function days(){var t=today();var d=document.querySelectorAll("input[data-min-today]");for(var k=0;k<d.length;k++){var x=d[k];if(!x.min||x.min<t)x.min=t;if(x.hasAttribute("data-default-today")&&(!x.value||x.value<t))x.value=t}}
+function days(){var t=today();var d=document.querySelectorAll("input[data-min-today]");for(var k=0;k<d.length;k++){var x=d[k];if(!x.min||x.min<t)x.min=t;if(x.__tkhDay)continue;x.__tkhDay=1;if(x.hasAttribute("data-default-today")&&(!x.value||x.value<t))x.value=t}}
 function scan(){var l=document.querySelectorAll("[data-stay-search]:not([data-ready])");for(var k=0;k<l.length;k++)sync(l[k]);days()}
 try{new MutationObserver(scan).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
 })();`;
