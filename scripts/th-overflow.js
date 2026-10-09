@@ -66,6 +66,10 @@ async function run() {
           const cs = getComputedStyle(el);
           if (cs.overflow === "visible" && cs.overflowX === "visible") continue;
           if (cs.display === "none" || cs.visibility === "hidden") continue;
+          // Visually hidden text (the sr-only pattern: a 1 px clipped box) is
+          // for screen readers; nothing on screen is cut off.
+          const box = el.getBoundingClientRect();
+          if (box.width <= 1 && box.height <= 1) continue;
           // Only leaf-ish text nodes · a scroll container is allowed to scroll.
           if (el.children.length > 1) continue;
           const text = (el.textContent || "").trim();
