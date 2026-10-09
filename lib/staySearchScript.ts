@@ -13,7 +13,12 @@
  * - the visible date labels are the inputs' values in the page language
  *   (formatDay's "Wed 8 Oct", via Intl), written to a data attribute and drawn
  *   by CSS, so React never sees a text node change and nothing re-renders
- * - check-out always stays after check-in; past dates are refused
+ * - check-out always stays after check-in; past dates are refused, and the
+ *   nights between them are drawn too ("2 nights", the page language's
+ *   plural forms from data-forms, chosen with Intl.PluralRules)
+ * - once the range calendar island is up (<html data-cal-ready>,
+ *   components/stay/StayCalendarHost) a click on a date field opens that
+ *   calendar instead of the browser's own picker
  * - a click on a date opens the native picker
  * - forms added later by client-side navigation are picked up by a
  *   MutationObserver (React does not run inline scripts it inserts). It
@@ -40,6 +45,9 @@ function today(){try{return new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"n
 function add(iso,n){var p=iso.split("-");return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]+n,12)).toISOString().slice(0,10)}
 var F={};
 function lab(iso,tag){if(!iso)return"";var f=F[tag];if(!f){try{f=new Intl.DateTimeFormat(tag,{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"})}catch(e){f=new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"})}F[tag]=f}var p=iso.split("-");var s=f.format(new Date(Date.UTC(+p[0],+p[1]-1,+p[2],12)));return tag==="en-GB"?s.split(",").join(""):s}
+function diff(a,b){var p=a.split("-"),q=b.split("-");return Math.round((Date.UTC(+q[0],+q[1]-1,+q[2])-Date.UTC(+p[0],+p[1]-1,+p[2]))/864e5)}
+var P={};
+function nights(el,tag,n){var f;try{f=JSON.parse(el.getAttribute("data-forms")||"{}")}catch(e){f={}}var r="other";try{var pr=P[tag]||(P[tag]=new Intl.PluralRules(tag));r=pr.select(n)}catch(e){}var t=f[r]||f.other||"{n}";var num=String(n);try{num=new Intl.NumberFormat(tag).format(n)}catch(e){}return t.split("{n}").join(num)}
 function sync(form){
 if(!form||!form.querySelector)return;
 var tag=form.getAttribute("data-intl")||"en-GB";
@@ -50,15 +58,17 @@ i.min=t;
 if(!i.value||i.value<t)i.value=add(t,1);
 if(!o.value||o.value<=i.value)o.value=add(i.value,1);
 o.min=add(i.value,1);
-var a=form.querySelector('[data-stay-text="in"]'),b=form.querySelector('[data-stay-text="out"]');
+if(diff(i.value,o.value)>30)o.value=add(i.value,30);
+var a=form.querySelector('[data-stay-text="in"]'),b=form.querySelector('[data-stay-text="out"]'),c=form.querySelector("[data-stay-nights]");
 if(a)a.setAttribute("data-v",lab(i.value,tag));
 if(b)b.setAttribute("data-v",lab(o.value,tag));
+if(c)c.setAttribute("data-v",nights(c,tag,diff(i.value,o.value)));
 form.setAttribute("data-ready","");
 try{form.dispatchEvent(new CustomEvent("tkh:stay",{bubbles:true}))}catch(e){}
 }
 window.__tkhStay=sync;
 document.addEventListener("change",function(e){var x=e.target;var f=x&&x.closest&&x.closest("[data-stay-search]");if(f)sync(f)});
-document.addEventListener("click",function(e){var x=e.target;if(x&&x.matches&&x.matches("[data-stay-search] input[type=date]")&&x.showPicker){try{x.showPicker()}catch(r){}}});
+document.addEventListener("click",function(e){if(document.documentElement.hasAttribute("data-cal-ready"))return;var x=e.target;if(x&&x.matches&&x.matches("[data-stay-search] input[type=date]")&&x.showPicker){try{x.showPicker()}catch(r){}}});
 function days(){var t=today();var d=document.querySelectorAll("input[data-min-today]");for(var k=0;k<d.length;k++){var x=d[k];if(!x.min||x.min<t)x.min=t;if(x.__tkhDay)continue;x.__tkhDay=1;if(x.hasAttribute("data-default-today")&&(!x.value||x.value<t))x.value=t}}
 function scan(){var l=document.querySelectorAll("[data-stay-search]:not([data-ready])");for(var k=0;k<l.length;k++)sync(l[k]);days()}
 function added(r){for(var k=0;k<r.length;k++){if(r[k].addedNodes.length){scan();return}}}

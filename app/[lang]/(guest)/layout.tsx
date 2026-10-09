@@ -9,6 +9,8 @@ import { pageLang, type LangParams } from "@/lib/pageLocale";
 import { CONCIERGE_KEYS, messagesFor } from "@/lib/locales";
 import { GuestShell } from "./GuestShell";
 import { RouteProgress } from "@/components/RouteProgress";
+import { StayCalendarHost } from "@/components/stay/StayCalendarHost";
+import { stayPickerLabels } from "@/components/stay/stayLabels";
 
 export const metadata: Metadata = {};
 
@@ -41,6 +43,8 @@ export default function GuestLayout({
         loadingLabel={t(locale, "cg.name")}
       />
       <RouteProgress label={t(locale, "a11y.loadingPage")} />
+      {/* The booking bar's range calendar · one island for every form. */}
+      <StayCalendarHost lang={locale} labels={stayPickerLabels(locale)} />
     </>
   );
 }

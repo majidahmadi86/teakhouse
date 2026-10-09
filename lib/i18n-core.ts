@@ -104,6 +104,16 @@ export function plural(locale: Lang, n: number, forms: PluralForms): string {
   return interpolate(s, { n: formatNumber(locale, n) });
 }
 
+/** The plural forms of "{n} nights" · handed to the booking bar's script. */
+export function nightsForms(locale: Lang): PluralForms {
+  return NIGHTS[locale] ?? NIGHTS.en;
+}
+
+/** Monday first, except where the week starts on Sunday in common use. */
+export function weekStartsOn(locale: Lang): 0 | 1 {
+  return locale === "th" || locale === "ja" || locale === "ko" || locale === "zh" || locale === "hi" || locale === "pt" ? 0 : 1;
+}
+
 export function nightsLabel(locale: Lang, n: number): string {
   return plural(locale, n, NIGHTS[locale] ?? NIGHTS.en);
 }

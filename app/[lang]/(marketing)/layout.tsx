@@ -14,6 +14,8 @@ import { t } from "@/lib/serverLocale";
 import { pageLang, type LangParams } from "@/lib/pageLocale";
 import { CONCIERGE_KEYS, messagesFor } from "@/lib/locales";
 import { RouteProgress } from "@/components/RouteProgress";
+import { StayCalendarHost } from "@/components/stay/StayCalendarHost";
+import { stayPickerLabels } from "@/components/stay/stayLabels";
 
 export const metadata: Metadata = {
   alternates: {
@@ -59,6 +61,8 @@ export default function MarketingLayout({
         loadingLabel={t(locale, "cg.name")}
       />
       <RouteProgress label={t(locale, "a11y.loadingPage")} />
+      {/* The booking bar's range calendar · one island for every form. */}
+      <StayCalendarHost lang={locale} labels={stayPickerLabels(locale)} />
     </>
   );
 }
