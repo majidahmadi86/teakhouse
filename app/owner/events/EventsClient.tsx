@@ -333,7 +333,7 @@ export default function OwnerEventsPage() {
             <input
               value={form.image}
               onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))}
-              placeholder="/images/events/pavilion-dinner-1280.webp"
+              placeholder="https://"
               className={inputClass}
             />
           </Field>

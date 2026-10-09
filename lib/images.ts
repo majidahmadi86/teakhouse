@@ -4,7 +4,7 @@ import { IMAGE_DATA } from "./images.generated";
  * The image registry · one module that knows every local image the site shows
  * (v17 A1/A2, generalised from the five-star branch's FsPicture/ImagePreload).
  *
- * Each image is registered by id ("dining/hero", "dishes/pad-thai") in
+ * Each image is registered by id (a ledger slot: "hero-home", "dish-pad-thai") in
  * scripts/images/images.config.mjs and built by scripts/images/build-images.mjs
  * into lib/images.generated.ts:
  *

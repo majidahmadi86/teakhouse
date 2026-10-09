@@ -44,8 +44,7 @@ const j = (url, init) => fetch(url, init).then(async (r) => ({
  */
 function pickImage() {
   const candidates = [
-    "public/images/contact-hero.jpg",
-    "public/hero-lcp-640.avif",
+    "scripts/fixtures/upload-sample.jpg",
   ];
   for (const c of candidates) {
     if (fs.existsSync(c) && c.endsWith(".jpg")) return c;

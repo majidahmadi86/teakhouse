@@ -18,7 +18,7 @@ const { chromium } = require("playwright");
 const fs = require("fs");
 
 const BASE = process.env.BASE || "https://teakhouse.mikaro.studio";
-const IMAGE = "public/images/contact-hero.jpg";
+const IMAGE = "scripts/fixtures/upload-sample.jpg";
 
 const results = [];
 function check(name, pass, detail = "") {

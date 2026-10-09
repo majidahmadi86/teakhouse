@@ -214,7 +214,7 @@ Slots in the brief that have no registered image, and what the design does inste
 - exp-team-front-desk: no frame. The team is a typographic list with a three-photo behind-the-scenes mosaic.
 - exp-longtail, events-jazz-brunch, events-strip-party, gallery-city-skyline, gallery-pool-from-above: dropped by design (the sections are reworked to not need them).
 - dish-coconut-pancakes: no frame. That dish shows no photo.
-- offers-early-bird: no frame passed; not registered. The early bird offer card has no photo of its own.
+- offers-early-bird: no frame passed; not registered. On /offers the early booking row shows a designed numeral panel (15%) in the photograph's place; the home offer cards are typographic for all three offers.
 - room-premier-river-view and room-premier-river-detail: the river-view frame became hero-home; the Premier River View room shows its two own frames (cover, bath).
 - og-default mirrors hero-home: a documented exception (the share card is not a venue image, so the zero-reuse venue rule is unaffected).
 
