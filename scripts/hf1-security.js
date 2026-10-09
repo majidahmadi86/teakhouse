@@ -589,7 +589,7 @@ async function phaseG(ref) {
     await page.fill("#ct-message", "HF-1 gate: the contact form still submits.");
     await Promise.all([
       page.waitForURL(/[?&](sent|error)=/, { timeout: 60000 }),
-      page.locator("button[type='submit']").click({ noWaitAfter: true, force: true }),
+      page.locator("main button[type='submit']").click({ noWaitAfter: true, force: true }),
     ]);
     const url = page.url();
     await ctx.close();

@@ -432,7 +432,7 @@ function staticChecks() {
     ["lib/seedDatabase.ts", /export async function seedDatabase\([^)]*\)\s*\{[\s\S]{0,300}?assertWritable\("seedDatabase"\);\s*\r?\n\s*console\.log/, "seedDatabase() refuses before its transaction opens"],
     ["lib/storage.ts", /export async function uploadMedia[\s\S]{0,400}?isReadOnlyDeployment\(\)/, "uploadMedia() refuses before any Supabase call"],
     ["lib/email.ts", /isReadOnlyDeployment\(\)/, "sendConfirmationEmail() refuses"],
-    ["app/(guest)/contact/actions.ts", /if \(isReadOnlyDeployment\(\)\)\s*\{\s*\r?\n\s*redirect\(`\/contact\?about=\$\{purpose\}&error=failed`\)/, "contact action ends on the existing error=failed path"],
+    ["app/[lang]/(guest)/contact/actions.ts", /if \(isReadOnlyDeployment\(\)\)\s*\{\s*\r?\n\s*redirect\(`\/contact\?about=\$\{purpose\}&error=failed`\)/, "contact action ends on the existing error=failed path"],
     ["lib/reservationService.ts", /if \(isReadOnlyDeployment\(\)\) return \{ ok: false, error: "failed" \};/, "dining reserve ends on the existing error=failed path"],
     ["lib/eventRequestService.ts", /if \(isReadOnlyDeployment\(\)\) return \{ ok: false, error: "failed" \};/, "events reserve ends on the existing error=failed path"],
   ];
