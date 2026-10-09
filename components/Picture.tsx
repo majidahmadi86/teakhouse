@@ -1,5 +1,5 @@
 import { ImagePreload } from "@/components/ImagePreload";
-import { fallbackSrc, image, srcSet, type ImageId } from "@/lib/images";
+import { fallbackSrc, image, objectPositionFor, srcSet, type ImageId } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,6 +44,9 @@ export function Picture({
   maxWidth?: number;
 }) {
   const entry = image(id);
+  // The caller's position wins; otherwise the registry's focal point, so a
+  // cover crop keeps the subject in frame.
+  const position = objectPosition ?? objectPositionFor(entry);
   const avif = srcSet(entry.avif, maxWidth);
   const webp = srcSet(entry.webp, maxWidth);
   const ground = { backgroundColor: entry.color };
@@ -70,7 +73,7 @@ export function Picture({
         decoding={priority ? "sync" : "async"}
         fetchPriority={priority ? "high" : undefined}
         className={cn(fill && "h-full w-full object-cover", className)}
-        style={{ ...ground, ...(objectPosition ? { objectPosition } : {}) }}
+        style={{ ...ground, ...(position ? { objectPosition: position } : {}) }}
       />
     </picture>
     </>

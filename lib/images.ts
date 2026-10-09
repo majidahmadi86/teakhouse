@@ -29,9 +29,18 @@ export type ImageEntry = {
   width: number;
   height: number;
   color: string;
+  /** The subject's position (0..1 from the left, 0..1 from the top), when the registry knows it. */
+  focal?: readonly [number, number];
   avif: readonly ImageVariant[];
   webp: readonly ImageVariant[];
 };
+
+/** The entry's focal point as a CSS object-position ("40% 55%"), or undefined. */
+export function objectPositionFor(entry: ImageEntry): string | undefined {
+  if (!entry.focal) return undefined;
+  const pct = (v: number) => `${Math.round(v * 1000) / 10}%`;
+  return `${pct(entry.focal[0])} ${pct(entry.focal[1])}`;
+}
 
 export function isImageId(id: string): id is ImageId {
   return Object.prototype.hasOwnProperty.call(IMAGE_DATA, id);

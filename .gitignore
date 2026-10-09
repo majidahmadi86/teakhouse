@@ -59,6 +59,10 @@ next-env.d.ts
 # them sitting untracked in the working tree.
 .lh-*.json
 
+# Photography masters (full-size JPEGs, 2400 px and up) · the image builder
+# reads them from here; they are never committed, only the encoded output is.
+/tools/image-masters/
+
 # local development database (tools/devdb)
 /tools/devdb/data
 /tools/devdb/node_modules
