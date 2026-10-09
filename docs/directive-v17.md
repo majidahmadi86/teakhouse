@@ -292,15 +292,15 @@ HF-1 DEPLOY + VERIFY
 
 ### Amendment 1 checklist
 - [x] (T) Preview safety committed on v17-a and adversarially reviewed; escapes closed: read-only mode refuses ALL raw SQL and any unknown Prisma operation (no classifier left to fool), fails closed (lib/writePolicy.mjs: writable only for VERCEL_ENV=production, or off Vercel against a database genuinely on localhost; next.config.mjs bakes "1"/"0" and refuses VERCEL without VERCEL_ENV), the concierge makes no outbound AI call when read-only, and next is on 14.2.35 (CVE-2025-29927). Gate: node scripts/preview-safety.js 268/268 on the dev DB. (S) done separately in the sovra repo.
-- [ ] HF-1 Teak House: hotfix/hf-1 cut from the production commit
-- [ ] HF-1 Teak House a: Deployment Protection on every generated URL (custom domain stays public)
-- [ ] HF-1 Teak House b: CRON_SECRET set for Production; cron route 401 without a valid bearer, also when unset
-- [ ] HF-1 Teak House c: reset same-origin, session required, one per 10 minutes, 401 unauthenticated
-- [ ] HF-1 Teak House d: no reseed on any guest or request path; reseed only from the authenticated cron
-- [ ] HF-1 Teak House e: every reseed one all-or-nothing transaction
-- [ ] HF-1 Teak House f: functions in hnd1, crons and routes confirmed there
-- [ ] HF-1 Solenne: audit of the same classes, fixes on hotfix/hf-1 cut from its production commit
+- [x] HF-1 Teak House: hotfix/hf-1 cut from the production commit · cut from fa44219 (read from Vercel), deployed as b709563 on 2026-10-07
+- [x] HF-1 Teak House a: Deployment Protection on every generated URL (custom domain stays public) · ssoProtection all_except_custom_domains set via the API; the three old deployment URLs answer 302 to Vercel sign-in, teakhouse.mikaro.studio 200; old deployments kept as rollback targets
+- [x] HF-1 Teak House b: CRON_SECRET set for Production; cron route 401 without a valid bearer, also when unset · generated in memory, never printed or stored; constant-time bearer check, 401 for missing, wrong or unset
+- [x] HF-1 Teak House c: reset same-origin, session required, one per 10 minutes, 401 unauthenticated · server-side owner session (signed cookie keyed from CRON_SECRET); every owner write route requires it; guest writes stay public
+- [x] HF-1 Teak House d: no reseed on any guest or request path; reseed only from the authenticated cron · GET /api/data writes nothing; Vercel Hobby allows one cron a day, so the demo refreshes daily (00:00 UTC), not hourly
+- [x] HF-1 Teak House e: every reseed one all-or-nothing transaction · one interactive transaction, forced mid-step failures leave the data unchanged
+- [x] HF-1 Teak House f: functions in hnd1, crons and routes confirmed there · x-vercel-id sin1::hnd1 on every smoke route
+- [x] HF-1 Solenne: audit of the same classes, fixes on hotfix/hf-1 cut from its production commit · cut from c340018, deployed as 58289fb on 2026-10-07: three crons fail closed, request-path reseed removed, atomic reseed, demo sandbox needs a signed demo session, hardened reset, six ungated DELETE handlers gated; old deployments were already protected
 - [ ] HF-1 Solenne: v17-a reseed atomic and schema-correct
-- [ ] HF-1 gates: v14 suites, security gate (every write and reset path refused unauthenticated, fingerprint unchanged), cron with and without secret, forced mid-reseed failure leaves data unchanged
-- [ ] HF-1 deployed, production smoke passed, owner TTFB before and after recorded, next scheduled cron confirmed in logs
+- [x] HF-1 gates: v14 suites, security gate (every write and reset path refused unauthenticated, fingerprint unchanged), cron with and without secret, forced mid-reseed failure leaves data unchanged · Teak House hf1-security 141/141, v11 36, v12 110, v13 263, v14 153, reserve 33; Solenne hf1-security 65/65, v15 119, v14 155, v11 36 (v12/v13 pre-existing failures identical on c340018)
+- [x] HF-1 deployed, production smoke passed, owner TTFB before and after recorded, next scheduled cron confirmed in logs · smoke Teak House 11/11, Solenne 14/14, no rollback; Teak House owner per query 760 to 900 ms -> about 30 ms, one-query API 1.37 to 1.44 s -> 0.30 s, owner HTML 0.58 to 0.70 s -> 0.29 to 0.31 s; crons on 2026-10-08: Teak House reseed 00:44 UTC (verified read-only in the DB: one transaction, seeded counts), Solenne reseed 00:15 UTC and report 02:08 UTC (verified through its API); the Hobby log window had expired, so the evidence is data, not logs
 - [x] (T) v17-a rebased onto hotfix/hf-1 (b709563, live in production): the superseded cron commit dropped, every write handler refuses read-only first and then runs HF-1's session, cron and same-origin checks, seedDatabase keeps HF-1's single transaction with the read-only refusal before it opens. HF-1 gate 141/141, v11 36/36, v12 110/110, v13 263/263, v14 153/153, reserve-bug-check 33/33, th-missing 0, tsc clean. (S) done separately in the sovra repo.
