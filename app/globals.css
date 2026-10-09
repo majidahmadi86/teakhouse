@@ -1376,7 +1376,20 @@ html[dir="rtl"] .stay-arrow {
 @media (min-width: 1024px) {
   body:has([data-booking-dock]) .tkh-fab {
     inset-inline-end: auto;
-    inset-inline-start: 1.5rem;
+    inset-inline-start: 1.25rem;
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    padding-left: 0;
+    padding-right: 0;
+    gap: 0;
+  }
+  body:has([data-booking-dock]) .tkh-fab .tkh-fab-label,
+  body:has([data-booking-dock]) .tkh-fab .tkh-fab-dot {
+    display: none;
+  }
+  body:has([data-booking-dock]) .tkh-fab .tkh-fab-icon {
+    display: block;
   }
 }
 @media (max-width: 1023px) {

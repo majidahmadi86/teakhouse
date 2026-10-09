@@ -93,12 +93,10 @@ async function run(browser, lang, width, height) {
   check(`${tag} at most one scroll`, scrolls <= MAX_SCROLLS, `${scrolls} · ${reached.join(" → ")}`);
   check(`${tag} the booking is stored (POST 201) and confirmed`, posted.includes(201) && !!code, `${posted.join(",")} ${code}`);
   check(`${tag} no page errors`, errors.length === 0, errors.join(" | "));
-  await page.screenshot({ path: `docs/v17-shots/teakhouse/book-confirmed-${lang}-${width}.png` }).catch(() => {});
   await ctx.close();
 }
 
 async function main() {
-  require("fs").mkdirSync("docs/v17-shots/teakhouse", { recursive: true });
   const browser = await chromium.launch();
   try {
     for (const lang of ["en", "th"]) {

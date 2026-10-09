@@ -373,7 +373,7 @@ export default function BookPageClient({
                                   <p className="mt-1 text-[13px] text-sub sm:text-[14px]">{tr(room.summary)}</p>
                                 </div>
                                 {isSel ? (
-                                  <span className="inline-flex shrink-0 items-center gap-1 rounded-soft bg-forest-soft px-2.5 py-1 text-[12.5px] font-semibold text-forest">
+                                  <span className="hidden shrink-0 items-center gap-1 rounded-soft bg-forest-soft px-2.5 py-1 text-[12.5px] font-semibold text-forest sm:inline-flex">
                                     <Check className="h-3.5 w-3.5" aria-hidden />
                                     {t("bk.selected")}
                                   </span>
