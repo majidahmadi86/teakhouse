@@ -188,7 +188,7 @@ function seedRateRules(roomId: string, anchor: Date): SeedRateRule[] {
  * v12 · Dining menu seed · EN carried in the *Th columns pending the Thai pass
  * (never author Thai). Categories + dishes are owner-editable after seed.
  */
-type SeedDish = { name: string; description: string; price: number };
+type SeedDish = { name: string; description: string; price: number; slot?: number };
 type SeedDiningCategory = { id: string; name: string; dishes: SeedDish[] };
 
 /**
@@ -217,10 +217,6 @@ const DINING_TH: Record<
         name: "ผลไม้รวมจากท่าเรือ",
         description:
           "ตามแต่เรือเช้าจะพามา: มะม่วง ส้มโอ ชมพู่ และพริกเกลือมะนาว",
-      },
-      {
-        name: "ขนมครก",
-        description: "ขนมครกขอบกรอบจากกระทะทองเหลือง กะทิยังอุ่นจากเตา",
       },
       {
         name: "ไข่สไตล์บ้านไม้สัก",
@@ -343,18 +339,16 @@ const DINING: SeedDiningCategory[] = [
         price: 180,
       },
       {
-        name: "Coconut pancakes",
-        description:
-          "Crisp-edged khanom krok off the brass pan, coconut cream still warm from the griddle.",
-        price: 140,
-      },
-      {
+        // Slot 4 (coconut pancakes) was retired in v17: no photograph of it
+        // passed the art direction. Ids stay stable, so the eggs keep i5.
+        slot: 5,
         name: "Eggs any way, teak-house style",
         description:
           "Two eggs from Nakhon Pathom, grilled tomato, pork sausage and toast from the corner bakery.",
         price: 190,
       },
       {
+        slot: 6,
         name: "Chiang Rai pour-over",
         description:
           "Single-origin arabica roasted in Chiang Rai, brewed slow at the pier counter.",
@@ -714,7 +708,7 @@ export async function seedDatabase(options: SeedOptions = {}) {
 
   const dishRows = DINING.flatMap((cat) =>
     cat.dishes.map((d, i) => ({
-      id: `${cat.id}-i${i + 1}`,
+      id: `${cat.id}-i${d.slot ?? i + 1}`,
       categoryId: cat.id,
       nameEn: d.name,
       nameTh: DINING_TH[cat.id]?.dishes[i]?.name ?? d.name,
@@ -737,8 +731,8 @@ export async function seedDatabase(options: SeedOptions = {}) {
       date: nextOccurrence(today, 11, 24),
       description:
         "Float a krathong from our pier, then sit down to a five-course Thai dinner under the full moon. One seating, 28 guests.",
-      // An evening event gets the evening photograph · the pavilion after dark.
-      image: "/images/events/pavilion-dinner-1280.webp",
+      // Registry ids (lib/images.ts): each event shows its own subject.
+      image: "events-loy-krathong",
     },
     {
       id: "ev-jazz-brunch",
@@ -746,8 +740,8 @@ export async function seedDatabase(options: SeedOptions = {}) {
       date: iso(addDays(today, toSunday)),
       description:
         "A trio on the pavilion deck, free-flow Thai brunch plates and the slow boats going by. Every Sunday, 11:30 to 15:00.",
-      // Daytime event, daytime photograph · tables on the pier at breakfast.
-      image: "/images/facilities/pier-breakfast-1280.webp",
+      // No photograph of this event passed the art direction: none is shown.
+      image: "",
     },
     {
       id: "ev-songkran-lunch",
@@ -755,7 +749,7 @@ export async function seedDatabase(options: SeedOptions = {}) {
       date: nextOccurrence(today, 4, 13),
       description:
         "Songkran the old way: water for blessing, not soaking. A khan tok lunch under the mango tree with the whole house.",
-      image: "/images/facilities/courtyard-garden-1280.webp",
+      image: "events-songkran-lunch",
     },
   ];
   const eventRows = EVENTS.map((ev) => ({
