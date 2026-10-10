@@ -4,9 +4,9 @@
  * so no half-loaded image is ever shown").
  *
  * Inlined once in the root layout's <head>. It marks <html> ready only when it
- * can do the whole job (motion welcome, no error); only then does CSS clip the
- * images of .tkh-unveil pictures (components/Picture). Each one is watched;
- * when it is near or above the viewport (a jump past it counts, so nothing
+ * can do the whole job (motion welcome, an IntersectionObserver, no error); only
+ * then does CSS clip the images of .tkh-unveil pictures (components/Picture).
+ * Each one is observed (no forced layout); when it is near or above the viewport (a jump past it counts, so nothing
  * scrolled over stays hidden) its image is decoded, and only then does the
  * reveal start. Its image is fetched now if lazy loading
  * skipped it. A decode that fails, or takes longer than six seconds, reveals
@@ -19,14 +19,12 @@
  */
 export const UNVEIL_JS = `(function(){try{
 if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-var pending=[];var raf=0;
+if(!("IntersectionObserver" in window))return;
 function reveal(p){var done=false;function go(){if(done)return;done=true;p.setAttribute("data-shown","")}var img=p.querySelector("img");if(img&&img.loading==="lazy")img.loading="eager";if(img&&img.decode){img.decode().then(go,go)}else{go()}setTimeout(go,6000)}
-function check(){raf=0;var h=window.innerHeight+200;for(var k=pending.length-1;k>=0;k--){var p=pending[k];if(p.getBoundingClientRect().top<h){pending.splice(k,1);reveal(p)}}}
-function soon(){if(!raf)raf=requestAnimationFrame(check)}
-function scan(){var l=document.querySelectorAll(".tkh-unveil:not([data-watch])");for(var k=0;k<l.length;k++){l[k].setAttribute("data-watch","");pending.push(l[k])}if(l.length)soon()}
+var io=new IntersectionObserver(function(es){for(var k=0;k<es.length;k++){var e=es[k];if(e.isIntersecting||e.boundingClientRect.top<0){io.unobserve(e.target);reveal(e.target)}}},{rootMargin:"0px 0px 200px 0px"});
+function scan(){var l=document.querySelectorAll(".tkh-unveil:not([data-watch])");for(var k=0;k<l.length;k++){l[k].setAttribute("data-watch","");io.observe(l[k])}}
 function added(r){for(var k=0;k<r.length;k++){if(r[k].addedNodes.length){scan();return}}}
 function watch(){scan();new MutationObserver(added).observe(document.documentElement,{childList:true,subtree:true})}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watch);else watch();
-window.addEventListener("scroll",soon,{passive:true});window.addEventListener("resize",soon);
 document.documentElement.setAttribute("data-unveil-ready","");
 }catch(e){document.documentElement.removeAttribute("data-unveil-ready")}})();`;

@@ -14,7 +14,7 @@ tools/image-masters/ (gitignored, never committed).
 
 | Id | Page · section | Photo page | Author | Source | Licence | Master | Brightness | Tone |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| hero-home | / · Hero (LCP) | [pexels 7546599](https://www.pexels.com/photo/cozy-resting-place-with-water-view-7546599/) | [Max Vakhtbovych](https://www.pexels.com/@artbovich/) | pexels | Pexels License (free to use, checked 2026-10-08) | 4200x2803 | 130.6 | `#9c9a98` |
+| hero-home | / · Hero (LCP); phone menu · the house above its address | [pexels 7546599](https://www.pexels.com/photo/cozy-resting-place-with-water-view-7546599/) | [Max Vakhtbovych](https://www.pexels.com/@artbovich/) | pexels | Pexels License (free to use, checked 2026-10-08) | 4200x2803 | 130.6 | `#9c9a98` |
 | hero-home-m | / · Hero (LCP), phone crop 4:5 | [pexels 7546599](https://www.pexels.com/photo/cozy-resting-place-with-water-view-7546599/) | [Max Vakhtbovych](https://www.pexels.com/@artbovich/) | pexels | Pexels License (free to use, checked 2026-10-08) | 4200x2803 | 130.6 | `#9c9a98` |
 | hero-rooms | /rooms · Page hero | [unsplash cty6Z4-hzVk](https://unsplash.com/photos/cty6Z4-hzVk) | [Lisa Anna](https://unsplash.com/@lisaanna195) | unsplash | Unsplash License (premium false, plus false, checked 2026-10-08) | 4200x2800 | 174.2 | `#c1beb4` |
 | hero-rooms-m | /rooms · Page hero, phone crop 4:5 | [unsplash cty6Z4-hzVk](https://unsplash.com/photos/cty6Z4-hzVk) | [Lisa Anna](https://unsplash.com/@lisaanna195) | unsplash | Unsplash License (premium false, plus false, checked 2026-10-08) | 4200x2800 | 174.2 | `#c1beb4` |
