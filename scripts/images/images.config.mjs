@@ -139,6 +139,8 @@ export const IMAGES = [
   // ---- Phase 4: the curated photography (ids are the ledger's slot names) ----
   ...HEROES.flatMap((s) => [slot(s, W_HERO), slot([`${s[0]}-m`, ...s.slice(1)], W_HERO_M, "4:5")]),
   ...ACCOUNT.map((s) => slot(s, W_ACCOUNT, "3:4")),
+  // The phone banner (220 px tall): a 16:9 crop, so a phone fetches a strip, not the portrait.
+  ...ACCOUNT.map((s) => slot([`${s[0]}-m`, ...s.slice(1)], [480, 720, 960], "16:9")),
   ...ROOM_COVERS.map((s) => slot(s, W_COVER)),
   ...ROOM_FRAMES.map((s) => slot(s, W_FRAME)),
   ...DISHES.map((s) => slot(s, W_DISH, "1:1")),

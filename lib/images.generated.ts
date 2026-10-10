@@ -837,6 +837,43 @@ export const IMAGE_DATA = {
       ]
     ]
   },
+  "hero-account-m": {
+    "width": 960,
+    "height": 540,
+    "color": "#a4a997",
+    "focal": [
+      0.55,
+      0.5
+    ],
+    "avif": [
+      [
+        480,
+        "/img/hero-account-m/480.7d64dd32ae.avif"
+      ],
+      [
+        720,
+        "/img/hero-account-m/720.3272f97df4.avif"
+      ],
+      [
+        960,
+        "/img/hero-account-m/960.5bdb89b347.avif"
+      ]
+    ],
+    "webp": [
+      [
+        480,
+        "/img/hero-account-m/480.47b9002d5b.webp"
+      ],
+      [
+        720,
+        "/img/hero-account-m/720.0d26a26c75.webp"
+      ],
+      [
+        960,
+        "/img/hero-account-m/960.0bea533eba.webp"
+      ]
+    ]
+  },
   "room-deluxe-king": {
     "width": 2048,
     "height": 1366,
@@ -4283,6 +4320,7 @@ export const IMAGE_BUILD_KEYS = {
   "hero-contact": "108387f426",
   "hero-contact-m": "9ab6f1db67",
   "hero-account": "184a764f2a",
+  "hero-account-m": "2c16c02e9d",
   "room-deluxe-king": "d2bd63fcc8",
   "room-deluxe-twin": "8fd5a89a4e",
   "room-premier-river": "2351ac0e65",
