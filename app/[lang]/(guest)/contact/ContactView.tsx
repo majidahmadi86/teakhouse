@@ -241,7 +241,7 @@ export function ContactView({
                 <div className="flex items-center justify-between gap-4 py-4">
                   <dt className="text-sub">{t(locale, "ct.call")}</dt>
                   <dd>
-                    <a href="tel:+6620000000" className="font-medium text-ink hover:text-forest">{t(locale, "ct.phone")}</a>
+                    <a href="tel:+6620000000" dir="ltr" className="font-medium text-ink hover:text-forest">{t(locale, "ct.phone")}</a>
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-4 py-4">

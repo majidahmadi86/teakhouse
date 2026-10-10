@@ -61,7 +61,7 @@ export function SiteHeader({ locale, overHero = false }: { locale: Lang; overHer
             <div className="flex items-center gap-7">
               <a href={`tel:${hotelConfig.contact.phone.replace(/\s/g, "")}`} className="tkh-util-link inline-flex items-center gap-2">
                 <Phone className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden />
-                {hotelConfig.contact.phone}
+                <span dir="ltr">{hotelConfig.contact.phone}</span>
               </a>
               <Link href="/location" prefetch={false} className="tkh-util-link inline-flex items-center gap-2">
                 <MapPin className="h-3.5 w-3.5" strokeWidth={1.6} aria-hidden />

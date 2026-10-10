@@ -1419,11 +1419,11 @@ html[data-script="arabic"] :is(h1, h2, h3, h4, .font-display) {
   letter-spacing: 0;
   line-height: 1.45;
 }
-html[data-script="arabic"] [class*="tracking-"],
-html[data-script="sc"] [class*="tracking-"],
-html[data-script="jp"] [class*="tracking-"],
-html[data-script="kr"] [class*="tracking-"],
-html[data-script="devanagari"] [class*="tracking-"] {
+html[data-script="arabic"] [class*="tracking-"]:not(.keep-tracking),
+html[data-script="sc"] [class*="tracking-"]:not(.keep-tracking),
+html[data-script="jp"] [class*="tracking-"]:not(.keep-tracking),
+html[data-script="kr"] [class*="tracking-"]:not(.keep-tracking),
+html[data-script="devanagari"] [class*="tracking-"]:not(.keep-tracking) {
   letter-spacing: 0 !important;
 }
 
@@ -1478,7 +1478,7 @@ html[data-unveil-ready] .tkh-unveil:not([data-shown]) > img {
    ───────────────────────────────────────────────────────────────────────── */
 html[lang="th"][data-surface="guest"] [class*="tracking-"]:not(.keep-tracking),
 html[lang="th"][data-surface="guest"] .eyebrow,
-html[lang="th"][data-surface="guest"] .logo-tagline,
+html[lang="th"][data-surface="guest"] .logo-tagline:not(.keep-tracking),
 html[lang="th"][data-surface="guest"] .btn-primary {
   letter-spacing: 0 !important;
 }
@@ -1650,4 +1650,11 @@ html[dir="rtl"] .tkh-drawer:popover-open .tkh-drawer-nav > * {
     pointer-events: none;
     transition: opacity 0.3s, transform 0.3s, visibility 0s 0.3s;
   }
+}
+
+/* The wordmark is Latin on every page: Thai pages draw it in Kanit, so it
+   keeps its spacing and a light weight there, like the Marcellus lockup. */
+html[lang="th"][data-surface="guest"] .logo-word {
+  letter-spacing: 0.16em;
+  font-weight: 400;
 }

@@ -59,7 +59,7 @@ export function LogoMark({
         <LogoCrest size={size} className={cn("logo-crest", light ? "text-white" : "text-teak")} />
         <div
           className={cn(
-            "logo-word mt-1 whitespace-nowrap font-display text-[20px] font-normal leading-none tracking-[.2em]",
+            "logo-word keep-tracking mt-1 whitespace-nowrap font-display text-[20px] font-normal leading-none tracking-[.2em]",
             light ? "text-white" : "text-ink"
           )}
         >
@@ -68,7 +68,7 @@ export function LogoMark({
         {showTag ? (
           <div
             className={cn(
-              "logo-tagline mt-1.5 flex items-center gap-2 whitespace-nowrap text-[8.5px] font-semibold uppercase tracking-[.32em]",
+              "logo-tagline keep-tracking mt-1.5 flex items-center gap-2 whitespace-nowrap text-[8.5px] font-semibold uppercase tracking-[.32em]",
               light ? "text-white/80" : "text-teak"
             )}
           >
@@ -87,7 +87,7 @@ export function LogoMark({
       <div className="min-w-0">
         <div
           className={cn(
-            "logo-word whitespace-nowrap font-display text-[19px] font-normal leading-none tracking-[.16em]",
+            "logo-word keep-tracking whitespace-nowrap font-display text-[19px] font-normal leading-none tracking-[.16em]",
             light ? "text-white" : "text-ink"
           )}
         >
@@ -96,7 +96,7 @@ export function LogoMark({
         {showTag ? (
           <div
             className={cn(
-              "logo-tagline mt-1.5 whitespace-nowrap text-[8.5px] font-semibold uppercase tracking-[.3em]",
+              "logo-tagline keep-tracking mt-1.5 whitespace-nowrap text-[8.5px] font-semibold uppercase tracking-[.3em]",
               light ? "text-white/80" : "text-teak"
             )}
           >

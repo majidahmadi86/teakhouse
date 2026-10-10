@@ -73,7 +73,7 @@ export function SiteFooter({ locale }: { locale: Lang }) {
             <Link href="/location" prefetch={false} className={linkClass}>
               {t(locale, "ft.loc")}
             </Link>
-            <a href="tel:+6620000000" className={linkClass}>
+            <a href="tel:+6620000000" dir="ltr" className={linkClass}>
               {t(locale, "ct.phone")}
             </a>
             <a href="mailto:stay@teakhouse.demo" className={linkClass}>
