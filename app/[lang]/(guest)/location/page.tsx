@@ -27,7 +27,7 @@ export default function LocationPage({ params }: { params: LangParams }) {
       <PageHero eyebrow={t(locale, "nav.location")} title={t(locale, "lc.h1")} lead={t(locale, "lc.lead")} />
 
       <section className="bg-stone px-5 pb-20 sm:px-8 md:pb-28">
-        <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="tkh-reveal-stagger mx-auto grid max-w-site gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <div>
             <div className="overflow-hidden rounded-card border border-line/80 shadow-soft">
               <RiverMap

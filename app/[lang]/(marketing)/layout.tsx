@@ -40,7 +40,7 @@ export default function MarketingLayout({
   return (
     <>
       <DemoModeBar variant="guest" locale={locale} />
-      <SiteHeader locale={locale} />
+      <SiteHeader locale={locale} overHero />
       <main className="pb-0">{children}</main>
       <SiteFooter locale={locale} />
       {/* On home the phone Book bar waits below the screen until the hero's

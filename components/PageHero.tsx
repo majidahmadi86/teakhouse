@@ -46,9 +46,9 @@ export function PageHero({
     <section className={cn("bg-stone", className)}>
       <div className={cn("wrap pt-12 md:pt-20", hasPhoto ? "pb-10 md:pb-14" : "pb-14 md:pb-24")}>
         <div className="max-w-[860px]">
-          <p className="eyebrow">{eyebrow}</p>
-          <h1 className="mt-4 md:mt-5">{title}</h1>
-          {lead ? <p className="lead mt-5 max-w-[60ch] md:mt-6">{lead}</p> : null}
+          <p className="tkh-hero-in eyebrow">{eyebrow}</p>
+          <h1 className="tkh-hero-rise mt-4 md:mt-5">{title}</h1>
+          {lead ? <p className="tkh-hero-in tkh-hero-in-2 lead mt-5 max-w-[60ch] md:mt-6">{lead}</p> : null}
           {cta ? <div className="mt-8">{cta}</div> : null}
         </div>
         {!hasPhoto ? <span className="rule mt-12 md:mt-16" aria-hidden /> : null}
@@ -62,7 +62,7 @@ export function PageHero({
               alt={alt}
               fetchPriority="high"
               decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="tkh-ken-burns-live absolute inset-0 h-full w-full object-cover"
             />
           ) : imageId ? (
             <ArtPicture
@@ -70,6 +70,7 @@ export function PageHero({
               phoneId={phoneImageId}
               alt={alt}
               priority
+              className="tkh-ken-burns-live"
               sizes="(min-width: 1600px) 1600px, 100vw"
             />
           ) : null}

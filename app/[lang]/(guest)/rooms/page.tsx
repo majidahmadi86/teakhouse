@@ -30,7 +30,7 @@ export default function RoomsPage({ params }: { params: LangParams }) {
       />
 
       <section className="bg-stone px-5 py-20 sm:px-8 md:py-28">
-        <div className="mx-auto grid max-w-site gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="tkh-reveal-stagger mx-auto grid max-w-site gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
           {rooms.map((room) => (
             <RoomCard
               key={room.slug}
@@ -44,7 +44,7 @@ export default function RoomsPage({ params }: { params: LangParams }) {
       </section>
 
       <section id="compare" className="scroll-mt-28 border-t border-line bg-white px-5 py-20 sm:px-8 md:py-28">
-        <div className="mx-auto max-w-site">
+        <div className="tkh-reveal mx-auto max-w-site">
           <p className="eyebrow">{t(locale, "rooms.compareEyebrow")}</p>
           <h2 className="mt-4">{t(locale, "rooms.compare")}</h2>
           <div className="mt-10 overflow-x-auto">
@@ -83,7 +83,7 @@ export default function RoomsPage({ params }: { params: LangParams }) {
       </section>
 
       <section className="border-t border-line bg-ivory px-5 py-20 sm:px-8 md:py-28">
-        <div className="mx-auto grid max-w-site gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <div className="tkh-reveal-stagger mx-auto grid max-w-site gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div>
             <p className="eyebrow">{t(locale, "off.eyebrow")}</p>
             <h2 className="mt-4">{t(locale, "rp.inc")}</h2>

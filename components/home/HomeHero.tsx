@@ -12,8 +12,8 @@ import { t, type Lang } from "@/lib/serverLocale";
  */
 export function HomeHero({ locale, searchSlot }: { locale: Lang; searchSlot: React.ReactNode }) {
   return (
-    <section id="tkh-hero" className="relative">
-      <div className="relative h-[min(125vw,calc(100svh-var(--header-h)-var(--demo-bar-h)-170px))] min-h-[340px] overflow-hidden md:h-[min(calc(100svh-var(--header-h)-var(--demo-bar-h)-52px),820px)] md:min-h-[520px]">
+    <section id="tkh-hero" className="tkh-hero-under relative">
+      <div className="relative h-[calc(min(125vw,100svh-var(--header-h)-var(--demo-bar-h)-170px)+var(--header-h))] min-h-[400px] overflow-hidden md:h-[calc(min(100svh-var(--header-h)-var(--util-h)-var(--demo-bar-h)-52px,820px)+var(--util-h)+var(--header-h))] md:min-h-[600px]">
         <ArtPicture
           id="hero-home"
           phoneId="hero-home-m"
@@ -24,15 +24,15 @@ export function HomeHero({ locale, searchSlot }: { locale: Lang; searchSlot: Rea
         <div className="hero-veil-bottom absolute inset-x-0 bottom-0 h-3/4 md:hidden" aria-hidden />
         <div className="hero-veil absolute inset-0 hidden md:block" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 md:inset-0">
-          <div className="wrap flex h-full flex-col justify-end pb-6 md:justify-center md:pb-28">
+          <div className="wrap flex h-full flex-col justify-end pb-6 md:justify-center md:pb-28 md:pt-[calc(var(--util-h)+var(--header-h))]">
             <div className="max-w-[640px] text-white">
-              <p className="hero-text-shadow text-[12px] font-semibold uppercase tracking-[0.22em] text-white/90 md:text-[13px]">
+              <p className="tkh-hero-in hero-text-shadow text-[12px] font-semibold uppercase tracking-[0.22em] text-white/90 md:text-[13px]">
                 {t(locale, "home.eyebrow")}
               </p>
-              <h1 className="hero-text-shadow mt-3 text-[clamp(2.25rem,6.4vw,4.75rem)] !leading-[1.04] text-white md:mt-5">
+              <h1 className="tkh-hero-rise hero-text-shadow mt-3 text-[clamp(2.25rem,6.4vw,4.75rem)] !leading-[1.04] text-white md:mt-5">
                 {t(locale, "home.h1")}
               </h1>
-              <p className="hero-text-shadow mt-5 hidden max-w-[52ch] text-[18px] leading-relaxed text-white/95 md:block">
+              <p className="tkh-hero-in tkh-hero-in-2 hero-text-shadow mt-5 hidden max-w-[52ch] text-[18px] leading-relaxed text-white/95 md:block">
                 {t(locale, "home.lead")}
               </p>
             </div>

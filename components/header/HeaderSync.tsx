@@ -101,6 +101,33 @@ export function HeaderSync() {
       });
     };
     const onPointer = (e: PointerEvent) => closeMenus(e.target as Element | null);
+    // A choice in a menu closes it at once, before the next page arrives (and
+    // when the link is the page already open, where no navigation follows):
+    // the phone menu hides; a desktop panel stays shut until the pointer
+    // leaves its item, even though the pointer still rests on it.
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as Element | null)?.closest?.("a[href]");
+      if (!link) return;
+      const drawer = document.getElementById("mobile-nav-drawer") as PopoverEl | null;
+      if (drawer?.contains(link)) {
+        try {
+          if (drawer.matches(":popover-open")) drawer.hidePopover?.();
+        } catch {
+          /* Popover API missing · the :target fallback closes with the hash. */
+        }
+      }
+      const wrap = link.closest<HTMLElement>(".tkh-menu-wrap");
+      if (wrap) {
+        wrap.setAttribute("data-closed", "");
+        (document.activeElement as HTMLElement | null)?.blur?.();
+        const reopen = () => {
+          wrap.removeAttribute("data-closed");
+          wrap.removeEventListener("pointerleave", reopen);
+        };
+        wrap.addEventListener("pointerleave", reopen);
+      }
+      closeMenus();
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
       closeMenus();
@@ -112,10 +139,12 @@ export function HeaderSync() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("click", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("click", onClick);
       document.removeEventListener("keydown", onKey);
       if (raf) cancelAnimationFrame(raf);
     };

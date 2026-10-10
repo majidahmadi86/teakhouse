@@ -25,7 +25,7 @@ export function Picture({
   className,
   pictureClassName,
   priority = false,
-  unveil = false,
+  unveil,
   fill = false,
   objectPosition,
   maxWidth,
@@ -43,6 +43,8 @@ export function Picture({
   /** Skip variants wider than this (a small slot never needs the 1280). */
   maxWidth?: number;
 }) {
+  // Every photograph below the fold unveils unless the caller says otherwise.
+  if (unveil === undefined) unveil = !priority;
   const entry = image(id);
   // The caller's position wins; otherwise the registry's focal point, so a
   // cover crop keeps the subject in frame.
