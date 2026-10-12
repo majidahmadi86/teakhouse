@@ -565,6 +565,13 @@ export const DICT: Record<string, DictEntry> = {
   "sec.comfort": { en: "Comfort", th: "ความสบาย" },
   "sec.services": { en: "Service", th: "บริการ" },
   "off.page": { en: "Offers", th: "ข้อเสนอพิเศษ" },
+  "nf.eyebrow": { en: "Page not found", th: "ไม่พบหน้านี้" },
+  "nf.title": { en: "This page is not here", th: "ไม่มีหน้านี้ในเว็บไซต์ของเรา" },
+  "nf.lead": {
+    en: "The address may be mistyped, or the page may have moved. Everything else is where you left it: the rooms, the river terrace and your booking.",
+    th: "ที่อยู่อาจพิมพ์ผิด หรือหน้านี้อาจถูกย้ายไปแล้ว ส่วนอื่นยังอยู่ที่เดิม ทั้งห้องพัก ระเบียงริมแม่น้ำ และการจองของคุณ",
+  },
+  "nf.home": { en: "Back to the home page", th: "กลับสู่หน้าแรก" },
   "off.eyebrow": { en: "Booked direct", th: "สำหรับการจองตรง" },
   "off.lead": { en: "Three quiet reasons to book with the hotel rather than a booking site.", th: "สามเหตุผลที่ควรจองกับโรงแรมโดยตรง แทนการจองผ่านเว็บไซต์ตัวกลาง" },
   "off.terms": { en: "Offers apply to direct bookings only and cannot be combined.", th: "ข้อเสนอสำหรับการจองตรงเท่านั้น และไม่สามารถใช้ร่วมกับข้อเสนออื่นได้" },
