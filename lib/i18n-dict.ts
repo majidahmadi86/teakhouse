@@ -683,7 +683,7 @@ export const DICT: Record<string, DictEntry> = {
   "nav.megaAll": { en: "All rooms and suites", th: "ห้องพักและสวีททั้งหมด" },
   "nav.megaCompare": { en: "Compare rooms", th: "เปรียบเทียบห้องพัก" },
   "nav.megaOffers": { en: "Special offers", th: "ข้อเสนอพิเศษ" },
-  "nav.roomsCount": { en: "Six rooms and suites", th: "ห้องพักและสวีท 6 แบบ" },
+  "nav.roomsCount": { en: "Six room types", th: "ห้องพัก 6 ประเภท" },
   "off.bookOffer": {
     en: "Book with this offer →",
     th: "จองด้วยข้อเสนอนี้ →",

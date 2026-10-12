@@ -6,4 +6,6 @@
  * lang/dir>, its fonts and its menu entry all work today. Phase 3 fills this
  * file (and the database content through EntityTranslation).
  */
-export const LOCALE_ZH: Record<string, string> = {};
+export const LOCALE_ZH: Record<string, string> = {
+  "nav.roomsCount": "六种房型",
+};
