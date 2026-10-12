@@ -86,7 +86,7 @@ export const FONT_SETS = {
     ],
     "vars": ":root{--font-display:\"tkh Serif SC\",\"tkh Serif SC Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-text:\"tkh Sans SC\",\"tkh Sans SC Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-marcellus:\"tkh Serif SC\",\"tkh Serif SC Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-jakarta:\"tkh Sans SC\",\"tkh Sans SC Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-kanit:\"tkh Serif SC\",\"tkh Serif SC Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-sarabun:\"tkh Sans SC\",\"tkh Sans SC Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif}",
     "css": "@font-face{font-family:\"tkh Serif SC Fallback\";src:local(\"Times New Roman\");ascent-override:95.05%;descent-override:23.62%;line-gap-override:0.00%;size-adjust:121.09%}\n@font-face{font-family:\"tkh Sans SC Fallback\";src:local(\"Arial\");ascent-override:117.61%;descent-override:29.20%;line-gap-override:0.00%;size-adjust:98.63%}",
-    "cssHref": "/fonts/css/sc.80d1e99abe.css",
+    "cssHref": "/fonts/css/sc.85b4e4a67b.css",
     "preloads": []
   },
   "jp": {
@@ -96,7 +96,7 @@ export const FONT_SETS = {
     ],
     "vars": ":root{--font-display:\"tkh Serif JP\",\"tkh Serif JP Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-text:\"tkh Sans JP\",\"tkh Sans JP Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-marcellus:\"tkh Serif JP\",\"tkh Serif JP Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-jakarta:\"tkh Sans JP\",\"tkh Sans JP Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-kanit:\"tkh Serif JP\",\"tkh Serif JP Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-sarabun:\"tkh Sans JP\",\"tkh Sans JP Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif}",
     "css": "@font-face{font-family:\"tkh Serif JP Fallback\";src:local(\"Times New Roman\");ascent-override:95.05%;descent-override:23.62%;line-gap-override:0.00%;size-adjust:121.09%}\n@font-face{font-family:\"tkh Sans JP Fallback\";src:local(\"Arial\");ascent-override:117.61%;descent-override:29.20%;line-gap-override:0.00%;size-adjust:98.63%}",
-    "cssHref": "/fonts/css/jp.f3b1a685d2.css",
+    "cssHref": "/fonts/css/jp.992c2f6c4c.css",
     "preloads": []
   },
   "kr": {
@@ -106,7 +106,7 @@ export const FONT_SETS = {
     ],
     "vars": ":root{--font-display:\"tkh Serif KR\",\"tkh Serif KR Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-text:\"tkh Sans KR\",\"tkh Sans KR Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-marcellus:\"tkh Serif KR\",\"tkh Serif KR Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-jakarta:\"tkh Sans KR\",\"tkh Sans KR Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif;--font-kanit:\"tkh Serif KR\",\"tkh Serif KR Fallback\",ui-serif, Georgia, \"Times New Roman\", serif;--font-sarabun:\"tkh Sans KR\",\"tkh Sans KR Fallback\",ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif}",
     "css": "@font-face{font-family:\"tkh Serif KR Fallback\";src:local(\"Times New Roman\");ascent-override:95.05%;descent-override:23.62%;line-gap-override:0.00%;size-adjust:121.09%}\n@font-face{font-family:\"tkh Sans KR Fallback\";src:local(\"Arial\");ascent-override:117.61%;descent-override:29.20%;line-gap-override:0.00%;size-adjust:98.63%}",
-    "cssHref": "/fonts/css/kr.875fe1c15a.css",
+    "cssHref": "/fonts/css/kr.6aa496a761.css",
     "preloads": []
   }
 } as const;

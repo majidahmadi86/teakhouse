@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { isLang, LANG_CODES, type Lang } from "@/lib/locales/meta";
+import { isLang, type Lang } from "@/lib/locales/meta";
 
 /**
  * Guest pages live under the internal locale segment app/[lang]/... (the
@@ -14,7 +14,16 @@ export function pageLang(params: LangParams): Lang {
   return params.lang;
 }
 
-/** generateStaticParams for the locale segment · every language, prerendered. */
+/**
+ * generateStaticParams for the locale segment · English and Thai are
+ * prerendered at build time; the other languages render on a page's first
+ * visit in that language and are cached from then on (dynamicParams stays on,
+ * pageLang() still 404s anything that is not a language). Building every
+ * language made each deployment ~100 MB of pages against the team's 10 GB
+ * deployment storage.
+ */
+const PRERENDERED: Lang[] = ["en", "th"];
+
 export function langStaticParams(): LangParams[] {
-  return LANG_CODES.map((lang) => ({ lang }));
+  return PRERENDERED.map((lang) => ({ lang }));
 }
