@@ -77,7 +77,7 @@ async function run(browser, lang, width, height) {
   await act("Check rates", page.locator('#tkh-hero-actions form[data-stay-search] button[type="submit"]'), async (l) => {
     await Promise.all([page.waitForURL(/\/book/, { timeout: 30000 }), l.click()]);
   });
-  await act("Select", page.locator('li[id^="room-"] button[aria-pressed]').first(), (l) => l.click());
+  await act("Select", page.locator('li[id^="room-"] button[aria-pressed]:not([disabled])').first(), (l) => l.click());
   await act("Continue", page.locator("[data-dock-action]"), (l) => l.click());
   await act("Name", page.locator('input[autocomplete="name"]'), (l) => l.fill(name));
   await act("Email", page.locator('input[type="email"]'), (l) => l.fill(`ease-${stamp.toLowerCase()}@example.test`));
