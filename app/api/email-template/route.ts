@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import type { EmailTemplateDto } from "@/lib/ownerTypes";
 import { requireOwner } from "@/lib/ownerSession";
+import { EN_BODY, EN_SUBJECT } from "@/lib/bookingEmail";
 import { readOnlyResponse } from "@/lib/readOnly";
 
 export const dynamic = "force-dynamic";
@@ -9,9 +10,9 @@ export const dynamic = "force-dynamic";
 const HOTEL_ID = "default";
 const TEMPLATE_KEY = "booking_confirmation";
 
-const DEFAULT_SUBJECT = "Your stay at {{hotelName}} · {{code}}";
-const DEFAULT_BODY =
-  "Dear {{guestName}},\n\nThank you for booking {{roomName}} from {{checkIn}} to {{checkOut}}.\nTotal: {{amount}}\nDeposit received: {{deposit}}\n\nSee you by the river.\n{{hotelName}}";
+// v18 · the same default the confirmation email falls back to (lib/bookingEmail).
+const DEFAULT_SUBJECT = EN_SUBJECT;
+const DEFAULT_BODY = EN_BODY;
 
 async function findTemplate() {
   return prisma.emailTemplate.findUnique({
@@ -54,7 +55,10 @@ function toDto(row: {
  * instead of being created: a GET must never write. The first owner save
  * creates it.
  */
-export async function GET() {
+export async function GET(req: Request) {
+  // Owner-only content (v18).
+  const denied = requireOwner(req);
+  if (denied) return denied;
   try {
     const row = await findTemplate();
     return NextResponse.json(

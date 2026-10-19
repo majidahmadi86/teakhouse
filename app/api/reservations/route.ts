@@ -7,11 +7,14 @@ import {
   type ReservationInput,
 } from "@/lib/reservations";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
-/** Owner list · soonest first, then by time within the day. */
-export async function GET() {
+/** Owner list · soonest first, then by time within the day. PII, owner only (v18). */
+export async function GET(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   const rows = await prisma.tableReservation.findMany({
     orderBy: [{ date: "asc" }, { time: "asc" }],
   });

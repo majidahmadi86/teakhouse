@@ -78,6 +78,23 @@ export async function PATCH(req: Request) {
   if (denied) return denied;
   try {
     const body = (await req.json()) as Partial<HotelDto>;
+    // v18 · the deposit share drives /book and every confirmation, so it is
+    // checked here as well as in the Settings form.
+    if (
+      body.depositPct !== undefined &&
+      !(Number.isInteger(body.depositPct) && body.depositPct >= 0 && body.depositPct <= 100)
+    ) {
+      return NextResponse.json(
+        { error: "invalid", field: "depositPct", message: "The deposit must be a whole number from 0 to 100." },
+        { status: 400 }
+      );
+    }
+    if (body.email !== undefined && !/^\S+@\S+\.\S+$/.test(String(body.email).trim())) {
+      return NextResponse.json(
+        { error: "invalid", field: "email", message: "The email address is not valid." },
+        { status: 400 }
+      );
+    }
     const existing = await prisma.hotel.findUnique({ where: { id: HOTEL_ID } });
     if (!existing) {
       return NextResponse.json({ error: "Hotel not found" }, { status: 404 });

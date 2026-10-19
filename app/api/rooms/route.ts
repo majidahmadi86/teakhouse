@@ -5,6 +5,7 @@ import type { Room } from "@/lib/rooms";
 import { revalidateRooms } from "@/lib/revalidate";
 import { requireOwner } from "@/lib/ownerSession";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { validateRoomCreate } from "@/lib/roomValidation";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,18 @@ export async function POST(req: Request) {
   if (denied) return denied;
   try {
     const body = (await req.json()) as Room;
+    const invalid = validateRoomCreate(body);
+    if (invalid) return NextResponse.json(invalid, { status: 400 });
+    const taken = await prisma.room.findFirst({
+      where: { OR: [{ slug: body.slug }, { id: body.id || body.slug }] },
+      select: { id: true },
+    });
+    if (taken) {
+      return NextResponse.json(
+        { error: "slug-taken", field: "slug", message: "Another room already uses this address." },
+        { status: 409 }
+      );
+    }
     const created = await prisma.room.create({
       data: { ...roomToDb(body), hotelId: "default" },
     });

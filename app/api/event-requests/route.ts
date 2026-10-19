@@ -7,11 +7,14 @@ import {
 } from "@/lib/eventRequests";
 import type { ContactKind } from "@/lib/reservations";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
-/** Owner list · newest first, with the event each one belongs to. */
-export async function GET() {
+/** Owner list · newest first, with the event each one belongs to. PII, owner only (v18). */
+export async function GET(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   const rows = await prisma.eventRequest.findMany({
     orderBy: { createdAt: "desc" },
     include: { event: { select: { titleEn: true, titleTh: true, date: true } } },

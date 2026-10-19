@@ -42,6 +42,8 @@ export function BookingDock({
   balance,
   savings,
   rateLines,
+  depositPct = 30,
+  offerLine = null,
   priced,
   action,
   hint,
@@ -56,6 +58,10 @@ export function BookingDock({
   balance: number;
   savings: number;
   rateLines: RateLine[];
+  /** v18 · Settings → deposit share, shown in the deposit label. */
+  depositPct?: number;
+  /** v18 · an /offers rule applied to the stay (label + what it takes off). */
+  offerLine?: { label: string; amount: number } | null;
   /** False until live rates are in, so no total is shown that would change. */
   priced: boolean;
   action: DockAction;
@@ -114,6 +120,12 @@ export function BookingDock({
           {showTotal ? (
             <div className="mt-4 border-t border-line pt-4 text-[14.5px]">
               <RateBreakdown lines={rateLines} />
+              {offerLine ? (
+                <p className="mt-3 flex justify-between gap-3 text-forest" data-dock-offer>
+                  <span>{offerLine.label}</span>
+                  <span className="font-medium">-{format(offerLine.amount)}</span>
+                </p>
+              ) : null}
               {savings > 0 ? (
                 <p className="mt-3 flex justify-between gap-3 text-deal">
                   <span>{t("bk.save")}</span>
@@ -137,7 +149,7 @@ export function BookingDock({
                 </p>
                 <p className="mt-1 text-[12.5px] text-sub">{t("bk.taxes")}</p>
                 <p className="mt-3 flex justify-between gap-3 text-[14.5px] font-medium text-ink">
-                  <span>{t("bk.dep")}</span>
+                  <span>{t("bk.dep", { pct: depositPct })}</span>
                   <span data-dock-deposit>{format(deposit)}</span>
                 </p>
                 <p className="mt-1 flex justify-between gap-3 text-[14px] text-sub">

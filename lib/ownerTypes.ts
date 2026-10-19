@@ -53,6 +53,8 @@ export type OwnerData = {
   blocks: Record<string, true>;
   /** Per-day rate rules, all rooms · the booking engine prices nights from these. */
   priceRules: PriceRule[];
+  /** v18 · Settings → deposit share (0-100); /book and the receipt read it. */
+  depositPct?: number;
   seedVersion?: number;
 };
 

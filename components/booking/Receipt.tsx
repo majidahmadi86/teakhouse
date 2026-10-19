@@ -30,6 +30,10 @@ export type ReceiptProps = {
   /** One line per price band of the stay · the per-night breakdown. */
   rateLines?: RateLine[];
   issuedAt?: Date;
+  /** v18 · Settings → deposit share, shown in the deposit label. */
+  depositPct?: number;
+  /** v18 · an /offers rule applied to the stay. */
+  offerLine?: { label: string; amount: number } | null;
 };
 
 export function Receipt({
@@ -49,6 +53,8 @@ export function Receipt({
   balance,
   rateLines = [],
   issuedAt = new Date(),
+  depositPct = 30,
+  offerLine = null,
 }: ReceiptProps) {
   const { t, tr, lang } = useI18n();
   const { format, currency } = useCurrency();
@@ -127,6 +133,12 @@ export function Receipt({
                   lines={rateLines}
                   showLabels={rateLines.length > 1}
                 />
+                {offerLine ? (
+                  <div className="flex justify-between text-forest">
+                    <span>{offerLine.label}</span>
+                    <span>-{format(offerLine.amount)}</span>
+                  </div>
+                ) : null}
                 <div className="flex justify-between border-t border-line pt-2 font-medium text-ink">
                   <span>{t("bk.stayTotal")}</span>
                   <span>{format(subtotal)}</span>
@@ -142,7 +154,7 @@ export function Receipt({
               </div>
             )}
             <div className="flex justify-between font-bold text-ink">
-              <span>{t("bk.dep")}</span>
+              <span>{t("bk.dep", { pct: depositPct })}</span>
               <span>{format(deposit)}</span>
             </div>
             <div className="flex justify-between text-sub">

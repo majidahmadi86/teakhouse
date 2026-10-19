@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,12 @@ export async function GET(req: Request) {
     if (!u) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(toApi(u));
   }
+
+  // v18 · Looking a guest up by email, or listing every account, is an owner
+  // question. The id lookup above is how a guest's own browser restores its
+  // session (the id is that browser's bearer), so it stays open.
+  const denied = requireOwner(req);
+  if (denied) return denied;
 
   if (email) {
     const u = await prisma.user.findUnique({

@@ -256,7 +256,7 @@ export const DICT: Record<string, DictEntry> = {
   "bk.nameph": { en: "As on your passport or ID", th: "ตามหนังสือเดินทางหรือบัตรประชาชน" },
   "bk.mail": { en: "Email", th: "อีเมล" },
   "bk.save": { en: "Saved by booking direct", th: "ประหยัดจากการจองตรง" },
-  "bk.dep": { en: "Deposit today (30%)", th: "มัดจำวันนี้ (30%)" },
+  "bk.dep": { en: "Deposit today ({pct}%)", th: "มัดจำวันนี้ ({pct}%)" },
   "bk.bal": { en: "Balance at the hotel", th: "ชำระส่วนที่เหลือที่โรงแรม" },
   "bk.card": { en: "Card", th: "บัตรเครดิต" },
   "bk.scan": { en: "Scan with any Thai banking app to pay the deposit.", th: "สแกนด้วยแอปธนาคารไทยใดก็ได้เพื่อชำระมัดจำ" },
@@ -423,8 +423,8 @@ export const DICT: Record<string, DictEntry> = {
   },
   "ow.s1": { en: "Tonight's occupancy", th: "อัตราเข้าพักคืนนี้" },
   "ow.s2": { en: "Arrivals today", th: "เช็คอินวันนี้" },
-  "ow.s3": { en: "Direct bookings · Aug", th: "จองตรง · ส.ค." },
-  "ow.s4": { en: "OTA commission saved · Aug", th: "ค่าคอมฯ OTA ที่ประหยัดได้ · ส.ค." },
+  "ow.s3": { en: "Direct bookings · {m}", th: "จองตรง · {m}" },
+  "ow.s4": { en: "OTA commission saved · {m}", th: "ค่าคอมฯ OTA ที่ประหยัดได้ · {m}" },
   "ow.s4sub": { en: "18% that stayed in the house", th: "18% ที่ยังอยู่กับบ้านหลังนี้" },
   "ow.bk": { en: "Bookings", th: "การจอง" },
   "ow.all": { en: "All sources", th: "ทุกช่องทาง" },
@@ -434,13 +434,7 @@ export const DICT: Record<string, DictEntry> = {
   "ow.lg1": { en: "Available", th: "ว่าง" },
   "ow.lg2": { en: "Booked", th: "จองแล้ว" },
   "ow.lg3": { en: "Blocked", th: "ปิดขาย" },
-  "ow.mix": { en: "Channel mix · August", th: "สัดส่วนช่องทาง · สิงหาคม" },
-  "ow.mixd": { en: "Direct 62%", th: "จองตรง 62%" },
-  "ow.mixo": { en: "OTA 38%", th: "OTA 38%" },
-  "ow.mixnote": {
-    en: "Every point moved from OTA to direct keeps about ฿670 per booking in the house.",
-    th: "ทุกการจองที่ย้ายจาก OTA มาเป็นจองตรง เก็บเงินไว้กับบ้านได้ราว 670 บาทต่อการจอง",
-  },
+  "ow.mix": { en: "Channel mix · {m}", th: "สัดส่วนช่องทาง · {m}" },
   "ow.back": { en: "← Back to the guest site", th: "← กลับไปหน้าเว็บสำหรับแขก" },
   "col.code": { en: "Code", th: "รหัส" },
   "col.guest": { en: "Guest", th: "แขก" },
@@ -1001,8 +995,8 @@ export const DICT: Record<string, DictEntry> = {
   "ow.monthlyRevenue": { en: "Monthly revenue", th: "รายได้รายเดือน" },
   "ow.bySource": { en: "Bookings by source", th: "การจองแยกตามช่องทาง" },
   "ow.sourceNote": {
-    en: "Placeholder mix for this month · wire OTA webhooks later",
-    th: "สัดส่วนตัวอย่างของเดือนนี้ · เชื่อม webhook ของ OTA ภายหลัง",
+    en: "This month's stays, counted by where they were booked.",
+    th: "การเข้าพักในเดือนนี้ นับตามช่องทางที่จอง",
   },
   "ow.exportCsv": { en: "Export CSV", th: "ส่งออก CSV" },
   "ow.addCategory": { en: "Add category", th: "เพิ่มหมวด" },
@@ -1296,7 +1290,7 @@ export const DICT: Record<string, DictEntry> = {
   "bk.errPhone": { en: "Please enter a phone number we can reach.", th: "กรุณากรอกหมายเลขโทรศัพท์ที่ติดต่อได้" },
   "bk.errMail": { en: "Please enter a valid email address.", th: "กรุณากรอกอีเมลให้ถูกต้อง" },
   "bk.errName": { en: "Please enter your full name.", th: "กรุณากรอกชื่อ-นามสกุล" },
-  "bk.payLead": { en: "A 30% deposit secures the room today. The balance is settled at the hotel.", th: "ชำระมัดจำ 30% วันนี้เพื่อยืนยันห้องพัก ส่วนที่เหลือชำระที่โรงแรม" },
+  "bk.payLead": { en: "A {pct}% deposit secures the room today. The balance is settled at the hotel.", th: "ชำระมัดจำ {pct}% วันนี้เพื่อยืนยันห้องพัก ส่วนที่เหลือชำระที่โรงแรม" },
   "bk.payment": { en: "Payment", th: "การชำระเงิน" },
   "bk.requestsPh": { en: "Arrival time, a celebration, dietary needs", th: "เวลาที่จะมาถึง โอกาสพิเศษ หรือข้อจำกัดด้านอาหาร" },
   "bk.optional": { en: "optional", th: "ไม่บังคับ" },
@@ -1320,6 +1314,745 @@ export const DICT: Record<string, DictEntry> = {
   "cal.done": { en: "Done", th: "เสร็จสิ้น" },
   "cal.title": { en: "Select your dates", th: "เลือกวันเข้าพัก" },
   "stay.yourStay": { en: "Your stay", th: "การเข้าพักของคุณ" },
+
+  // ── v18 · guest booking flow ────────────────────────────────────────────
+  "bk.children": { en: "Children in the party", th: "จำนวนเด็กในกลุ่ม" },
+  "bk.childrenCount": { en: "Children: {n} · Adults: {a}", th: "เด็ก {n} · ผู้ใหญ่ {a}" },
+  "bk.chooseAnother": { en: "Choose another room or other dates", th: "เลือกห้องอื่นหรือวันอื่น" },
+  "bk.confirming": { en: "Confirming your stay…", th: "กำลังยืนยันการเข้าพัก…" },
+  "bk.cvc": { en: "Security code (CVC)", th: "รหัสความปลอดภัย 3 หลักหลังบัตร" },
+  "bk.demoCard": { en: "Demo payment · no card is charged", th: "การชำระเงินตัวอย่าง · ไม่มีการตัดเงินจากบัตร" },
+  "bk.demoCardNote": {
+    en: "This is a demonstration site. Any test number such as 4242 4242 4242 4242 will do; nothing is sent to a bank.",
+    th: "นี่คือเว็บไซต์สาธิต ใช้หมายเลขทดสอบใดก็ได้ เช่น 4242 4242 4242 4242 โดยไม่มีข้อมูลใดถูกส่งไปยังธนาคาร",
+  },
+  "bk.errCard": { en: "Please check the card number.", th: "กรุณาตรวจสอบหมายเลขบัตร" },
+  "bk.errCvc": { en: "Please enter the 3 or 4 digit security code.", th: "กรุณากรอกรหัสความปลอดภัย 3 หรือ 4 หลัก" },
+  "bk.errExpiry": { en: "Please enter a valid expiry date (MM/YY).", th: "กรุณากรอกวันหมดอายุให้ถูกต้อง (ดด/ปป)" },
+  "bk.expiryPh": { en: "MM/YY", th: "ดด/ปป" },
+  "bk.errFailed": {
+    en: "We could not confirm your booking just now, and nothing has been charged. Please try again in a moment.",
+    th: "ขณะนี้ยังไม่สามารถยืนยันการจองได้ และยังไม่มีการเรียกเก็บเงินใดๆ กรุณาลองใหม่อีกครั้งในอีกสักครู่",
+  },
+  "bk.errNetwork": {
+    en: "The connection dropped before your booking reached us, and nothing has been charged. Please check your connection and try again.",
+    th: "การเชื่อมต่อขาดหายก่อนที่การจองจะมาถึงเรา และยังไม่มีการเรียกเก็บเงินใดๆ กรุณาตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง",
+  },
+  "bk.errTaken": {
+    en: "This room has just been reserved for some of these nights, and nothing has been charged.",
+    th: "ห้องนี้เพิ่งถูกจองในบางคืนของช่วงวันที่ท่านเลือก และยังไม่มีการเรียกเก็บเงินใดๆ",
+  },
+  "bk.soldOut": { en: "Fully reserved for these dates", th: "ห้องเต็มในช่วงวันที่เลือก" },
+  "bk.soldOutShort": { en: "Unavailable", th: "ไม่ว่าง" },
+  "bk.soldOutHint": {
+    en: "This room is fully reserved for these dates. Please choose another room or other dates.",
+    th: "ห้องนี้เต็มในช่วงวันที่เลือก กรุณาเลือกห้องอื่นหรือวันอื่น",
+  },
+  "bk.confMissingH": { en: "We could not open this confirmation", th: "ไม่สามารถเปิดใบยืนยันการจองนี้ได้" },
+  "bk.confMissing": {
+    en: "The link may be incomplete. Please use the link in your confirmation email, or sign in to see your bookings. Our team is glad to help by message or phone.",
+    th: "ลิงก์อาจไม่สมบูรณ์ กรุณาใช้ลิงก์ในอีเมลยืนยันการจอง หรือเข้าสู่ระบบเพื่อดูการจองของท่าน ทีมงานของเรายินดีช่วยเหลือทางข้อความหรือโทรศัพท์",
+  },
+  "bk.confCancelled": {
+    en: "This booking has been cancelled. The details below are kept for your records.",
+    th: "การจองนี้ถูกยกเลิกแล้ว รายละเอียดด้านล่างเก็บไว้เป็นหลักฐานของท่าน",
+  },
+  "bk.offer.early.terms": {
+    en: "Arrive 30 days or more from today and 15% comes off the stay.",
+    th: "เข้าพักในวันที่ห่างจากวันนี้ตั้งแต่ 30 วันขึ้นไป ราคาห้องพักลดลง 15%",
+  },
+  "bk.offer.early.applied": { en: "Applied: 15% off this stay.", th: "ใช้สิทธิ์แล้ว: ราคาห้องพักลดลง 15% สำหรับการเข้าพักนี้" },
+  "bk.offer.early.needs": {
+    en: "Choose an arrival at least 30 days from today for this offer to apply.",
+    th: "กรุณาเลือกวันเข้าพักที่ห่างจากวันนี้อย่างน้อย 30 วัน เพื่อใช้สิทธิ์ข้อเสนอนี้",
+  },
+  "bk.offer.longer.terms": {
+    en: "Stay four nights or more and 20% comes off the stay.",
+    th: "เข้าพักตั้งแต่ 4 คืนขึ้นไป ราคาห้องพักลดลง 20%",
+  },
+  "bk.offer.longer.applied": { en: "Applied: 20% off this stay.", th: "ใช้สิทธิ์แล้ว: ราคาห้องพักลดลง 20% สำหรับการเข้าพักนี้" },
+  "bk.offer.longer.needs": {
+    en: "Choose four nights or more for this offer to apply.",
+    th: "กรุณาเลือกเข้าพักตั้งแต่ 4 คืนขึ้นไป เพื่อใช้สิทธิ์ข้อเสนอนี้",
+  },
+  "bk.offer.arrival.terms": {
+    en: "Stay three nights or more and our car meets you at the airport. The room rate is unchanged.",
+    th: "เข้าพักตั้งแต่ 3 คืนขึ้นไป รถของโรงแรมจะรอรับท่านที่สนามบิน โดยราคาห้องพักคงเดิม",
+  },
+  "bk.offer.arrival.applied": {
+    en: "Included: a private airport transfer. Our team will confirm your flight details by email.",
+    th: "รวมแล้ว: บริการรถรับจากสนามบินแบบส่วนตัว ทีมงานจะติดต่อยืนยันรายละเอียดเที่ยวบินทางอีเมล",
+  },
+  "bk.offer.arrival.needs": {
+    en: "Choose three nights or more for the airport transfer to be included.",
+    th: "กรุณาเลือกเข้าพักตั้งแต่ 3 คืนขึ้นไป เพื่อรับบริการรถรับจากสนามบิน",
+  },
+
+  // ── v18 · owner panel feedback layer (components/owner/OwnerUI) ─────────
+  "ow.ui.close": { en: "Close", th: "ปิด" },
+  "ow.ui.confirm": { en: "Confirm", th: "ยืนยัน" },
+  "ow.ui.ok": { en: "Understood", th: "รับทราบ" },
+  "ow.ui.cannotUndo": { en: "This cannot be undone.", th: "การดำเนินการนี้ไม่สามารถย้อนกลับได้" },
+  "ow.ui.deleteFailed": { en: "Could not delete. Please try again.", th: "ลบไม่สำเร็จ กรุณาลองอีกครั้ง" },
+  "ow.ui.deletedName": { en: "{name} deleted", th: "ลบ {name} แล้ว" },
+  "ow.ui.discard": { en: "Leave without saving", th: "ออกโดยไม่บันทึก" },
+  "ow.ui.keepEditing": { en: "Keep editing", th: "แก้ไขต่อ" },
+  "ow.ui.hiddenFromGuests": { en: "Hidden from guests", th: "ซ่อนจากแขก" },
+  "ow.ui.loadFailed": { en: "This page could not load its latest details.", th: "ไม่สามารถโหลดข้อมูลล่าสุดของหน้านี้ได้" },
+  "ow.ui.loading": { en: "Loading…", th: "กำลังโหลด…" },
+  "ow.ui.nowHidden": { en: "{name} is now hidden from guests", th: "{name} ถูกซ่อนจากแขกแล้ว" },
+  "ow.ui.nowPublished": { en: "{name} is now visible to guests", th: "{name} แสดงให้แขกเห็นแล้ว" },
+  "ow.ui.offline": {
+    en: "The connection dropped and nothing was saved. Please try again.",
+    th: "การเชื่อมต่อขาดหายและยังไม่มีการบันทึก กรุณาลองอีกครั้ง",
+  },
+  "ow.ui.resetTitle": { en: "Reset the demo data?", th: "รีเซ็ตข้อมูลตัวอย่างหรือไม่?" },
+  "ow.ui.resetBody": {
+    en: "Every booking, room, rate and message returns to the demo set, and changes made since are gone.",
+    th: "การจอง ห้องพัก ราคา และข้อความทั้งหมดจะกลับเป็นชุดข้อมูลตัวอย่าง และการเปลี่ยนแปลงที่ทำไว้จะหายไปทั้งหมด",
+  },
+  "ow.ui.resetDone": { en: "Demo data restored", th: "คืนค่าข้อมูลตัวอย่างแล้ว" },
+  "ow.ui.retry": { en: "Try again", th: "ลองอีกครั้ง" },
+  "ow.ui.saveFailed": { en: "Could not save.", th: "บันทึกไม่สำเร็จ" },
+  "ow.ui.saved": { en: "Saved", th: "บันทึกแล้ว" },
+  "ow.ui.savedName": { en: "{name} saved", th: "บันทึก {name} แล้ว" },
+  "ow.ui.statusSaved": { en: "{ref} updated", th: "อัปเดต {ref} แล้ว" },
+  "ow.ui.unsavedTitle": { en: "Unsaved changes", th: "มีการแก้ไขที่ยังไม่ได้บันทึก" },
+  "ow.ui.unsavedBody": {
+    en: "Some changes on this page are not saved yet. Leave without saving them?",
+    th: "การแก้ไขบางส่วนในหน้านี้ยังไม่ได้บันทึก ต้องการออกโดยไม่บันทึกหรือไม่?",
+  },
+
+  // ── v18 · owner form validation ─────────────────────────────────────────
+  "ow.v.fix": { en: "Please check the highlighted fields.", th: "กรุณาตรวจสอบช่องที่ระบุ" },
+  "ow.v.guest": { en: "Enter the guest's name.", th: "กรุณากรอกชื่อแขก" },
+  "ow.v.dates": { en: "Choose a check-out date after check-in.", th: "กรุณาเลือกวันเช็คเอาท์หลังวันเช็คอิน" },
+  "ow.v.amount": { en: "Enter an amount above zero.", th: "กรุณากรอกยอดเงินมากกว่าศูนย์" },
+  "ow.v.email": { en: "Enter a valid email address.", th: "กรุณากรอกอีเมลให้ถูกต้อง" },
+  "ow.v.adults": { en: "At least one adult.", th: "ต้องมีผู้ใหญ่อย่างน้อย 1 ท่าน" },
+  "ow.v.roomName": { en: "Give the room an English name.", th: "กรุณาตั้งชื่อห้องภาษาอังกฤษ" },
+  "ow.v.slug": { en: "Use lowercase letters, numbers and hyphens only.", th: "ใช้ได้เฉพาะตัวอักษรภาษาอังกฤษพิมพ์เล็ก ตัวเลข และขีดกลาง" },
+  "ow.v.slugTaken": { en: "Another room already uses this web address.", th: "มีห้องอื่นใช้ที่อยู่เว็บนี้แล้ว" },
+  "ow.v.rate": { en: "The direct rate must be above zero.", th: "ราคาจองตรงต้องมากกว่าศูนย์" },
+  "ow.v.ota": { en: "The OTA rate cannot be negative.", th: "ราคาบน OTA ต้องไม่ติดลบ" },
+  "ow.v.capacity": { en: "A room sleeps at least one guest.", th: "ห้องต้องรองรับแขกได้อย่างน้อย 1 ท่าน" },
+  "ow.v.nameEn": { en: "Enter the English name.", th: "กรุณากรอกชื่อภาษาอังกฤษ" },
+  "ow.v.price": { en: "The price cannot be negative.", th: "ราคาต้องไม่ติดลบ" },
+  "ow.v.titleEn": { en: "Enter the English title.", th: "กรุณากรอกชื่องานภาษาอังกฤษ" },
+  "ow.v.date": { en: "Choose a date.", th: "กรุณาเลือกวันที่" },
+  "ow.v.hotelName": { en: "The hotel needs a name.", th: "กรุณากรอกชื่อโรงแรม" },
+  "ow.v.deposit": { en: "Enter a whole number from 0 to 100.", th: "กรุณากรอกจำนวนเต็มตั้งแต่ 0 ถึง 100" },
+  "ow.v.time": { en: "Use the 24-hour format, for example 14:00.", th: "ใช้รูปแบบ 24 ชั่วโมง เช่น 14:00" },
+  "ow.v.subject": { en: "The email needs a subject.", th: "กรุณากรอกหัวเรื่องอีเมล" },
+
+  // ── v18 · bookings ──────────────────────────────────────────────────────
+  "ow.bk.amountManual": { en: "Amount set by hand · kept when the dates or room change.", th: "กำหนดยอดเอง · จะไม่เปลี่ยนตามวันที่หรือห้อง" },
+  "ow.bk.amountQuoted": { en: "Calculated from the room's rates for these nights.", th: "คำนวณจากราคาห้องในคืนที่เลือก" },
+  "ow.bk.useQuote": { en: "Use the rate calendar price, {p}", th: "ใช้ราคาจากปฏิทินราคา {p}" },
+  "ow.bk.arrivalPh": { en: "e.g. 22:30", th: "เช่น 22:30" },
+  "ow.bk.sortBy": { en: "Sort by", th: "เรียงตาม" },
+  "ow.bk.order": { en: "Order", th: "ลำดับ" },
+  "ow.bk.asc": { en: "Ascending", th: "น้อยไปมาก" },
+  "ow.bk.desc": { en: "Descending", th: "มากไปน้อย" },
+  "ow.bk.cancelTitle": { en: "Cancel booking {code}?", th: "ยกเลิกการจอง {code} หรือไม่?" },
+  "ow.bk.cancelBody": {
+    en: "The stay for {guest} ({dates}) will be cancelled and the room released for those nights. The booking stays in your records.",
+    th: "การเข้าพักของ {guest} ({dates}) จะถูกยกเลิก และห้องจะกลับมาว่างในคืนดังกล่าว โดยข้อมูลการจองยังคงอยู่ในระบบ",
+  },
+  "ow.bk.keep": { en: "Keep the booking", th: "คงการจองไว้" },
+  "ow.bk.cancelled": { en: "{code} cancelled · the room is open again", th: "ยกเลิก {code} แล้ว · ห้องกลับมาว่าง" },
+  "ow.bk.created": { en: "Booking {code} saved", th: "บันทึกการจอง {code} แล้ว" },
+  "ow.bk.updated": { en: "Booking updated", th: "อัปเดตการจองแล้ว" },
+  "ow.bk.editTitle": { en: "Edit {code}", th: "แก้ไข {code}" },
+  "ow.bk.empty": {
+    en: "No bookings yet. New stays appear here the moment they are made.",
+    th: "ยังไม่มีการจอง การจองใหม่จะแสดงที่นี่ทันทีที่เกิดขึ้น",
+  },
+  "ow.bk.prevPage": { en: "Previous page", th: "หน้าก่อนหน้า" },
+  "ow.bk.nextPage": { en: "Next page", th: "หน้าถัดไป" },
+  "ow.bk.perPage": { en: "Bookings per page", th: "จำนวนการจองต่อหน้า" },
+  "ow.bk.showing": { en: "{from} to {to} of {n}", th: "{from} ถึง {to} จาก {n} รายการ" },
+  "ow.bk.notesSaved": { en: "Notes saved", th: "บันทึกโน้ตแล้ว" },
+  "ow.bk.overlapTitle": { en: "These nights are already taken", th: "คืนดังกล่าวมีการจองแล้ว" },
+  "ow.bk.overlapBody": {
+    en: "{room} is already booked or closed for some of these nights. Save anyway only once you have moved the other guest yourself.",
+    th: "{room} มีการจองหรือปิดขายในบางคืนของช่วงนี้ ควรบันทึกต่อเฉพาะเมื่อท่านได้จัดห้องให้แขกอีกท่านเรียบร้อยแล้ว",
+  },
+  "ow.bk.saveAnyway": { en: "Save anyway", th: "บันทึกต่อ" },
+  "ow.bk.sourceWhat": { en: "Where the booking came from", th: "ช่องทางที่มาของการจอง" },
+  "ow.bk.statusWhat": { en: "Where the stay stands today", th: "สถานะของการเข้าพักในขณะนี้" },
+  "ow.bk.statusSaved": { en: "Status: {status}", th: "สถานะ: {status}" },
+
+  // ── v18 · rooms ─────────────────────────────────────────────────────────
+  "ow.rm.addPhoto": { en: "Add a photo link", th: "เพิ่มลิงก์รูปภาพ" },
+  "ow.rm.added": { en: "{name} added", th: "เพิ่ม {name} แล้ว" },
+  "ow.rm.saved": { en: "{name} saved", th: "บันทึก {name} แล้ว" },
+  "ow.rm.amenities": { en: "Amenities", th: "สิ่งอำนวยความสะดวก" },
+  "ow.rm.archive": { en: "Take off sale", th: "ปิดการขายห้องนี้" },
+  "ow.rm.archived": { en: "{name} is off sale and hidden from guests", th: "{name} ปิดการขายและซ่อนจากแขกแล้ว" },
+  "ow.rm.onSale": { en: "{name} is on sale again", th: "{name} เปิดขายอีกครั้งแล้ว" },
+  "ow.rm.delTitle": { en: "Delete {name}?", th: "ลบ {name} หรือไม่?" },
+  "ow.rm.delBody": {
+    en: "The room, its rate rules and its closed nights are removed. A room with bookings cannot be deleted; take it off sale instead.",
+    th: "ห้องพัก กฎราคา และคืนที่ปิดขายของห้องนี้จะถูกลบ ห้องที่มีการจองไม่สามารถลบได้ ให้ปิดการขายแทน",
+  },
+  "ow.rm.deleted": { en: "{name} deleted", th: "ลบ {name} แล้ว" },
+  "ow.rm.hasBookingsTitle": { en: "This room has bookings", th: "ห้องนี้มีการจองอยู่" },
+  "ow.rm.hasBookingsBody": {
+    en: "There are {n} bookings for this room, so it stays in the system to protect those stays. Take it off sale to hide it from guests.",
+    th: "ห้องนี้มีการจอง {n} รายการ จึงต้องเก็บไว้ในระบบเพื่อดูแลการเข้าพักเหล่านั้น ปิดการขายเพื่อซ่อนห้องนี้จากแขกได้",
+  },
+  "ow.rm.emptyTitle": { en: "No rooms yet", th: "ยังไม่มีห้องพัก" },
+  "ow.rm.emptyBody": {
+    en: "Add your first room with its name, rate and photographs. Guests can book it as soon as it is on sale.",
+    th: "เพิ่มห้องแรกพร้อมชื่อ ราคา และรูปภาพ แขกจะจองได้ทันทีที่เปิดขาย",
+  },
+  "ow.rm.noMatch": { en: "No rooms match your search.", th: "ไม่พบห้องที่ตรงกับคำค้นหา" },
+  "ow.rm.photoUrls": { en: "Photographs", th: "รูปภาพ" },
+  "ow.rm.search": { en: "Search rooms by name or web address", th: "ค้นหาห้องจากชื่อหรือที่อยู่เว็บ" },
+
+  // ── v18 · calendar, rates, dining, events, messages, settings ──────────
+  "ow.cal.blockFailed": { en: "That night could not be changed. Please try again.", th: "ไม่สามารถเปลี่ยนสถานะของคืนนั้นได้ กรุณาลองอีกครั้ง" },
+  "ow.cal.heatLead": { en: "Occupancy by night · a deeper colour means a fuller house", th: "อัตราเข้าพักรายคืน · สียิ่งเข้ม ห้องยิ่งเต็ม" },
+  "ow.cal.intensity": { en: "Occupancy", th: "อัตราเข้าพัก" },
+  "ow.rate.editTitle": { en: "Edit rate rule", th: "แก้ไขกฎราคา" },
+  "ow.rate.saveEdit": { en: "Save changes", th: "บันทึกการแก้ไข" },
+  "ow.rate.cancelEdit": { en: "Stop editing", th: "เลิกแก้ไข" },
+  "ow.rate.updated": { en: "Rate rule updated", th: "อัปเดตกฎราคาแล้ว" },
+  "ow.rate.delTitle": { en: "Delete the rule {name}?", th: "ลบกฎราคา {name} หรือไม่?" },
+  "ow.rate.delBody": {
+    en: "Nights from {from} to {to} return to the base rate, or to another rule that covers them.",
+    th: "คืนตั้งแต่ {from} ถึง {to} จะกลับไปใช้ราคาพื้นฐาน หรือกฎราคาอื่นที่ครอบคลุม",
+  },
+  "ow.rate.delFailed": { en: "The rule could not be deleted. Please try again.", th: "ลบกฎราคาไม่สำเร็จ กรุณาลองอีกครั้ง" },
+  "ow.rate.phOverride": { en: "e.g. Songkran", th: "เช่น สงกรานต์" },
+  "ow.rate.phSeason": { en: "e.g. High season", th: "เช่น ช่วงฤดูท่องเที่ยว" },
+  "ow.dn.delCatTitle": { en: "Delete the {name} section?", th: "ลบหมวด {name} หรือไม่?" },
+  "ow.dn.delCatBody": {
+    en: "Its {n} dishes are removed with it. This cannot be undone.",
+    th: "รายการอาหาร {n} รายการในหมวดนี้จะถูกลบไปด้วย และไม่สามารถย้อนกลับได้",
+  },
+  "ow.dn.delDishTitle": { en: "Delete {name}?", th: "ลบ {name} หรือไม่?" },
+  "ow.dn.emptyMenu": { en: "The menu is empty. Add a section, then its dishes.", th: "ยังไม่มีเมนู เพิ่มหมวดก่อน แล้วจึงเพิ่มรายการอาหาร" },
+  "ow.dn.noDishes": { en: "No dishes in this section yet.", th: "ยังไม่มีรายการอาหารในหมวดนี้" },
+  "ow.ev.delTitle": { en: "Delete {name}?", th: "ลบ {name} หรือไม่?" },
+  "ow.ev.delBody": { en: "The event leaves the guest site. This cannot be undone.", th: "งานนี้จะถูกนำออกจากเว็บไซต์ และไม่สามารถย้อนกลับได้" },
+  "ow.ev.empty": {
+    en: "No events yet. Add an evening and it appears on the Events page.",
+    th: "ยังไม่มีงาน เพิ่มงานแล้วงานจะแสดงในหน้ากิจกรรม",
+  },
+  "ow.ev.event": { en: "Event", th: "งาน" },
+  "ow.ev.past": { en: "past", th: "ผ่านไปแล้ว" },
+  "ow.msg.search": { en: "Search by name, contact or message", th: "ค้นหาจากชื่อ ช่องทางติดต่อ หรือข้อความ" },
+  "ow.msg.noMatch": { en: "No messages match your search.", th: "ไม่พบข้อความที่ตรงกับคำค้นหา" },
+  "ow.msg.statusSaved": { en: "Message from {name}: {status}", th: "ข้อความจาก {name}: {status}" },
+  "ow.set.hotelSaved": { en: "Hotel details saved", th: "บันทึกข้อมูลโรงแรมแล้ว" },
+  "ow.set.templateSaved": { en: "Confirmation email saved", th: "บันทึกอีเมลยืนยันการจองแล้ว" },
+  "ow.set.hotelMissing": { en: "The hotel details could not be loaded.", th: "ไม่สามารถโหลดข้อมูลโรงแรมได้" },
+  "ow.set.templateMissing": { en: "The email template could not be loaded.", th: "ไม่สามารถโหลดแม่แบบอีเมลได้" },
+  "ow.adr": { en: "ADR", th: "ค่าห้องเฉลี่ย" },
+  "ow.mixEmpty": {
+    en: "No stays this month yet. The split between direct and OTA bookings appears with the first one.",
+    th: "เดือนนี้ยังไม่มีการเข้าพัก สัดส่วนการจองตรงกับ OTA จะแสดงเมื่อมีการจองแรก",
+  },
+
+  // ── v18 · field help (the ? beside owner fields) ─────────────────────────
+  "ow.tip.bookings.passport": {
+    en: "Needed for the immigration report on foreign guests; a Thai ID number works for Thai guests.",
+    th: "ใช้สำหรับแจ้งที่พักของคนต่างด้าว (ตม.30) สำหรับแขกต่างชาติ แขกชาวไทยใช้เลขบัตรประชาชนได้",
+  },
+  "ow.tip.bookings.email": {
+    en: "The confirmation email is sent to this address when the booking is saved.",
+    th: "อีเมลยืนยันการจองจะส่งไปยังอีเมลนี้เมื่อบันทึกการจอง",
+  },
+  "ow.tip.bookings.arrival": {
+    en: "When the guest expects to arrive, so the team is ready at the door.",
+    th: "เวลาที่แขกคาดว่าจะมาถึง เพื่อให้ทีมงานเตรียมต้อนรับได้ทันเวลา",
+  },
+  "ow.tip.bookings.special": {
+    en: "What the guest asked for, such as a quiet room or an anniversary cake.",
+    th: "สิ่งที่แขกร้องขอ เช่น ห้องที่เงียบสงบ หรือเค้กวันครบรอบ",
+  },
+  "ow.tip.bookings.notes": {
+    en: "Private notes for your team; guests never see them.",
+    th: "บันทึกภายในสำหรับทีมงาน แขกจะไม่เห็นข้อความนี้",
+  },
+  "ow.tip.bookings.source": {
+    en: "Direct means booked with the hotel; Agoda and Booking.com are OTAs that keep a commission.",
+    th: "จองตรงคือจองกับโรงแรมโดยตรง ส่วน Agoda และ Booking.com เป็น OTA ที่หักค่าคอมมิชชั่น",
+  },
+  "ow.tip.bookings.status": {
+    en: "Confirmed before arrival, In house during the stay, Checked out after departure.",
+    th: "ยืนยันแล้วก่อนแขกมาถึง เข้าพักอยู่ระหว่างการเข้าพัก และเช็คเอาท์แล้วเมื่อแขกออกจากโรงแรม",
+  },
+  "ow.tip.bookings.amount": {
+    en: "The full stay total; it follows the rate calendar until you type your own figure.",
+    th: "ยอดรวมของการเข้าพักทั้งหมด คำนวณตามปฏิทินราคาจนกว่าท่านจะกรอกยอดเอง",
+  },
+  "ow.tip.rooms.slug": {
+    en: "The room's web address, for example river-loft; lowercase letters, numbers and hyphens only.",
+    th: "ที่อยู่เว็บของห้อง ใช้ได้เฉพาะตัวอักษรภาษาอังกฤษพิมพ์เล็ก ตัวเลข และขีดกลาง",
+  },
+  "ow.tip.rooms.size": {
+    en: "Floor area in square metres, shown with the room.",
+    th: "พื้นที่ห้องเป็นตารางเมตร แสดงพร้อมรายละเอียดห้อง",
+  },
+  "ow.tip.rooms.capacity": {
+    en: "The most guests the room sleeps, children included; larger parties cannot book it.",
+    th: "จำนวนแขกสูงสุดที่ห้องรองรับได้ รวมเด็ก กลุ่มที่ใหญ่กว่านี้จะจองห้องนี้ไม่ได้",
+  },
+  "ow.tip.rooms.active": {
+    en: "Only rooms on sale can be booked; taking a room off sale hides it but keeps its bookings.",
+    th: "เฉพาะห้องที่เปิดขายเท่านั้นที่จองได้ การปิดขายจะซ่อนห้องแต่ยังเก็บการจองไว้",
+  },
+  "ow.tip.rooms.rate": {
+    en: "The nightly price for booking direct, before any season or date price from the rate calendar.",
+    th: "ราคาต่อคืนสำหรับการจองตรง ก่อนปรับตามช่วงฤดูกาลหรือราคาเฉพาะวันในปฏิทินราคา",
+  },
+  "ow.tip.rooms.ota": {
+    en: "The same night's price on booking sites; guests see the difference as what they keep.",
+    th: "ราคาคืนเดียวกันบนเว็บไซต์จองห้องพัก แขกจะเห็นส่วนต่างเป็นสิ่งที่ประหยัดได้",
+  },
+  "ow.tip.rooms.photos": {
+    en: "The first photograph is the cover; upload each one or paste its link.",
+    th: "รูปแรกจะเป็นภาพหน้าปก อัปโหลดแต่ละรูปหรือวางลิงก์ของรูป",
+  },
+  "ow.tip.calendar.heat": {
+    en: "Each day shows the share of rooms booked that night.",
+    th: "แต่ละวันแสดงสัดส่วนห้องที่มีการจองในคืนนั้น",
+  },
+  "ow.tip.calendar.block": {
+    en: "Guests cannot book a closed night; tapping a booked night opens its booking.",
+    th: "แขกจะจองคืนที่ปิดขายไม่ได้ และการแตะคืนที่มีการจองจะเปิดดูการจองนั้น",
+  },
+  "ow.tip.rates.base": {
+    en: "What the room costs on any night that no season or date price covers.",
+    th: "ราคาห้องในคืนที่ไม่มีช่วงฤดูกาลหรือราคาเฉพาะวันกำหนดไว้",
+  },
+  "ow.tip.rates.kind": {
+    en: "A season covers a range of dates; a date price sets single days and wins over a season.",
+    th: "ช่วงฤดูกาลใช้กับช่วงวันที่ ส่วนราคาเฉพาะวันใช้กับวันเดียวและมีผลเหนือช่วงฤดูกาล",
+  },
+  "ow.tip.rates.label": {
+    en: "A name for you and the team, shown on the calendar.",
+    th: "ชื่อสำหรับท่านและทีมงาน จะแสดงบนปฏิทินราคา",
+  },
+  "ow.tip.rates.mode": {
+    en: "Set a fixed price per night, or multiply the base rate.",
+    th: "กำหนดราคาคงที่ต่อคืน หรือคูณจากราคาพื้นฐาน",
+  },
+  "ow.tip.rates.fixed": {
+    en: "The exact price per night, in baht, for these dates.",
+    th: "ราคาต่อคืนเป็นบาทสำหรับช่วงวันที่นี้",
+  },
+  "ow.tip.rates.multiplier": {
+    en: "1.2 sets the night 20% above the base rate; 0.9 sets it 10% below.",
+    th: "1.2 คือราคาสูงกว่าราคาพื้นฐาน 20% และ 0.9 คือต่ำกว่าราคาพื้นฐาน 10%",
+  },
+  "ow.tip.dining.visibility": {
+    en: "Hidden items stay here for you but leave the guest menu.",
+    th: "รายการที่ซ่อนจะยังอยู่ในระบบ แต่ไม่แสดงในเมนูสำหรับแขก",
+  },
+  "ow.tip.dining.price": {
+    en: "The price guests see on the menu, in baht.",
+    th: "ราคาที่แขกเห็นในเมนู หน่วยเป็นบาท",
+  },
+  "ow.tip.dining.accept": {
+    en: "Switch off to stop guests reserving tables online.",
+    th: "ปิดเพื่อหยุดรับการสำรองโต๊ะออนไลน์จากแขก",
+  },
+  "ow.tip.dining.serviceStart": {
+    en: "The first sitting guests can choose.",
+    th: "รอบแรกที่แขกเลือกสำรองโต๊ะได้",
+  },
+  "ow.tip.dining.serviceEnd": {
+    en: "When the kitchen closes; the last sitting is set before it.",
+    th: "เวลาที่ครัวปิด รอบสุดท้ายจะอยู่ก่อนเวลานี้",
+  },
+  "ow.tip.dining.party": {
+    en: "Larger parties are invited to contact the hotel directly.",
+    th: "กลุ่มที่ใหญ่กว่านี้จะได้รับคำแนะนำให้ติดต่อโรงแรมโดยตรง",
+  },
+  "ow.tip.events.date": {
+    en: "Once the date has passed, the event leaves the guest calendar on its own.",
+    th: "เมื่อพ้นวันงานแล้ว งานจะหายจากปฏิทินของแขกโดยอัตโนมัติ",
+  },
+  "ow.tip.events.visibility": {
+    en: "Hidden events stay here but are not shown on the Events page.",
+    th: "งานที่ซ่อนจะยังอยู่ในระบบ แต่ไม่แสดงในหน้ากิจกรรม",
+  },
+  "ow.tip.events.image": {
+    en: "Upload a photograph, or paste a link to one already online.",
+    th: "อัปโหลดรูปภาพ หรือวางลิงก์ของรูปที่อยู่บนเว็บแล้ว",
+  },
+  "ow.tip.events.requests": {
+    en: "Guests asking for seats at an event; confirm or decline each one.",
+    th: "คำขอที่นั่งจากแขกสำหรับแต่ละงาน ยืนยันหรือปฏิเสธได้ทีละรายการ",
+  },
+  "ow.tip.messages.status": {
+    en: "New until opened; mark it Done once the guest has a reply.",
+    th: "เป็นข้อความใหม่จนกว่าจะเปิดอ่าน เปลี่ยนเป็นเสร็จสิ้นเมื่อได้ตอบแขกแล้ว",
+  },
+  "ow.tip.settings.tagline": {
+    en: "A short line that describes the house, used alongside its name.",
+    th: "ข้อความสั้นที่บรรยายโรงแรม ใช้คู่กับชื่อโรงแรม",
+  },
+  "ow.tip.settings.email": {
+    en: "Guests who reply to their confirmation email reach this address.",
+    th: "แขกที่ตอบกลับอีเมลยืนยันการจองจะส่งถึงอีเมลนี้",
+  },
+  "ow.tip.settings.line": {
+    en: "The hotel's LINE ID, for guests who prefer to message.",
+    th: "LINE ID ของโรงแรม สำหรับแขกที่สะดวกติดต่อทางข้อความ",
+  },
+  "ow.tip.settings.deposit": {
+    en: "The share of the stay guests pay when booking direct (0 to 100); the booking page and every confirmation follow it.",
+    th: "สัดส่วนค่าที่พักที่แขกชำระเมื่อจองตรง (0 ถึง 100) หน้าจองห้องพักและอีเมลยืนยันทุกฉบับจะใช้ค่านี้",
+  },
+  "ow.tip.settings.times": {
+    en: "Use the 24-hour clock, for example 14:00; every confirmation shows these times.",
+    th: "ใช้รูปแบบ 24 ชั่วโมง เช่น 14:00 อีเมลยืนยันทุกฉบับจะแสดงเวลานี้",
+  },
+  "ow.tip.settings.cancel": {
+    en: "The terms guests accept when booking; keep them short and exact.",
+    th: "เงื่อนไขที่แขกยอมรับเมื่อจองห้องพัก ควรสั้นและชัดเจน",
+  },
+  "ow.tip.settings.pets": {
+    en: "Whether pets are welcome, and on what terms.",
+    th: "แจ้งว่ารับสัตว์เลี้ยงหรือไม่ และมีเงื่อนไขอย่างไร",
+  },
+  "ow.tip.settings.subject": {
+    en: "The subject line of the English confirmation email.",
+    th: "หัวเรื่องของอีเมลยืนยันการจองฉบับภาษาอังกฤษ",
+  },
+  "ow.tip.settings.body": {
+    en: "Words in double braces are filled in for each booking; Thai guests receive the house Thai version.",
+    th: "คำในวงเล็บปีกกาคู่จะถูกแทนที่ด้วยข้อมูลของแต่ละการจอง แขกชาวไทยจะได้รับอีเมลฉบับภาษาไทยของโรงแรม",
+  },
+
+  // ── v18 · help layer: shell button, help centre ─────────────────────────
+  "ow.help.nav": { en: "Help", th: "ช่วยเหลือ" },
+  "ow.help.how": { en: "How this page works", th: "วิธีใช้หน้านี้" },
+  "ow.help.howTitle": { en: "How this page works", th: "วิธีใช้หน้านี้" },
+  "ow.help.mistake": { en: "A common mistake", th: "ข้อผิดพลาดที่พบบ่อย" },
+  "ow.help.openCentre": { en: "Open the help centre", th: "เปิดศูนย์ช่วยเหลือ" },
+  "ow.help.title": { en: "Help centre", th: "ศูนย์ช่วยเหลือ" },
+  "ow.help.lead": {
+    en: "Short guides to every page of the owner panel, the terms the dashboard uses, and the order in which to set up the house.",
+    th: "คู่มือสั้นๆ สำหรับทุกหน้าในระบบเจ้าของ ความหมายของคำที่ใช้ในแดชบอร์ด และลำดับการตั้งค่าโรงแรมของท่าน",
+  },
+  "ow.help.search": { en: "Search the guides and terms", th: "ค้นหาคู่มือและคำศัพท์" },
+  "ow.help.noMatch": { en: "Nothing matches that search. Try a shorter word.", th: "ไม่พบผลลัพธ์ ลองใช้คำที่สั้นลง" },
+  "ow.help.guides": { en: "Page guides", th: "คู่มือแต่ละหน้า" },
+  "ow.help.glossary": { en: "Glossary", th: "อภิธานศัพท์" },
+  "ow.help.goTo": { en: "Open {page}", th: "ไปที่หน้า{page}" },
+
+  "ow.fw.title": { en: "Your first week", th: "สัปดาห์แรกของท่าน" },
+  "ow.fw.lead": {
+    en: "Set up the house in this order. Each step builds on the one before, so guests only ever see finished pages.",
+    th: "ตั้งค่าตามลำดับนี้ แต่ละขั้นตอนต่อยอดจากขั้นก่อนหน้า แขกจึงเห็นเฉพาะหน้าที่พร้อมแล้วเท่านั้น",
+  },
+  "ow.fw.s1": {
+    en: "Rooms: name each room, set how many guests it sleeps and add photographs.",
+    th: "ห้องพัก: ตั้งชื่อแต่ละห้อง กำหนดจำนวนผู้เข้าพัก และเพิ่มรูปภาพ",
+  },
+  "ow.fw.s2": {
+    en: "Rates: set each room's base rate, then add seasons and holiday prices.",
+    th: "ปฏิทินราคา: กำหนดราคาพื้นฐานของแต่ละห้อง แล้วเพิ่มช่วงฤดูกาลและราคาวันหยุด",
+  },
+  "ow.fw.s3": {
+    en: "Calendar: close any nights a room cannot be sold, such as planned maintenance.",
+    th: "ปฏิทิน: ปิดขายคืนที่ห้องไม่พร้อมให้บริการ เช่น ช่วงซ่อมบำรุงตามแผน",
+  },
+  "ow.fw.s4": {
+    en: "Offers, dining and events: check the offers on the guest site match your rates, then publish the menu and the evenings ahead.",
+    th: "ข้อเสนอ ห้องอาหาร และกิจกรรม: ตรวจสอบว่าข้อเสนอบนเว็บไซต์สอดคล้องกับราคาของท่าน แล้วเผยแพร่เมนูและงานที่กำลังจะมาถึง",
+  },
+  "ow.fw.s5": {
+    en: "Settings: confirm the contact details, check-in times, the deposit share and the confirmation email.",
+    th: "ตั้งค่า: ยืนยันข้อมูลติดต่อ เวลาเช็คอิน สัดส่วนมัดจำ และอีเมลยืนยันการจอง",
+  },
+
+  "ow.gl.adr.name": { en: "Average daily rate", th: "ราคาห้องเฉลี่ยต่อคืน" },
+  "ow.gl.adr.def": {
+    en: "Room revenue divided by the room-nights sold. It shows what a sold night earns on average.",
+    th: "รายได้ค่าห้องหารด้วยจำนวนห้องคืนที่ขายได้ บอกว่าแต่ละคืนที่ขายได้สร้างรายได้เฉลี่ยเท่าใด",
+  },
+  "ow.gl.revpar.name": { en: "Revenue per available room", th: "รายได้ต่อห้องที่เปิดขาย" },
+  "ow.gl.revpar.def": {
+    en: "Room revenue divided by every room-night you could have sold, sold or not. It joins price and occupancy in one figure.",
+    th: "รายได้ค่าห้องหารด้วยจำนวนห้องคืนทั้งหมดที่เปิดขาย ไม่ว่าจะขายได้หรือไม่ เป็นตัวเลขเดียวที่รวมทั้งราคาและอัตราเข้าพัก",
+  },
+  "ow.gl.occupancy.name": { en: "Occupancy", th: "อัตราเข้าพัก" },
+  "ow.gl.occupancy.def": {
+    en: "The share of room-nights that are booked. Six of twelve rooms taken tonight is 50% occupancy.",
+    th: "สัดส่วนของห้องคืนที่มีการจอง เช่น คืนนี้มีแขก 6 จาก 12 ห้อง เท่ากับอัตราเข้าพัก 50%",
+  },
+  "ow.gl.deposit.name": { en: "Deposit", th: "เงินมัดจำ" },
+  "ow.gl.deposit.def": {
+    en: "The part of the stay a guest pays when booking direct. You set the share in Settings; the balance is settled at the hotel.",
+    th: "ส่วนของค่าที่พักที่แขกชำระเมื่อจองตรง ท่านกำหนดสัดส่วนได้ในหน้าตั้งค่า และยอดคงเหลือชำระที่โรงแรม",
+  },
+  "ow.gl.ota.name": { en: "OTA commission", th: "ค่าคอมมิชชั่น OTA" },
+  "ow.gl.ota.def": {
+    en: "What a booking site such as Agoda or Booking.com keeps from each stay it sells, often 15% to 20%. A direct booking keeps that share in the house.",
+    th: "ส่วนที่เว็บไซต์จองห้องพัก เช่น Agoda หรือ Booking.com หักจากแต่ละการเข้าพักที่ขายได้ มักอยู่ที่ 15% ถึง 20% การจองตรงช่วยให้รายได้ส่วนนี้อยู่กับโรงแรม",
+  },
+
+  // ── v18 · page guides (ow.guide.<page>.*) ────────────────────────────────
+  "ow.guide.dash.title": { en: "Dashboard", th: "แดชบอร์ด" },
+  "ow.guide.dash.what": {
+    en: "A morning view of the house: tonight's occupancy, today's arrivals, this month's revenue and where bookings come from.",
+    th: "ภาพรวมของโรงแรมในยามเช้า ทั้งอัตราเข้าพักคืนนี้ แขกที่จะมาถึงวันนี้ รายได้เดือนนี้ และช่องทางที่มาของการจอง",
+  },
+  "ow.guide.dash.s1": {
+    en: "Read the four cards at the top first: occupancy tonight, arrivals today, the direct share and the commission kept this month.",
+    th: "อ่านการ์ดสี่ใบด้านบนก่อน ได้แก่ อัตราเข้าพักคืนนี้ แขกที่มาถึงวันนี้ สัดส่วนการจองตรง และค่าคอมมิชชั่นที่ประหยัดได้ในเดือนนี้",
+  },
+  "ow.guide.dash.s2": {
+    en: "Hover over or tap the small i beside any figure to see exactly how it is counted.",
+    th: "แตะหรือวางเมาส์ที่สัญลักษณ์ i ข้างตัวเลข เพื่อดูว่าคำนวณอย่างไร",
+  },
+  "ow.guide.dash.s3": {
+    en: "Use the revenue panel to compare the last six months and to follow the average daily rate.",
+    th: "ใช้แผงรายได้เพื่อเปรียบเทียบหกเดือนล่าสุด และติดตามค่าห้องเฉลี่ยต่อคืน",
+  },
+  "ow.guide.dash.s4": {
+    en: "Check the availability strip for the days ahead, and switch between 7, 14 and 30 days with the buttons beside it.",
+    th: "ตรวจดูแถบห้องว่างของวันข้างหน้า และสลับดู 7, 14 หรือ 30 วันได้จากปุ่มด้านข้าง",
+  },
+  "ow.guide.dash.mistake": {
+    en: "Reading an empty channel mix as a fault. It fills in with the month's first booking.",
+    th: "เข้าใจว่าสัดส่วนช่องทางที่ว่างเปล่าคือข้อผิดพลาด ความจริงจะแสดงเมื่อมีการจองแรกของเดือน",
+  },
+
+  "ow.guide.bookings.title": { en: "Bookings", th: "การจอง" },
+  "ow.guide.bookings.what": {
+    en: "Every stay in one list: search and sort, record a booking by hand, and follow a guest from arrival to departure.",
+    th: "รายการการเข้าพักทั้งหมดในที่เดียว ค้นหาและเรียงลำดับ บันทึกการจองด้วยตนเอง และติดตามแขกตั้งแต่มาถึงจนเช็คเอาท์",
+  },
+  "ow.guide.bookings.s1": {
+    en: "Search by guest, code or email, and narrow the list by source or status.",
+    th: "ค้นหาจากชื่อแขก รหัส หรืออีเมล แล้วกรองตามช่องทางหรือสถานะ",
+  },
+  "ow.guide.bookings.s2": {
+    en: "Tap a column heading to sort, and choose 25 or 50 rows per page at the foot of the list.",
+    th: "แตะหัวคอลัมน์เพื่อเรียงลำดับ และเลือกแสดง 25 หรือ 50 รายการต่อหน้าที่ด้านล่างของรายการ",
+  },
+  "ow.guide.bookings.s3": {
+    en: "Open a booking to see the guest, the stay and the payment, and to keep private notes.",
+    th: "เปิดการจองเพื่อดูข้อมูลแขก การเข้าพัก และการชำระเงิน พร้อมจดบันทึกภายใน",
+  },
+  "ow.guide.bookings.s4": {
+    en: "Use Check in and Check out on arrival and departure, so the dashboard stays accurate.",
+    th: "กดเช็คอินและเช็คเอาท์เมื่อแขกมาถึงและออกจากโรงแรม เพื่อให้แดชบอร์ดแสดงข้อมูลถูกต้อง",
+  },
+  "ow.guide.bookings.s5": {
+    en: "Add a telephone or walk-in booking with New booking; the amount follows the rate calendar unless you type your own.",
+    th: "เพิ่มการจองทางโทรศัพท์หรือแขกที่มาโดยตรงด้วยปุ่มเพิ่มการจอง ยอดเงินจะคำนวณตามปฏิทินราคา เว้นแต่ท่านกรอกเอง",
+  },
+  "ow.guide.bookings.mistake": {
+    en: "Saving over a warning that the room is taken. Save anyway only once the other guest has been moved.",
+    th: "กดบันทึกทั้งที่มีคำเตือนว่าห้องถูกจองแล้ว ควรบันทึกต่อเฉพาะเมื่อได้ย้ายแขกอีกท่านเรียบร้อยแล้ว",
+  },
+
+  "ow.guide.rooms.title": { en: "Rooms", th: "ห้องพัก" },
+  "ow.guide.rooms.what": {
+    en: "The rooms you sell: names in English and Thai, capacity, rates, amenities and photographs.",
+    th: "ห้องพักที่เปิดขาย ทั้งชื่อภาษาอังกฤษและภาษาไทย จำนวนผู้เข้าพัก ราคา สิ่งอำนวยความสะดวก และรูปภาพ",
+  },
+  "ow.guide.rooms.s1": {
+    en: "Add a room with its names, size and how many guests it sleeps.",
+    th: "เพิ่มห้องพร้อมชื่อ ขนาด และจำนวนแขกที่รองรับได้",
+  },
+  "ow.guide.rooms.s2": {
+    en: "Set the direct rate and the booking-site rate, so guests see what they keep by booking with you.",
+    th: "กำหนดราคาจองตรงและราคาบนเว็บไซต์จองห้องพัก ให้แขกเห็นว่าการจองตรงคุ้มค่าเพียงใด",
+  },
+  "ow.guide.rooms.s3": {
+    en: "Tick the amenities and add photographs; the first one becomes the cover.",
+    th: "เลือกสิ่งอำนวยความสะดวกและเพิ่มรูปภาพ รูปแรกจะเป็นภาพหน้าปก",
+  },
+  "ow.guide.rooms.s4": {
+    en: "Take a room off sale to hide it from guests without losing its bookings.",
+    th: "ปิดการขายห้องเพื่อซ่อนจากแขกโดยไม่สูญเสียข้อมูลการจอง",
+  },
+  "ow.guide.rooms.s5": {
+    en: "Open Rate calendar on a room's card for seasons and holiday prices.",
+    th: "เปิดปฏิทินราคาจากการ์ดของห้อง เพื่อตั้งช่วงฤดูกาลและราคาวันหยุด",
+  },
+  "ow.guide.rooms.mistake": {
+    en: "Trying to delete a room that has bookings. Take it off sale instead, and its history stays intact.",
+    th: "พยายามลบห้องที่มีการจอง ควรปิดการขายแทน เพื่อให้ประวัติการจองยังครบถ้วน",
+  },
+
+  "ow.guide.calendar.title": { en: "Calendar", th: "ปฏิทิน" },
+  "ow.guide.calendar.what": {
+    en: "A month of every room at a glance: which nights are booked, open or closed, and how full the house is.",
+    th: "ภาพรวมห้องพักทั้งเดือน เห็นได้ทันทีว่าคืนไหนมีการจอง ว่าง หรือปิดขาย และโรงแรมเต็มเพียงใด",
+  },
+  "ow.guide.calendar.s1": {
+    en: "Move between months with the arrows, and pick one room to focus on it.",
+    th: "เลื่อนดูแต่ละเดือนด้วยลูกศร และเลือกห้องเดียวเพื่อดูเฉพาะห้องนั้น",
+  },
+  "ow.guide.calendar.s2": {
+    en: "Tap an open night to close it, for maintenance or private use; tap it again to reopen it.",
+    th: "แตะคืนที่ว่างเพื่อปิดขาย เช่น ช่วงซ่อมบำรุงหรือใช้งานส่วนตัว แตะอีกครั้งเพื่อเปิดขาย",
+  },
+  "ow.guide.calendar.s3": {
+    en: "Tap a booked night to open that booking.",
+    th: "แตะคืนที่มีการจองเพื่อเปิดดูการจองนั้น",
+  },
+  "ow.guide.calendar.s4": {
+    en: "Switch to Heat to see occupancy night by night across the month.",
+    th: "สลับเป็นมุมมองความหนาแน่น เพื่อดูอัตราเข้าพักรายคืนตลอดทั้งเดือน",
+  },
+  "ow.guide.calendar.mistake": {
+    en: "Forgetting to reopen closed nights. Guests cannot book them until you do.",
+    th: "ลืมเปิดขายคืนที่ปิดไว้ แขกจะจองคืนเหล่านั้นไม่ได้จนกว่าท่านจะเปิดอีกครั้ง",
+  },
+
+  "ow.guide.rates.title": { en: "Rate calendar", th: "ปฏิทินราคา" },
+  "ow.guide.rates.what": {
+    en: "What each room costs on every night: the base rate, seasons across date ranges, and prices for single dates.",
+    th: "ราคาของแต่ละห้องในทุกคืน ทั้งราคาพื้นฐาน ช่วงฤดูกาล และราคาเฉพาะวัน",
+  },
+  "ow.guide.rates.s1": {
+    en: "Choose a room, then set its base rate; it applies to every night without a rule.",
+    th: "เลือกห้อง แล้วกำหนดราคาพื้นฐาน ซึ่งใช้กับทุกคืนที่ไม่มีกฎราคา",
+  },
+  "ow.guide.rates.s2": {
+    en: "Add a season for a range of dates, as a fixed price or as a multiple of the base rate.",
+    th: "เพิ่มช่วงฤดูกาลสำหรับช่วงวันที่ เป็นราคาคงที่หรือเป็นตัวคูณจากราคาพื้นฐาน",
+  },
+  "ow.guide.rates.s3": {
+    en: "Tap a single date in the grid to give that night its own price, such as Songkran or New Year.",
+    th: "แตะวันที่ในตารางเพื่อกำหนดราคาเฉพาะคืนนั้น เช่น สงกรานต์หรือปีใหม่",
+  },
+  "ow.guide.rates.s4": {
+    en: "Use the pencil on any rule to change it, or the bin to remove it.",
+    th: "ใช้ไอคอนดินสอเพื่อแก้ไขกฎราคา หรือไอคอนถังขยะเพื่อลบ",
+  },
+  "ow.guide.rates.s5": {
+    en: "Read the colours: plain for the base rate, blue for a season, gold for a date price.",
+    th: "สังเกตสีในตาราง: สีพื้นคือราคาพื้นฐาน สีฟ้าคือช่วงฤดูกาล และสีทองคือราคาเฉพาะวัน",
+  },
+  "ow.guide.rates.mistake": {
+    en: "Laying two seasons over the same dates. A date price always wins; between seasons, keep one per range of dates.",
+    th: "ตั้งช่วงฤดูกาลสองช่วงซ้อนกันในวันเดียวกัน ราคาเฉพาะวันจะมีผลเหนือเสมอ ส่วนช่วงฤดูกาลควรมีเพียงหนึ่งช่วงต่อช่วงวันที่",
+  },
+
+  "ow.guide.dining.title": { en: "Dining", th: "ห้องอาหาร" },
+  "ow.guide.dining.what": {
+    en: "The restaurant menu guests read online, and the table reservations they send.",
+    th: "เมนูห้องอาหารที่แขกดูออนไลน์ และการสำรองโต๊ะที่แขกส่งเข้ามา",
+  },
+  "ow.guide.dining.s1": {
+    en: "Confirm each new table request in the list at the top; the guest is waiting for your reply.",
+    th: "ยืนยันคำขอสำรองโต๊ะใหม่ในรายการด้านบน แขกกำลังรอคำตอบจากท่าน",
+  },
+  "ow.guide.dining.s2": {
+    en: "Set the service hours and the largest party you accept online.",
+    th: "กำหนดเวลาให้บริการและจำนวนแขกสูงสุดต่อโต๊ะที่รับจองออนไลน์",
+  },
+  "ow.guide.dining.s3": {
+    en: "Add a menu section, then its dishes with names in both languages and a price.",
+    th: "เพิ่มหมวดเมนู แล้วเพิ่มรายการอาหารพร้อมชื่อทั้งสองภาษาและราคา",
+  },
+  "ow.guide.dining.s4": {
+    en: "Hide a dish that is out of season rather than deleting it.",
+    th: "ซ่อนเมนูที่ไม่มีให้บริการตามฤดูกาลแทนการลบ",
+  },
+  "ow.guide.dining.s5": {
+    en: "Upload a photograph for the dining page and for each section.",
+    th: "อัปโหลดรูปภาพสำหรับหน้าห้องอาหารและแต่ละหมวด",
+  },
+  "ow.guide.dining.mistake": {
+    en: "Leaving the service hours as they were after the kitchen changes its times. Guests can only book the sittings shown.",
+    th: "ไม่ได้ปรับเวลาให้บริการเมื่อครัวเปลี่ยนเวลา แขกจะจองได้เฉพาะรอบที่แสดงเท่านั้น",
+  },
+
+  "ow.guide.events.title": { en: "Events", th: "กิจกรรม" },
+  "ow.guide.events.what": {
+    en: "Evenings and occasions at the hotel, and the seat requests guests send for them.",
+    th: "งานและโอกาสพิเศษที่โรงแรม พร้อมคำขอที่นั่งที่แขกส่งเข้ามา",
+  },
+  "ow.guide.events.s1": {
+    en: "Answer seat requests first: confirm or decline each one so the guest hears back.",
+    th: "ตอบคำขอที่นั่งก่อน ยืนยันหรือปฏิเสธแต่ละรายการเพื่อให้แขกได้รับคำตอบ",
+  },
+  "ow.guide.events.s2": {
+    en: "Add an event with its date, a title and a description in English and Thai.",
+    th: "เพิ่มงานพร้อมวันที่ ชื่องาน และคำบรรยายทั้งภาษาอังกฤษและภาษาไทย",
+  },
+  "ow.guide.events.s3": {
+    en: "Add a photograph so the event stands out on the guest page.",
+    th: "เพิ่มรูปภาพเพื่อให้งานโดดเด่นบนหน้าของแขก",
+  },
+  "ow.guide.events.s4": {
+    en: "Keep an event hidden while it is still being planned, then publish it when ready.",
+    th: "ซ่อนงานไว้ระหว่างการวางแผน แล้วเผยแพร่เมื่อพร้อม",
+  },
+  "ow.guide.events.mistake": {
+    en: "Publishing an event without a Thai title. Thai guests then see the English one.",
+    th: "เผยแพร่งานโดยไม่มีชื่อภาษาไทย แขกชาวไทยจะเห็นชื่อภาษาอังกฤษแทน",
+  },
+
+  "ow.guide.messages.title": { en: "Messages", th: "ข้อความ" },
+  "ow.guide.messages.what": {
+    en: "Every enquiry from the contact form, sorted by what the guest is asking about.",
+    th: "ข้อความสอบถามทั้งหมดจากแบบฟอร์มติดต่อ จัดกลุ่มตามเรื่องที่แขกสอบถาม",
+  },
+  "ow.guide.messages.s1": {
+    en: "Start with the count of new messages beside the page title.",
+    th: "เริ่มจากจำนวนข้อความใหม่ข้างชื่อหน้า",
+  },
+  "ow.guide.messages.s2": {
+    en: "Filter by stay, dining or events, or search for a name or a word in the message.",
+    th: "กรองตามเรื่องที่พัก ห้องอาหาร หรือกิจกรรม หรือค้นหาจากชื่อหรือคำในข้อความ",
+  },
+  "ow.guide.messages.s3": {
+    en: "Reply through the contact the guest left, shown beside their name.",
+    th: "ตอบกลับทางช่องทางที่แขกให้ไว้ ซึ่งแสดงอยู่ข้างชื่อ",
+  },
+  "ow.guide.messages.s4": {
+    en: "Mark the message Done once the guest has an answer.",
+    th: "เปลี่ยนสถานะเป็นเสร็จสิ้นเมื่อได้ตอบแขกแล้ว",
+  },
+  "ow.guide.messages.mistake": {
+    en: "Leaving answered messages as New. The count then hides the ones still waiting.",
+    th: "ปล่อยข้อความที่ตอบแล้วไว้เป็นสถานะใหม่ ทำให้มองไม่เห็นข้อความที่ยังรอคำตอบ",
+  },
+
+  "ow.guide.settings.title": { en: "Settings", th: "ตั้งค่า" },
+  "ow.guide.settings.what": {
+    en: "The details every page and email draws on: contact, address, times, policies, the deposit and the confirmation email.",
+    th: "ข้อมูลที่ทุกหน้าและอีเมลใช้ ได้แก่ ข้อมูลติดต่อ ที่อยู่ เวลา นโยบาย เงินมัดจำ และอีเมลยืนยันการจอง",
+  },
+  "ow.guide.settings.s1": {
+    en: "Check the hotel name, email, phone and LINE ID.",
+    th: "ตรวจสอบชื่อโรงแรม อีเมล โทรศัพท์ และ LINE ID",
+  },
+  "ow.guide.settings.s2": {
+    en: "Set the deposit share; the booking page and every confirmation follow it at once.",
+    th: "กำหนดสัดส่วนมัดจำ หน้าจองห้องพักและอีเมลยืนยันทุกฉบับจะใช้ค่านี้ทันที",
+  },
+  "ow.guide.settings.s3": {
+    en: "Enter the check-in and check-out times in the 24-hour format.",
+    th: "กรอกเวลาเช็คอินและเช็คเอาท์ในรูปแบบ 24 ชั่วโมง",
+  },
+  "ow.guide.settings.s4": {
+    en: "Keep the cancellation and pet policies short and exact.",
+    th: "เขียนนโยบายการยกเลิกและนโยบายสัตว์เลี้ยงให้สั้นและชัดเจน",
+  },
+  "ow.guide.settings.s5": {
+    en: "Edit the confirmation email; the words in double braces are filled in for each booking.",
+    th: "แก้ไขอีเมลยืนยันการจอง คำในวงเล็บปีกกาคู่จะถูกแทนที่ด้วยข้อมูลของแต่ละการจอง",
+  },
+  "ow.guide.settings.mistake": {
+    en: "Removing {{deposit}} or {{balance}} from the email. The guest then cannot see what is still to pay.",
+    th: "ลบ {{deposit}} หรือ {{balance}} ออกจากอีเมล ทำให้แขกไม่เห็นยอดที่ยังต้องชำระ",
+  },
 };
 
 

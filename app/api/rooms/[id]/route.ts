@@ -5,6 +5,7 @@ import type { Room } from "@/lib/rooms";
 import { revalidateRooms } from "@/lib/revalidate";
 import { requireOwner } from "@/lib/ownerSession";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { validateRoomPatch } from "@/lib/roomValidation";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,20 @@ export async function PATCH(req: Request, { params }: Ctx) {
   if (denied) return denied;
   try {
     const patch = (await req.json()) as Partial<Room>;
+    const invalid = validateRoomPatch(patch);
+    if (invalid) return NextResponse.json(invalid, { status: 400 });
+    if (patch.slug !== undefined) {
+      const taken = await prisma.room.findFirst({
+        where: { slug: patch.slug, id: { not: params.id } },
+        select: { id: true },
+      });
+      if (taken) {
+        return NextResponse.json(
+          { error: "slug-taken", message: "Another room already uses this address." },
+          { status: 409 }
+        );
+      }
+    }
     const existing = await prisma.room.findUnique({ where: { id: params.id } });
     if (!existing) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -67,16 +82,21 @@ export async function DELETE(req: Request, { params }: Ctx) {
     if (!room) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-    const bookings = await prisma.booking.findMany({
+    // v18 · A room with booking history is never deleted: that would take the
+    // guests' bookings with it. The owner is told how many there are and can
+    // archive the room instead (active = false), which hides it from guests.
+    const bookingCount = await prisma.booking.count({
       where: { roomSlug: room.slug },
-      select: { id: true },
     });
-    const ids = bookings.map((b) => b.id);
-    if (ids.length) {
-      await prisma.guestBooking.deleteMany({
-        where: { bookingId: { in: ids } },
-      });
-      await prisma.booking.deleteMany({ where: { id: { in: ids } } });
+    if (bookingCount > 0) {
+      return NextResponse.json(
+        {
+          error: "has-bookings",
+          count: bookingCount,
+          message: `This room has ${bookingCount} booking(s). Archive it instead.`,
+        },
+        { status: 409 }
+      );
     }
     await prisma.roomBlock.deleteMany({ where: { roomId: params.id } });
     await prisma.seasonalPriceRule.deleteMany({ where: { roomId: params.id } });

@@ -5,12 +5,14 @@ import type { ImageId } from "@/lib/images";
 import { t, tr } from "@/lib/serverLocale";
 import { pageLang, type LangParams } from "@/lib/pageLocale";
 import { cn } from "@/lib/utils";
+import type { OfferId } from "@/lib/offers";
 
-const OFFERS: { n: "1" | "2" | "3"; image?: ImageId; alt?: { en: string; th: string } }[] = [
+const OFFERS: { n: "1" | "2" | "3"; id: OfferId; image?: ImageId; alt?: { en: string; th: string } }[] = [
   // Early bird · no photograph says "booked early"; its panel is the numeral.
-  { n: "1" },
+  { n: "1", id: "early" },
   {
     n: "2",
+    id: "longer",
     image: "offers-stay-longer",
     alt: {
       en: "A timber dining table with woven chairs beneath a tall window full of green",
@@ -19,6 +21,7 @@ const OFFERS: { n: "1" | "2" | "3"; image?: ImageId; alt?: { en: string; th: str
   },
   {
     n: "3",
+    id: "arrival",
     image: "offers-airport-pickup",
     alt: {
       en: "The open rear door of the hotel car, cream leather seats inside",
@@ -58,7 +61,8 @@ export default function OffersPage({ params }: { params: LangParams }) {
                 <p className="text-[12.5px] font-semibold uppercase tracking-[0.18em] text-teak">{t(locale, `off.${o.n}.badge`)}</p>
                 <h2 className="mt-3 text-[clamp(1.8rem,2.8vw,2.4rem)]">{t(locale, `off.${o.n}.title`)}</h2>
                 <p className="lead mt-5">{t(locale, `off.${o.n}.body`)}</p>
-                <Link href="/book" prefetch={false} className="btn-primary mt-8">
+                {/* v18 · the offer travels to /book, which applies its rule to the quote. */}
+                <Link href={`/book?offer=${o.id}`} prefetch={false} className="btn-primary mt-8">
                   {t(locale, "off.cta")}
                 </Link>
               </div>

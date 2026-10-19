@@ -15,13 +15,25 @@ import { cn } from "@/lib/utils";
  * glyph stays 18px but the hit area is 44px (invisible ::before inset). The
  * bubble measures itself after opening and clamps horizontally so a card edge
  * or the viewport can never clip it.
+ *
+ * v18 · variant "help" draws a small ? instead of the i: the field-help glyph
+ * beside owner form labels (ow.tip.<page>.<field>). Same behaviour, same
+ * bubble; "info" stays the metric tip on the dashboard cards.
  */
-export function InfoTip({ label, text }: { label: string; text: string }) {
+export function InfoTip({
+  label,
+  text,
+  variant = "info",
+}: {
+  label: string;
+  text: string;
+  variant?: "info" | "help";
+}) {
   const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [shift, setShift] = useState(0);
   const wrapRef = useRef<HTMLSpanElement>(null);
-  const bubbleRef = useRef<HTMLDivElement>(null);
+  const bubbleRef = useRef<HTMLSpanElement>(null);
   const id = useId();
   const open = hovered || pinned;
 
@@ -94,20 +106,35 @@ export function InfoTip({ label, text }: { label: string; text: string }) {
             stroke="currentColor"
             strokeWidth="1.5"
           />
-          <circle cx="10" cy="6.1" r="1.2" fill="currentColor" />
-          <rect x="9.05" y="8.5" width="1.9" height="6.2" rx="0.95" fill="currentColor" />
+          {variant === "help" ? (
+            <>
+              <path
+                d="M7.6 7.7a2.45 2.45 0 0 1 4.8.6c0 1.6-2.4 2-2.4 3.4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="14.4" r="1.05" fill="currentColor" />
+            </>
+          ) : (
+            <>
+              <circle cx="10" cy="6.1" r="1.2" fill="currentColor" />
+              <rect x="9.05" y="8.5" width="1.9" height="6.2" rx="0.95" fill="currentColor" />
+            </>
+          )}
         </svg>
       </button>
       {open ? (
-        <div
+        <span
           ref={bubbleRef}
           id={id}
           role="tooltip"
-          className="absolute left-1/2 top-full z-modal mt-2.5 w-64 max-w-[78vw] rounded-xl bg-brand px-3.5 py-3 text-left text-xs font-semibold normal-case leading-relaxed tracking-normal text-white/85 shadow-[0_16px_40px_rgba(0,0,0,.5),inset_0_1px_0_rgba(255,255,255,.08)]"
+          className="absolute left-1/2 top-full z-modal mt-2.5 block w-64 max-w-[78vw] rounded-xl bg-brand px-3.5 py-3 text-left text-xs font-semibold normal-case leading-relaxed tracking-normal text-white/85 shadow-[0_16px_40px_rgba(0,0,0,.5),inset_0_1px_0_rgba(255,255,255,.08)]"
           style={{ transform: `translateX(calc(-50% + ${shift}px))` }}
         >
           {text}
-        </div>
+        </span>
       ) : null}
     </span>
   );

@@ -159,6 +159,8 @@ export function GuestAuthProvider({ children }: { children: React.ReactNode }) {
           userId: target,
           bookingId,
         }),
+      }).catch(() => {
+        /* best effort · the booking itself is already saved */
       });
     },
     [user]
@@ -176,6 +178,8 @@ export function GuestAuthProvider({ children }: { children: React.ReactNode }) {
           userId: user.id,
           patch,
         }),
+      }).catch(() => {
+        /* best effort */
       });
     },
     [user]

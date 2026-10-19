@@ -16,6 +16,7 @@ import { cn, isoDate } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 import { useI18n } from "@/lib/i18n";
 import { ownerFetch } from "@/lib/ownerSessionClient";
+import { TipLabel, useToast } from "@/components/owner/OwnerUI";
 
 const STATUS_STYLE: Record<ReservationStatus, string> = {
   pending: "bg-gold/20 text-gold",
@@ -42,11 +43,15 @@ const TIME_CHOICES = (() => {
 
 // HF-1 · owner writes carry the owner session (lib/ownerSessionClient).
 async function jsonFetch(url: string, init?: RequestInit) {
-  const res = await ownerFetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-  return res.ok;
+  try {
+    const res = await ownerFetch(url, {
+      headers: { "Content-Type": "application/json" },
+      ...init,
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -62,16 +67,17 @@ async function jsonFetch(url: string, init?: RequestInit) {
 export function ReservationsPanel() {
   const { t, lang } = useI18n();
   const dfl = dfLocale(lang);
+  const toast = useToast();
   const [rows, setRows] = useState<TableReservation[] | null>(null);
   const [hotel, setHotel] = useState<HotelDto | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
-  const [settingsMsg, setSettingsMsg] = useState("");
   const [showPast, setShowPast] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
+      // v18 · the reservation list is owner-only (names, phone numbers).
       const [rRes, hRes] = await Promise.all([
-        fetch("/api/reservations", { cache: "no-store" }),
+        ownerFetch("/api/reservations", { cache: "no-store" }),
         fetch("/api/hotel", { cache: "no-store" }),
       ]);
       setRows(rRes.ok ? ((await rRes.json()) as TableReservation[]) : []);
@@ -106,13 +112,16 @@ export function ReservationsPanel() {
       method: "PATCH",
       body: JSON.stringify({ status }),
     });
-    if (!ok) await refresh();
+    if (ok) toast(t("ow.ui.statusSaved", { ref: row.ref }));
+    else {
+      toast(t("ow.ui.saveFailed"), "error");
+      await refresh();
+    }
   }
 
   async function saveSettings(patch: Partial<HotelDto>) {
     if (!hotel) return;
     setSavingSettings(true);
-    setSettingsMsg("");
     const next = { ...hotel, ...patch };
     setHotel(next);
     try {
@@ -122,12 +131,15 @@ export function ReservationsPanel() {
         body: JSON.stringify(patch),
       });
       if (!res.ok) {
-        setSettingsMsg("Save failed");
+        toast(t("ow.ui.saveFailed"), "error");
         await refresh();
         return;
       }
       setHotel((await res.json()) as HotelDto);
-      setSettingsMsg("Saved");
+      toast(t("ow.ui.saved"));
+    } catch {
+      toast(t("ow.ui.offline"), "error");
+      await refresh();
     } finally {
       setSavingSettings(false);
     }
@@ -148,13 +160,12 @@ export function ReservationsPanel() {
           <div className="flex items-center gap-3">
             {savingSettings ? (
               <Loader2 className="h-4 w-4 animate-spin text-white/50" aria-hidden />
-            ) : settingsMsg ? (
-              <span className="text-xs font-semibold text-white/50">
-                {settingsMsg}
-              </span>
             ) : null}
-            <span className="text-sm font-bold text-white/70">
-              {t(hotel?.reservationsEnabled ? "ow.takingBookings" : "ow.switchedOff")}
+            <span className="flex items-center gap-1.5 text-sm font-bold text-white/70">
+              <TipLabel
+                label={t(hotel?.reservationsEnabled ? "ow.takingBookings" : "ow.switchedOff")}
+                tip={t("ow.tip.dining.accept")}
+              />
             </span>
             <button
               type="button"
@@ -188,8 +199,8 @@ export function ReservationsPanel() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <div className="mb-2 text-sm font-semibold text-white/80">
-              {t("ow.serviceStarts")}
+            <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-white/80">
+              <TipLabel label={t("ow.serviceStarts")} tip={t("ow.tip.dining.serviceStart")} />
             </div>
             <OwnerListbox
               value={hotel?.serviceStart ?? "11:30"}
@@ -198,8 +209,8 @@ export function ReservationsPanel() {
             />
           </div>
           <div>
-            <div className="mb-2 text-sm font-semibold text-white/80">
-              {t("ow.kitchenCloses")}
+            <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-white/80">
+              <TipLabel label={t("ow.kitchenCloses")} tip={t("ow.tip.dining.serviceEnd")} />
             </div>
             <OwnerListbox
               value={hotel?.serviceEnd ?? "22:00"}
@@ -208,8 +219,8 @@ export function ReservationsPanel() {
             />
           </div>
           <div>
-            <div className="mb-2 text-sm font-semibold text-white/80">
-              {t("ow.largestParty")}
+            <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-white/80">
+              <TipLabel label={t("ow.largestParty")} tip={t("ow.tip.dining.party")} />
             </div>
             <OwnerListbox
               value={String(hotel?.maxPartySize ?? 10)}

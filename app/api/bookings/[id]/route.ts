@@ -4,12 +4,16 @@ import { bookingToClient } from "@/lib/mappers";
 import type { Booking } from "@/lib/ownerTypes";
 import { requireOwner } from "@/lib/ownerSession";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { roomConflict } from "@/lib/availability";
 
 export const dynamic = "force-dynamic";
 
 type Ctx = { params: { id: string } };
 
-export async function GET(_req: Request, { params }: Ctx) {
+/** One booking · PII, so owner session only (v18). */
+export async function GET(req: Request, { params }: Ctx) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   const row = await prisma.booking.findUnique({ where: { id: params.id } });
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(bookingToClient(row));
@@ -66,7 +70,50 @@ export async function PATCH(req: Request, { params }: Ctx) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   try {
-    const patch = body as Partial<Booking>;
+    const patch = body as Partial<Booking> & { force?: boolean };
+    const existing = await prisma.booking.findUnique({ where: { id: params.id } });
+    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // v18 · A change of room or dates (or reinstating a cancelled stay) is
+    // checked against the other bookings and the closed nights. The owner is
+    // shown the clash and may save anyway with { force: true }.
+    const nextRoom = patch.roomSlug ?? existing.roomSlug;
+    const nextIn = patch.checkIn ?? existing.checkIn;
+    const nextOut = patch.checkOut ?? existing.checkOut;
+    const nextStatus = patch.status ?? existing.status;
+    if (nextOut <= nextIn) {
+      return NextResponse.json(
+        { error: "dates", message: "Check-out must be after check-in." },
+        { status: 400 }
+      );
+    }
+    if ("amount" in patch && !(typeof patch.amount === "number" && patch.amount > 0)) {
+      return NextResponse.json(
+        { error: "amount", message: "The amount must be more than zero." },
+        { status: 400 }
+      );
+    }
+    const moved =
+      nextRoom !== existing.roomSlug ||
+      nextIn !== existing.checkIn ||
+      nextOut !== existing.checkOut ||
+      (existing.status === "cancelled" && nextStatus !== "cancelled");
+    if (moved && nextStatus !== "cancelled" && !patch.force) {
+      const clash = await roomConflict(nextRoom, nextIn, nextOut, params.id);
+      if (clash.booking || clash.blockedNights.length) {
+        return NextResponse.json(
+          {
+            error: "overlap",
+            message: clash.booking
+              ? `This room is already booked (${clash.booking.code}) for some of these nights.`
+              : "This room is closed for some of these nights.",
+            conflict: clash,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     const data: Record<string, unknown> = {};
     const keys: (keyof Booking)[] = [
       "code",

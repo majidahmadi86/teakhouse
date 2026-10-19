@@ -225,3 +225,42 @@ export async function checkAvailability(
     alternatives,
   };
 }
+
+export type RoomConflict = {
+  /** The first booking that overlaps the stay, if any. */
+  booking: { id: string; code: string; checkIn: string; checkOut: string } | null;
+  /** The nights of the stay the owner has closed (blocked) for this room. */
+  blockedNights: string[];
+};
+
+/**
+ * v18 · Does one room clash with a stay? Used where a single booking is being
+ * written (an owner editing dates or moving a guest to another room), so the
+ * booking itself can be left out of the check. Half-open, like everything
+ * else here: a check-out day is free for the next check-in.
+ */
+export async function roomConflict(
+  roomSlug: string,
+  checkIn: string,
+  checkOut: string,
+  excludeBookingId?: string
+): Promise<RoomConflict> {
+  const nights = eachNightIso(checkIn, checkOut);
+  const [booking, blocks] = await Promise.all([
+    prisma.booking.findFirst({
+      where: {
+        roomSlug,
+        status: { not: "cancelled" },
+        checkIn: { lt: checkOut },
+        checkOut: { gt: checkIn },
+        ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+      },
+      select: { id: true, code: true, checkIn: true, checkOut: true },
+    }),
+    prisma.roomBlock.findMany({
+      where: { room: { slug: roomSlug }, dateIso: { in: nights } },
+      select: { dateIso: true },
+    }),
+  ]);
+  return { booking, blockedNights: blocks.map((b) => b.dateIso).sort() };
+}

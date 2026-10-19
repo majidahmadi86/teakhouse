@@ -7,7 +7,9 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   CalendarDays,
   DoorOpen,
+  HelpCircle,
   Inbox,
+  LifeBuoy,
   LayoutDashboard,
   Loader2,
   LogOut,
@@ -18,6 +20,8 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { GuideDrawer, guideForPath } from "@/components/owner/OwnerHelp";
+import { OwnerUIProvider, useConfirm, useToast } from "@/components/owner/OwnerUI";
 import { useI18n } from "@/lib/i18n";
 import { useOwner } from "@/lib/ownerStore";
 import {
@@ -48,6 +52,7 @@ const NAV: {
   { href: "/owner/rates", labelKey: "ow.rateCalendar", icon: Tags },
   { href: "/owner/calendar", labelKey: "ow.cal", icon: CalendarDays },
   { href: "/owner/settings", labelKey: "ow.settings", icon: Settings },
+  { href: "/owner/help", labelKey: "ow.help.nav", icon: LifeBuoy },
 ];
 
 const LG_QUERY = "(min-width: 1024px)";
@@ -216,7 +221,6 @@ export function OwnerShell({
 }: {
   children: React.ReactNode;
 }) {
-  const { t } = useI18n();
   const { hydrated, isAuthed, logout, resetDemo } = useOwner();
   const isDesktop = useIsDesktop();
   const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -226,11 +230,51 @@ export function OwnerShell({
   if (!isAuthed && !demoMode) return <LoginScreen />;
   if (!demoMode && session === "pending") return <Spinner />;
 
-  const onReset = () => {
-    if (!window.confirm(t("ow.sure"))) return;
-    void resetDemo().then((result) => {
-      if (result === "rate-limited") window.alert(t("ow.resetWait"));
+  return (
+    <OwnerUIProvider>
+      <ShellFrame isDesktop={isDesktop} demoMode={demoMode} logout={logout} resetDemo={resetDemo}>
+        {children}
+      </ShellFrame>
+    </OwnerUIProvider>
+  );
+}
+
+/**
+ * The signed-in frame · inside OwnerUIProvider, so the reset button uses the
+ * panel's own confirm dialog and toast, and the page guide button sits here.
+ */
+function ShellFrame({
+  children,
+  isDesktop,
+  demoMode,
+  logout,
+  resetDemo,
+}: {
+  children: React.ReactNode;
+  isDesktop: boolean;
+  demoMode: boolean;
+  logout: () => void;
+  resetDemo: () => Promise<"ok" | "rate-limited" | "failed">;
+}) {
+  const { t } = useI18n();
+  const confirm = useConfirm();
+  const toast = useToast();
+  const pathname = usePathname();
+  const guide = guideForPath(pathname);
+  const [guideOpen, setGuideOpen] = useState(false);
+
+  const onReset = async () => {
+    const ok = await confirm({
+      title: t("ow.ui.resetTitle"),
+      message: t("ow.ui.resetBody"),
+      confirmLabel: t("ow.reset"),
+      tone: "danger",
     });
+    if (!ok) return;
+    const result = await resetDemo();
+    if (result === "ok") toast(t("ow.ui.resetDone"));
+    else if (result === "rate-limited") toast(t("ow.resetWait"), "error");
+    else toast(t("ow.ui.saveFailed"), "error");
   };
 
   return (
@@ -268,7 +312,7 @@ export function OwnerShell({
             <LangToggle />
             <button
               type="button"
-              onClick={onReset}
+              onClick={() => void onReset()}
               className="owner-control min-h-[44px] w-full rounded-xl px-4 py-3 text-sm font-bold text-white/70 transition hover:text-white"
             >
               {t("ow.reset")}
@@ -306,7 +350,7 @@ export function OwnerShell({
             <LangToggle compact />
             <button
               type="button"
-              onClick={onReset}
+              onClick={() => void onReset()}
               className="owner-control min-h-[44px] flex-1 rounded-xl px-3 text-xs font-bold text-white/70 transition hover:text-white"
             >
               {t("ow.reset")}
@@ -337,9 +381,22 @@ export function OwnerShell({
 
       <main className="min-w-0 flex-1">
         <div className="mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-10">
+          {guide ? (
+            <div className="-mt-2 mb-4 flex justify-end md:-mt-4">
+              <button
+                type="button"
+                onClick={() => setGuideOpen(true)}
+                className="owner-control inline-flex min-h-[44px] items-center gap-2 rounded-xl px-4 text-sm font-bold text-white/80 transition hover:text-white"
+              >
+                <HelpCircle className="h-4 w-4" aria-hidden />
+                {t("ow.help.how")}
+              </button>
+            </div>
+          ) : null}
           {children}
         </div>
       </main>
+      <GuideDrawer page={guide} open={guideOpen} onClose={() => setGuideOpen(false)} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Search } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
 import { OwnerSkeleton } from "@/components/owner/OwnerSkeleton";
 import {
@@ -12,6 +12,8 @@ import {
 } from "@/lib/contactMessages";
 import { useI18n } from "@/lib/i18n";
 import { ownerFetch } from "@/lib/ownerSessionClient";
+import { useToast } from "@/components/owner/OwnerUI";
+import { InfoTip } from "@/components/owner/InfoTip";
 import { cn } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 
@@ -48,14 +50,20 @@ const STATUS_LABEL: Record<string, string> = {
 export default function OwnerMessagesPage() {
   const { t, lang } = useI18n();
   const dfl = dfLocale(lang);
+  const toast = useToast();
   const [rows, setRows] = useState<ContactMessage[] | null>(null);
   const [filter, setFilter] = useState<"all" | ContactPurpose>("all");
+  const [query, setQuery] = useState("");
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/contact", { cache: "no-store" });
+      // v18 · owner-only (names, contact details).
+      const res = await ownerFetch("/api/contact", { cache: "no-store" });
+      setLoadFailed(!res.ok);
       setRows(res.ok ? ((await res.json()) as ContactMessage[]) : []);
     } catch {
+      setLoadFailed(true);
       setRows([]);
     }
   }, []);
@@ -64,10 +72,18 @@ export default function OwnerMessagesPage() {
     void refresh();
   }, [refresh]);
 
-  const shown = useMemo(
-    () => (rows ?? []).filter((m) => filter === "all" || m.purpose === filter),
-    [rows, filter]
-  );
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (rows ?? []).filter((m) => {
+      if (filter !== "all" && m.purpose !== filter) return false;
+      if (!q) return true;
+      return (
+        m.name.toLowerCase().includes(q) ||
+        m.contact.toLowerCase().includes(q) ||
+        m.message.toLowerCase().includes(q)
+      );
+    });
+  }, [rows, filter, query]);
   const unread = (rows ?? []).filter((m) => m.status === "new").length;
 
   async function setStatus(row: ContactMessage, status: string) {
@@ -78,12 +94,22 @@ export default function OwnerMessagesPage() {
           )
         : prev
     );
-    const res = await ownerFetch(`/api/contact/${row.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (!res.ok) await refresh();
+    let ok = false;
+    try {
+      const res = await ownerFetch(`/api/contact/${row.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      ok = res.ok;
+    } catch {
+      ok = false;
+    }
+    if (ok) toast(t("ow.msg.statusSaved", { name: row.name, status: t(STATUS_LABEL[status] ?? "ow.stNew") }));
+    else {
+      toast(t("ow.ui.saveFailed"), "error");
+      await refresh();
+    }
   }
 
   if (rows === null) return <OwnerSkeleton />;
@@ -119,8 +145,37 @@ export default function OwnerMessagesPage() {
         </div>
       </div>
 
+      <div className="owner-panel mb-6 rounded-2xl p-4">
+        <label className="relative block">
+          <span className="sr-only">{t("ow.msg.search")}</span>
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("ow.msg.search")}
+            className="min-h-[44px] w-full py-3 pl-11 pr-4 text-base"
+          />
+        </label>
+      </div>
+
+      {loadFailed ? (
+        <div className="owner-panel mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
+          <p className="text-sm font-semibold text-red-300">{t("ow.ui.loadFailed")}</p>
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            className="owner-control min-h-[44px] rounded-xl px-4 text-sm font-bold text-white"
+          >
+            {t("ow.ui.retry")}
+          </button>
+        </div>
+      ) : null}
+
       {shown.length === 0 ? (
-        <p className="text-sm text-white/55">{t("ow.nothingHere")}</p>
+        <p className="text-sm text-white/55">
+          {query.trim() ? t("ow.msg.noMatch") : t("ow.nothingHere")}
+        </p>
       ) : (
         <ul className="space-y-4">
           {shown.map((m) => (
@@ -145,8 +200,10 @@ export default function OwnerMessagesPage() {
                 <span className="ml-auto text-xs text-white/40">
                   {format(parseISO(m.createdAt), "d MMM yyyy · HH:mm", dfl)}
                 </span>
-                <div className="w-[130px] shrink-0">
+                <div className="flex w-[160px] shrink-0 items-center gap-1.5">
+                  <InfoTip variant="help" label={t("col.st")} text={t("ow.tip.messages.status")} />
                   <OwnerListbox
+                    className="flex-1"
                     value={m.status}
                     onChange={(v) => setStatus(m, v)}
                     options={["new", "read", "done"].map((s) => ({
@@ -168,7 +225,7 @@ export default function OwnerMessagesPage() {
                     </>
                   ) : null}
                   {m.date ? format(parseISO(m.date), "d MMM yyyy", dfl) : null}
-                  {m.party ? ` · ${m.party} guests` : ""}
+                  {m.party ? ` · ${m.party === 1 ? t("ow.guestOne") : t("ow.guestCount", { n: m.party })}` : ""}
                 </p>
               ) : null}
 

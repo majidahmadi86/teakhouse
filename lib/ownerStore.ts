@@ -12,6 +12,7 @@ import React, {
 import { getSeedGuestRooms } from "./guestRooms";
 import {
   endOwnerSession,
+  ensureOwnerSession,
   ownerFetch,
   startOwnerSession,
 } from "./ownerSessionClient";
@@ -124,31 +125,110 @@ function computeOtaSavedMonth(data: OwnerData): number {
   return total;
 }
 
-async function fetchData(): Promise<OwnerData> {
-  const res = await fetch("/api/data", { cache: "no-store" });
+/** Where the store is mounted · the owner panel or a guest page. */
+export type StoreScope = "owner" | "guest";
+
+/** The guest account id this browser holds (lib/guestAuth), if any. */
+function guestSessionId(): string | null {
+  try {
+    return localStorage.getItem("tkh-user");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * v18 · /api/data answers the owner session with every booking and everyone
+ * else with the guest view (no personal fields). The owner panel makes sure
+ * its session exists before asking; a guest page passes its own account id so
+ * /account still lists that guest's bookings.
+ */
+async function fetchData(scope: StoreScope): Promise<OwnerData> {
+  let res: Response;
+  if (scope === "owner") {
+    await ensureOwnerSession();
+    res = await fetch("/api/data", { cache: "no-store" });
+  } else {
+    const gid = guestSessionId();
+    const q = gid ? `?guest=${encodeURIComponent(gid)}` : "";
+    res = await fetch(`/api/data${q}`, { cache: "no-store" });
+  }
   if (!res.ok) throw new Error("Failed to load data");
   return res.json();
 }
+
+/**
+ * v18 · Every store write answers with what happened, so a page can confirm
+ * only on success and say exactly what went wrong otherwise. Writes are
+ * server-first: the page never shows a change the server refused.
+ */
+export type WriteFailure = {
+  ok: false;
+  /** HTTP status, or 0 when the request never reached the server. */
+  status: number;
+  /** Machine code from the API ("overlap", "unavailable", "slug-taken"...). */
+  error: string;
+  /** The API's own sentence, when it sent one. */
+  message?: string;
+  body?: Record<string, unknown>;
+};
+export type WriteResult<T = null> = { ok: true; data: T } | WriteFailure;
+
+async function readResult<T>(res: Response): Promise<WriteResult<T>> {
+  const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  if (res.ok) return { ok: true, data: body as T };
+  return {
+    ok: false,
+    status: res.status,
+    error: typeof body.error === "string" ? body.error : "failed",
+    message: typeof body.message === "string" ? body.message : undefined,
+    body,
+  };
+}
+
+function networkFailure(): WriteFailure {
+  return { ok: false, status: 0, error: "network" };
+}
+
+export type CreatedBooking = Booking & { confirmToken?: string; confirmUrl?: string };
+
+export type AddBookingOptions = {
+  /** Owner only · save despite a clash the server reported (409). */
+  force?: boolean;
+  /** Guest only · an offer id from /offers. */
+  offer?: string;
+  /** The guest's language · the confirmation email follows it. */
+  lang?: string;
+};
 
 type OwnerCtx = {
   data: OwnerData;
   hydrated: boolean;
   isAuthed: boolean;
+  /** Settings → deposit share, 0-100 (30 until the store loads). */
+  depositPct: number;
   login: (email: string, pin: string) => Promise<boolean>;
   logout: () => void;
+  refresh: () => Promise<void>;
   resetDemo: () => Promise<"ok" | "rate-limited" | "failed">;
-  addBooking: (booking: BookingInput) => void;
-  updateBooking: (id: string, patch: Partial<Booking>) => void;
+  addBooking: (booking: BookingInput, opts?: AddBookingOptions) => Promise<WriteResult<CreatedBooking>>;
+  updateBooking: (
+    id: string,
+    patch: Partial<Booking>,
+    opts?: { force?: boolean }
+  ) => Promise<WriteResult<Booking>>;
   cancelGuestBooking: (id: string, guestUserId: string) => void;
-  deleteBooking: (id: string) => void;
-  addRoom: (room: RoomData) => void;
-  updateRoom: (id: string, patch: Partial<RoomData>) => void;
-  deleteRoom: (id: string) => void;
-  toggleBlock: (roomSlug: string, dateIso: string) => void;
+  deleteBooking: (id: string) => Promise<WriteResult>;
+  addRoom: (room: RoomData) => Promise<WriteResult<RoomData>>;
+  updateRoom: (id: string, patch: Partial<RoomData>) => Promise<WriteResult<RoomData>>;
+  deleteRoom: (id: string) => Promise<WriteResult>;
+  toggleBlock: (roomSlug: string, dateIso: string) => Promise<boolean>;
   addPriceRule: (rule: Omit<PriceRule, "id">) => Promise<void>;
   updatePriceRule: (id: string, patch: Partial<PriceRule>) => Promise<void>;
   deletePriceRule: (id: string) => Promise<void>;
   getCell: (roomSlug: string, dateIso: string) => CellState;
+  /** The booking holding a room on a night, if any (the calendar links to it). */
+  bookingAt: (roomSlug: string, dateIso: string) => Booking | null;
   occupancyTonight: () => { occupied: number; total: number };
   arrivalsToday: () => number;
   directCountMonth: () => number;
@@ -157,10 +237,22 @@ type OwnerCtx = {
 
 const Ctx = createContext<OwnerCtx | null>(null);
 
-export function OwnerProvider({ children }: { children: React.ReactNode }) {
+export function OwnerProvider({
+  children,
+  scope = "guest",
+}: {
+  children: React.ReactNode;
+  scope?: StoreScope;
+}) {
   const [data, setData] = useState<OwnerData>(emptyData);
   const [hydrated, setHydrated] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
+  // Owner writes carry the owner session; guest writes stay plain fetch.
+  const send = useCallback(
+    (input: string, init?: RequestInit) =>
+      scope === "owner" ? ownerFetch(input, init) : fetch(input, init),
+    [scope]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -170,7 +262,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     const timeoutId = window.setTimeout(() => {
       void (async () => {
         try {
-          const loaded = await fetchData();
+          const loaded = await fetchData(scope);
           if (!cancelled) {
             startTransition(() => setData(loaded));
           }
@@ -197,30 +289,35 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [scope]);
 
   const refresh = useCallback(async () => {
     try {
-      const loaded = await fetchData();
+      const loaded = await fetchData(scope);
       setData(loaded);
     } catch {
       /* keep current */
     }
-  }, []);
+  }, [scope]);
 
   // HF-1 · the PIN is checked by the server, which sets the owner session
   // cookie. The localStorage flag only remembers that this tab signed in.
-  const login = useCallback(async (email: string, pin: string) => {
-    if (!(await startOwnerSession(pin))) return false;
-    try {
-      localStorage.setItem(AUTH_KEY, "1");
-      localStorage.setItem(`${AUTH_KEY}-email`, email);
-    } catch {
-      /* ignore */
-    }
-    setIsAuthed(true);
-    return true;
-  }, []);
+  // v18 · the data loaded before sign-in was the guest view, so reload it.
+  const login = useCallback(
+    async (email: string, pin: string) => {
+      if (!(await startOwnerSession(pin))) return false;
+      try {
+        localStorage.setItem(AUTH_KEY, "1");
+        localStorage.setItem(`${AUTH_KEY}-email`, email);
+      } catch {
+        /* ignore */
+      }
+      setIsAuthed(true);
+      await refresh();
+      return true;
+    },
+    [refresh]
+  );
 
   const logout = useCallback(() => {
     endOwnerSession();
@@ -248,45 +345,56 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const addBooking = useCallback((booking: BookingInput) => {
-    const full: Booking = {
-      phone: "",
-      email: "",
-      notes: "",
-      ...booking,
-    };
-    setData((prev) => ({
-      ...prev,
-      bookings: [...prev.bookings, full],
-    }));
-    void (async () => {
-      const res = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(full),
-      });
-      if (!res.ok) await refresh();
-    })();
-  }, [refresh]);
+  /**
+   * v18 · server-first. The booking appears (and a guest sees "Confirmed")
+   * only once the server has written it; a clash comes back as 409.
+   */
+  const addBooking = useCallback(
+    async (booking: BookingInput, opts: AddBookingOptions = {}) => {
+      try {
+        const res = await send("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: "", email: "", notes: "", ...booking, ...opts }),
+        });
+        const result = await readResult<CreatedBooking>(res);
+        if (result.ok) {
+          const created = result.data;
+          setData((prev) => ({
+            ...prev,
+            bookings: [created, ...prev.bookings.filter((b) => b.id !== created.id)],
+          }));
+        }
+        return result;
+      } catch {
+        return networkFailure();
+      }
+    },
+    [send]
+  );
 
   const updateBooking = useCallback(
-    (id: string, patch: Partial<Booking>) => {
-      setData((prev) => ({
-        ...prev,
-        bookings: prev.bookings.map((b) =>
-          b.id === id ? { ...b, ...patch } : b
-        ),
-      }));
-      void (async () => {
+    async (id: string, patch: Partial<Booking>, opts: { force?: boolean } = {}) => {
+      try {
         const res = await ownerFetch(`/api/bookings/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(patch),
+          body: JSON.stringify(opts.force ? { ...patch, force: true } : patch),
         });
-        if (!res.ok) await refresh();
-      })();
+        const result = await readResult<Booking>(res);
+        if (result.ok) {
+          const updated = result.data;
+          setData((prev) => ({
+            ...prev,
+            bookings: prev.bookings.map((b) => (b.id === id ? updated : b)),
+          }));
+        }
+        return result;
+      } catch {
+        return networkFailure();
+      }
     },
-    [refresh]
+    []
   );
 
   /**
@@ -303,110 +411,117 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
         ),
       }));
       void (async () => {
-        const res = await fetch(`/api/bookings/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "cancelled", guestUserId }),
-        });
-        if (!res.ok) await refresh();
+        try {
+          const res = await fetch(`/api/bookings/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "cancelled", guestUserId }),
+          });
+          if (!res.ok) await refresh();
+        } catch {
+          await refresh();
+        }
       })();
     },
     [refresh]
   );
 
-  const deleteBooking = useCallback(
-    (id: string) => {
-      setData((prev) => ({
-        ...prev,
-        bookings: prev.bookings.filter((b) => b.id !== id),
-      }));
-      void (async () => {
-        const res = await ownerFetch(`/api/bookings/${id}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) await refresh();
-      })();
-    },
-    [refresh]
-  );
+  const deleteBooking = useCallback(async (id: string) => {
+    try {
+      const res = await ownerFetch(`/api/bookings/${id}`, { method: "DELETE" });
+      const result = await readResult<null>(res);
+      if (result.ok) {
+        setData((prev) => ({
+          ...prev,
+          bookings: prev.bookings.filter((b) => b.id !== id),
+        }));
+      }
+      return result;
+    } catch {
+      return networkFailure();
+    }
+  }, []);
 
-  const addRoom = useCallback(
-    (room: RoomData) => {
-      setData((prev) => ({
-        ...prev,
-        rooms: [...prev.rooms, room],
-      }));
-      void (async () => {
-        const res = await ownerFetch("/api/rooms", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(room),
-        });
-        if (!res.ok) await refresh();
-      })();
-    },
-    [refresh]
-  );
+  const addRoom = useCallback(async (room: RoomData) => {
+    try {
+      const res = await ownerFetch("/api/rooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(room),
+      });
+      const result = await readResult<RoomData>(res);
+      if (result.ok) {
+        const created = result.data;
+        setData((prev) => ({ ...prev, rooms: [...prev.rooms, created] }));
+      }
+      return result;
+    } catch {
+      return networkFailure();
+    }
+  }, []);
 
-  const updateRoom = useCallback(
-    (id: string, patch: Partial<RoomData>) => {
-      setData((prev) => ({
-        ...prev,
-        rooms: prev.rooms.map((r) => (r.id === id ? { ...r, ...patch } : r)),
-      }));
-      void (async () => {
-        const res = await ownerFetch(`/api/rooms/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(patch),
-        });
-        if (!res.ok) await refresh();
-      })();
-    },
-    [refresh]
-  );
+  const updateRoom = useCallback(async (id: string, patch: Partial<RoomData>) => {
+    try {
+      const res = await ownerFetch(`/api/rooms/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      const result = await readResult<RoomData>(res);
+      if (result.ok) {
+        const updated = result.data;
+        setData((prev) => ({
+          ...prev,
+          rooms: prev.rooms.map((r) => (r.id === id ? updated : r)),
+        }));
+      }
+      return result;
+    } catch {
+      return networkFailure();
+    }
+  }, []);
 
-  const deleteRoom = useCallback(
-    (id: string) => {
-      setData((prev) => {
-        const room = prev.rooms.find((r) => r.id === id);
-        if (!room) return prev;
-        return {
+  /** v18 · refused (409 "has-bookings") while the room has any booking. */
+  const deleteRoom = useCallback(async (id: string) => {
+    try {
+      const res = await ownerFetch(`/api/rooms/${id}`, { method: "DELETE" });
+      const result = await readResult<null>(res);
+      if (result.ok) {
+        setData((prev) => ({
           ...prev,
           rooms: prev.rooms.filter((r) => r.id !== id),
-          bookings: prev.bookings.filter((b) => b.roomSlug !== room.slug),
-        };
-      });
-      void (async () => {
-        const res = await ownerFetch(`/api/rooms/${id}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) await refresh();
-      })();
-    },
-    [refresh]
-  );
+          priceRules: prev.priceRules.filter((r) => r.roomId !== id),
+        }));
+      }
+      return result;
+    } catch {
+      return networkFailure();
+    }
+  }, []);
 
-  const toggleBlock = useCallback(
-    (roomSlug: string, dateIso: string) => {
-      const key = blockKey(roomSlug, dateIso);
-      setData((prev) => {
-        const blocks = { ...prev.blocks };
-        if (blocks[key]) delete blocks[key];
-        else blocks[key] = true;
-        return { ...prev, blocks };
+  /** Optimistic (a calendar cell must answer at once), undone on failure. */
+  const toggleBlock = useCallback(async (roomSlug: string, dateIso: string) => {
+    const key = blockKey(roomSlug, dateIso);
+    const flip = (prev: OwnerData): OwnerData => {
+      const blocks = { ...prev.blocks };
+      if (blocks[key]) delete blocks[key];
+      else blocks[key] = true;
+      return { ...prev, blocks };
+    };
+    setData(flip);
+    try {
+      const res = await ownerFetch("/api/blocks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomSlug, dateIso }),
       });
-      void (async () => {
-        const res = await ownerFetch("/api/blocks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ roomSlug, dateIso }),
-        });
-        if (!res.ok) await refresh();
-      })();
-    },
-    [refresh]
-  );
+      if (res.ok) return true;
+    } catch {
+      /* undone below */
+    }
+    setData(flip);
+    return false;
+  }, []);
 
   /**
    * Rate rules go to the server first · the row id is the server's to mint, and
@@ -430,42 +545,49 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  /** v18 · server-first; throws when the server refuses, so the page can say so. */
   const updatePriceRule = useCallback(
     async (id: string, patch: Partial<PriceRule>) => {
       const rule = data.priceRules.find((r) => r.id === id);
-      if (!rule) return;
-      setData((prev) => ({
-        ...prev,
-        priceRules: prev.priceRules.map((r) =>
-          r.id === id ? { ...r, ...patch } : r
-        ),
-      }));
+      if (!rule) throw new Error("Rule not found");
       const res = await ownerFetch(`/api/rooms/${rule.roomId}/pricing`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...patch, id }),
       });
-      if (!res.ok) await refresh();
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(body.error ?? "Could not save the rate rule");
+      }
+      const saved = (await res.json().catch(() => null)) as PriceRule | null;
+      setData((prev) => ({
+        ...prev,
+        priceRules: prev.priceRules.map((r) =>
+          r.id === id ? (saved && saved.id ? saved : { ...r, ...patch }) : r
+        ),
+      }));
     },
-    [data.priceRules, refresh]
+    [data.priceRules]
   );
 
   const deletePriceRule = useCallback(
     async (id: string) => {
       const rule = data.priceRules.find((r) => r.id === id);
       if (!rule) return;
-      setData((prev) => ({
-        ...prev,
-        priceRules: prev.priceRules.filter((r) => r.id !== id),
-      }));
       const res = await ownerFetch(
         `/api/rooms/${rule.roomId}/pricing?id=${encodeURIComponent(id)}`,
         { method: "DELETE" }
       );
-      if (!res.ok) await refresh();
+      if (!res.ok) throw new Error("Could not delete the rate rule");
+      setData((prev) => ({
+        ...prev,
+        priceRules: prev.priceRules.filter((r) => r.id !== id),
+      }));
     },
-    [data.priceRules, refresh]
+    [data.priceRules]
   );
+
+  const depositPct = data.depositPct ?? 30;
 
   const getCell = useCallback(
     (roomSlug: string, dateIso: string): CellState => {
@@ -476,6 +598,14 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       return booked ? "booked" : "available";
     },
     [data]
+  );
+
+  const bookingAt = useCallback(
+    (roomSlug: string, dateIso: string): Booking | null =>
+      data.bookings.find(
+        (b) => b.roomSlug === roomSlug && dateOverlapsBooking(dateIso, b)
+      ) ?? null,
+    [data.bookings]
   );
 
   const occupancyTonight = useCallback(
@@ -494,8 +624,10 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       data,
       hydrated,
       isAuthed,
+      depositPct,
       login,
       logout,
+      refresh,
       resetDemo,
       addBooking,
       updateBooking,
@@ -509,6 +641,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       updatePriceRule,
       deletePriceRule,
       getCell,
+      bookingAt,
       occupancyTonight,
       arrivalsToday,
       directCountMonth,
@@ -518,8 +651,10 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       data,
       hydrated,
       isAuthed,
+      depositPct,
       login,
       logout,
+      refresh,
       resetDemo,
       addBooking,
       updateBooking,
@@ -533,6 +668,7 @@ export function OwnerProvider({ children }: { children: React.ReactNode }) {
       updatePriceRule,
       deletePriceRule,
       getCell,
+      bookingAt,
       occupancyTonight,
       arrivalsToday,
       directCountMonth,

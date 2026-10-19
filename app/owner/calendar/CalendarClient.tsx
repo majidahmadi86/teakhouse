@@ -1,19 +1,22 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   eachDayOfInterval,
   endOfMonth,
   format,
   startOfMonth,
+  type Locale,
 } from "date-fns";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
+import { TipLabel, useToast } from "@/components/owner/OwnerUI";
 import { premiumEase } from "@/components/motion/Reveal";
 import { useI18n } from "@/lib/i18n";
 import { type CellState, useOwner } from "@/lib/ownerStore";
-import { cn, isoDate } from "@/lib/utils";
+import { addDays, cn, isoDate } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 
 function cellColor(state: CellState): string {
@@ -42,10 +45,19 @@ function heatStyle(pct: number): { className: string; style?: React.CSSPropertie
   return { className: "bg-gold" };
 }
 
+/** Weekday headers from date-fns, so they follow the panel language. */
+function weekdayLabels(dfl?: { locale: Locale }): string[] {
+  const sunday = new Date(2024, 8, 1); // a known Sunday
+  return Array.from({ length: 7 }, (_, i) => format(addDays(sunday, i), "EEE", dfl));
+}
+
 export default function OwnerCalendarPage() {
   const { t, tr, lang } = useI18n();
   const dfl = dfLocale(lang);
-  const { data, getCell, toggleBlock } = useOwner();
+  const { data, getCell, toggleBlock, bookingAt } = useOwner();
+  const toast = useToast();
+  const stateLabel = (state: CellState) =>
+    state === "booked" ? t("ow.lg2") : state === "blocked" ? t("ow.lg3") : t("ow.lg1");
   const reduce = useReducedMotion();
 
   const [month, setMonth] = useState(() => {
@@ -116,10 +128,11 @@ export default function OwnerCalendarPage() {
     });
   }
 
-  function handleCellClick(roomSlug: string, dateIso: string) {
+  async function handleCellClick(roomSlug: string, dateIso: string) {
     const state = getCell(roomSlug, dateIso);
     if (state === "booked") return;
-    toggleBlock(roomSlug, dateIso);
+    const ok = await toggleBlock(roomSlug, dateIso);
+    if (!ok) toast(t("ow.cal.blockFailed"), "error");
   }
 
   return (
@@ -204,11 +217,11 @@ export default function OwnerCalendarPage() {
         >
       {viewMode === "heat" ? (
         <section className="owner-panel overflow-hidden rounded-2xl  p-4 md:p-6">
-          <p className="mb-4 text-sm text-white/55">
-            Occupancy heat · darker = fuller house that night
+          <p className="mb-4 flex items-center gap-1.5 text-sm text-white/55">
+            <TipLabel label={t("ow.cal.heatLead")} tip={t("ow.tip.calendar.heat")} />
           </p>
           <div className="grid grid-cols-7 gap-2 sm:gap-3">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            {weekdayLabels(dfl).map((d) => (
               <div
                 key={d}
                 className="text-center text-[0.65rem] font-extrabold uppercase tracking-[0.12em] text-white/55"
@@ -244,7 +257,7 @@ export default function OwnerCalendarPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold text-white/70">
-            <span className="text-white/55">Intensity</span>
+            <span className="text-white/55">{t("ow.cal.intensity")}</span>
             <LegendDot color="bg-white/[0.06]" label="0%" />
             <LegendDot color="bg-own-blue/25" label="1-24%" />
             <LegendDot color="bg-own-blue/45" label="25-49%" />
@@ -282,20 +295,34 @@ export default function OwnerCalendarPage() {
                   {days.map((d) => {
                     const dateIso = isoDate(d);
                     const state = getCell(room.slug, dateIso);
-                    const isBooked = state === "booked";
+                    const label = `${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${stateLabel(state)}`;
+                    if (state === "booked") {
+                      // v18 · a booked night opens its booking.
+                      const booking = bookingAt(room.slug, dateIso);
+                      return (
+                        <Link
+                          key={`${room.slug}-${dateIso}`}
+                          href={booking ? `/owner/bookings?id=${encodeURIComponent(booking.id)}` : "/owner/bookings"}
+                          title={booking ? `${label} · ${booking.code} · ${booking.guest}` : label}
+                          aria-label={booking ? `${label} · ${booking.code}` : label}
+                          className={cn(
+                            "aspect-square min-h-[28px] min-w-[28px] rounded-sm bg-own-blue transition hover:ring-2 hover:ring-white/60"
+                          )}
+                        />
+                      );
+                    }
                     return (
                       <button
                         key={`${room.slug}-${dateIso}`}
                         type="button"
-                        disabled={isBooked}
-                        onClick={() => handleCellClick(room.slug, dateIso)}
-                        title={`${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${state}`}
+                        onClick={() => void handleCellClick(room.slug, dateIso)}
+                        title={label}
                         className={cn(
                           "aspect-square min-h-[28px] min-w-[28px] rounded-sm transition",
-                          cellColor(state),
-                          isBooked && "opacity-90"
+                          cellColor(state)
                         )}
-                        aria-label={`${tr(room.name)} ${format(d, "d MMM", dfl)} ${state}`}
+                        aria-label={label}
+                        aria-pressed={state === "blocked"}
                       />
                     );
                   })}
@@ -309,8 +336,8 @@ export default function OwnerCalendarPage() {
             <LegendDot color="bg-own-blue" label={t("ow.lg2")} />
             <LegendDot color="bg-white/15" label={t("ow.lg3")} />
           </div>
-          <p className="mt-3 text-xs font-medium text-white/55">
-            {t("ow.calHint")}
+          <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-white/55">
+            <TipLabel label={t("ow.calHint")} tip={t("ow.tip.calendar.block")} />
           </p>
         </section>
       )}

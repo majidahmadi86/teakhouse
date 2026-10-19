@@ -139,13 +139,17 @@ export default function OwnerDashboardPage() {
   const animatedOta = useCountUp(otaSaved);
 
   const activeRooms = data.rooms.filter((r) => r.active);
+  const monthName = format(new Date(), "MMMM", dfl);
+  const stateLabel = (state: CellState) =>
+    state === "booked" ? t("ow.lg2") : state === "blocked" ? t("ow.lg3") : t("ow.lg1");
 
   const channelMix = useMemo(() => {
     const now = new Date();
     const monthBookings = data.bookings.filter((b) =>
       bookingTouchesMonth(b, now)
     );
-    if (monthBookings.length === 0) return { direct: 62, ota: 38 };
+    // v18 · no stays this month means no mix to show · never a made-up split.
+    if (monthBookings.length === 0) return null;
     const direct = monthBookings.filter((b) => b.source === "Direct").length;
     const directPctVal = Math.round((direct / monthBookings.length) * 100);
     return { direct: directPctVal, ota: 100 - directPctVal };
@@ -266,7 +270,7 @@ export default function OwnerDashboardPage() {
         </OwnerRise>
 
         <OwnerRise>
-          <StatCard label={t("ow.s3")} tip={t("ow.tip.s3")}>
+          <StatCard label={t("ow.s3", { m: monthName })} tip={t("ow.tip.s3")}>
             <span className="font-display text-4xl font-semibold text-deal">
               {animatedDirect}%
             </span>
@@ -274,7 +278,7 @@ export default function OwnerDashboardPage() {
         </OwnerRise>
 
         <OwnerRise>
-          <StatCard label={t("ow.s4")} gold sub={t("ow.s4sub")} tip={t("ow.tip.s4")}>
+          <StatCard label={t("ow.s4", { m: monthName })} gold sub={t("ow.s4sub")} tip={t("ow.tip.s4")}>
             <span className="font-display text-4xl font-semibold text-white">
               {formatBaht(animatedOta)}
             </span>
@@ -302,7 +306,7 @@ export default function OwnerDashboardPage() {
             value={`${revenue.occupancyPct}%`}
             tip={t("ow.tip.occ")}
           />
-          <MiniStat label="ADR" value={formatBaht(revenue.adr)} tip={t("ow.tip.adr")} />
+          <MiniStat label={t("ow.adr")} value={formatBaht(revenue.adr)} tip={t("ow.tip.adr")} />
           <MiniStat
             label={t("ow.bookingsCount")}
             value={String(revenue.bookingCount)}
@@ -369,7 +373,7 @@ export default function OwnerDashboardPage() {
                         src === "Direct" ? "text-deal" : "text-gold"
                       )}
                     >
-                      {src === "Direct" ? t("ow.direct") : src}
+                      {src === "Direct" ? t("ow.direct") : src === "Booking" ? "Booking.com" : src}
                     </span>
                     <span className="text-sm font-semibold text-white">
                       {count}
@@ -394,27 +398,34 @@ export default function OwnerDashboardPage() {
 
       <section className="owner-panel mb-6 rounded-2xl  p-6 md:p-8">
         <h2 className="mb-4 font-display text-xl font-semibold text-white">
-          {t("ow.mix")}
+          {t("ow.mix", { m: monthName })}
         </h2>
-        <div className="flex h-4 overflow-hidden rounded-full">
-          <div
-            className="bg-deal transition-all duration-700"
-            style={{ width: `${channelMix.direct}%` }}
-          />
-          <div
-            className="bg-gold transition-all duration-700"
-            style={{ width: `${channelMix.ota}%` }}
-          />
-        </div>
-        <div className="mt-3 flex flex-wrap gap-6 text-sm font-bold">
-          <span className="text-deal">
-            {t("ow.direct")} {channelMix.direct}%
-          </span>
-          <span className="text-gold">
-            {t("ow.ota")} {channelMix.ota}%
-          </span>
-        </div>
-        <p className="mt-4 text-sm font-medium text-white/60">{t("ow.mixnote")}</p>
+        {channelMix ? (
+          <>
+            <div className="flex h-4 overflow-hidden rounded-full">
+              <div
+                className="bg-deal transition-all duration-700"
+                style={{ width: `${channelMix.direct}%` }}
+              />
+              <div
+                className="bg-gold transition-all duration-700"
+                style={{ width: `${channelMix.ota}%` }}
+              />
+            </div>
+            <div className="mt-3 flex flex-wrap gap-6 text-sm font-bold">
+              <span className="text-deal">
+                {t("ow.direct")} {channelMix.direct}%
+              </span>
+              <span className="text-gold">
+                {t("ow.ota")} {channelMix.ota}%
+              </span>
+            </div>
+          </>
+        ) : (
+          <p className="owner-inset rounded-xl px-4 py-4 text-sm font-medium text-white/60">
+            {t("ow.mixEmpty")}
+          </p>
+        )}
       </section>
 
       <section className="owner-panel rounded-2xl  p-6 md:p-8">
@@ -514,13 +525,13 @@ export default function OwnerDashboardPage() {
                   return (
                     <div
                       key={`${room.slug}-${dateIso}`}
-                      title={`${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${state}`}
+                      title={`${tr(room.name)} · ${format(d, "d MMM", dfl)} · ${stateLabel(state)}`}
                       className={cn(
                         "aspect-square min-h-[36px] min-w-[36px] rounded-md",
                         cellColor(state),
                         dateIso === todayIso && "ring-1 ring-gold/50"
                       )}
-                      aria-label={`${tr(room.name)} ${format(d, "d MMM", dfl)} ${state}`}
+                      aria-label={`${tr(room.name)} ${format(d, "d MMM", dfl)} ${stateLabel(state)}`}
                     />
                   );
                 })}

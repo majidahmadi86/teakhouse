@@ -1,11 +1,12 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CalendarDays, Check, ChevronDown, Users } from "lucide-react";
+import { AlertTriangle, CalendarDays, Check, ChevronDown, Lock, Sparkles, Users } from "lucide-react";
 import { BookingDock } from "@/components/booking/BookingDock";
 import { MediaPicture } from "@/components/MediaPicture";
-import { generateBookingCode, qrMockSvg } from "@/lib/bookingUtils";
+import { qrMockSvg } from "@/lib/bookingUtils";
 import { useCurrency } from "@/lib/currency";
 import { isComplete, nightsOf, type DayIso, type StayRange } from "@/lib/dateRange";
 import { useGuestAuth } from "@/lib/guestAuth";
@@ -13,21 +14,55 @@ import { useI18n } from "@/lib/i18n";
 import { formatDay, nightsLabel } from "@/lib/i18n-core";
 import { bookableRooms, type BookableRoom } from "@/lib/liveRooms";
 import { useGuestPriceRulesByRoom, useGuestRooms, useOwner } from "@/lib/ownerStore";
-import { groupNights, otaEquivalent, quoteStay } from "@/lib/pricing";
+import { eachNightIso, groupNights, otaEquivalent, quoteStay } from "@/lib/pricing";
+import { applyOffer, isOfferId, OFFER_NUMBER, type OfferId } from "@/lib/offers";
 import type { MediaProps } from "@/lib/roomMedia";
-import { catalogueRoom, type Room } from "@/lib/rooms";
+import { catalogueRoom } from "@/lib/rooms";
 import { hotelDayIso, MAX_GUESTS, type Stay } from "@/lib/stayDate";
 import { cn } from "@/lib/utils";
 
 const StayPicker = dynamic(() => import("@/components/stay/StayPicker").then((m) => m.StayPicker), {
   ssr: false,
 });
-const Receipt = dynamic(() => import("@/components/booking/Receipt").then((m) => m.Receipt), { ssr: false });
 
 type PayMethod = "promptpay" | "card";
 type Step = 1 | 2 | 3;
+type CardErrors = { number?: boolean; expiry?: boolean; cvc?: boolean };
 
-const DEPOSIT_PCT = 30;
+/** Demo card checks · shape only (no card is ever charged): digits + Luhn. */
+function luhnOk(digits: string): boolean {
+  let sum = 0;
+  let dbl = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let d = Number(digits[i]);
+    if (dbl) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+    dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
+
+function formatCardNumber(v: string): string {
+  return v.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+function formatExpiry(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 4);
+  return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+}
+
+function expiryOk(v: string, todayIso: string): boolean {
+  const m = /^(\d{2})\/(\d{2})$/.exec(v);
+  if (!m) return false;
+  const month = Number(m[1]);
+  const year = 2000 + Number(m[2]);
+  if (month < 1 || month > 12) return false;
+  const [ty, tm] = todayIso.split("-").map(Number);
+  return year > ty || (year === ty && month >= tm);
+}
 
 /**
  * /book · the booking flow (v17 A4): Room → Details → Confirmed.
@@ -53,10 +88,11 @@ export default function BookPageClient({
 }) {
   const { t, tr, lang } = useI18n();
   const { format } = useCurrency();
+  const router = useRouter();
   const { user, attachBooking } = useGuestAuth();
   const dbRooms = useGuestRooms();
   const rulesByRoom = useGuestPriceRulesByRoom();
-  const { addBooking, hydrated: rulesLoaded } = useOwner();
+  const { addBooking, refresh, hydrated: rulesLoaded, depositPct, data } = useOwner();
   const rooms = useMemo(() => bookableRooms(dbRooms), [dbRooms]);
 
   const topRef = useRef<HTMLDivElement>(null);
@@ -64,6 +100,9 @@ export default function BookPageClient({
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+  const cardNumberRef = useRef<HTMLInputElement>(null);
+  const cardExpiryRef = useRef<HTMLInputElement>(null);
+  const cardCvcRef = useRef<HTMLInputElement>(null);
 
   const initialRoom = catalogueRoom(initialStay.room);
   const [step, setStep] = useState<Step>(1);
@@ -76,10 +115,31 @@ export default function BookPageClient({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [requests, setRequests] = useState("");
+  const [children, setChildren] = useState(0);
   const [payMethod, setPayMethod] = useState<PayMethod>("promptpay");
-  const [code, setCode] = useState("");
-  const [bookingId, setBookingId] = useState("");
+  const [card, setCard] = useState({ number: "", expiry: "", cvc: "" });
+  const [cardErrors, setCardErrors] = useState<CardErrors>({});
   const [errors, setErrors] = useState<{ name?: boolean; email?: boolean; phone?: boolean }>({});
+  /** v18 · the request is in flight · the guest sees "Confirming", never a premature "Confirmed". */
+  const [submitting, setSubmitting] = useState(false);
+  const [payError, setPayError] = useState<{ text: string; soldOut: boolean } | null>(null);
+  const [offer, setOffer] = useState<OfferId | null>(null);
+
+  // v18 · an offer from /offers arrives as ?offer= · read after mount so the
+  // static page stays one page per stay.
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("offer");
+      if (isOfferId(q)) setOffer(q);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // Children can never outnumber the party.
+  useEffect(() => {
+    setChildren((c) => Math.min(c, Math.max(0, guests - 1)));
+  }, [guests]);
 
   useEffect(() => {
     if (user) {
@@ -105,12 +165,13 @@ export default function BookPageClient({
   useEffect(() => {
     const q = new URLSearchParams({ in: stay.from, out: stay.to, g: String(guests) });
     if (roomSlug) q.set("room", roomSlug);
+    if (offer) q.set("offer", offer);
     try {
       window.history.replaceState(window.history.state, "", `/book?${q.toString()}`);
     } catch {
       /* ignore */
     }
-  }, [stay, guests, roomSlug]);
+  }, [stay, guests, roomSlug, offer]);
 
   const nights = nightsOf(stay.from, stay.to);
   const selected: BookableRoom | null = roomSlug ? rooms.find((r) => r.slug === roomSlug) ?? null : null;
@@ -122,14 +183,46 @@ export default function BookPageClient({
 
   const quote = useMemo(() => (selected ? quoteFor(selected) : null), [selected, quoteFor]);
   const rateLines = useMemo(() => (quote ? groupNights(quote.nights) : []), [quote]);
-  const subtotal = quote?.total ?? 0;
+  const todayIso = hotelDayIso();
+  const offerResult = useMemo(
+    () => (offer && quote ? applyOffer(offer, quote.total, stay.from, stay.to, todayIso) : null),
+    [offer, quote, stay, todayIso]
+  );
+  const subtotal = offerResult ? offerResult.total : quote?.total ?? 0;
   const savings = selected && quote ? Math.max(0, otaEquivalent(quote.total, selected.rate, selected.ota) - quote.total) : 0;
-  const deposit = Math.round((subtotal * DEPOSIT_PCT) / 100);
+  // v18 · Settings → deposit share, from the server (30 until the store loads).
+  const deposit = Math.round((subtotal * depositPct) / 100);
   const balance = subtotal - deposit;
+  const offerLine =
+    offerResult && offerResult.eligible && offerResult.saved > 0
+      ? { label: t(`off.${OFFER_NUMBER[offerResult.offer]}.title`), amount: offerResult.saved }
+      : null;
 
   const fits = (room: BookableRoom) => guests <= room.capacity;
 
+  /**
+   * v18 · A room is sold out for the stay when any night is taken by another
+   * booking or closed by the owner. The store holds both (the guest view of
+   * /api/data has no personal details), and the server checks again on
+   * booking, so a stale page can never double-book.
+   */
+  const soldOut = useMemo(() => {
+    const out = new Set<string>();
+    if (!rulesLoaded) return out;
+    const nights = eachNightIso(stay.from, stay.to);
+    for (const room of rooms) {
+      const taken = data.bookings.some(
+        (b) => b.roomSlug === room.slug && b.status !== "cancelled" && b.checkIn < stay.to && b.checkOut > stay.from
+      );
+      const closed = nights.some((n) => data.blocks[`${room.slug}:${n}`]);
+      if (taken || closed) out.add(room.slug);
+    }
+    return out;
+  }, [rulesLoaded, rooms, data.bookings, data.blocks, stay]);
+  const selectedSoldOut = selected ? soldOut.has(selected.slug) : false;
+
   function goStep(next: Step) {
+    setPayError(null);
     setStep(next);
     requestAnimationFrame(() => {
       topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -158,7 +251,28 @@ export default function BookPageClient({
       phone: phone.trim().length < 6,
     };
     setErrors(next);
-    const first = next.name ? nameRef.current : next.email ? emailRef.current : next.phone ? phoneRef.current : null;
+    const nextCard: CardErrors =
+      payMethod === "card"
+        ? {
+            number: !(card.number.replace(/\D/g, "").length >= 12 && luhnOk(card.number.replace(/\D/g, ""))),
+            expiry: !expiryOk(card.expiry, todayIso),
+            cvc: !/^\d{3,4}$/.test(card.cvc),
+          }
+        : {};
+    setCardErrors(nextCard);
+    const first = next.name
+      ? nameRef.current
+      : next.email
+        ? emailRef.current
+        : next.phone
+          ? phoneRef.current
+          : nextCard.number
+            ? cardNumberRef.current
+            : nextCard.expiry
+              ? cardExpiryRef.current
+              : nextCard.cvc
+                ? cardCvcRef.current
+                : null;
     if (first) {
       first.focus({ preventScroll: true });
       first.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -167,29 +281,60 @@ export default function BookPageClient({
     return true;
   }
 
-  function pay() {
-    if (!selected) return;
+  /**
+   * v18 · The booking is confirmed only when the server says so (201). Until
+   * then the button reads "Confirming", and a refusal (the room was just
+   * taken, the network dropped) is said plainly beside it, with nothing
+   * pretending to be confirmed. Never throws: addBooking resolves either way.
+   */
+  async function pay() {
+    if (!selected || submitting) return;
     if (!validate()) return;
-    const bookingCode = generateBookingCode();
-    const id = `bk-${Date.now()}`;
-    addBooking({
-      id,
-      code: bookingCode,
-      guest: name.trim(),
-      phone: phone.trim(),
-      email: email.trim(),
-      roomSlug: selected.slug,
-      checkIn: stay.from,
-      checkOut: stay.to,
-      source: "Direct",
-      amount: subtotal,
-      status: "ok",
-      notes: requests.trim(),
-    });
-    if (user) attachBooking(id);
-    setBookingId(id);
-    setCode(bookingCode);
-    goStep(3);
+    setPayError(null);
+    setSubmitting(true);
+    const result = await addBooking(
+      {
+        id: "",
+        code: "",
+        guest: name.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        roomSlug: selected.slug,
+        checkIn: stay.from,
+        checkOut: stay.to,
+        source: "Direct",
+        amount: subtotal,
+        status: "ok",
+        notes: requests.trim(),
+        specialRequests: requests.trim() || undefined,
+        adults: Math.max(1, guests - children),
+        children,
+      },
+      { offer: offer ?? undefined, lang }
+    );
+    if (!result.ok) {
+      setSubmitting(false);
+      const soldOutNow = result.status === 409;
+      if (soldOutNow) void refresh();
+      setPayError({
+        text:
+          result.status === 0
+            ? t("bk.errNetwork")
+            : soldOutNow
+              ? t("bk.errTaken")
+              : t("bk.errFailed"),
+        soldOut: soldOutNow,
+      });
+      return;
+    }
+    const created = result.data;
+    if (user) attachBooking(created.id);
+    if (created.confirmUrl) {
+      router.push(created.confirmUrl);
+    } else {
+      setSubmitting(false);
+      setPayError({ text: t("bk.errFailed"), soldOut: false });
+    }
   }
 
   const steps = [t("bk.s1"), t("bk.s2"), t("bk.s3")];
@@ -198,39 +343,21 @@ export default function BookPageClient({
       ? {
           label: t("bk.continue"),
           onClick: () => selected && goStep(2),
-          disabled: !selected || !fits(selected),
+          disabled: !selected || !fits(selected) || selectedSoldOut,
         }
       : {
-          label: `${t("bk.pay")} ${rulesLoaded ? format(deposit) : ""}`.trim(),
-          onClick: pay,
-          disabled: !selected,
+          label: submitting
+            ? t("bk.confirming")
+            : `${t("bk.pay")} ${rulesLoaded ? format(deposit) : ""}`.trim(),
+          onClick: () => void pay(),
+          disabled: !selected || submitting || selectedSoldOut,
         };
-  const hint = step === 1 && !selected ? t("bk.dockEmpty") : undefined;
-
-  // The receipt needs the DB-shaped room.
-  const receiptRoom: Room | null = selected
-    ? {
-        id: selected.id,
-        slug: selected.slug,
-        shortKey: selected.shortKey,
-        name: selected.name,
-        rate: selected.rate,
-        ota: selected.ota,
-        meta: selected.summary,
-        description: selected.description,
-        photos: [],
-        amenities: selected.amenities,
-        capacity: selected.capacity,
-        bedType: selected.beds,
-        sizeM2: selected.sizeM2,
-        view: selected.view,
-        floor: selected.floor,
-        bathtub: selected.bathtub,
-        balcony: selected.balcony,
-        pets: false,
-        active: true,
-      }
-    : null;
+  const hint =
+    step === 1 && !selected
+      ? t("bk.dockEmpty")
+      : selectedSoldOut
+        ? t("bk.soldOutHint")
+        : undefined;
 
   const stayLabel = `${formatDay(lang, stay.from)} → ${formatDay(lang, stay.to)}`;
 
@@ -289,6 +416,28 @@ export default function BookPageClient({
                 </div>
               </div>
               <div className="mt-6 lg:mt-7" />
+              {offer && step < 3 ? (
+                <div
+                  className={cn(
+                    "mb-5 flex items-start gap-3 rounded-card border px-4 py-3.5 text-[14px] print:hidden",
+                    offerResult?.eligible || !rulesLoaded || !selected
+                      ? "border-forest/30 bg-forest-soft text-forest"
+                      : "border-line bg-white text-ink/80"
+                  )}
+                  role="status"
+                >
+                  <Sparkles className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <p>
+                    <span className="font-semibold">{t(`off.${OFFER_NUMBER[offer]}.title`)}</span>
+                    {" · "}
+                    {!selected || !offerResult
+                      ? t(`bk.offer.${offer}.terms`)
+                      : offerResult.eligible
+                        ? t(`bk.offer.${offer}.applied`)
+                        : t(`bk.offer.${offer}.needs`)}
+                  </p>
+                </div>
+              ) : null}
               {step === 1 ? (
                 <>
                   {/* The stay · always editable, never asked for twice. */}
@@ -342,7 +491,8 @@ export default function BookPageClient({
                   <ul className="mt-4 space-y-4 sm:mt-6 sm:space-y-5">
                     {rooms.map((room, i) => {
                       const isSel = room.slug === roomSlug;
-                      const ok = fits(room);
+                      const isSoldOut = soldOut.has(room.slug);
+                      const ok = fits(room) && !isSoldOut;
                       const total = rulesLoaded ? quoteFor(room).total : null;
                       const m = media[room.slug];
                       return (
@@ -351,7 +501,8 @@ export default function BookPageClient({
                           id={`room-${room.slug}`}
                           className={cn(
                             "scroll-mt-32 overflow-hidden rounded-card border bg-white transition duration-300",
-                            isSel ? "border-forest shadow-lift ring-1 ring-forest" : "border-line/80 shadow-soft hover:shadow-lift"
+                            isSel ? "border-forest shadow-lift ring-1 ring-forest" : "border-line/80 shadow-soft hover:shadow-lift",
+                            isSoldOut && "opacity-60 grayscale"
                           )}
                         >
                           <div className="grid grid-cols-[108px_minmax(0,1fr)] sm:grid-cols-[minmax(0,260px)_1fr] md:grid-cols-[minmax(0,300px)_1fr]">
@@ -415,7 +566,9 @@ export default function BookPageClient({
                                       </span>
                                     </p>
                                   ) : null}
-                                  {!ok ? (
+                                  {isSoldOut ? (
+                                    <p className="text-[13px] font-medium text-coral-deep">{t("bk.soldOut")}</p>
+                                  ) : !fits(room) ? (
                                     <p className="text-[13px] text-coral-deep">{t("bk.tooMany", { n: room.capacity })}</p>
                                   ) : null}
                                 </div>
@@ -426,7 +579,7 @@ export default function BookPageClient({
                                   aria-pressed={isSel}
                                   className={cn(isSel ? "btn-secondary" : "btn-primary", "min-h-11 px-6 max-sm:w-full")}
                                 >
-                                  {isSel ? t("bk.selected") : t("bk.select")}
+                                  {isSoldOut ? t("bk.soldOutShort") : isSel ? t("bk.selected") : t("bk.select")}
                                 </button>
                               </div>
                             </div>
@@ -488,6 +641,21 @@ export default function BookPageClient({
                           className={inputClass}
                         />
                       </Field>
+                      {guests > 1 ? (
+                        <Field label={t("bk.children")} className="sm:col-span-2">
+                          <select
+                            value={children}
+                            onChange={(e) => setChildren(Number(e.target.value))}
+                            className={cn(inputClass, "cursor-pointer")}
+                          >
+                            {Array.from({ length: guests }, (_, i) => i).map((n) => (
+                              <option key={n} value={n}>
+                                {t("bk.childrenCount", { n, a: guests - n })}
+                              </option>
+                            ))}
+                          </select>
+                        </Field>
+                      ) : null}
                       <Field label={`${t("bk.requests")} · ${t("bk.optional")}`} className="sm:col-span-2">
                         <textarea
                           value={requests}
@@ -502,7 +670,7 @@ export default function BookPageClient({
 
                   <section>
                     <h2 className="text-[clamp(1.6rem,2.4vw,2.1rem)]">{t("bk.payment")}</h2>
-                    <p className="mt-2 text-[15px] text-sub">{t("bk.payLead")}</p>
+                    <p className="mt-2 text-[15px] text-sub">{t("bk.payLead", { pct: depositPct })}</p>
                     <div className="mt-6 grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("bk.payment")}>
                       {(["promptpay", "card"] as const).map((m) => (
                         <button
@@ -534,42 +702,91 @@ export default function BookPageClient({
                         <p className="text-[14.5px] text-ink/80">{t("bk.scan")}</p>
                       </div>
                     ) : (
-                      <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                        <Field label={t("bk.cardNum")} className="sm:col-span-2">
-                          <input inputMode="numeric" autoComplete="off" placeholder="4242 4242 4242 4242" className={inputClass} />
-                        </Field>
-                        <Field label={t("bk.expiry")}>
-                          <input autoComplete="off" placeholder="12/28" className={inputClass} />
-                        </Field>
-                        <Field label="CVC">
-                          <input autoComplete="off" placeholder="123" className={inputClass} />
-                        </Field>
+                      <div className="mt-5 rounded-card border border-line/80 bg-white p-5">
+                        <p className="mb-4 inline-flex items-center gap-2 rounded-soft bg-ivory px-3 py-1.5 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-teak">
+                          <Lock className="h-3.5 w-3.5" aria-hidden />
+                          {t("bk.demoCard")}
+                        </p>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <Field
+                            label={t("bk.cardNum")}
+                            className="sm:col-span-2"
+                            error={cardErrors.number ? t("bk.errCard") : undefined}
+                          >
+                            <input
+                              ref={cardNumberRef}
+                              inputMode="numeric"
+                              autoComplete="off"
+                              value={card.number}
+                              onChange={(e) => {
+                                setCard((c) => ({ ...c, number: formatCardNumber(e.target.value) }));
+                                setCardErrors((x) => ({ ...x, number: false }));
+                              }}
+                              placeholder="4242 4242 4242 4242"
+                              aria-invalid={cardErrors.number || undefined}
+                              className={inputClass}
+                            />
+                          </Field>
+                          <Field label={t("bk.expiry")} error={cardErrors.expiry ? t("bk.errExpiry") : undefined}>
+                            <input
+                              ref={cardExpiryRef}
+                              inputMode="numeric"
+                              autoComplete="off"
+                              value={card.expiry}
+                              onChange={(e) => {
+                                setCard((c) => ({ ...c, expiry: formatExpiry(e.target.value) }));
+                                setCardErrors((x) => ({ ...x, expiry: false }));
+                              }}
+                              placeholder={t("bk.expiryPh")}
+                              aria-invalid={cardErrors.expiry || undefined}
+                              className={inputClass}
+                            />
+                          </Field>
+                          <Field label={t("bk.cvc")} error={cardErrors.cvc ? t("bk.errCvc") : undefined}>
+                            <input
+                              ref={cardCvcRef}
+                              inputMode="numeric"
+                              autoComplete="off"
+                              value={card.cvc}
+                              onChange={(e) => {
+                                setCard((c) => ({ ...c, cvc: e.target.value.replace(/\D/g, "").slice(0, 4) }));
+                                setCardErrors((x) => ({ ...x, cvc: false }));
+                              }}
+                              placeholder="123"
+                              aria-invalid={cardErrors.cvc || undefined}
+                              className={inputClass}
+                            />
+                          </Field>
+                        </div>
+                        <p className="mt-4 text-[13px] text-sub">{t("bk.demoCardNote")}</p>
                       </div>
                     )}
                     <p className="mt-4 text-[13.5px] text-sub">{t("bk.demo")}</p>
+                    {payError ? (
+                      <div
+                        role="alert"
+                        className="mt-5 flex items-start gap-3 rounded-card border border-coral-deep/40 bg-white px-4 py-3.5 text-[14.5px] text-coral-deep"
+                      >
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                        <div>
+                          <p>{payError.text}</p>
+                          {payError.soldOut ? (
+                            <button
+                              type="button"
+                              onClick={() => goStep(1)}
+                              className="mt-2 font-medium text-forest underline underline-offset-4"
+                            >
+                              {t("bk.chooseAnother")}
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : null}
                   </section>
                 </div>
               ) : null}
 
-              {step === 3 && receiptRoom ? (
-                <Receipt
-                  code={code}
-                  bookingId={bookingId}
-                  guestName={name}
-                  guestEmail={email}
-                  guestPhone={phone}
-                  guests={String(guests)}
-                  checkIn={new Date(stay.from + "T12:00:00")}
-                  checkOut={new Date(stay.to + "T12:00:00")}
-                  room={receiptRoom}
-                  nights={nights}
-                  rate={selected?.rate ?? 0}
-                  subtotal={subtotal}
-                  deposit={deposit}
-                  balance={balance}
-                  rateLines={rateLines}
-                />
-              ) : null}
+
             </div>
 
             {step < 3 ? (
@@ -584,6 +801,8 @@ export default function BookPageClient({
                 balance={balance}
                 savings={savings}
                 rateLines={rateLines}
+                depositPct={depositPct}
+                offerLine={offerLine}
                 priced={rulesLoaded}
                 action={action}
                 hint={hint}

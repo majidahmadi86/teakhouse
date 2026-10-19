@@ -4,8 +4,15 @@ import { format, type Locale } from "date-fns";
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ChevronLeft, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from "lucide-react";
 import { OwnerListbox } from "@/components/owner/OwnerField";
+import {
+  FieldError,
+  TipLabel,
+  useConfirm,
+  useDirtyGuard,
+  useToast,
+} from "@/components/owner/OwnerUI";
 import { useI18n } from "@/lib/i18n";
 import { useOwner } from "@/lib/ownerStore";
 import {
@@ -58,8 +65,10 @@ function emptyDraft(kind: PriceRuleKind, startDate = ""): RuleDraft {
 export default function OwnerRatesPage() {
   const { t, tr, lang } = useI18n();
   const dfl = dfLocale(lang);
-  const { data, addPriceRule, deletePriceRule, updateRoom } = useOwner();
+  const { data, addPriceRule, updatePriceRule, deletePriceRule, updateRoom } = useOwner();
   const searchParams = useSearchParams();
+  const toast = useToast();
+  const confirm = useConfirm();
 
   const rooms = useMemo(
     () => [...data.rooms].sort((a, b) => b.rate - a.rate),
@@ -72,9 +81,13 @@ export default function OwnerRatesPage() {
     return { year: now.getFullYear(), month0: now.getMonth() };
   });
   const [draft, setDraft] = useState<RuleDraft>(() => emptyDraft("season"));
+  const [draftBaseline, setDraftBaseline] = useState(() => JSON.stringify(emptyDraft("season")));
+  /** v18 · the rule being edited, or null when the form adds a new one. */
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [baseDraft, setBaseDraft] = useState("");
+  const [baseError, setBaseError] = useState("");
 
   // Deep link from the rooms page · ?room=<id>, falling back to the first room.
   useEffect(() => {
@@ -91,7 +104,18 @@ export default function OwnerRatesPage() {
 
   useEffect(() => {
     setBaseDraft(room ? String(room.rate) : "");
+    setBaseError("");
   }, [room]);
+
+  useDirtyGuard(
+    JSON.stringify(draft) !== draftBaseline ||
+      (room !== null && baseDraft !== "" && baseDraft !== String(room.rate))
+  );
+
+  function resetDraft(next: RuleDraft) {
+    setDraft(next);
+    setDraftBaseline(JSON.stringify(next));
+  }
 
   const rules = useMemo(
     () => data.priceRules.filter((r) => r.roomId === roomId),
@@ -129,25 +153,56 @@ export default function OwnerRatesPage() {
     });
   }
 
-  function saveBase() {
+  async function saveBase() {
     if (!room) return;
     const value = Math.round(Number(baseDraft));
     if (!Number.isFinite(value) || value <= 0) {
-      setMessage(t("ow.rateBaseInvalid"));
+      setBaseError(t("ow.rateBaseInvalid"));
       return;
     }
+    setBaseError("");
     if (value === room.rate) return;
-    updateRoom(room.id, { rate: value });
-    setMessage(t("ow.rateBaseSaved"));
+    const result = await updateRoom(room.id, { rate: value });
+    if (result.ok) toast(t("ow.rateBaseSaved"));
+    else {
+      setBaseError(result.status === 0 ? t("ow.ui.offline") : t("ow.ui.saveFailed"));
+      toast(t("ow.ui.saveFailed"), "error");
+    }
   }
 
   /** Clicking a date starts an override for exactly that day. */
   function startOverrideFor(dateIso: string) {
     setMessage("");
-    setDraft(emptyDraft("override", dateIso));
+    setEditingId(null);
+    resetDraft(emptyDraft("override", dateIso));
+    // A fresh override from a date click is a new draft · nothing typed yet.
+    setDraftBaseline(JSON.stringify(emptyDraft("override", dateIso)));
     document
       .getElementById("rate-rule-form")
       ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  /** v18 · load an existing rule into the form to change it. */
+  function startEdit(rule: PriceRule) {
+    setMessage("");
+    setEditingId(rule.id);
+    resetDraft({
+      kind: rule.kind,
+      label: rule.label,
+      startDate: rule.startDate,
+      endDate: rule.endDate,
+      mode: rule.price != null ? "price" : "multiplier",
+      amount: rule.price != null ? String(rule.price) : String(rule.multiplier ?? ""),
+    });
+    document
+      .getElementById("rate-rule-form")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setMessage("");
+    resetDraft(emptyDraft(draft.kind));
   }
 
   async function submitRule() {
@@ -168,31 +223,48 @@ export default function OwnerRatesPage() {
 
     setBusy(true);
     setMessage("");
+    const fields = {
+      kind: draft.kind,
+      label: draft.label.trim(),
+      startDate: draft.startDate,
+      endDate: draft.endDate,
+      price: draft.mode === "price" ? Math.round(amount) : null,
+      multiplier: draft.mode === "multiplier" ? amount : null,
+    };
     try {
-      await addPriceRule({
-        roomId: room.id,
-        kind: draft.kind,
-        label: draft.label.trim(),
-        startDate: draft.startDate,
-        endDate: draft.endDate,
-        price: draft.mode === "price" ? Math.round(amount) : null,
-        multiplier: draft.mode === "multiplier" ? amount : null,
-      });
-      setDraft(emptyDraft(draft.kind));
-      setMessage(t("ow.rateSaved"));
+      if (editingId) {
+        await updatePriceRule(editingId, fields);
+        setEditingId(null);
+        toast(t("ow.rate.updated"));
+      } else {
+        await addPriceRule({ roomId: room.id, ...fields });
+        toast(t("ow.rateSaved"));
+      }
+      resetDraft(emptyDraft(draft.kind));
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : t("ow.rateSaveFailed"));
+      setMessage(
+        e instanceof Error && e.message ? `${t("ow.rateSaveFailed")} ${e.message}` : t("ow.rateSaveFailed")
+      );
     } finally {
       setBusy(false);
     }
   }
 
   async function removeRule(rule: PriceRule) {
-    if (!window.confirm(t("ow.sure"))) return;
+    const ok = await confirm({
+      title: t("ow.rate.delTitle", { name: rule.label || t("ow.rateUnnamed") }),
+      message: t("ow.rate.delBody", { from: rule.startDate, to: rule.endDate }),
+      confirmLabel: t("ow.del"),
+      tone: "danger",
+    });
+    if (!ok) return;
     setBusy(true);
     try {
       await deletePriceRule(rule.id);
-      setMessage(t("ow.rateDeleted"));
+      if (editingId === rule.id) cancelEdit();
+      toast(t("ow.rateDeleted"));
+    } catch {
+      toast(t("ow.rate.delFailed"), "error");
     } finally {
       setBusy(false);
     }
@@ -243,8 +315,8 @@ export default function OwnerRatesPage() {
         />
 
         <label className="block">
-          <span className="mb-1.5 block text-sm font-bold text-white/80">
-            {t("ow.rateBase")}
+          <span className="mb-1.5 flex items-center gap-1.5 text-sm font-bold text-white/80">
+            <TipLabel label={t("ow.rateBase")} tip={t("ow.tip.rates.base")} />
           </span>
           <div className="flex gap-2">
             <input
@@ -253,18 +325,23 @@ export default function OwnerRatesPage() {
               step="50"
               inputMode="numeric"
               value={baseDraft}
-              onChange={(e) => setBaseDraft(e.target.value)}
-              onBlur={saveBase}
+              onChange={(e) => {
+                setBaseDraft(e.target.value);
+                setBaseError("");
+              }}
+              onBlur={() => void saveBase()}
+              aria-invalid={baseError ? true : undefined}
               className="min-h-[44px] w-full px-3 py-2 text-sm"
             />
             <button
               type="button"
-              onClick={saveBase}
+              onClick={() => void saveBase()}
               className="owner-control min-h-[44px] shrink-0 rounded-xl px-4 text-sm font-bold text-white"
             >
               {t("ow.save")}
             </button>
           </div>
+          <FieldError message={baseError} />
         </label>
 
         {spread ? (
@@ -351,7 +428,10 @@ export default function OwnerRatesPage() {
                 .map((rule) => (
                   <li
                     key={rule.id}
-                    className="owner-inset flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 text-xs"
+                    className={cn(
+                      "owner-inset flex items-start justify-between gap-3 rounded-xl px-3 py-2.5 text-xs",
+                      editingId === rule.id && "ring-1 ring-own-blue"
+                    )}
                   >
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-center gap-2 font-bold text-white">
@@ -384,6 +464,16 @@ export default function OwnerRatesPage() {
                             }`}
                       </p>
                     </div>
+                    <div className="flex shrink-0 items-center">
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => startEdit(rule)}
+                      className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg text-white/70 transition hover:bg-white/10 disabled:opacity-50"
+                      aria-label={`${t("ow.edit")} ${rule.label || rule.startDate}`}
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden />
+                    </button>
                     <button
                       type="button"
                       disabled={busy}
@@ -393,6 +483,7 @@ export default function OwnerRatesPage() {
                     >
                       <Trash2 className="h-4 w-4" aria-hidden />
                     </button>
+                    </div>
                   </li>
                 ))}
             </ul>
@@ -401,9 +492,12 @@ export default function OwnerRatesPage() {
 
         <section id="rate-rule-form" className="owner-panel rounded-2xl p-4 md:p-6">
           <h2 className="mb-4 font-display text-xl font-semibold text-white">
-            {t("ow.rateAdd")}
+            {editingId ? t("ow.rate.editTitle") : t("ow.rateAdd")}
           </h2>
 
+          <p className="mb-2 flex items-center gap-1.5 text-sm font-bold text-white/80">
+            <TipLabel label={t("ow.rateKind")} tip={t("ow.tip.rates.kind")} />
+          </p>
           <div
             className="owner-inset mb-4 flex rounded-xl p-1"
             role="group"
@@ -434,8 +528,8 @@ export default function OwnerRatesPage() {
 
           <div className="space-y-3">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-bold text-white/80">
-                {t("ow.rateLabel")}
+              <span className="mb-1.5 flex items-center gap-1.5 text-sm font-bold text-white/80">
+                <TipLabel label={t("ow.rateLabel")} tip={t("ow.tip.rates.label")} />
               </span>
               <input
                 value={draft.label}
@@ -443,7 +537,7 @@ export default function OwnerRatesPage() {
                   setDraft((d) => ({ ...d, label: e.target.value }))
                 }
                 placeholder={
-                  draft.kind === "override" ? "Songkran" : "High season"
+                  draft.kind === "override" ? t("ow.rate.phOverride") : t("ow.rate.phSeason")
                 }
                 className="min-h-[44px] w-full px-3 py-2 text-sm"
               />
@@ -487,6 +581,9 @@ export default function OwnerRatesPage() {
               </label>
             </div>
 
+            <p className="flex items-center gap-1.5 text-sm font-bold text-white/80">
+              <TipLabel label={t("ow.rateMode")} tip={t("ow.tip.rates.mode")} />
+            </p>
             <div
               className="owner-inset flex rounded-xl p-1"
               role="group"
@@ -516,10 +613,11 @@ export default function OwnerRatesPage() {
             </div>
 
             <label className="block">
-              <span className="mb-1.5 block text-sm font-bold text-white/80">
-                {draft.mode === "price"
-                  ? t("ow.rateFixedLabel")
-                  : t("ow.rateMultiplierLabel")}
+              <span className="mb-1.5 flex items-center gap-1.5 text-sm font-bold text-white/80">
+                <TipLabel
+                  label={draft.mode === "price" ? t("ow.rateFixedLabel") : t("ow.rateMultiplierLabel")}
+                  tip={draft.mode === "price" ? t("ow.tip.rates.fixed") : t("ow.tip.rates.multiplier")}
+                />
               </span>
               <input
                 type="number"
@@ -546,12 +644,21 @@ export default function OwnerRatesPage() {
               onClick={() => void submitRule()}
               className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-own-blue px-5 py-3 text-sm font-extrabold text-white transition hover:bg-[#3d8ae6] disabled:opacity-60"
             >
-              <Plus className="h-5 w-5" aria-hidden />
-              {t("ow.rateAddBtn")}
+              {editingId ? null : <Plus className="h-5 w-5" aria-hidden />}
+              {editingId ? t("ow.rate.saveEdit") : t("ow.rateAddBtn")}
             </button>
+            {editingId ? (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="owner-control min-h-[44px] w-full rounded-xl px-5 py-3 text-sm font-bold text-white/70"
+              >
+                {t("ow.rate.cancelEdit")}
+              </button>
+            ) : null}
 
             {message ? (
-              <p className="text-xs font-semibold text-deal" role="status">
+              <p className="text-xs font-semibold text-red-300" role="alert">
                 {message}
               </p>
             ) : null}

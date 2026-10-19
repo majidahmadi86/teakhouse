@@ -11,6 +11,7 @@ import {
 } from "@/lib/eventRequests";
 import { useI18n } from "@/lib/i18n";
 import { ownerFetch } from "@/lib/ownerSessionClient";
+import { TipLabel, useToast } from "@/components/owner/OwnerUI";
 import { cn } from "@/lib/utils";
 import { dfLocale } from "@/lib/dateLocale";
 
@@ -34,11 +35,13 @@ const STATUS_LABEL: Record<EventRequestStatus, string> = {
 export function RequestsPanel() {
   const { t, tr, lang } = useI18n();
   const dfl = dfLocale(lang);
+  const toast = useToast();
   const [rows, setRows] = useState<EventRequest[] | null>(null);
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/event-requests", { cache: "no-store" });
+      // v18 · owner-only (names, phone numbers).
+      const res = await ownerFetch("/api/event-requests", { cache: "no-store" });
       setRows(res.ok ? ((await res.json()) as EventRequest[]) : []);
     } catch {
       setRows([]);
@@ -53,12 +56,22 @@ export function RequestsPanel() {
     setRows((prev) =>
       prev ? prev.map((r) => (r.id === row.id ? { ...r, status } : r)) : prev
     );
-    const res = await ownerFetch(`/api/event-requests/${row.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (!res.ok) await refresh();
+    let ok = false;
+    try {
+      const res = await ownerFetch(`/api/event-requests/${row.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      ok = res.ok;
+    } catch {
+      ok = false;
+    }
+    if (ok) toast(t("ow.ui.statusSaved", { ref: row.ref }));
+    else {
+      toast(t("ow.ui.saveFailed"), "error");
+      await refresh();
+    }
   }
 
   const pending = (rows ?? []).filter((r) => r.status === "pending").length;
@@ -71,7 +84,7 @@ export function RequestsPanel() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2.5 font-display text-xl font-semibold text-white">
           <Ticket className="h-5 w-5 text-own-blue" aria-hidden />
-          {t("ow.seatRequests")}
+          <TipLabel label={t("ow.seatRequests")} tip={t("ow.tip.events.requests")} />
           {pending > 0 ? (
             <span className="rounded-full bg-gold/20 px-2.5 py-1 text-xs font-extrabold text-gold">
               {t("ow.toAnswer", { n: pending })}
@@ -101,7 +114,7 @@ export function RequestsPanel() {
             >
               <div className="min-w-[150px] flex-1">
                 <p className="truncate text-sm font-bold text-white">
-                  {row.eventTitle ? tr(row.eventTitle) : "Event"}
+                  {row.eventTitle ? tr(row.eventTitle) : t("ow.ev.event")}
                 </p>
                 {row.eventDate ? (
                   <p className="text-xs font-bold text-own-blue">

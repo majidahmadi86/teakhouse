@@ -9,11 +9,14 @@ import {
   type ContactPurpose,
 } from "@/lib/contactMessages";
 import { readOnlyResponse } from "@/lib/readOnly";
+import { requireOwner } from "@/lib/ownerSession";
 
 export const dynamic = "force-dynamic";
 
-/** Owner list · newest first. */
-export async function GET() {
+/** Owner list · newest first. PII, so owner session only (v18). */
+export async function GET(req: Request) {
+  const denied = requireOwner(req);
+  if (denied) return denied;
   const rows = await prisma.contactMessage.findMany({
     orderBy: { createdAt: "desc" },
     take: 200,

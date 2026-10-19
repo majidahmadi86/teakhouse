@@ -52,7 +52,7 @@ export default function OwnerLayout({
         <OwnerProviders initialLang={locale}>
           <DemoModeBar variant="owner" locale={locale} />
           <DemoModal strings={getDemoStrings(locale)}>
-            <OwnerStoreProvider>
+            <OwnerStoreProvider scope="owner">
               <OwnerShell>{children}</OwnerShell>
             </OwnerStoreProvider>
           </DemoModal>

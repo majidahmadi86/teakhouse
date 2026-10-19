@@ -11,7 +11,13 @@ import type { HotelEvent } from "@/lib/events";
 import { useI18n } from "@/lib/i18n";
 import { ownerFetch } from "@/lib/ownerSessionClient";
 import { cn, isoDate } from "@/lib/utils";
-import { ModalActions, OwnerModal } from "../dining/DiningClient";
+import {
+  ModalActions,
+  OwnerFormField,
+  OwnerModal,
+  useConfirm,
+  useToast,
+} from "@/components/owner/OwnerUI";
 import { RequestsPanel } from "./RequestsPanel";
 import { invalidateCached, readCached } from "@/lib/ownerCache";
 import { dfLocale } from "@/lib/dateLocale";
@@ -36,11 +42,15 @@ function emptyEvent(): EventForm {
 
 // HF-1 · owner writes carry the owner session (lib/ownerSessionClient).
 async function jsonFetch(url: string, init?: RequestInit): Promise<boolean> {
-  const res = await ownerFetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-  return res.ok;
+  try {
+    const res = await ownerFetch(url, {
+      headers: { "Content-Type": "application/json" },
+      ...init,
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -50,7 +60,13 @@ async function jsonFetch(url: string, init?: RequestInit): Promise<boolean> {
 export default function OwnerEventsPage() {
   const { t, tr, lang } = useI18n();
   const dfl = dfLocale(lang);
+  const toast = useToast();
+  const confirm = useConfirm();
   const [events, setEvents] = useState<HotelEvent[] | null>(null);
+  const [baseline, setBaseline] = useState("");
+  const [errors, setErrors] = useState<{ title?: string; date?: string }>({});
+  const [formError, setFormError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<HotelEvent | null>(null);
@@ -69,26 +85,39 @@ export default function OwnerEventsPage() {
     void refresh();
   }, [refresh]);
 
-  function openAdd() {
-    setEditing(null);
-    setForm(emptyEvent());
+  function openWith(ev: HotelEvent | null, next: EventForm) {
+    setEditing(ev);
+    setForm(next);
+    setBaseline(JSON.stringify(next));
+    setErrors({});
+    setFormError("");
     setModalOpen(true);
   }
 
+  function openAdd() {
+    openWith(null, emptyEvent());
+  }
+
   function openEdit(ev: HotelEvent) {
-    setEditing(ev);
-    setForm({
+    openWith(ev, {
       title: { ...ev.title },
       date: ev.date,
       description: { ...ev.description },
       image: ev.image,
       published: ev.published,
     });
-    setModalOpen(true);
   }
 
   async function saveEvent() {
-    if (!form.title.en.trim() || !form.date) return;
+    const found: { title?: string; date?: string } = {};
+    if (!form.title.en.trim()) found.title = t("ow.v.titleEn");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(form.date)) found.date = t("ow.v.date");
+    setErrors(found);
+    if (found.title || found.date) {
+      setFormError(t("ow.v.fix"));
+      return;
+    }
+    setFormError("");
     const payload = {
       title: {
         en: form.title.en.trim(),
@@ -102,32 +131,48 @@ export default function OwnerEventsPage() {
       image: form.image.trim(),
       published: form.published,
     };
-    if (editing) {
-      await jsonFetch(`/api/events/${editing.id}`, {
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      });
-    } else {
-      await jsonFetch("/api/events", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
+    setSaving(true);
+    const ok = editing
+      ? await jsonFetch(`/api/events/${editing.id}`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        })
+      : await jsonFetch("/api/events", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+    setSaving(false);
+    if (!ok) {
+      setFormError(t("ow.ui.saveFailed"));
+      return;
     }
+    setBaseline(JSON.stringify(form));
     setModalOpen(false);
+    toast(t("ow.ui.savedName", { name: payload.title.en }));
     await refresh(true);
   }
 
   async function togglePublished(ev: HotelEvent) {
-    await jsonFetch(`/api/events/${ev.id}`, {
+    const ok = await jsonFetch(`/api/events/${ev.id}`, {
       method: "PATCH",
       body: JSON.stringify({ published: !ev.published }),
     });
+    if (ok) toast(ev.published ? t("ow.ui.nowHidden", { name: tr(ev.title) }) : t("ow.ui.nowPublished", { name: tr(ev.title) }));
+    else toast(t("ow.ui.saveFailed"), "error");
     await refresh(true);
   }
 
   async function deleteEvent(ev: HotelEvent) {
-    if (!window.confirm(t("ow.sure"))) return;
-    await jsonFetch(`/api/events/${ev.id}`, { method: "DELETE" });
+    const yes = await confirm({
+      title: t("ow.ev.delTitle", { name: tr(ev.title) }),
+      message: t("ow.ev.delBody"),
+      confirmLabel: t("ow.del"),
+      tone: "danger",
+    });
+    if (!yes) return;
+    const ok = await jsonFetch(`/api/events/${ev.id}`, { method: "DELETE" });
+    if (ok) toast(t("ow.ui.deletedName", { name: tr(ev.title) }));
+    else toast(t("ow.ui.deleteFailed"), "error");
     await refresh(true);
   }
 
@@ -154,7 +199,9 @@ export default function OwnerEventsPage() {
       <RequestsPanel />
 
       {events.length === 0 ? (
-        <p className="text-sm text-white/55">No events yet.</p>
+        <div className="owner-panel rounded-2xl p-8 text-center">
+          <p className="text-sm text-white/60">{t("ow.ev.empty")}</p>
+        </div>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {events.map((ev) => (
@@ -176,7 +223,7 @@ export default function OwnerEventsPage() {
                   />
                   {!ev.published ? (
                     <span className="absolute left-3 top-3 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white/80">
-                      Hidden from guests
+                      {t("ow.ui.hiddenFromGuests")}
                     </span>
                   ) : null}
                 </div>
@@ -189,7 +236,7 @@ export default function OwnerEventsPage() {
                   )}
                 >
                   {format(parseISO(ev.date), "EEE d MMM yyyy", dfl)}
-                  {ev.date < todayIso ? " · past" : ""}
+                  {ev.date < todayIso ? ` · ${t("ow.ev.past")}` : ""}
                 </p>
                 <h2 className="mt-2 font-display text-xl font-semibold text-white">
                   {tr(ev.title)}
@@ -203,7 +250,7 @@ export default function OwnerEventsPage() {
                     type="button"
                     role="switch"
                     aria-checked={ev.published}
-                    aria-label={ev.published ? "Published" : "Hidden"}
+                    aria-label={`${t("ow.published")} · ${tr(ev.title)}`}
                     onClick={() => togglePublished(ev)}
                     className={cn(
                       "relative h-7 w-12 rounded-full transition",
@@ -244,10 +291,11 @@ export default function OwnerEventsPage() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         title={editing ? t("ow.edit") : t("ow.addEvent")}
+        dirty={modalOpen && JSON.stringify(form) !== baseline}
       >
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={t("ow.f.titleEn")}>
+            <Field label={t("ow.f.titleEn")} error={errors.title}>
               <input
                 value={form.title.en}
                 onChange={(e) =>
@@ -273,7 +321,7 @@ export default function OwnerEventsPage() {
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={t("rsv.date")}>
+            <Field label={t("rsv.date")} tip={t("ow.tip.events.date")} error={errors.date}>
               <input
                 type="date"
                 value={form.date}
@@ -281,7 +329,7 @@ export default function OwnerEventsPage() {
                 className={inputClass}
               />
             </Field>
-            <Field label={t("ow.f.visibility")}>
+            <Field label={t("ow.f.visibility")} tip={t("ow.tip.events.visibility")}>
               <OwnerListbox
                 value={form.published ? "yes" : "no"}
                 onChange={(v) =>
@@ -329,7 +377,7 @@ export default function OwnerEventsPage() {
             onChange={(url) => setForm((p) => ({ ...p, image: url }))}
             hint={t("ow.hint.event")}
           />
-          <Field label={t("ow.f.pastePath")}>
+          <Field label={t("ow.f.pastePath")} tip={t("ow.tip.events.image")}>
             <input
               value={form.image}
               onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))}
@@ -340,9 +388,11 @@ export default function OwnerEventsPage() {
         </div>
         <ModalActions
           onCancel={() => setModalOpen(false)}
-          onSave={saveEvent}
+          onSave={() => void saveEvent()}
           cancelLabel={t("ow.cancel")}
-          saveLabel={t("ow.save")}
+          saveLabel={saving ? t("ow.setSaving") : t("ow.save")}
+          saving={saving}
+          error={formError || undefined}
         />
       </OwnerModal>
     </div>
@@ -351,17 +401,5 @@ export default function OwnerEventsPage() {
 
 const inputClass = "min-h-[44px] w-full px-4 py-3 text-base";
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="mb-2 text-sm font-semibold text-white/80">{label}</div>
-      {children}
-    </div>
-  );
-}
+/** The owner form field with optional ? help and inline error (OwnerUI). */
+const Field = OwnerFormField;
